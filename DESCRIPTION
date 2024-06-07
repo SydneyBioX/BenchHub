@@ -38,3 +38,7 @@ Remotes:
     rehbergT/zeroSum/zeroSum,
     SydneyBioX/CPOP,
     SydneyBioX/PD16SData
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
