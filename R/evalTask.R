@@ -1,5 +1,3 @@
-library(R6)
-
 eval_task_factory = R6Class(
   "evalTask",
   

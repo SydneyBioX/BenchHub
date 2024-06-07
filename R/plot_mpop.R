@@ -14,10 +14,10 @@ plot_mpop = function(mpop_result, type = "point", s = "lambda.min"){
   
   if (type == "point") {
     g1 = coef_plotdf %>% 
-      ggplot() + 
-      aes(x = .data$coef1, y = .data$coef2) +
-      geom_point() +
-      geom_abline(slope = 1, intercept = 0, colour = "red")
+      ggplot2::ggplot() + 
+      ggplot2::aes(x = .data$coef1, y = .data$coef2) +
+      ggplot2::geom_point() +
+      ggplot2::geom_abline(slope = 1, intercept = 0, colour = "red")
     
     return(lst(plot = g1, data = coef_plotdf))
   }
@@ -29,19 +29,19 @@ plot_mpop = function(mpop_result, type = "point", s = "lambda.min"){
                                              values_to = "coef_value")
     
     p = coef_plotdf_gather %>%
-      ggplot() +
-      aes(x = .data$coef_name, y = .data$coef_value, fill = .data$coef_key) +
-      geom_col(position = "dodge")
+      ggplot2::ggplot() +
+      ggplot2::aes(x = .data$coef_name, y = .data$coef_value, fill = .data$coef_key) +
+      ggplot2::geom_col(position = "dodge")
     
     return(lst(plot = p, data = coef_plotdf_gather))
   }
   
   if (type == "text") {
     p = coef_plotdf %>% 
-      ggplot() +
-      aes(x = .data$coef1, y = .data$coef2, label = .data$coef_name) +
-      geom_text() +
-      geom_abline(slope = 1, intercept = 0, colour = "red")
+      ggplot2::ggplot() +
+      ggplot2::aes(x = .data$coef1, y = .data$coef2, label = .data$coef_name) +
+      ggplot2::geom_text() +
+      ggplot2::geom_abline(slope = 1, intercept = 0, colour = "red")
     
     return(lst(plot = p, data = coef_plotdf))
   }
