@@ -5,40 +5,21 @@ Authors@R:
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: use_mit_license()
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
-    biomformat,
-    Biostrings,
-    caret,
-    microViz,
-    dplyr,
-    ExperimentHub,
-    ggplot2,
-    glmnet,
-    limma,
-    microbiome,
-    phyloseq,
+    cli,
+    fs,
+    glue,
     R6,
-    zeroSum,
-    Seurat,
-    SimBenchData,
-    CPOP,
-    PD16SData,
-    tigger,
-    viridis,
-    forcats,
-    tidyr,
-    assertthat
-Remotes:
-    david-barnett/microViz,
-    rehbergT/zeroSum/zeroSum,
-    SydneyBioX/CPOP,
-    SydneyBioX/PD16SData
+    rlang,
+    stringr
 Suggests: 
+    anndata,
+    httr,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
