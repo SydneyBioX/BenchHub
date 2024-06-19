@@ -8,15 +8,15 @@ getData <- function(datasetID) {
       "i" = "Use a format string instead: {.emph source}:{.emph ID}"
     ))
   } else if (length(parsed) == 2) {
-    sourceName <- parsed[1]
+    sourceName <- tolower(parsed[1])
     id <- parsed[2]
 
     if (!exists(paste0(sourceName, "Dl"))) {
-      supported <- stringr::str_remove(
+      supported <- stringr::str_remove( # nolint
         grep("Dl", ls("package:TrioR"), value = TRUE), "Dl"
       )
       cli::cli_abort(c(
-        "Downloading form {.emph {source}} is not supported.",
+        "Downloading form {.emph {sourceName}} is not supported.",
         "i" = "Choose one of the following: {supported}"
       ))
     }
