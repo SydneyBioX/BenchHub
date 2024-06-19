@@ -66,7 +66,8 @@ figshareDl <- function(ID) {
   if (!is.null(fileID) || !is.null(names(body))) {
     body <- list(body)
   }
-  # for files with the same name, get the most recent ID
+  # for files with the same name, get the most recent ID (deals with versions)
+  # TODO: Deal with files that have been deleted in newer versions 
   datasets <- do.call(rbind, lapply(body, data.frame)) |>
     dplyr::arrange(dplyr::desc(id)) |>
     dplyr::group_by(name) |>
@@ -121,4 +122,16 @@ figshareDl <- function(ID) {
   }
 
   dlLoacations
+}
+
+geoDl <- function(ID) {
+  cli::cli_abort(c(
+    "GEO Downloads are not supported yet ☹"
+  ))
+}
+
+experimenthubDl <- function(ID) {
+  cli::cli_abort(c(
+    "ExperimentHub Downloads are not supported yet ☹"
+  ))
 }
