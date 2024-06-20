@@ -1,4 +1,4 @@
-Trio <- R6Class(
+Trio <- R6::R6Class(
   "Trio",
   public = list(
     data = NULL,
