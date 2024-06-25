@@ -1,9 +1,27 @@
+#' A Trio object
+#' @description An object containing a dataset and methods for evaluating
+#'   analytical task against ground truths in the dataset.
+#' @field data The data
+#' @field goldStandards The gold standards in the data
+#' @field metrics The metric for evaluating tasks against the gold standards
+#'
+#' @examples
+#' trio <- Trio$new("figshare:26054188/47112109")
+#' @export
 Trio <- R6::R6Class(
   "Trio",
   public = list(
     data = NULL,
     goldStandards = list(),
     metrics = list(),
+
+    # TODO: Implement Trio$sources() (Issue #2)
+
+    #' @description
+    #' Create a Trio object
+    #' @param datasetID
+    #'   A string specifying a dataset, either a name from curated-trio-data or
+    #'   a format string of the form `source`:`source_id`.
     initialize = function(datasetID) {
       self$data <- getData(datasetID)
     },
@@ -51,7 +69,9 @@ Trio <- R6::R6Class(
     #' @param name A string specifying the name of the gold standard.
     #' @param metric
     #'   The metric. A function to be run on the input to evaluate to compare it
-    #'   with the gold standard.
+    #'   with the gold standard. Should be of the form f(x, y, ...). Where `x`
+    #'   is the "truth" and `y` is the output to be evaluated. Otherwise input
+    #'   a wrapper function of the desired metric.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
     addMetric = function(name, metric, args) {
