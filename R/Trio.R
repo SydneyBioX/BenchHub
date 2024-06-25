@@ -44,6 +44,26 @@ Trio <- R6::R6Class(
           "metrics" = metrics
         )
       }
+    },
+
+    #' @description
+    #' Add a metric to the Trio.
+    #' @param name A string specifying the name of the gold standard.
+    #' @param metric
+    #'   The metric. A function to be run on the input to evaluate to compare it
+    #'   with the gold standard.
+    #' @param args
+    #'   A named list of parameters and values to be passed to the function.
+    addMetric = function(name, metric, args) {
+      if (name %in% names(self$metrics)) {
+        cli::cli_warn(c(
+          "A metric `{name}` is already present in this Trio, overwriting."
+        ))
+      }
+      # TODO: Validate metric!!
+      self$metrics[[name]] <- function(gs, to_eval, metric, args) {
+        do.call(metric, append(list(gs, to_eval), args))
+      }
     }
   )
 )
