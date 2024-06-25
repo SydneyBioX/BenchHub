@@ -1,5 +1,7 @@
 # Download inferfaces for each source that Trio supports
 
+
+# ID: input of the form ARTICLE_ID or ARTICLE_ID/FILE_ID
 figshareDl <- function(ID) {
   API_URL <- "https://api.figshare.com/v2/"
 
@@ -130,7 +132,7 @@ geoDl <- function(ID) {
   # download GEO data
   tryCatch(
     {
-      geoData <- GEOquery::getGEO(GEO = ID, destdir = tempFolder)
+      dlLoacations <- GEOquery::getGEOfile(GEO = ID, destdir = tempFolder)
     },
     error = function(e) {
       cli::cli_abort(c(
@@ -140,9 +142,6 @@ geoDl <- function(ID) {
       ))
     }
   )
-
-  # extract file paths
-  dlLoacations <- list.files(tempFolder, pattern = ID, full.names = TRUE)
 
   if (length(dlLoacations) == 0) {
     cli::cli_warn(c(
