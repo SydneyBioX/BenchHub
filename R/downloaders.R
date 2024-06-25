@@ -1,13 +1,6 @@
 # Download inferfaces for each source that Trio supports
 
 figshareDl <- function(ID) {
-  if (!requireNamespace("httr2", quietly = TRUE)) {
-    cli::cli_abort(c(
-      "{.pkg httr2} is required to to get data from {.url figshare.com}.",
-      "i" = "You can get it by running: {.code install.packages('httr2')}"
-    ))
-  }
-
   API_URL <- "https://api.figshare.com/v2/"
 
   # get file ID from ID if it is available
@@ -67,7 +60,7 @@ figshareDl <- function(ID) {
     body <- list(body)
   }
   # for files with the same name, get the most recent ID (deals with versions)
-  # TODO: Deal with files that have been deleted in newer versions 
+  # TODO: Deal with files that have been deleted in newer versions
   datasets <- do.call(rbind, lapply(body, data.frame)) |>
     dplyr::arrange(dplyr::desc(id)) |>
     dplyr::group_by(name) |>

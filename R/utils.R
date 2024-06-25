@@ -59,3 +59,13 @@ loadFile <- function(filePath) {
     ))
   }
 }
+
+
+assertSuggestAvail <- function(package) {
+  if (!requireNamespace(package, quietly = TRUE)) {
+    cli::cli_abort(c(
+      "{.pkg package} is required to to get data from {.url figshare.com}.",
+      "i" = "You can get it by running: {.code install.packages('{package}')}"
+    ))
+  }
+}
