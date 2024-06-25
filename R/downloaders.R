@@ -125,9 +125,38 @@ figshareDl <- function(ID) {
 }
 
 geoDl <- function(ID) {
-  cli::cli_abort(c(
-    "GEO Downloads are not supported yet ☹"
-  ))
+  if (!requireNamespace("GEOquery", quietly = TRUE)) {
+    cli::cli_abort(c(
+      "{.pkg GEOquery} is required to get data from {.url ncbi.nlm.nih.gov/geo}.",
+      "i" = "You can get it by running: {.code install.packages('GEOquery')}"
+    ))
+  }
+  
+  # ensure tempdir for downloads
+  tempFolder <- tempdir()
+  
+  # download GEO data
+  tryCatch({
+    geoData <- GEOquery::getGEO(GEO = ID, destdir = tempFolder)
+  }, error = function(e) {
+    cli::cli_abort(c(
+      "Failed to download GEO data: {ID}",
+      "i" = "Check the GEO ID and try again.",
+      "Error message: {e$message}"
+    ))
+  })
+  
+  # extract file paths
+  dlLoacations <- list.files(tempFolder, pattern = ID, full.names = TRUE)
+  
+  if (length(dlLoacations) == 0) {
+    cli::cli_warn(c(
+      "No files found for GEO ID: {ID}",
+      "i" = "Ensure that the GEO ID is correct and the data is available."
+    ))
+  }
+  
+  dlLoacations
 }
 
 experimenthubDl <- function(ID) {
