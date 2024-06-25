@@ -33,7 +33,8 @@ Trio <- R6::R6Class(
     #'   The goldstandard. An object to be compared or a function to be run on
     #'   the data.
     #' @param metrics
-    #'   A list of metrics names used to campaere gs with the input to evaluate.
+    #'   A list of one or more metrics names used to campare gs with the input
+    #'   to evaluate.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
     addGS = function(name, gs, metrics, args = NULL) {
