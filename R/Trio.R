@@ -75,12 +75,18 @@ Trio <- R6::R6Class(
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
     addMetric = function(name, metric, args) {
+      if (!methods::is(metric, "function")) {
+        cli::cli_abort(c(
+          "{.var metric} should be a {.cls function}, not a {.cls {class(metric)}}."
+        ))
+      }
       if (name %in% names(self$metrics)) {
         cli::cli_warn(c(
           "A metric `{name}` is already present in this Trio, overwriting."
         ))
       }
       # TODO: Validate metric!!
+      # metric functions should follow this format (gs, to_eval, ...)
       self$metrics[[name]] <- function(gs, to_eval, metric, args) {
         do.call(metric, append(list(gs, to_eval), args))
       }
