@@ -17,7 +17,8 @@ Imports:
     R6,
     rlang,
     httr2,
-    stringr
+    stringr,
+    purrr
 Suggests: 
     anndata,
     knitr,
