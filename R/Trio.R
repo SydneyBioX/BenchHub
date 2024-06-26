@@ -67,7 +67,7 @@ Trio <- R6::R6Class(
 
     #' @description
     #' Add a metric to the Trio.
-    #' @param name A string specifying the name of the gold standard.
+    #' @param name A string specifying the name of the metric.
     #' @param metric
     #'   The metric. A function to be run on the input to evaluate to compare it
     #'   with the gold standard. Should be of the form f(x, y, ...). Where `x`
@@ -87,10 +87,37 @@ Trio <- R6::R6Class(
         ))
       }
       # TODO: Validate metric!!
-      # metric functions should follow this format (gs, to_eval, ...)
-      self$metrics[[name]] <- function(gs, to_eval, metric, args) {
+      # metric functions should follow this format (gs, to_eval)
+      self$metrics[[name]] <- function(gs, to_eval) {
         do.call(metric, append(list(gs, to_eval), args))
       }
+    },
+
+    #' @description
+    #' Get a gold standard by name.
+    #' @param name A string specifying the name of the gold standard.
+    getGS = function(name) {
+      if (length(self$goldStandards) == 0) {
+        cli::cli_abort(c(
+          "There are no gold standards in this Trio!",
+          "i" = "Add some using {.code Trio$addGS(...)}."
+        ))
+      }
+      if (!name %in% names(self$goldStandards)) {
+        gsNames <- names(self$goldStandards)
+        cli::cli_abort(c(
+          "Gold standard {.val {name}} could not be found.",
+          "i" = "Add it using {.code Trio$addGS(.)} or choose one of {.val {gsNames}}"
+        ))
+      }
+
+      gs <- self$goldStandards[[name]]$gs
+
+      if (!methods::is(gs, "function")) {
+        return(gs)
+      }
+
+      gs(self$data)
     }
   )
 )
