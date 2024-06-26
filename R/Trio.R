@@ -75,7 +75,7 @@ Trio <- R6::R6Class(
     #'   a wrapper function of the desired metric.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
-    addMetric = function(name, metric, args) {
+    addMetric = function(name, metric, args = NULL) {
       if (!methods::is(metric, "function")) {
         cli::cli_abort(c(
           "{.var metric} should be a {.cls function}, not a {.cls {class(metric)}}."
@@ -91,6 +91,19 @@ Trio <- R6::R6Class(
       self$metrics[[name]] <- function(gs, to_eval) {
         do.call(metric, append(list(gs, to_eval), args))
       }
+    },
+
+    #' @description
+    #' Get metrics by gold standard name.
+    #' @param gsName A string specifying the name of the gold standard.
+    getMetrics = function(gsName) {
+      if (!gsName %in% names(self$goldStandards)) {
+        cli::cli_abort(c(
+          "{.val {gsName} is not a gold standard in this object.}",
+          "i" = "Choose one of {.val {names(self$goldStandards)}}"
+        ))
+      }
+      purrr::pluck(self$goldStandards, gsName, "metrics")
     },
 
     #' @description
