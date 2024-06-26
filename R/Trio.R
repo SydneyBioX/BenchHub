@@ -48,9 +48,9 @@ Trio <- R6::R6Class(
         # Assign a function that adds args and applies to each element in
         # self$data, returning the result.
         self$goldStandards[[name]] <- list(
-          "gs" = function(gs, args) {
-            purrr::lmap(
-              self$data,
+          "gs" = function(data) {
+            lapply(
+              data, # a list of datasets to apply `gs` to
               \(x) do.call(gs, append(list(x), args))
             )
           },
