@@ -11,7 +11,9 @@ kdeWrap <- function(gs, to_eval) {
 
 
 test_that("Evaluation works.", {
-  trio <- Trio$new("figshare:26054188/47112109")
+  testCache <- system.file("extdata", "testdata", package = "TrioR")
+
+  trio <- Trio$new("figshare:26054188/47112109", cachePath = testCache)
 
   sce <- trio |> purrr::pluck("data", 1)
 
