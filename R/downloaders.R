@@ -82,50 +82,41 @@ figshareDl <- function(ID, cachePath) {
   dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
-  dlLoacations <- paste(dlPath, datasets$name, sep = "/")
+  dlLoacation <- fs::path_join(c(dlPath, datasets$name))
 
   # check if files already exist
   alreadyDl <- datasets$name %in% list.files(dlPath)
 
   # if the files exist, check their md5 hashes
   # delete files that need redownloading
-  if (any(alreadyDl)) {
+  if (alreadyDl) {
     validDl <- cli::hash_file_md5(
-      dlLoacations[alreadyDl]
+      dlLoacation[alreadyDl]
     ) == datasets$computed_md5[alreadyDl]
-    alreadyDl[validDl] <- alreadyDl[validDl] & validDl
+    alreadyDl <- alreadyDl && validDl
 
-    toReDl <- fs::file_exists(dlLoacations[!alreadyDl])
-    fs::file_delete(names(toReDl[toReDl]))
+    if (!validDl) {
+      fs::file_delete(dlLoacation)
+    }
   }
 
   # download datasets which are not available locally
-  if (any(!alreadyDl)) {
-    status <- curl::multi_download(
-      datasets$download_url[!alreadyDl], dlLoacations[!alreadyDl]
+  if (!alreadyDl) {
+    curl::curl_download(
+      datasets$download_url, dlLoacation
     )
-
-    if (!all(status$success)) {
-      # TODO: Deal with one failed download.
-      cli::cli_abort(c(
-        "One or more downloads failed.",
-        "Dataset names: {datasets[!alreadyDl,][!status$success, 'name']}",
-        "Dataset URLs: {datasets[!alreadyDl,][!status$success, 'download_url']}"
-      ))
-    }
   }
   # Check md5 checksums
-  MD5equal <- cli::hash_file_md5(dlLoacations) == datasets$computed_md5
+  MD5equal <- cli::hash_file_md5(dlLoacation) == datasets$computed_md5
 
-  if (!all(MD5equal)) {
-    # TODO: Inform user on how to redownload the data.
+  if (!MD5equal) {
     cli::cli_warn(c(
       "Not all MD5 hashes of downloaded data are as expected!",
       "i" = "Reinitiallising the Trio will redownload corrupted data."
     ))
   }
 
-  dlLoacations
+  dlLoacation
 }
 
 geoDl <- function(ID) {
