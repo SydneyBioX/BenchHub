@@ -64,8 +64,8 @@ figshareDl <- function(ID, cachePath) {
   # for files with the same name, get the most recent ID (deals with versions)
   # TODO: Deal with files that have been deleted in newer versions
   datasets <- do.call(rbind, lapply(body, data.frame)) |>
-    dplyr::arrange(dplyr::desc(id)) |>
-    dplyr::group_by(name) |>
+    dplyr::arrange(dplyr::desc("id")) |>
+    dplyr::group_by("name") |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>
     dplyr::select(c("name", "size", "download_url", "computed_md5", "mimetype"))
@@ -128,8 +128,7 @@ geoDl <- function(ID, cachePath) {
   }
 
   dlPath <- fs::path_join(c(cachePath, paste0("GEO_", ID)))
-  
-  
+
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
 
@@ -147,7 +146,7 @@ geoDl <- function(ID, cachePath) {
         ))
       }
     )
-    
+
     if (length(dlLoacation) == 0) {
       cli::cli_warn(c(
         "No files found for GEO ID: {ID}",
@@ -158,7 +157,9 @@ geoDl <- function(ID, cachePath) {
     # download GEO supplementary data
     tryCatch(
       {
-        dlLoacation <- GEOquery::getGEOSuppFiles(GEO = ID, baseDir = dlPath, fetch_files = TRUE)
+        dlLoacation <- GEOquery::getGEOSuppFiles(
+          GEO = ID, baseDir = dlPath, fetch_files = TRUE
+        )
       },
       error = function(e) {
         cli::cli_abort(c(
@@ -168,7 +169,7 @@ geoDl <- function(ID, cachePath) {
         ))
       }
     )
-    
+
     if (length(dlLoacation) == 0) {
       cli::cli_warn(c(
         "No files found for GEO ID: {ID}",
