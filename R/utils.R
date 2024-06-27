@@ -1,4 +1,4 @@
-getData <- function(datasetID) {
+getData <- function(datasetID, cachePath) {
   parsed <- unlist(stringr::str_split(datasetID, ":"))
 
   if (length(parsed) == 1) {
@@ -20,7 +20,10 @@ getData <- function(datasetID) {
         "i" = "Choose one of the following: {supported}"
       ))
     }
-    files <- do.call(paste0(sourceName, "Dl"), list("ID" = id))
+    files <- do.call(
+      paste0(sourceName, "Dl"),
+      list("ID" = id, "cachePath" = cachePath)
+    )
   } else {
     cli::cli_abort(c(
       "Unsupported data specification string",
@@ -82,6 +85,15 @@ loadFile <- function(filePath) {
 
 getTrioCachePath <- function(cachePath) {
   defaultPath <- FALSE
+
+  # if cachePath is TRUE, use the default cache location without prompting user
+  if (cachePath == TRUE) {
+    cachePath <- fs::path_join(
+      c(tools::R_user_dir("", which = "cache"), "TrioR")
+    )
+    if (!fs::dir_exists(cachePath)) fs::dir_create(cachePath)
+    return(cachePath)
+  }
 
   if (is.null(cachePath)) {
     cachePath <- fs::path_join(

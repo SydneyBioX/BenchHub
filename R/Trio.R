@@ -25,7 +25,7 @@ Trio <- R6::R6Class(
     #'   a format string of the form `source`:`source_id`.
     initialize = function(datasetID, cachePath = NULL) {
       self$cachePath <- getTrioCachePath(cachePath)
-      self$data <- getData(datasetID)
+      self$data <- getData(datasetID, self$cachePath)
     },
 
     #' @description

@@ -2,7 +2,7 @@
 
 
 # ID: input of the form ARTICLE_ID or ARTICLE_ID/FILE_ID
-figshareDl <- function(ID) {
+figshareDl <- function(ID, cachePath) {
   API_URL <- "https://api.figshare.com/v2/"
 
   # get file ID from ID if it is available
@@ -70,12 +70,13 @@ figshareDl <- function(ID) {
     dplyr::ungroup() |>
     dplyr::select(c("name", "size", "download_url", "computed_md5", "mimetype"))
 
-  # TODO: Set a cache data directory that can be checked against the hashes.
-  tempFolder <- tempdir()
-  dlLoacations <- paste(tempFolder, datasets$name, sep = "/")
+  dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
+  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
+
+  dlLoacations <- paste(dlPath, datasets$name, sep = "/")
 
   # check if files already exist
-  alreadyDl <- datasets$name %in% list.files(tempFolder)
+  alreadyDl <- datasets$name %in% list.files(dlPath)
 
   # if the files exist, check their md5 hashes
   # delete files that need redownloading
@@ -153,7 +154,7 @@ geoDl <- function(ID) {
   dlLoacations
 }
 
-experimenthubDl <- function(ID) {
+experimenthubDl <- function(ID, cachePath) {
   cli::cli_abort(c(
     "ExperimentHub Downloads are not supported yet ☹"
   ))
