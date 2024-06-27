@@ -119,21 +119,20 @@ figshareDl <- function(ID, cachePath) {
   dlLoacation
 }
 
-geoDl <- function(ID) {
+geoDl <- function(ID, cachePath) {
   if (!requireNamespace("GEOquery", quietly = TRUE)) {
     cli::cli_abort(c(
-      "{.pkg GEOquery} is required to get data from {.url ncbi.nlm.nih.gov/geo}.",
+      "Install {.pkg GEOquery} to get data from {.url ncbi.nlm.nih.gov/geo}.",
       "i" = "You can get it by running: {.code install.packages('GEOquery')}"
     ))
   }
 
-  # ensure tempdir for downloads
-  tempFolder <- tempdir()
+  dlPath <- fs::path_join(c(cachePath, paste0("GEO_", ID)))
 
   # download GEO data
   tryCatch(
     {
-      dlLoacations <- GEOquery::getGEOfile(GEO = ID, destdir = tempFolder)
+      dlLoacation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
     },
     error = function(e) {
       cli::cli_abort(c(
