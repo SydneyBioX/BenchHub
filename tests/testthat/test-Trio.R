@@ -3,27 +3,26 @@ fraction_zeros <- function(sce) {
   sapply(data, function(col) sum(col == 0) / length(col))
 }
 
+kdeWrap <- function(gs, to_eval) {
+  ks::kde.test(
+    x1 = as.numeric(gs), x2 = as.numeric(to_eval)
+  ) |> pluck("zstat")
+}
+
 
 test_that("Evaluation works.", {
-  trio <- Trio$new("figshare:26054188/47112109") |>
-    suppressWarnings()
+  trio <- Trio$new("figshare:26054188/47112109")
 
-  sce <- suppressPackageStartupMessages(trio |>
-    purrr::pluck("data", 1))
+  sce <- trio |> purrr::pluck("data", 1)
 
   expected <- fraction_zeros(sce)
 
   trio$addGS("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
   trio$addGS("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
+
   actual <- trio$getGS("fracZero") |> pluck(1)
 
   expect_equal(actual, expected)
-
-  kdeWrap <- function(gs, to_eval) {
-    ks::kde.test(
-      x1 = as.numeric(gs), x2 = as.numeric(to_eval)
-    ) |> pluck("zstat")
-  }
 
   trio$addMetric("KDE Score", kdeWrap)
   trio$addMetric("KDE Score 2", kdeWrap)
