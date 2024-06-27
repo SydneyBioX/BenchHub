@@ -1,6 +1,6 @@
 #' A Trio object
 #' @description An object containing a dataset and methods for evaluating
-#'   analytical task against ground truths in the dataset.
+#'   analytical tasks against ground truths for the dataset.
 #' @field data The data
 #' @field goldStandards The gold standards in the data
 #' @field metrics The metric for evaluating tasks against the gold standards
@@ -40,7 +40,10 @@ Trio <- R6::R6Class(
     addGS = function(name, gs, metrics, args = NULL) {
       if (name %in% names(self$goldStandards)) {
         cli::cli_warn(c(
-          "A gold standard `{name}` is already present in this Trio, overwriting."
+          paste0(
+            "A gold standard `{name}` is already present in this Trio,",
+            " overwriting."
+          )
         ))
       }
 
@@ -78,7 +81,10 @@ Trio <- R6::R6Class(
     addMetric = function(name, metric, args = NULL) {
       if (!methods::is(metric, "function")) {
         cli::cli_abort(c(
-          "{.var metric} should be a {.cls function}, not a {.cls {class(metric)}}."
+          paste0(
+            "{.var metric} should be a {.cls function}, not a",
+            " {.cls {class(metric)}}."
+          )
         ))
       }
       if (name %in% names(self$metrics)) {
@@ -120,7 +126,10 @@ Trio <- R6::R6Class(
         gsNames <- names(self$goldStandards)
         cli::cli_abort(c(
           "Gold standard {.val {name}} could not be found.",
-          "i" = "Add it using {.code Trio$addGS(.)} or choose one of {.val {gsNames}}"
+          "i" = paste0(
+            "Add it using {.code Trio$addGS(.)} or choose one of ",
+            "{.val {gsNames}}"
+          )
         ))
       }
 
@@ -144,13 +153,18 @@ Trio <- R6::R6Class(
         gsNames <- names(self$goldStandards)
         cli::cli_abort(c(
           "None of the specified gold standards are available in this object.",
-          "i" = "Add it using {.code Trio$addGS(.)} or choose from {.val {gsNames}}"
+          "i" = (
+            "Add it using {.code Trio$addGS(.)} or choose from {.val {gsNames}}"
+          )
         ))
       }
       if (any(!gsAvail)) {
         unavail <- names(input)[!gsAvail]
         cli::cli_inform(c(
-          "Gold standard{?s} {.val {unavail}} from {.var input} {?is/are} not available in this object.",
+          paste0(
+            "Gold standard{?s} {.val {unavail}} from {.var input} {?is/are} ",
+            "not available in this object."
+          ),
           "i" = "Evaluating the following: {.var {names(input)[gsAvail]}}"
         ))
       }
@@ -176,14 +190,20 @@ Trio <- R6::R6Class(
 
       if (length(unavailMetrics) == length(allMetrics)) {
         cli::cli_abort(c(
-          "None of the metrics related to the gold standards being evalutaed are available in the object.",
+          paste0(
+            "None of the metrics related to the gold standards being evalutaed",
+            " are available in the object."
+          ),
           "i" = "Add some of the following: {.val {allMetrics}}."
         ))
       }
 
       if (length(unavailMetrics) > 0) {
         cli::cli_warn(c(
-          "{.val {unavailMetrics}} metric{?s} {?is/are} not available in the object.",
+          paste0(
+            "{.val {unavailMetrics}} metric{?s} {?is/are} not available in",
+            " the object."
+          ),
           "They will be skipped during evaluation."
         ))
 
