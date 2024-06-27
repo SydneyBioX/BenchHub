@@ -70,6 +70,15 @@ figshareDl <- function(ID, cachePath) {
     dplyr::ungroup() |>
     dplyr::select(c("name", "size", "download_url", "computed_md5", "mimetype"))
 
+  if (nrow(datasets) > 1) {
+    # interactively select one of multiple datasets
+    df <- datasets |>
+      dplyr::select(name, size) |>
+      dplyr::mutate(size = paste0(round(size / 1e6, 2), " MB"))
+    cli::cli_inform("Select a dataset to download:")
+    datasets <- datasets[menu(apply(df, 1, paste, collapse = "  ")), ]
+  }
+
   dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
