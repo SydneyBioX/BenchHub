@@ -143,14 +143,14 @@ geoDl <- function(ID, cachePath) {
     }
   )
 
-  if (length(dlLoacations) == 0) {
+  if (length(dlLoacation) == 0) {
     cli::cli_warn(c(
       "No files found for GEO ID: {ID}",
       "i" = "Ensure that the GEO ID is correct and the data is available."
     ))
   }
 
-  dlLoacations
+  dlLoacation
 }
 
 experimenthubDl <- function(ID, cachePath) {
