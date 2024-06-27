@@ -18,11 +18,18 @@ Imports:
     rlang,
     httr2,
     stringr,
-    purrr
+    purrr,
+    dplyr,
+    utils,
+    curl
 Suggests: 
     anndata,
+    GEOquery,
     knitr,
+    ks,
     rmarkdown,
+    SingleCellExperiment,
+    SummarizedExperiment,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
