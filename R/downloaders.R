@@ -128,26 +128,53 @@ geoDl <- function(ID, cachePath) {
   }
 
   dlPath <- fs::path_join(c(cachePath, paste0("GEO_", ID)))
+  
+  
+  # get file ID from ID if it is available
+  splitID <- unlist(stringr::str_split(ID, "/"))
 
-  # download GEO data
-  tryCatch(
-    {
-      dlLoacation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
-    },
-    error = function(e) {
-      cli::cli_abort(c(
-        "Failed to download GEO data: {ID}",
-        "i" = "Check the GEO ID and try again.",
-        "Error message: {e$message}"
+  if (length(splitID == 1)) {
+    # download GEO data
+    tryCatch(
+      {
+        dlLoacation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
+      },
+      error = function(e) {
+        cli::cli_abort(c(
+          "Failed to download GEO data: {ID}",
+          "i" = "Check the GEO ID and try again.",
+          "Error message: {e$message}"
+        ))
+      }
+    )
+    
+    if (length(dlLoacation) == 0) {
+      cli::cli_warn(c(
+        "No files found for GEO ID: {ID}",
+        "i" = "Ensure that the GEO ID is correct and the data is available."
       ))
     }
-  )
-
-  if (length(dlLoacation) == 0) {
-    cli::cli_warn(c(
-      "No files found for GEO ID: {ID}",
-      "i" = "Ensure that the GEO ID is correct and the data is available."
-    ))
+  } else {
+    # download GEO supplementary data
+    tryCatch(
+      {
+        dlLoacation <- GEOquery::getGEOSuppFiles(GEO = ID, baseDir = dlPath, fetch_files = TRUE)
+      },
+      error = function(e) {
+        cli::cli_abort(c(
+          "Failed to download GEO data: {ID}",
+          "i" = "Check the GEO ID and try again.",
+          "Error message: {e$message}"
+        ))
+      }
+    )
+    
+    if (length(dlLoacation) == 0) {
+      cli::cli_warn(c(
+        "No files found for GEO ID: {ID}",
+        "i" = "Ensure that the GEO ID is correct and the data is available."
+      ))
+    }
   }
 
   dlLoacation
