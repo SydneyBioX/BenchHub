@@ -6,7 +6,7 @@ fraction_zeros <- function(sce) {
 kdeWrap <- function(gs, to_eval) {
   ks::kde.test(
     x1 = as.numeric(gs), x2 = as.numeric(to_eval)
-  ) |> pluck("zstat")
+  ) |> purrr::pluck("zstat")
 }
 
 
@@ -22,7 +22,7 @@ test_that("Evaluation works.", {
   trio$addGS("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
   trio$addGS("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
 
-  actual <- trio$getGS("fracZero") |> pluck(1)
+  actual <- trio$getGS("fracZero") |> purrr::pluck(1)
 
   expect_equal(actual, expected)
 

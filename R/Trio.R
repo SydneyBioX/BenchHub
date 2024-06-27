@@ -4,9 +4,10 @@
 #' @field data The data
 #' @field goldStandards The gold standards in the data
 #' @field metrics The metric for evaluating tasks against the gold standards
+#' @field cachePath The path to the data cache
 #'
 #' @examples
-#' trio <- Trio$new("figshare:26054188/47112109")
+#' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 #' @export
 Trio <- R6::R6Class(
   "Trio",
@@ -23,7 +24,8 @@ Trio <- R6::R6Class(
     #' @param datasetID
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
-    initialize = function(datasetID, cachePath = NULL) {
+    #' @param cachePath The path to the data cache
+    initialize = function(datasetID, cachePath = FALSE) {
       self$cachePath <- getTrioCachePath(cachePath)
       self$data <- getData(datasetID, self$cachePath)
     },
@@ -217,7 +219,7 @@ Trio <- R6::R6Class(
       }
 
       # compute each metric for each input
-      imap(input, function(to_eval, gsName) {
+      purrr::imap(input, function(to_eval, gsName) {
         res <- lapply(
           metrics[[gsName]],
           function(x) self$metrics[[x]](to_eval, gs[[gsName]])

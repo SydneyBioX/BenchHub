@@ -76,7 +76,7 @@ figshareDl <- function(ID, cachePath) {
       dplyr::select(name, size) |>
       dplyr::mutate(size = paste0(round(size / 1e6, 2), " MB"))
     cli::cli_inform("Select a dataset to download:")
-    datasets <- datasets[menu(apply(df, 1, paste, collapse = "  ")), ]
+    datasets <- datasets[utils::menu(apply(df, 1, paste, collapse = "  ")), ]
   }
 
   dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
@@ -155,6 +155,6 @@ geoDl <- function(ID, cachePath) {
 
 experimenthubDl <- function(ID, cachePath) {
   cli::cli_abort(c(
-    "ExperimentHub Downloads are not supported yet ☹"
+    "ExperimentHub Downloads are not supported yet! :("
   ))
 }

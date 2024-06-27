@@ -95,7 +95,7 @@ getTrioCachePath <- function(cachePath) {
     return(cachePath)
   }
 
-  if (is.null(cachePath)) {
+  if (cachePath == FALSE) {
     cachePath <- fs::path_join(
       c(tools::R_user_dir("", which = "cache"), "TrioR")
     )
