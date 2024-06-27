@@ -60,6 +60,99 @@ loadFile <- function(filePath) {
   }
 }
 
+.getAnswer <- function(m1, m2) {
+  while (TRUE) {
+    cli::cli_inform(m1)
+    answer <- tolower(readline(m2))
+    if (answer %in% c("", "y")) {
+      answer <- TRUE
+      break
+    } else if (answer == "n") {
+      answer <- FALSE
+      break
+    } else {
+      cli::cli_inform(
+        "Invalid input {.val {answer}}, choose one of {.val {c('y','n')}}"
+      )
+    }
+  }
+  answer
+}
+
+
+getTrioCachePath <- function(cachePath) {
+  defaultPath <- FALSE
+
+  if (is.null(cachePath)) {
+    cachePath <- fs::path_join(
+      c(tools::R_user_dir("", which = "cache"), "TrioR")
+    )
+    defaultPath <- TRUE
+  }
+  cacheExists <- fs::dir_exists(cachePath)
+
+  if (!defaultPath) {
+    # if the user specified path does not exist, ensure it is correct
+    if (!cacheExists) {
+      create <- .getAnswer(
+        cli::cli_text("Spicified path ({.path {cachePath}}) does not exit"),
+        "Create it? ([y]/n) "
+      )
+      if (create) {
+        keep <- TRUE
+      } else {
+        keep <- FALSE
+      }
+    } else {
+      # if user specfied a cache path and it already exists, return it.
+      return(cachePath)
+    }
+  } else if (defaultPath && cacheExists) {
+    keep <- .getAnswer(
+      cli::cli_text("Default cache was found at {.path {cachePath}}."),
+      "Would you like to use this path? ([y]/n) "
+    )
+  } else {
+    keep <- .getAnswer(
+      cli::cli_text("Default cache path is {.path {cachePath}}."),
+      "Would you like to cache downloaded datasets here? ([y]/n) "
+    )
+  }
+
+  if (keep) {
+    if (!cacheExists) fs::dir_create(cachePath)
+
+    return(cachePath)
+  }
+
+  while (TRUE) {
+    userPath <- readline("Where would you like to store your cache? ")
+
+    if (fs::dir_exists(userPath)) {
+      cli::cli_inform(
+        "Creating data cache at {.path {fs::path_expand(userPath)}}"
+      )
+      cachePath <- userPath
+      break
+    } else {
+      create <- .getAnswer(
+        cli::cli_text("{.path {userPath}} does not exist."),
+        "Would you like the create it? ([y]/n) "
+      )
+      if (create) {
+        cli::cli_inform(
+          "Creating data cache at {.path {fs::path_expand(userPath)}}"
+        )
+        fs::dir_create(userPath)
+        cachePath <- userPath
+        break
+      }
+    }
+  }
+
+  cachePath
+}
+
 
 assertSuggestAvail <- function(package) {
   if (!requireNamespace(package, quietly = TRUE)) {

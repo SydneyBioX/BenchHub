@@ -11,6 +11,7 @@
 Trio <- R6::R6Class(
   "Trio",
   public = list(
+    cachePath = NULL,
     data = NULL,
     goldStandards = list(),
     metrics = list(),
@@ -22,7 +23,8 @@ Trio <- R6::R6Class(
     #' @param datasetID
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
-    initialize = function(datasetID) {
+    initialize = function(datasetID, cachePath = NULL) {
+      self$cachePath <- getTrioCachePath(cachePath)
       self$data <- getData(datasetID)
     },
 
