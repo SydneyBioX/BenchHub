@@ -5,10 +5,10 @@
 \title{A Trio object}
 \description{
 An object containing a dataset and methods for evaluating
-analytical task against ground truths in the dataset.
+analytical tasks against ground truths for the dataset.
 }
 \examples{
-trio <- Trio$new("figshare:26054188/47112109")
+trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -18,6 +18,8 @@ trio <- Trio$new("figshare:26054188/47112109")
 \item{\code{goldStandards}}{The gold standards in the data}
 
 \item{\code{metrics}}{The metric for evaluating tasks against the gold standards}
+
+\item{\code{cachePath}}{The path to the data cache}
 }
 \if{html}{\out{</div>}}
 }
@@ -27,6 +29,9 @@ trio <- Trio$new("figshare:26054188/47112109")
 \item \href{#method-Trio-new}{\code{Trio$new()}}
 \item \href{#method-Trio-addGS}{\code{Trio$addGS()}}
 \item \href{#method-Trio-addMetric}{\code{Trio$addMetric()}}
+\item \href{#method-Trio-getMetrics}{\code{Trio$getMetrics()}}
+\item \href{#method-Trio-getGS}{\code{Trio$getGS()}}
+\item \href{#method-Trio-evaluate}{\code{Trio$evaluate()}}
 \item \href{#method-Trio-clone}{\code{Trio$clone()}}
 }
 }
@@ -36,7 +41,7 @@ trio <- Trio$new("figshare:26054188/47112109")
 \subsection{Method \code{new()}}{
 Create a Trio object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID, cachePath = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -44,6 +49,8 @@ Create a Trio object
 \describe{
 \item{\code{datasetID}}{A string specifying a dataset, either a name from curated-trio-data or
 a format string of the form \code{source}:\code{source_id}.}
+
+\item{\code{cachePath}}{The path to the data cache}
 }
 \if{html}{\out{</div>}}
 }
@@ -65,7 +72,8 @@ Add a gold standard to the Trio.
 \item{\code{gs}}{The goldstandard. An object to be compared or a function to be run on
 the data.}
 
-\item{\code{metrics}}{A list of metrics names used to campaere gs with the input to evaluate.}
+\item{\code{metrics}}{A list of one or more metrics names used to campare gs with the input
+to evaluate.}
 
 \item{\code{args}}{A named list of parameters and values to be passed to the function.}
 }
@@ -78,18 +86,72 @@ the data.}
 \subsection{Method \code{addMetric()}}{
 Add a metric to the Trio.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$addMetric(name, metric, args)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$addMetric(name, metric, args = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{A string specifying the name of the metric.}
+
+\item{\code{metric}}{The metric. A function to be run on the input to evaluate to compare it
+with the gold standard. Should be of the form f(x, y, ...). Where \code{x}
+is the "truth" and \code{y} is the output to be evaluated. Otherwise input
+a wrapper function of the desired metric.}
+
+\item{\code{args}}{A named list of parameters and values to be passed to the function.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-getMetrics"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-getMetrics}{}}}
+\subsection{Method \code{getMetrics()}}{
+Get metrics by gold standard name.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getMetrics(gsName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{gsName}}{A string specifying the name of the gold standard.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-getGS"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-getGS}{}}}
+\subsection{Method \code{getGS()}}{
+Get a gold standard by name.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getGS(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{A string specifying the name of the gold standard.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-evaluate"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-evaluate}{}}}
+\subsection{Method \code{evaluate()}}{
+Evalute against gold standards
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input)}\if{html}{\out{</div>}}
+}
 
-\item{\code{metric}}{The metric. A function to be run on the input to evaluate to compare it
-with the gold standard.}
-
-\item{\code{args}}{A named list of parameters and values to be passed to the function.}
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{A named list of objects to be evaluated against gold
+standards.}
 }
 \if{html}{\out{</div>}}
 }
