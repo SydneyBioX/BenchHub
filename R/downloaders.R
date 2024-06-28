@@ -64,8 +64,8 @@ figshareDl <- function(ID, cachePath) {
   # for files with the same name, get the most recent ID (deals with versions)
   # TODO: Deal with files that have been deleted in newer versions
   datasets <- do.call(rbind, lapply(body, data.frame)) |>
-    dplyr::arrange(dplyr::desc("id")) |>
-    dplyr::group_by("name") |>
+    dplyr::arrange(dplyr::desc(id)) |>
+    dplyr::group_by(name) |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>
     dplyr::select(c("name", "size", "download_url", "computed_md5", "mimetype"))
