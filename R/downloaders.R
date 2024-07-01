@@ -146,20 +146,17 @@ geoDl <- function(ID, cachePath) {
         ))
       }
     )
-
-    if (length(dlLoacation) == 0) {
-      cli::cli_warn(c(
-        "No files found for GEO ID: {ID}",
-        "i" = "Ensure that the GEO ID is correct and the data is available."
-      ))
-    }
   } else {
+    mainID = splitID[1]
+    suppID = splitID[2]
+    
     # download GEO supplementary data
     tryCatch(
       {
         dlLoacation <- GEOquery::getGEOSuppFiles(
-          GEO = ID, baseDir = dlPath, fetch_files = TRUE
-        )
+          GEO = mainID, baseDir = dlPath, fetch_files = TRUE, regex = suppID
+        ) |>
+          rownames()
       },
       error = function(e) {
         cli::cli_abort(c(
@@ -169,13 +166,13 @@ geoDl <- function(ID, cachePath) {
         ))
       }
     )
-
-    if (length(dlLoacation) == 0) {
-      cli::cli_warn(c(
-        "No files found for GEO ID: {ID}",
-        "i" = "Ensure that the GEO ID is correct and the data is available."
-      ))
-    }
+  }
+  
+  if (length(dlLoacation) == 0) {
+    cli::cli_warn(c(
+      "No files found for GEO ID: {ID}",
+      "i" = "Ensure that the GEO ID is correct and the data is available."
+    ))
   }
 
   dlLoacation
