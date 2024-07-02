@@ -128,6 +128,7 @@ geoDl <- function(ID, cachePath) {
   }
 
   dlPath <- fs::path_join(c(cachePath, paste0("GEO_", ID)))
+  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
@@ -154,7 +155,7 @@ geoDl <- function(ID, cachePath) {
     tryCatch(
       {
         dlLoacation <- GEOquery::getGEOSuppFiles(
-          GEO = mainID, baseDir = dlPath, fetch_files = TRUE, regex = suppID
+          GEO = mainID, makeDirectory = FALSE, baseDir = dlPath, fetch_files = FALSE, filter_regex = suppID
         ) |>
           rownames()
       },
@@ -183,3 +184,5 @@ experimenthubDl <- function(ID, cachePath) {
     "ExperimentHub Downloads are not supported yet! :("
   ))
 }
+
+
