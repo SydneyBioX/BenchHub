@@ -127,13 +127,14 @@ geoDl <- function(ID, cachePath) {
     ))
   }
 
-  dlPath <- fs::path_join(c(cachePath, paste0("GEO_", ID)))
-  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
 
-  if (length(splitID == 1)) {
+  dlPath <- fs::path_join(c(cachePath, paste0("GEO_", splitID[1])))
+  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
+
+  if (length(splitID) == 1) {
     # download GEO data
     tryCatch(
       {
@@ -148,16 +149,18 @@ geoDl <- function(ID, cachePath) {
       }
     )
   } else {
-    mainID = splitID[1]
-    suppID = splitID[2]
-    
+    mainID <- splitID[1]
+    suppID <- splitID[2]
+
     # download GEO supplementary data
     tryCatch(
       {
         dlLoacation <- GEOquery::getGEOSuppFiles(
-          GEO = mainID, makeDirectory = FALSE, baseDir = dlPath, fetch_files = FALSE, filter_regex = suppID
+          GEO = mainID, makeDirectory = FALSE,
+          baseDir = dlPath, filter_regex = suppID
         ) |>
-          rownames()
+          rownames() |>
+          purrr::pluck(1)
       },
       error = function(e) {
         cli::cli_abort(c(
@@ -168,7 +171,7 @@ geoDl <- function(ID, cachePath) {
       }
     )
   }
-  
+
   if (length(dlLoacation) == 0) {
     cli::cli_warn(c(
       "No files found for GEO ID: {ID}",
@@ -184,5 +187,3 @@ experimenthubDl <- function(ID, cachePath) {
     "ExperimentHub Downloads are not supported yet! :("
   ))
 }
-
-
