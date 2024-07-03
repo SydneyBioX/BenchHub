@@ -16,6 +16,8 @@ Trio <- R6::R6Class(
     data = NULL,
     goldStandards = list(),
     metrics = list(),
+    dataSource = NULL,
+    dataSourceID = NULL,
 
     # TODO: Implement Trio$sources() (Issue #2)
 
@@ -26,8 +28,13 @@ Trio <- R6::R6Class(
     #'   a format string of the form `source`:`source_id`.
     #' @param cachePath The path to the data cache
     initialize = function(datasetID, cachePath = FALSE) {
+      # parse user input and set dataSource and dataSourceID
+      private$parseIDString(datasetID)
+
       self$cachePath <- getTrioCachePath(cachePath)
-      self$data <- getData(datasetID, self$cachePath)
+      self$data <- getData(
+        self$dataSource, self$dataSourceID, self$cachePath
+      )
     },
 
     #' @description
@@ -226,6 +233,63 @@ Trio <- R6::R6Class(
         )
         setNames(res, metrics[[gsName]])
       })
+    }
+  ),
+  private = list(
+    datasetID = NULL,
+    parseIDString = function(userInput) {
+      parsed <- unlist(stringr::str_split(userInput, ":"))
+
+      if (length(parsed) == 1) {
+        datasets <- googlesheets4::read_sheet(
+          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+          sheet = "Datasets"
+        )
+
+        if (!userInput %in% datasets$name) {
+          # TODO: Tell the user how to list the avaiable datasets
+          cli::cli_abort(c(
+            "Specified dataset ({.val {ID}}) is not avaiable."
+          ))
+        }
+
+        sourceName <- datasets |>
+          dplyr::filter(name == userInput) |>
+          dplyr::select(source) |>
+          purrr::pluck(1)
+
+        id <- datasets |>
+          dplyr::filter(name == userInput) |>
+          dplyr::select(sourceID) |>
+          purrr::pluck(1)
+
+        private$datasetID <- datasets |>
+          dplyr::filter(name == userInput) |>
+          dplyr::select(datasetID) |>
+          purrr::pluck(1)
+
+      } else if (length(parsed) == 2) {
+        sourceName <- tolower(parsed[1])
+        id <- parsed[2]
+      } else {
+        cli::cli_abort(c(
+          "Unsupported data specification string",
+          "i" = "Input a dataset name or a string like {.emph source}:{.emph ID}"
+        ))
+      }
+
+      if (!exists(paste0(sourceName, "Dl"))) {
+        supported <- stringr::str_remove( # nolint
+          grep("Dl", ls("package:TrioR"), value = TRUE), "Dl"
+        )
+        cli::cli_abort(c(
+          "Downloading form {.emph {sourceName}} is not supported.",
+          "i" = "Choose one of the following: {supported}"
+        ))
+      }
+
+      self$dataSource <- sourceName
+      self$dataSourceID <- id
     }
   )
 )

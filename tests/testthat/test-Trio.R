@@ -35,3 +35,9 @@ test_that("Evaluation works.", {
 
   expect_equal(actual_eval, purrr::pluck(evaluation, "fracZero", "KDE Score"))
 })
+
+
+test_that("get data by name", {
+  testCache <- system.file("extdata", "testdata", package = "TrioR")
+  testthat::expect_no_error(Trio$new("MOBNEW", cachePath = testCache))
+})

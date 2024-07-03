@@ -21,7 +21,8 @@ Imports:
     purrr,
     dplyr,
     utils,
-    curl
+    curl,
+    googlesheets4
 Suggests: 
     anndata,
     GEOquery,

@@ -1,35 +1,9 @@
-getData <- function(datasetID, cachePath) {
-  parsed <- unlist(stringr::str_split(datasetID, ":"))
+getData <- function(sourceName, id, cachePath) {
 
-  if (length(parsed) == 1) {
-    # TODO: Validate named datasets.
-    cli::cli_abort(c(
-      "Getting datasets by name is not supported yet :(",
-      "i" = "Use a format string instead: {.emph source}:{.emph ID}"
-    ))
-  } else if (length(parsed) == 2) {
-    sourceName <- tolower(parsed[1])
-    id <- parsed[2]
-
-    if (!exists(paste0(sourceName, "Dl"))) {
-      supported <- stringr::str_remove( # nolint
-        grep("Dl", ls("package:TrioR"), value = TRUE), "Dl"
-      )
-      cli::cli_abort(c(
-        "Downloading form {.emph {sourceName}} is not supported.",
-        "i" = "Choose one of the following: {supported}"
-      ))
-    }
-    files <- do.call(
-      paste0(sourceName, "Dl"),
-      list("ID" = id, "cachePath" = cachePath)
-    )
-  } else {
-    cli::cli_abort(c(
-      "Unsupported data specification string",
-      "i" = "Input a datasetID or a string formatted {.emph source}:{.emph ID}"
-    ))
-  }
+  files <- do.call(
+    paste0(sourceName, "Dl"),
+    list("ID" = id, "cachePath" = cachePath)
+  )
 
   lapply(files, loadFile)
 }
