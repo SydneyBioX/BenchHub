@@ -1,3 +1,7 @@
+# Silence check notes about R6 class
+#' @importFrom R6 R6Class
+NULL
+
 #' A Trio object
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
@@ -5,10 +9,13 @@
 #' @field goldStandards The gold standards in the data
 #' @field metrics The metric for evaluating tasks against the gold standards
 #' @field cachePath The path to the data cache
+#' @field dataSource The data repository that the data were retrieved from
+#' @field dataSourceID The dataset ID for `dataSouce`
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 #' @export
+#' @importFrom googlesheets4 read_sheet
 Trio <- R6::R6Class(
   "Trio",
   public = list(
@@ -32,7 +39,7 @@ Trio <- R6::R6Class(
       private$parseIDString(datasetID)
 
       self$cachePath <- getTrioCachePath(cachePath)
-      self$data <- getData(
+      self$data <- private$getData(
         self$dataSource, self$dataSourceID, self$cachePath
       )
     },
@@ -267,14 +274,15 @@ Trio <- R6::R6Class(
           dplyr::filter(name == userInput) |>
           dplyr::select(datasetID) |>
           purrr::pluck(1)
-
       } else if (length(parsed) == 2) {
         sourceName <- tolower(parsed[1])
         id <- parsed[2]
       } else {
         cli::cli_abort(c(
           "Unsupported data specification string",
-          "i" = "Input a dataset name or a string like {.emph source}:{.emph ID}"
+          "i" = (
+            "Input a dataset name or a string like {.emph source}:{.emph ID}"
+          )
         ))
       }
 
@@ -290,6 +298,16 @@ Trio <- R6::R6Class(
 
       self$dataSource <- sourceName
       self$dataSourceID <- id
+    },
+    # Send the ID to the appropriate downloader and load the file, if possible.
+    getData = function(sourceName, id, cachePath) {
+      # TODO: allow the user to input a custom loading function.
+      files <- do.call(
+        paste0(sourceName, "Dl"),
+        list("ID" = id, "cachePath" = cachePath)
+      )
+
+      lapply(files, loadFile)
     }
   )
 )

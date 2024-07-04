@@ -20,6 +20,10 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{metrics}}{The metric for evaluating tasks against the gold standards}
 
 \item{\code{cachePath}}{The path to the data cache}
+
+\item{\code{dataSource}}{The data repository that the data were retrieved from}
+
+\item{\code{dataSourceID}}{The dataset ID for \code{dataSouce}}
 }
 \if{html}{\out{</div>}}
 }

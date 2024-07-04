@@ -1,14 +1,6 @@
-getData <- function(sourceName, id, cachePath) {
-
-  files <- do.call(
-    paste0(sourceName, "Dl"),
-    list("ID" = id, "cachePath" = cachePath)
-  )
-
-  lapply(files, loadFile)
-}
-
-
+#' Load downloaded files.
+#' @param filePath A path to the file to load.
+#' @noRd
 loadFile <- function(filePath) {
   ext <- tools::file_ext(filePath)
 
@@ -37,6 +29,10 @@ loadFile <- function(filePath) {
   }
 }
 
+#' Get an answer to a question.
+#' @param m1 A message clarifying the context
+#' @param m2 The y/n question to ask the user
+#' @noRd
 .getAnswer <- function(m1, m2) {
   while (TRUE) {
     cli::cli_inform(m1)
@@ -56,7 +52,11 @@ loadFile <- function(filePath) {
   answer
 }
 
-
+#' Determine the cache path for the trio
+#' @param cachePath
+#'   Either a valid path or a boolean. If TRUE, will create then return the
+#'   default Trio cache path without prompting the user.
+#' @noRd
 getTrioCachePath <- function(cachePath) {
   defaultPath <- FALSE
 
@@ -140,11 +140,13 @@ getTrioCachePath <- function(cachePath) {
 }
 
 
-assertSuggestAvail <- function(package) {
-  if (!requireNamespace(package, quietly = TRUE)) {
-    cli::cli_abort(c(
-      "{.pkg package} is required to to get data from {.url figshare.com}.",
-      "i" = "You can get it by running: {.code install.packages('{package}')}"
-    ))
-  }
+assertSuggestAvail <- function(packages) {
+  lapply(packages, \(package) {
+    if (!requireNamespace(package, quietly = TRUE)) {
+      cli::cli_abort(c(
+        "{.pkg package} is required for this functionality.",
+        "i" = "You can get it by running: {.code install.packages('{package}')}"
+      ))
+    }
+  })
 }

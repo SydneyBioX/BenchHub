@@ -1,7 +1,13 @@
 # Download inferfaces for each source that Trio supports
 
-
-# ID: input of the form ARTICLE_ID or ARTICLE_ID/FILE_ID
+#' Download files from geo
+#' @description Download main or supplimentary files from GEO.
+#' @param ID
+#'   The ID, formatted either "ARTICLE_ID" for the main file or
+#'   "ARTICLE_ID/FILE_ID" for a specific file.
+#' @param cachePath
+#'   The path to store the downloaded file.
+#' @keywords internal
 figshareDl <- function(ID, cachePath) {
   API_URL <- "https://api.figshare.com/v2/"
 
@@ -119,6 +125,14 @@ figshareDl <- function(ID, cachePath) {
   dlLoacation
 }
 
+#' Download files from geo
+#' @description Download main or supplimentary files from GEO.
+#' @param ID
+#'   The ID, formatted either "GSEXXXXXX" for the main file or
+#'   "GSEXXXXXX/SupFile.tar.gz" or a supplimentary file.
+#' @param cachePath
+#'   The path to store the downloaded file.
+#' @keywords internal
 geoDl <- function(ID, cachePath) {
   if (!requireNamespace("GEOquery", quietly = TRUE)) {
     cli::cli_abort(c(
@@ -126,7 +140,6 @@ geoDl <- function(ID, cachePath) {
       "i" = "You can get it by running: {.code install.packages('GEOquery')}"
     ))
   }
-
 
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
