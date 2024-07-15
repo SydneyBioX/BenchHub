@@ -3,13 +3,6 @@ fraction_zeros <- function(sce) {
   sapply(data, function(col) sum(col == 0) / length(col))
 }
 
-kdeWrap <- function(gs, to_eval) {
-  ks::kde.test(
-    x1 = as.numeric(gs), x2 = as.numeric(to_eval)
-  ) |> purrr::pluck("zstat")
-}
-
-
 test_that("Evaluation works.", {
   testCache <- system.file("extdata", "testdata", package = "TrioR")
 
@@ -26,12 +19,12 @@ test_that("Evaluation works.", {
 
   expect_equal(actual, expected)
 
-  trio$addMetric("KDE Score", kdeWrap)
-  trio$addMetric("KDE Score 2", kdeWrap)
+  trio$addMetric("KDE Score", kdeMetric)
+  trio$addMetric("KDE Score 2", kdeMetric)
 
   evaluation <- trio$evaluate(list(fracZero = actual, fracZero2 = actual))
 
-  actual_eval <- kdeWrap(actual, actual)
+  actual_eval <- kdeMetric(actual, actual)
 
   expect_equal(actual_eval, purrr::pluck(evaluation, "fracZero", "KDE Score"))
 })
@@ -40,4 +33,6 @@ test_that("Evaluation works.", {
 test_that("get data by name", {
   testCache <- system.file("extdata", "testdata", package = "TrioR")
   testthat::expect_no_error(Trio$new("MOBNEW", cachePath = testCache))
+
+  testthat::expect_error(Trio$new("InvalidDatasetName"))
 })

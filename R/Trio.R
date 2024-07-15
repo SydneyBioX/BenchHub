@@ -256,7 +256,7 @@ Trio <- R6::R6Class(
         if (!userInput %in% datasets$name) {
           # TODO: Tell the user how to list the avaiable datasets
           cli::cli_abort(c(
-            "Specified dataset ({.val {ID}}) is not avaiable."
+            "Specified dataset ({.val {userInput}}) is not avaiable."
           ))
         }
 
