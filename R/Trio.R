@@ -42,6 +42,9 @@ Trio <- R6::R6Class(
       self$data <- private$getData(
         self$dataSource, self$dataSourceID, self$cachePath
       )
+      if (!is.null(private$datasetID)) {
+        private$populateTrio()
+      }
     },
 
     #' @description
@@ -308,6 +311,46 @@ Trio <- R6::R6Class(
       )
 
       lapply(files, loadFile)
+    },
+    populateTrio = function() {
+      # get the gold standard metadata from curated trio datasets
+      gSMetaData <- suppressMessages(googlesheets4::read_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Dataset-Gold Standard",
+      ) |>
+        dplyr::filter(datasetID == private$datasetID))
+
+      goldStandards <- gSMetaData |> purrr::pluck("Gold Standard")
+
+      metrics <- suppressMessages(googlesheets4::read_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Task-GS Type-Metric",
+      ) |>
+        dplyr::filter(`GS Type` %in% goldStandards) |>
+        dplyr::select(`GS Type`, `MetricID`))
+
+      # add each gold standard with it's respective metrics
+      apply(gSMetaData, 1, \(gs) {
+        if (gs["is_in_data"]) {
+          if (gs["type"] == "column") {
+            self$addGS(
+              name = gs["Gold Standard"],
+              gs = \() self$data[[1]][gs["name"]],
+              metrics = metrics |>
+                dplyr::filter(`GS Type` == gs["Gold Standard"]) |>
+                purrr::pluck("MetricID")
+            )
+          } else {
+            cli::cli_abort(c(
+              "Accessors for non-tabular data types aren't supported yet."
+            ))
+          }
+        } else {
+          cli::cli_abort(c(
+            "Gold standards that are not in the data are not supoorted yet."
+          ))
+        }
+      })
     }
   )
 )
