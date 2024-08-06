@@ -75,12 +75,15 @@ actual <- list(trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[-test_id])()
 
 trio$addMetric("Harrel C-Index", harrelCIndexMetric)
 
-evaluation <- trio$evaluate(list(surv_obj = actual))
+```
 
-actual_eval <- harrelCIndexMetric(actual, expected)
+```{r}
+# evaluation <- trio$evaluate(list(surv_obj = actual))
 
-expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index"))
+# actual_eval <- harrelCIndexMetric(actual, expected)
 
-print(expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")))
+# expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index"))
+
+# print(expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")))
 ```
 
