@@ -22,6 +22,8 @@ loadFile <- function(filePath) {
     }
 
     anndata::read_h5ad(filePath)
+  } else if (tolower(ext) == "csv") {
+    suppressMessages(readr::read_delim(filePath))
   } else {
     cli::cli_abort(c(
       "File format {.file .{ext}} is not currently supported."
