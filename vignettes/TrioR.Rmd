@@ -15,5 +15,75 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+devtools::load_all()
 library(TrioR)
 ```
+
+# import data
+
+```{r}
+testCache <- system.file("extdata", "testdata", package = "TrioR")
+trio <- Trio$new("figshare:26142922/47361046", cachePath = testCache)
+data <- trio |> purrr::pluck("data", 1)
+
+dplyr::glimpse(data)
+```
+
+# prepare survival model 
+
+Here we use one fold for an example
+
+```{r}
+cvSets <- cvTools::cvFolds(n = nrow(data), K = 3, R = 1)
+j <- 1
+test_id <- cvSets$subsets[cvSets$which == j]
+test <- data[test_id, ]
+train <- data[-test_id, ]
+fit <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+```
+
+# preapre the evaluation function
+
+- prediction wrapper function
+- build survival object wrapper function
+
+```{r}
+surv_risk_pred <- function(model, data) {
+  if (is.null(data)) {
+    stats::predict(model, type = "risk")
+  } else {
+    stats::predict(model, newdata = data, type = "risk")
+  }
+}
+
+surv_obj <- function(data){
+  with(data, survival::Surv(time, status))
+}
+
+```
+
+# TrioR demo
+
+```{r}
+# create expectation eg. risk in prediction, here is the list
+expected <- list(surv_risk_pred(fit,NULL),surv_risk_pred(fit,test))
+
+trio$addGS("surv_obj", surv_obj, c("Harrel C-Index"))
+
+# actual, same as expectation
+actual <- list(trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[-test_id])(), trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[test_id])())
+
+trio$addMetric("Harrel C-Index", harrelCIndexMetric)
+
+```
+
+```{r}
+# evaluation <- trio$evaluate(list(surv_obj = actual))
+
+# actual_eval <- harrelCIndexMetric(actual, expected)
+
+# expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index"))
+
+# print(expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")))
+```
+

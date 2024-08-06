@@ -23,7 +23,14 @@ loadFile <- function(filePath) {
 
     anndata::read_h5ad(filePath)
   } else if (tolower(ext) == "csv") {
-    suppressMessages(readr::read_delim(filePath))
+    if (!requireNamespace("readr", quietly = TRUE)) {
+      cli::cli_abort(c(
+        "Reading H5AD files requires the {.pkg readr} package.",
+        "i" = "Check {.url https://readr.tidyverse.org/} for instuctions."
+      ))
+    }
+    
+    readr::read_csv(filePath)
   } else {
     cli::cli_abort(c(
       "File format {.file .{ext}} is not currently supported."
