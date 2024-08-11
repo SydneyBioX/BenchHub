@@ -7,19 +7,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-```{r setup}
+```{r setup, message=FALSE}
 devtools::load_all()
 library(TrioR)
 ```
 
-# import data
+# Import data
+
+- Here, we use the survival data from survBenchmark-figShare. 
+- This survival data is clinical (lung). 
+- The Figshare ID is [26142922/47361046](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361046) 
+
 
 ```{r}
 testCache <- system.file("extdata", "testdata", package = "TrioR")
@@ -29,9 +27,10 @@ data <- trio |> purrr::pluck("data", 1)
 dplyr::glimpse(data)
 ```
 
-# prepare survival model 
+# Prepare survival model 
 
-Here we use one fold for an example
+In this example, we use Cox proportional hazards regression model. 
+Since we use c-index as evaluation metric, we here use one of the Cross-validation folds for an example. 
 
 ```{r}
 cvSets <- cvTools::cvFolds(n = nrow(data), K = 3, R = 1)
@@ -39,13 +38,17 @@ j <- 1
 test_id <- cvSets$subsets[cvSets$which == j]
 test <- data[test_id, ]
 train <- data[-test_id, ]
-fit <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+fit <- survival::coxph(survival::Surv(time, status) ~ age + sex + ph.ecog + pat.karno + meal.cal + wt.loss, data = train)
+# data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+# all_surv_obj <- with(data, survival::Surv(time, status))
+fit
 ```
 
-# preapre the evaluation function
+# Preapre function
 
-- prediction wrapper function
-- build survival object wrapper function
+- surv_risk_pred: risk prediction/expectation
+- surv_obj: survival object, this is for Gold Standard
+- harrelCIndexMetric: evaluation metric, we use harrel c-index
 
 ```{r}
 surv_risk_pred <- function(model, data) {
@@ -56,8 +59,17 @@ surv_risk_pred <- function(model, data) {
   }
 }
 
-surv_obj <- function(data){
-  with(data, survival::Surv(time, status))
+surv_obj <- function(data) {
+  all_surv_obj <- with(data, survival::Surv(time, status))
+  # test_index <- which(data$index == "test")
+  # train_index <- which(data$index == "train")
+  return(all_surv_obj)
+}
+
+
+harrelCIndexMetric <- function(gs, to_eval) {
+  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
+  return(harrelC1["C Index"])
 }
 
 ```
@@ -73,17 +85,24 @@ trio$addGS("surv_obj", surv_obj, c("Harrel C-Index"))
 # actual, same as expectation
 actual <- list(trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[-test_id])(), trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[test_id])())
 
+# actual <- list(all_surv_obj[-test_id, ], all_surv_obj[test_id, ])
+
+#actual <- trio$getGS("surv_obj") |> purrr::pluck(1)
+
 trio$addMetric("Harrel C-Index", harrelCIndexMetric)
+# actual <- trio$getGS("surv_obj") |> purrr::pluck(1)
 
 ```
 
 ```{r}
-# evaluation <- trio$evaluate(list(surv_obj = actual))
+# bug here, expected and actual are using different function, but currently it only support one function for actual and prediction.
+# for example, in spatialsimbench, evaluation is only be one function for fraczero
+# evaluation <- trio$evaluate(list(surv_obj = actual)) # error
 
-# actual_eval <- harrelCIndexMetric(actual, expected)
+actual_eval <- harrelCIndexMetric(actual, expected)
 
-# expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index"))
+# expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")) # error
 
-# print(expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")))
+print(actual_eval)
 ```
 

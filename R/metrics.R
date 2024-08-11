@@ -6,12 +6,7 @@ kdeMetric <- function(gs, to_eval) {
 }
 
 harrelCIndexMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "Harrell's c-index is not supported yet! :("
-  # ))
-  # gs is survival data with time and event, here assume input only two data columns called time and status
-  # to_eval is the prediction of risk 
-  harrelC1 <- Hmisc::rcorr.cens(-prediction_list[[2]], groundtruth_list[[2]])
+  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
   return(harrelC1["C Index"])
 }
 
