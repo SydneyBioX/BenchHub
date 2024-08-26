@@ -4,6 +4,11 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+## Installation instruction
+
+```r
+ devtools::install_github("SydneyBioX/TrioR")
+```
 
 ## Goals
 
