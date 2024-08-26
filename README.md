@@ -1,5 +1,5 @@
 
-# TrioR
+# BenchHub
 
 <!-- badges: start -->
 <!-- badges: end -->
