@@ -7,7 +7,7 @@
 ## Installation instruction
 
 ```r
- devtools::install_github("SydneyBioX/TrioR")
+ devtools::install_github("SydneyBioX/BenchHub")
 ```
 
 ## Goals
@@ -23,7 +23,7 @@
 We could find datasets by datatype, task and patterns.
 
 ```r
-library(TrioR)
+library(BenchHub)
 
 findData(dataType = "SST", task = "Celltype Classification")
 #outputs a data frame with metadata about the matched datasets
