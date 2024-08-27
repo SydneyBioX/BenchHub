@@ -5,7 +5,7 @@ vignette: >
   %\VignetteIndexEntry{TrioR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
----
+--- 
 
 ```{r setup, message=FALSE}
 devtools::load_all()
@@ -39,7 +39,7 @@ test_id <- cvSets$subsets[cvSets$which == j]
 test <- data[test_id, ]
 train <- data[-test_id, ]
 fit <- survival::coxph(survival::Surv(time, status) ~ age + sex + ph.ecog + pat.karno + meal.cal + wt.loss, data = train)
-# data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
 # all_surv_obj <- with(data, survival::Surv(time, status))
 fit
 ```
@@ -48,61 +48,108 @@ fit
 
 - surv_risk_pred: risk prediction/expectation
 - surv_obj: survival object, this is for Gold Standard
-- harrelCIndexMetric: evaluation metric, we use harrel c-index
 
 ```{r}
 surv_risk_pred <- function(model, data) {
   if (is.null(data)) {
-    stats::predict(model, type = "risk")
+    return(unname(stats::predict(model, type = "risk")))
   } else {
-    stats::predict(model, newdata = data, type = "risk")
+    return(unname(stats::predict(model, newdata = data, type = "risk")))
   }
 }
 
+
+
 surv_obj <- function(data) {
-  all_surv_obj <- with(data, survival::Surv(time, status))
-  # test_index <- which(data$index == "test")
-  # train_index <- which(data$index == "train")
-  return(all_surv_obj)
+  sub_data_test <- data[data[,"index"] == "test", ]
+  sub_data_train <- data[data[,"index"] == "train", ]
+  test_surv_obj <- with(sub_data_test, survival::Surv(time, status))
+  train_surv_obj <- with(sub_data_train, survival::Surv(time, status))
+  return(list(train_surv_obj, test_surv_obj))
 }
 
 
-harrelCIndexMetric <- function(gs, to_eval) {
+
+```
+
+Here are the metrics function
+
+```{r}
+harrelCIndexMetric <- function(to_eval, gs) {
   harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
   return(harrelC1["C Index"])
 }
 
+beggCIndexMetric <- function(to_eval, gs) {
+  begg_cindex <- survAUC::BeggC(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]])
+  return(begg_cindex)
+}
+
+unoCIndexMetric <- function(to_eval, gs) {
+  # browser()
+  uno_cindex <- survAUC::UnoC(gs[[1]], gs[[2]], to_eval[[2]])
+  return(uno_cindex)
+}
+
+ghCIndexMetric <- function(to_eval, gs) {
+  gh_cindex <- survAUC::GHCI(to_eval[[2]])
+  return(gh_cindex)
+}
+
+brierScoreMetric <- function(to_eval, gs) {
+  time <- gs[[1]][,"time"]
+  brier_score <- survAUC::predErr(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]],times=time, type = "brier", int.type = "unweighted")$error
+  return(mean(brier_score))
+}
+
+timeDependentAUCMetric <- function(to_eval, gs) {
+  time <- gs[[1]][,"time"]
+  AUC_CD <- survAUC::AUC.uno(gs[[1]], gs[[2]], to_eval[[2]], time)
+  return(mean(AUC_CD$auc))
+}
+
 ```
+
 
 # TrioR demo
 
 ```{r}
-# create expectation eg. risk in prediction, here is the list
-expected <- list(surv_risk_pred(fit,NULL),surv_risk_pred(fit,test))
+trio$data[[1]] <- data
 
-trio$addGS("surv_obj", surv_obj, c("Harrel C-Index"))
-
-# actual, same as expectation
-actual <- list(trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[-test_id])(), trio$getGS("surv_obj") |> purrr::pluck(1) |> (\(x) x[test_id])())
-
-# actual <- list(all_surv_obj[-test_id, ], all_surv_obj[test_id, ])
-
-#actual <- trio$getGS("surv_obj") |> purrr::pluck(1)
+expected <- list(surv_risk_pred(fit, NULL), surv_risk_pred(fit,test))
 
 trio$addMetric("Harrel C-Index", harrelCIndexMetric)
-# actual <- trio$getGS("surv_obj") |> purrr::pluck(1)
+trio$addMetric("Begg C-Index", beggCIndexMetric)
+trio$addMetric("Uno C-Index", unoCIndexMetric)
+trio$addMetric("GHCI C-Index", ghCIndexMetric)
+trio$addMetric("Brier Score", brierScoreMetric)
+trio$addMetric("Time Dependent AUC", timeDependentAUCMetric)
+trio$addGS("surv_obj", surv_obj, c("Harrel C-Index", "Begg C-Index", "Uno C-Index", "GHCI C-Index", "Brier Score", "Time Dependent AUC"))
+
+actual <- trio$getGS("surv_obj") 
+
 
 ```
 
 ```{r}
-# bug here, expected and actual are using different function, but currently it only support one function for actual and prediction.
-# for example, in spatialsimbench, evaluation is only be one function for fraczero
-# evaluation <- trio$evaluate(list(surv_obj = actual)) # error
+evaluation <- trio$evaluate(list(surv_obj = expected))
 
-actual_eval <- harrelCIndexMetric(actual, expected)
+evaluation
 
-# expect_equal(actual_eval, purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")) # error
-
-print(actual_eval)
 ```
+
+```{r}
+expect_equal(harrelCIndexMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")) 
+
+expect_equal(beggCIndexMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "Begg C-Index"))  
+
+expect_equal(unoCIndexMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Uno C-Index")) 
+
+expect_equal(ghCIndexMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "GHCI C-Index"))  
+
+expect_equal(brierScoreMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Brier Score")) 
+
+expect_equal(timeDependentAUCMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "Time Dependent AUC"))  
+```
+
 
