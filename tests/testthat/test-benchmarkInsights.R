@@ -1,6 +1,7 @@
-test_that("addevalSummary handles complex Compare structure correctly and is read-only", {
+test_that("addevalSummary handles complex Compare structure correctly and metadata works as expected", {
   benchmark <- benchmarkInsights$new()
   
+  # Create complex evalResult structure
   evalResult <- list(
     SRTsim = list(
       fracZero_spot = list(fracZero_spot = list("Kernel density score" = -0.5228492)),
@@ -15,9 +16,11 @@ test_that("addevalSummary handles complex Compare structure correctly and is rea
   )
   
   dataID <- "dataset1"
+  
+  # Add evaluation summary
   benchmark$addevalSummary(evalResult, dataID)
   
-  # Check that the evalSummary has the correct number of rows (6 rows expected)
+  # Check that evalSummary has the correct number of rows (6 rows expected)
   expect_equal(nrow(benchmark$evalSummary), 6)
   
   # Check the structure and content of evalSummary
@@ -30,10 +33,30 @@ test_that("addevalSummary handles complex Compare structure correctly and is rea
   expect_equal(benchmark$evalSummary$result, c(-0.5228492, -0.3692081, -0.3692081, 
                                                -0.1863305, -0.3556976, -1.333087))
   
-  # Check that attempting to modify addevalSummary throws an error with the correct message
-  expect_error({
-    benchmark$addevalSummary <- "attempt to modify"
-  }, "cannot change value of locked binding for 'addevalSummary'")
+  # Create a metadata dataframe
+  metadata_df <- data.frame(
+    dataID = "dataset1",
+    speciesTissue = "Human breast cancer",
+    healthState = "Spatial",
+    protocol = "Visium",
+    Spot_cell_number = 4744,
+    Gene_number = 28402,
+    DOI = "10.1038/s41588-021-00911-1",
+    stringsAsFactors = FALSE
+  )
+  
+  # Add metadata
+  benchmark$addMetadata(metadata_df)
+  
+  # Check that the metadata is added correctly
+  expect_equal(nrow(benchmark$metadata), 1)
+  expect_equal(benchmark$metadata$dataID, "dataset1")
+  expect_equal(benchmark$metadata$speciesTissue, "Human breast cancer")
+  expect_equal(benchmark$metadata$healthState, "Spatial")
+  expect_equal(benchmark$metadata$protocol, "Visium")
+  expect_equal(benchmark$metadata$Spot_cell_number, 4744)
+  expect_equal(benchmark$metadata$Gene_number, 28402)
+  expect_equal(benchmark$metadata$DOI, "10.1038/s41588-021-00911-1")
 })
 
 

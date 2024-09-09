@@ -5,18 +5,19 @@ NULL
 #' @description An object containing a benchmark result for evaluating
 #'   analytical tasks.
 #' @field evalSummary The evaluation summary is stored by dataframe, where
-#'   each row is the compared identifier, each columns are the metric used in 
-#'   the evaluation task
+#'   each row is the compared identifier, each column is the metric used in 
+#'   the evaluation task.
+#' @field metadata A dataframe to store metadata for the benchmark.
 #'   
 #' @examples
 #' TODO
 #' @export
-
 benchmarkInsights <- R6::R6Class(
   classname = "benchmarkInsights",
   
   public = list(
-    evalSummary = NULL,  # Placeholder for evalSummary
+    evalSummary = NULL,   # Placeholder for evalSummary
+    metadata = NULL,      # Placeholder for metadata
     
     #' @description Adds evaluation results to evalSummary.
     #' @param evalResult A list containing evaluation results.
@@ -40,22 +41,26 @@ benchmarkInsights <- R6::R6Class(
       if (is.null(self$evalSummary)) {
         self$evalSummary <- result_df
       } else {
-        # Convert existing evalSummary to a data frame if necessary
-        self$evalSummary <- as.data.frame(self$evalSummary, stringsAsFactors = FALSE)
-        
         # Append new results to evalSummary
         self$evalSummary <- rbind(self$evalSummary, result_df)
       }
-    }
-  ),
-  
-  active = list(
-    # Active binding for evalSummary that just returns it
-    evalSummaryActive = function() {
-      if (is.null(self$evalSummary)) {
-        return(NULL)
+    },
+    
+    #' @description Adds metadata to the metadata field.
+    #' @param metadata A dataframe containing metadata information.
+    addMetadata = function(metadata) {
+      # Ensure the input is a dataframe
+      if (!is.data.frame(metadata)) {
+        stop("Metadata must be a dataframe.")
       }
-      return(self$evalSummary)
+      
+      # If metadata is NULL, initialize it as the new metadata dataframe
+      if (is.null(self$metadata)) {
+        self$metadata <- metadata
+      } else {
+        # Append the new metadata to the existing metadata
+        self$metadata <- rbind(self$metadata, metadata)
+      }
     }
   )
 )
