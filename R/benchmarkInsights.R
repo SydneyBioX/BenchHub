@@ -6,7 +6,7 @@ NULL
 #'   analytical tasks.
 #' @field evalSummary The evaluation summary is stored by dataframe, where
 #'   each row is the compared identifier, each column is the metric used in 
-#'   the evaluation task.
+#'   the evaluation task and related information.
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'   
 #' @examples
@@ -19,11 +19,7 @@ benchmarkInsights <- R6::R6Class(
     evalSummary = NULL,   # Placeholder for evalSummary
     metadata = NULL,      # Placeholder for metadata
     
-    #' @description Adds evaluation results to evalSummary.
-    #' @param evalResult A list containing evaluation results.
-    #' @param dataID A character string representing the dataset ID.
     addevalSummary = function(evalResult, dataID) {
-      # Convert the evalResult list into a data frame
       result_df <- do.call(rbind, lapply(names(evalResult), function(compare) {
         do.call(rbind, lapply(names(evalResult[[compare]]), function(GS) {
           do.call(rbind, lapply(names(evalResult[[compare]][[GS]]), function(expected) {
@@ -34,33 +30,60 @@ benchmarkInsights <- R6::R6Class(
         }))
       }))
       
-      # Ensure result_df is always a data frame
       result_df <- as.data.frame(result_df, stringsAsFactors = FALSE)
       
-      # If evalSummary is NULL, initialize it as the new result_df
       if (is.null(self$evalSummary)) {
         self$evalSummary <- result_df
       } else {
-        # Append new results to evalSummary
         self$evalSummary <- rbind(self$evalSummary, result_df)
       }
     },
     
-    #' @description Adds metadata to the metadata field.
-    #' @param metadata A dataframe containing metadata information.
     addMetadata = function(metadata) {
-      # Ensure the input is a dataframe
       if (!is.data.frame(metadata)) {
         stop("Metadata must be a dataframe.")
       }
       
-      # If metadata is NULL, initialize it as the new metadata dataframe
       if (is.null(self$metadata)) {
         self$metadata <- metadata
       } else {
-        # Append the new metadata to the existing metadata
         self$metadata <- rbind(self$metadata, metadata)
       }
+    },
+    
+    #' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
+    #' @param evalSummary A dataframe containing the evaluation summary.
+    #' @return A heatmap object.
+    getHeatmap = function(evalSummary) {
+      if (is.null(evalSummary)) {
+        stop("Evaluation summary is required to generate heatmap.")
+      }
+      
+      # Average results across datasets by GS, Compare, and metric
+      averaged_df <- evalSummary %>%
+        dplyr::group_by(GS, Compare, metric) %>%
+        dplyr::summarise(avg_result = mean(result, na.rm = TRUE)) %>%
+        dplyr::ungroup()
+      
+      # Detect if there are any duplicated GS names across different metrics
+      averaged_df <- averaged_df %>%
+        dplyr::mutate(
+          # Check if there are duplicate GS names, and if so, combine GS and metric to distinguish them
+          GS_metric = ifelse(duplicated(GS) | duplicated(GS, fromLast = TRUE), 
+                             paste(GS, metric, sep = "_"), 
+                             GS)
+        )
+      
+      # Reshape the data into a wide format where Compare is the row and GS_metric is the column
+      reshaped_df <- reshape2::dcast(averaged_df, Compare ~ GS_metric, value.var = "avg_result")
+      
+      # Set Compare as rownames and remove the Compare column
+      rownames(reshaped_df) <- reshaped_df$Compare
+      reshaped_df$Compare <- NULL
+      heatmap <- funkyheatmap::funky_heatmap(reshaped_df)
+      
+      return(heatmap)
     }
+    
   )
 )
