@@ -203,7 +203,7 @@ experimenthubDl <- function(ID, cachePath) {
   # load ExperimentHub
   eh <- ExperimentHub::ExperimentHub()
   
-  # check if the ID is valid and fetch metadata
+  # check if the ID is valid
   if (!ID %in% names(eh)) {
     cli::cli_abort(c(
       "Invalid ExperimentHub ID: {ID}",
@@ -211,14 +211,14 @@ experimenthubDl <- function(ID, cachePath) {
     ))
   }
   
-  # create download path
+  # create a download path
   dlPath <- fs::path_join(c(cachePath, paste("ExperimentHub_", ID)))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
   
   dlLocation <- fs::path_join(c(dlPath, ID))
   
-  # check if file already exists
-  alreadyDl <- paste("ExperimentHub_", ID) %in% list.files(dlPath)
+  # check if the file already exists
+  alreadyDl <- ID %in% list.files(dlPath)
   
   # download data if not already downloaded
   if (!alreadyDl) {
@@ -228,7 +228,6 @@ experimenthubDl <- function(ID, cachePath) {
     
     # set working directory
     setwd(dlLocation)
-    
     data_name <- paste(paste("ExperimentHub_", ID), ".rds")
     
     # manually save the ExperimentHub data as an RDS file in the working directory
