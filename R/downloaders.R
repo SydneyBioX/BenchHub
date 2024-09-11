@@ -196,7 +196,53 @@ geoDl <- function(ID, cachePath) {
 }
 
 experimenthubDl <- function(ID, cachePath) {
-  cli::cli_abort(c(
-    "ExperimentHub Downloads are not supported yet! :("
-  ))
+  # cli::cli_abort(c(
+  #   "ExperimentHub Downloads are not supported yet! :("
+  # ))
+  
+  # load ExperimentHub
+  eh <- ExperimentHub::ExperimentHub()
+  
+  # check if the ID is valid and fetch metadata
+  if (!ID %in% names(eh)) {
+    cli::cli_abort(c(
+      "Invalid ExperimentHub ID: {ID}",
+      "i" = "Check the ID and try again."
+    ))
+  }
+  
+  # create download path
+  dlPath <- fs::path_join(c(cachePath, paste("ExperimentHub_", ID)))
+  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
+  
+  dlLocation <- fs::path_join(c(dlPath, ID))
+  
+  # check if file already exists
+  alreadyDl <- paste("ExperimentHub_", ID) %in% list.files(dlPath)
+  
+  # download data if not already downloaded
+  if (!alreadyDl) {
+    cli::cli_inform("Downloading data for ID: {ID}...")
+    # download ExperimentHub data
+    data <- eh[[ID]]
+    
+    # set working directory
+    setwd(dlLocation)
+    
+    data_name <- paste(paste("ExperimentHub_", ID), ".rds")
+    
+    # manually save the ExperimentHub data as an RDS file in the working directory
+    saveRDS(data, file = data_name)
+  } else {
+    cli::cli_inform("File already exists in cache. No download needed.")
+  }
+  
+  if (length(dlLocation) == 0) {
+    cli::cli_warn(c(
+      "No files found for ExperimentHub ID: {ID}",
+      "i" = "Ensure that the ExperimentHub ID is correct and the data is available."
+    ))
+  }
+  
+  dlLocation
 }
