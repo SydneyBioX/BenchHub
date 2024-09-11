@@ -83,6 +83,40 @@ benchmarkInsights <- R6::R6Class(
       heatmap <- funkyheatmap::funky_heatmap(reshaped_df)
       
       return(heatmap)
+    },
+    
+    #' @description Creates a scatterplot for the given x and y variables, with an optional grouping.
+    #' @param data A pre-processed dataframe containing the x, y, and optional group variables.
+    #' @param x The x-axis variable (e.g., GS).
+    #' @param y The y-axis variable (e.g., metric).
+    #' @param group A grouping variable for coloring points (e.g., Compare).
+    #' @return A ggplot2 scatterplot object.
+    getScatterplot = function(minievalSummary) {
+      if (!is.data.frame(minievalSummary)) {
+        stop("Input data must be a dataframe.")
+      }
+      
+      th <- theme(text=element_text(size=12),
+                  axis.text.x = element_text(angle = 45, hjust = 1),
+                  panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  panel.background = element_rect(colour = "black", size=0.2, fill=NA))
+      
+      minievalSummary_aggreate <- minievalSummary %>%
+        group_by(GS, Compare, metric) %>%
+        summarise(average_result = mean(result, na.rm = TRUE)) %>%
+        ungroup()
+      
+      plot <- ggplot(minievalSummary_aggreate, 
+                     aes(x = minievalSummary_aggreate$GS, 
+                         y = minievalSummary_aggreate$average_result, 
+                         group = minievalSummary_aggreate$Compare, 
+                         color = minievalSummary_aggreate$Compare)) +
+                      geom_point() +
+                      geom_line() +
+                      th
+    
+      return(plot)
     }
     
   )
