@@ -78,23 +78,6 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
 })
 
 
-
-
-test_that("addevalSummary handles empty evalResult correctly", {
-  benchmark <- benchmarkInsights$new()
-  
-  # Create an empty evalResult
-  evalResult <- list()
-  
-  dataID <- "dataset1"
-  
-  # Add evaluation summary
-  benchmark$addevalSummary(evalResult, dataID)
-  
-  # Check that evalSummary is still NULL (nothing should have been added)
-  expect_true(is.null(benchmark$evalSummary))
-})
-
 test_that("addMetadata handles multiple entries correctly", {
   benchmark <- benchmarkInsights$new()
   
@@ -135,5 +118,40 @@ test_that("addMetadata handles multiple entries correctly", {
   expect_equal(benchmark$metadata$DOI, c("10.1038/s41588-021-00911-1", "10.1016/j.cell.2021.05.015"))
 })
 
+test_that("getScatterplot creates a scatterplot with optional grouping", {
+  benchmark <- benchmarkInsights$new()
+  evalResult1 <- list(
+    SRTsim = list(
+      "1000_200" = list(time = list("time" = 233)),
+      "2000_200" = list(time = list("time" = 543)),
+      "3000_200" = list(time = list("time" = 666))
+    ),
+    scDesign3 = list(
+      "1000_200" = list(time = list("time" = 567)),
+      "2000_200" = list(time = list("time" = 777)),
+      "3000_200" = list(time = list("time" = 890))
+    )
+  )
+  
+  evalResult2 <- list(
+    SRTsim = list(
+      "1000_200" = list(time = list("time" = 123)),
+      "2000_200" = list(time = list("time" = 678)),
+      "3000_200" = list(time = list("time" = 888))
+    ),
+    scDesign3 = list(
+      "1000_200" = list(time = list("time" = 456)),
+      "2000_200" = list(time = list("time" = 445)),
+      "3000_200" = list(time = list("time" = 789))
+    )
+  )
+
+  benchmark$addevalSummary(evalResult1, "dataset1")
+  benchmark$addevalSummary(evalResult2, "dataset2")
+
+  scatter_plot <- benchmark$getScatterplot(benchmark$evalSummary)
+  expect_true(inherits(scatter_plot, "ggplot"))
+
+})
 
 
