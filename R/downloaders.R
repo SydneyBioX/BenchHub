@@ -226,12 +226,10 @@ experimenthubDl <- function(ID, cachePath) {
     # download ExperimentHub data
     data <- eh[[ID]]
     
-    # set working directory
-    setwd(dlLocation)
     data_name <- paste(paste("ExperimentHub_", ID), ".rds")
     
     # manually save the ExperimentHub data as an RDS file in the working directory
-    saveRDS(data, file = data_name)
+    saveRDS(data, file = fs::path_join(c(dlLocation, data_name)))
   } else {
     cli::cli_inform("File already exists in cache. No download needed.")
   }
