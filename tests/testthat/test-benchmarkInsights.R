@@ -149,8 +149,10 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
   benchmark$addevalSummary(evalResult1, "dataset1")
   benchmark$addevalSummary(evalResult2, "dataset2")
 
-  scatter_plot <- benchmark$getScatterplot(benchmark$evalSummary)
-  expect_true(inherits(scatter_plot, "ggplot"))
+  line_plot <- benchmark$getLineplot(benchmark$evalSummary, c('3000_200', '2000_200', '1000_200'))
+  # line_plot <- benchmark$getLineplot(benchmark$evalSummary,)
+  expect_true(inherits(line_plot, "ggplot"))
+
 
 })
 

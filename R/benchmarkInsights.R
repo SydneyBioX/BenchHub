@@ -85,13 +85,14 @@ benchmarkInsights <- R6::R6Class(
       return(heatmap)
     },
     
-    #' @description Creates a scatterplot for the given x and y variables, with an optional grouping.
+    #' @description Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
     #' @param data A pre-processed dataframe containing the x, y, and optional group variables.
     #' @param x The x-axis variable (e.g., GS).
     #' @param y The y-axis variable (e.g., metric).
     #' @param group A grouping variable for coloring points (e.g., Compare).
-    #' @return A ggplot2 scatterplot object.
-    getScatterplot = function(minievalSummary) {
+    #' @param order An optional vector specifying the order of x-axis values.
+    #' @return A ggplot2 line plot object.
+    getLineplot = function(minievalSummary, order = NULL) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
@@ -101,23 +102,30 @@ benchmarkInsights <- R6::R6Class(
                   panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank(),
                   panel.background = element_rect(colour = "black", size=0.2, fill=NA))
-      
+
       minievalSummary_aggreate <- minievalSummary %>%
         group_by(GS, Compare, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
+
+      if (!is.null(order)) {
+        minievalSummary_aggreate$GS <- factor(minievalSummary_aggreate$GS, levels = order)
+      }
       
+      # Create the line plot
       plot <- ggplot(minievalSummary_aggreate, 
-                     aes(x = minievalSummary_aggreate$GS, 
-                         y = minievalSummary_aggreate$average_result, 
-                         group = minievalSummary_aggreate$Compare, 
-                         color = minievalSummary_aggreate$Compare)) +
-                      geom_point() +
-                      geom_line() +
-                      th
-    
+                     aes(x = GS, 
+                         y = average_result, 
+                         group = Compare, 
+                         color = Compare)) +
+        labs(x = "gold standard", y = "average_value", fill = "compare") +
+        geom_point() +
+        geom_line() +
+        th
+      
       return(plot)
     }
+    
     
   )
 )
