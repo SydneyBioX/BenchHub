@@ -150,10 +150,106 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
   benchmark$addevalSummary(evalResult2, "dataset2")
 
   line_plot <- benchmark$getLineplot(benchmark$evalSummary, c('3000_200', '2000_200', '1000_200'))
-  # line_plot <- benchmark$getLineplot(benchmark$evalSummary,)
+  line_plot <- benchmark$getLineplot(benchmark$evalSummary)
   expect_true(inherits(line_plot, "ggplot"))
-
-
 })
+
+test_that("getScatterplot handles multiple datasets with duplicate GS names by using two metrics", {
+  benchmark <- benchmarkInsights$new()
+
+  evalResult1 <- list(
+    SRTsim = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.7),
+        specificity = list("specificity" = 0.8)
+      )
+    ),
+    scDesign3 = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.56),
+        specificity = list("specificity" = 0.7)
+      )
+    ),
+    SPARsim = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.76),
+        specificity = list("specificity" = 0.88)
+      )
+    ),
+    Spider = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.36),
+        specificity = list("specificity" = 0.45)
+      )
+    ),
+    powersimR = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.76),
+        specificity = list("specificity" = 0.88)
+      )
+    ),
+    SPsimSeq = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.12),
+        specificity = list("specificity" = 0.23)
+      )
+    )
+  )
+  
+  evalResult2 <- list(
+    SRTsim = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.67),
+        specificity = list("specificity" = 0.80)
+      )
+    ),
+    scDesign3 = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.45),
+        specificity = list("specificity" = 0.78)
+      )
+    ),
+    SPARsim = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.56),
+        specificity = list("specificity" = 0.56)
+      )
+    ),
+    Spider = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.89),
+        specificity = list("specificity" = 0.79)
+      )
+    ),
+    powersimR = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.45),
+        specificity = list("specificity" = 0.56)
+      )
+    ),
+    SPsimSeq = list(
+      SVG = list(
+        sensitivity = list("sensitivity" = 0.32),
+        specificity = list("specificity" = 0.12)
+      )
+    )
+  )
+  
+
+  
+  # Add evaluation summaries
+  benchmark$addevalSummary(evalResult1, "dataset1")
+  benchmark$addevalSummary(evalResult2, "dataset2")
+  
+  # Generate scatterplot and check it was created correctly
+  scatterplot <- benchmark$getScatterplot(benchmark$evalSummary)
+  
+  # Ensure the scatterplot object is not NULL
+  expect_true(!is.null(scatterplot))
+})
+
+
+
+
 
 

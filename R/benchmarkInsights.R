@@ -86,10 +86,7 @@ benchmarkInsights <- R6::R6Class(
     },
     
     #' @description Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
-    #' @param data A pre-processed dataframe containing the x, y, and optional group variables.
-    #' @param x The x-axis variable (e.g., GS).
-    #' @param y The y-axis variable (e.g., metric).
-    #' @param group A grouping variable for coloring points (e.g., Compare).
+    #' @param minievalSummary subset of evaluation summary
     #' @param order An optional vector specifying the order of x-axis values.
     #' @return A ggplot2 line plot object.
     getLineplot = function(minievalSummary, order = NULL) {
@@ -124,8 +121,39 @@ benchmarkInsights <- R6::R6Class(
         th
       
       return(plot)
-    }
+    },
     
+    #' @description Creates a scatter plot for the same GS, with an two compared metrics.
+    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
+    #' @return A ggplot2 line plot object.
+    getScatterplot = function(minievalSummary) {
+      if (!is.data.frame(minievalSummary)) {
+        stop("Input data must be a dataframe.")
+      }
+    
+      minievalSummary_aggreate <- benchmark$evalSummary %>%
+        group_by(Compare, metric) %>%
+        summarise(average_result = mean(result, na.rm = TRUE)) %>%
+        ungroup()
+      
+      metric_types <- unique(minievalSummary_aggreate$metric)
+      
+      result <- minievalSummary_aggreate %>%
+        pivot_wider(names_from = metric, values_from = average_result) %>%
+        rename(metric_a = !!metric_types[1], metric_b = !!metric_types[2])
+      
+      plot <- ggplot(result, aes(x = metric_a, y = metric_b, label = Compare)) +
+              geom_point(alpha = 0.4) + 
+              ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = Compare)) +
+              coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
+              scale_x_continuous(expand = c(0, 0)) +
+              scale_y_continuous(expand = c(0, 0)) +
+              theme_minimal() +
+              ylab(metric_types[2]) + 
+              xlab(metric_types[1])
+      
+      return(plot)
+    }
     
   )
 )
