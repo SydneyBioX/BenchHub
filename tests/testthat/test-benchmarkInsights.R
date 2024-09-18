@@ -20,6 +20,15 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
         ARI = list("ARI" = 0.35),
         NMI = list("NMI" = 0.65)
       )
+    ),
+    scDesign2 = list(
+      fracZero_spot = list(fracZero_spot = list("Kernel density score" = 0.5456492)),
+      fracZero_gene = list(fracZero_gene = list("Kernel density score" = -0.4694581)),
+      libSize = list(libSize = list("Kernel density score" = 0.3688881)),
+      clustering = list(
+        ARI = list("ARI" = 0.48),
+        NMI = list("NMI" = 0.95)
+      )
     )
   )
   
@@ -41,7 +50,17 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
         ARI = list("ARI" = 0.15),
         NMI = list("NMI" = 0.28)
       )
-    )
+    ),
+      scDesign2 = list(
+        fracZero_spot = list(fracZero_spot = list("Kernel density score" = 0.345662)),
+        fracZero_gene = list(fracZero_gene = list("Kernel density score" = 0.4634561)),
+        libSize = list(libSize = list("Kernel density score" = 0.300001)),
+        clustering = list(
+          ARI = list("ARI" = 0.23),
+          NMI = list("NMI" = 0.12)
+        )
+      )
+    
   )
   
   evalResult3 <- list(
@@ -62,6 +81,15 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
         ARI = list("ARI" = 0.89),
         NMI = list("NMI" = 0.56)
       )
+    ),
+    scDesign2 = list(
+      fracZero_spot = list(fracZero_spot = list("Kernel density score" = 0.1236492)),
+      fracZero_gene = list(fracZero_gene = list("Kernel density score" = 0.465678)),
+      libSize = list(libSize = list("Kernel density score" = 0.123481)),
+      clustering = list(
+        ARI = list("ARI" = 0.23),
+        NMI = list("NMI" = 0.89)
+      )
     )
   )
   
@@ -73,8 +101,15 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   # Generate heatmap and check it was created correctly
   heatmap <- benchmark$getHeatmap(benchmark$evalSummary)
   
+  KDE_summary <- benchmark$evalSummary |>
+    dplyr::filter(metric == "Kernel density score")
+  
+  grouped_boxplot <- benchmark$getBoxplot(KDE_summary)
+
+  
   # Ensure the heatmap object is not NULL
   expect_true(!is.null(heatmap))
+  expect_true(!is.null(grouped_boxplot))
 })
 
 
@@ -235,8 +270,6 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
     )
   )
   
-
-  
   # Add evaluation summaries
   benchmark$addevalSummary(evalResult1, "dataset1")
   benchmark$addevalSummary(evalResult2, "dataset2")
@@ -249,7 +282,12 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
 })
 
 
+KDE_summary <- benchmark$evalSummary |>
+  dplyr::filter(metric == "Kernel density score")
 
 
-
-
+p1 <- ggplot(KDE_summary, aes(x=Compare, y=result, fill=Compare)) + 
+  geom_boxplot() +
+  facet_wrap(~GS, scale="free") +
+  th +
+  ggsci::scale_fill_npg()

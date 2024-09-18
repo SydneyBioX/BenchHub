@@ -153,6 +153,23 @@ benchmarkInsights <- R6::R6Class(
               xlab(metric_types[1])
       
       return(plot)
+    },
+    
+    #' @description Creates boxplot plots for the mutiple GS, different Compare, one metric.
+    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
+    #' @return A ggplot2 line plot object.
+    getBoxplot = function(minievalSummary) {
+      if (!is.data.frame(minievalSummary)) {
+        stop("Input data must be a dataframe.")
+      }
+      
+      p1 <- ggplot(minievalSummary, aes(x=Compare, y=result, fill=Compare)) + 
+        geom_boxplot() +
+        facet_wrap(~GS, scale="free") +
+        th +
+        ggsci::scale_fill_npg()
+
+      return(p1)
     }
     
   )
