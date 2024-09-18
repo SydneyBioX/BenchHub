@@ -170,6 +170,60 @@ benchmarkInsights <- R6::R6Class(
         ggsci::scale_fill_npg()
 
       return(p1)
+    },
+    
+    #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "GS", "metric", or "Compare").
+    #' The correlation plot shows the pairwise correlation between results for different categories (GS, metric, or Compare).
+    #' @param minievalSummary A subset of the evaluation summary. It must include columns relevant to the input type (GS, metric, Compare) and the result values.
+    #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "GS", "metric", or "Compare".
+    #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
+    getCorplot = function(minievalSummary, input_type) {
+      
+      if (!is.data.frame(minievalSummary)) {
+        stop("Input data must be a dataframe.")
+      }
+      
+      if (!input_type %in% c("GS", "metric", "Compare")) {
+        stop("Invalid input_type. Must be 'GS', 'metric', or 'Compare'.")
+      }
+      
+      df <- benchmark$evalSummary
+      
+      if (input_type == "metric") {
+        pivot_df <- df %>%
+          select(datasetID, Compare, metric, result) %>%
+          pivot_wider(names_from = metric, values_from = result, values_fn = mean)
+        
+      } else if (input_type == "GS") {
+        pivot_df <- df %>%
+          select(datasetID, Compare, GS, result) %>%
+          pivot_wider(names_from = GS, values_from = result, values_fn = mean)
+        
+      } else if (input_type == "Compare") {
+        pivot_df <- df %>%
+          select(datasetID, GS, Compare, result) %>%
+          pivot_wider(names_from = Compare, values_from = result, values_fn = mean)
+      }
+      
+      cor_matrix <- pivot_df %>%
+        select_if(is.numeric) %>%
+        cor(use = "pairwise.complete.obs")
+
+      p1 <- ggcorrplot(cor_matrix, method = "square", 
+                       type = "lower", 
+                       lab = TRUE, 
+                       colors = c("white", "grey", "black")) +
+        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1), 
+              panel.grid.major = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              axis.ticks = element_blank(),
+              legend.justification = c(0, 1),   
+              legend.direction = "horizontal") +
+        guides(fill = guide_colorbar(barwidth = 7, barheight = 1, title.position = "top", 
+                                     title.hjust = 0.5))
+      
+      return(p1)
     }
     
   )

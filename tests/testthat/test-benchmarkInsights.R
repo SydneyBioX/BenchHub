@@ -105,6 +105,10 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
     dplyr::filter(metric == "Kernel density score")
   
   grouped_boxplot <- benchmark$getBoxplot(KDE_summary)
+  
+  GS_corplot <- benchmark$getCorplot(benchmark$evalSummary, "GS")
+  metric_corplot <- benchmark$getCorplot(benchmark$evalSummary, "metric")
+  Compare_corplot <- benchmark$getCorplot(benchmark$evalSummary, "Compare")
 
   
   # Ensure the heatmap object is not NULL
@@ -282,12 +286,68 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
 })
 
 
-KDE_summary <- benchmark$evalSummary |>
-  dplyr::filter(metric == "Kernel density score")
+# Load necessary libraries
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(corrplot)
+
+# Example dataset
+df <- benchmark$evalSummary
 
 
-p1 <- ggplot(KDE_summary, aes(x=Compare, y=result, fill=Compare)) + 
-  geom_boxplot() +
-  facet_wrap(~GS, scale="free") +
-  th +
-  ggsci::scale_fill_npg()
+
+pivot_df <- df %>%
+  select(datasetID, Compare, GS, result) %>%
+  pivot_wider(names_from = GS, values_from = result)
+
+
+cor_matrix <- pivot_df %>%
+  select(-datasetID, -Compare) %>%
+  cor(use = "pairwise.complete.obs")
+
+df <- benchmark$evalSummary
+
+pivot_df <- df %>%
+  select(datasetID, Compare, metric, result) %>%
+  pivot_wider(names_from = metric, values_from = result, 
+              values_fn = mean) 
+
+
+cor_matrix <- pivot_df %>%
+  select(-datasetID, -Compare) %>%
+  cor(use = "pairwise.complete.obs")
+
+ggcorrplot(cor_matrix, method = "square", 
+           type = "lower", 
+           lab = TRUE, 
+           colors = c("white", "grey", "black")) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1), 
+        panel.grid.major = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        legend.justification = c(0, 1),   
+        # legend.position = c(0.1, 0.8),   
+        legend.direction = "horizontal") +
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1, title.position = "top", 
+                               title.hjust = 0.5))
+
+
+
+pivot_df <- df %>%
+  select(datasetID, Compare, metric, result) %>%
+  pivot_wider(names_from = metric, values_from = result, 
+              values_fn = mean) 
+
+
+cor_matrix <- pivot_df %>%
+  select(-datasetID, -Compare) %>%
+  cor(use = "pairwise.complete.obs")
+
+
+
+
+
+
