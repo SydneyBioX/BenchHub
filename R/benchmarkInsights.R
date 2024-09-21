@@ -208,11 +208,11 @@ benchmarkInsights <- R6::R6Class(
       cor_matrix <- pivot_df %>%
         select_if(is.numeric) %>%
         cor(use = "pairwise.complete.obs")
-
-      p1 <- ggcorrplot(cor_matrix, method = "square", 
-                       type = "lower", 
-                       lab = TRUE, 
-                       colors = c("white", "grey", "black")) +
+      
+      p1 <- ggcorrplot::ggcorrplot(cor_matrix, method = "square", 
+                                   type = "lower", 
+                                   lab = TRUE, 
+                                   colors = c("white", "grey", "black")) +
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1), 
               panel.grid.major = element_blank(),
               panel.border = element_blank(),
@@ -224,7 +224,52 @@ benchmarkInsights <- R6::R6Class(
                                      title.hjust = 0.5))
       
       return(p1)
-    }
+    },
     
+    #' @description This function generates a forest plot using linear models based on the 
+    #' comparison between groups in the provided evaluation summary. The plot is created
+    #' using dotwhisker and broom packages, with custom grouping and labeling.
+    #' @param minievalSummary A data frame containing the evaluation summary.
+    #' @param input_group A string specifying the grouping variable (only "datasetID", "Compare", or "GS" allowed).
+    #' @param input_model A string specifying the model variable (only "datasetID", "Compare", or "GS" allowed).
+    #' @return A forest plot showing the comparison of models across groups.
+    getForestplot = function(minievalSummary, input_group, input_model) {
+      
+      allowed_values <- c("datasetID", "Compare", "GS", "metric")
+      if (!input_group %in% allowed_values) {
+        stop("Invalid input_group. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
+      }
+      if (!input_model %in% allowed_values) {
+        stop("Invalid input_model. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
+      }
+      
+      # minievalSummary <- benchmark$evalSummary
+      # input_group <- "metric"
+      # input_model <- "Compare"
+      
+      to_plot <- minievalSummary %>%
+        group_by(!!sym(input_group)) %>%
+        do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) %>%
+        rename(model = !!sym(input_group))
+      
+      predictor_labels <- to_plot$term %>%
+        unique() %>%
+        set_names(., .)
+      
+      if ('(Intercept)' %in% predictor_labels) {
+        predictor_labels['(Intercept)'] <- paste0(input_model, " (Intercept)")
+      }
+      
+      to_plot <- relabel_predictors(to_plot, predictor_labels)
+      
+      g <- dotwhisker::dwplot(to_plot,
+                              vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +
+        theme_minimal() + 
+        theme(panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.background = element_rect(colour = "black", size = 1, fill = NA))
+      
+      return(g)
+    }
   )
 )
