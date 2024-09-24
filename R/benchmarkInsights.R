@@ -58,7 +58,6 @@ benchmarkInsights <- R6::R6Class(
       if (is.null(evalSummary)) {
         stop("Evaluation summary is required to generate heatmap.")
       }
-      
       # Average results across datasets by GS, Compare, and metric
       averaged_df <- evalSummary %>%
         dplyr::group_by(GS, Compare, metric) %>%
@@ -166,10 +165,13 @@ benchmarkInsights <- R6::R6Class(
       p1 <- ggplot(minievalSummary, aes(x=Compare, y=result, fill=Compare)) + 
         geom_boxplot() +
         facet_wrap(~GS, scale="free") +
-        th +
+        theme(text=element_text(size=12 ),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.background = element_rect(colour = "black", size=0.2, fill=NA)) +
         ggsci::scale_fill_npg()
 
-      return(p1)
+       return(p1)
     },
     
     #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "GS", "metric", or "Compare").
@@ -222,7 +224,6 @@ benchmarkInsights <- R6::R6Class(
               legend.direction = "horizontal") +
         guides(fill = guide_colorbar(barwidth = 7, barheight = 1, title.position = "top", 
                                      title.hjust = 0.5))
-      
       return(p1)
     },
     

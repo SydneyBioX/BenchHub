@@ -1,21 +1,21 @@
 test_that("getHeatmap handles multiple datasets with duplicate GS names by using metrics", {
   benchmark <- benchmarkInsights$new()
-  
+  library(dplyr)
   # Create evalResult structure with three datasets
   evalResult1 <- list(
     SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.5228492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.3692081)),
-      libSize = list(libSize = list("KS" = -0.3692081)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.5228492)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.3692081)),
+      libSize = list(libSize = list("KS" = 0.3692081)),
       clustering = list(
         ARI = list("ARI" = 0.45),
         NMI = list("NMI" = 0.65)
       )
     ),
     scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.1863305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.3556976)),
-      libSize = list(libSize = list("KS" = -1.333087)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.1863305)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.3556976)),
+      libSize = list(libSize = list("KS" = 1.333087)),
       clustering = list(
         ARI = list("ARI" = 0.35),
         NMI = list("NMI" = 0.65)
@@ -23,7 +23,7 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
     ),
     scDesign2 = list(
       fracZero_spot = list(fracZero_spot = list("KS" = 0.5456492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.4694581)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.4694581)),
       libSize = list(libSize = list("KS" = 0.3688881)),
       clustering = list(
         ARI = list("ARI" = 0.48),
@@ -34,17 +34,17 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   
   evalResult2 <- list(
     SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.7228492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.7892081)),
-      libSize = list(libSize = list("KS" = -0.1232081)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.7228492)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.7892081)),
+      libSize = list(libSize = list("KS" = 0.1232081)),
       clustering = list(
         ARI = list("ARI" = 0.85),
         NMI = list("NMI" = 0.78)
       )
     ),
     scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.1453305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.8956976)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.1453305)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.8956976)),
       libSize = list(libSize = list("KS" = -1.999087)),
       clustering = list(
         ARI = list("ARI" = 0.15),
@@ -65,18 +65,18 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   
   evalResult3 <- list(
     SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.1238492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.5672081)),
-      libSize = list(libSize = list("KS" = -0.7892081)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.1238492)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.5672081)),
+      libSize = list(libSize = list("KS" = 0.7892081)),
       clustering = list(
         ARI = list("ARI" = 0.78),
         NMI = list("NMI" = 0.99)
       )
     ),
     scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = -0.6666305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = -0.2345976)),
-      libSize = list(libSize = list("KS" = -1.888887)),
+      fracZero_spot = list(fracZero_spot = list("KS" = 0.6666305)),
+      fracZero_gene = list(fracZero_gene = list("KS" = 0.2345976)),
+      libSize = list(libSize = list("KS" = 1.888887)),
       clustering = list(
         ARI = list("ARI" = 0.89),
         NMI = list("NMI" = 0.56)
