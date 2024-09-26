@@ -27,6 +27,23 @@ test_that("Evaluation works.", {
   actual_eval <- kdeMetric(actual, actual)
 
   expect_equal(actual_eval, purrr::pluck(evaluation, "fracZero", "KDE Score"))
+
+  # Separate methods evaluation
+  testthat::expect_no_error(
+    evaluation <- trio$evaluate(
+      list(
+        method1 = list(
+          fracZero = actual,
+          fracZero2 = actual
+        ),
+        method2 = list(
+          fracZero = actual,
+          fracZero2 = actual
+        )
+      ),
+      separateMethods = TRUE
+    )
+  )
 })
 
 

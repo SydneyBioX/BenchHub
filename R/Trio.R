@@ -43,7 +43,7 @@ Trio <- R6::R6Class(
         self$dataSource, self$dataSourceID, self$cachePath
       )
       if (!is.null(private$datasetID)) {
-        private$populateTrio()
+        #private$populateTrio()
       }
     },
 
@@ -167,82 +167,89 @@ Trio <- R6::R6Class(
     #' Evalute against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
-    evaluate = function(input) {
+    #' @param separateMethods If `input` contains separate sublists to evaluate
+    #'   for each method.
+    evaluate = function(input, separateMethods = FALSE) {
       # check if a gold standard is available for each element of the input.
-      gsAvail <- names(input) %in% names(self$goldStandards)
-      if (all(!gsAvail)) {
-        gsNames <- names(self$goldStandards)
-        cli::cli_abort(c(
-          "None of the specified gold standards are available in this object.",
-          "i" = (
-            "Add it using {.code Trio$addGS(.)} or choose from {.val {gsNames}}"
+      if (separateMethods) {
+        evalList <- lapply(input, self$evaluate)
+        return(evalList)
+      } else {
+        gsAvail <- names(input) %in% names(self$goldStandards)
+        if (all(!gsAvail)) {
+          gsNames <- names(self$goldStandards)
+          cli::cli_abort(c(
+            "None of the specified gold standards are available in this object.",
+            "i" = (
+              "Add it using {.code Trio$addGS(.)} or choose from {.val {gsNames}}"
+            )
+          ))
+        }
+        if (any(!gsAvail)) {
+          unavail <- names(input)[!gsAvail]
+          cli::cli_inform(c(
+            paste0(
+              "Gold standard{?s} {.val {unavail}} from {.var input} {?is/are} ",
+              "not available in this object."
+            ),
+            "i" = "Evaluating the following: {.var {names(input)[gsAvail]}}"
+          ))
+        }
+
+        # subset to inputs with available GS
+        input <- input[gsAvail]
+
+        # compute/retrive gold standards
+        gs <- setNames(
+          lapply(names(input), self$getGS) |> unlist(recursive = FALSE),
+          names(input)
+        )
+
+        # get a list of metrics to compute for each gold standard in the data
+        metrics <- setNames(lapply(names(input), self$getMetrics), names(input))
+
+        # get a flat list of available metrics
+        allMetrics <- metrics |>
+          unlist() |>
+          unique()
+        # find metrics that are not available in the trio
+        unavailMetrics <- allMetrics[!allMetrics %in% names(self$metrics)]
+
+        if (length(unavailMetrics) == length(allMetrics)) {
+          cli::cli_abort(c(
+            paste0(
+              "None of the metrics related to the gold standards being evalutaed",
+              " are available in the object."
+            ),
+            "i" = "Add some of the following: {.val {allMetrics}}."
+          ))
+        }
+
+        if (length(unavailMetrics) > 0) {
+          cli::cli_warn(c(
+            paste0(
+              "{.val {unavailMetrics}} metric{?s} {?is/are} not available in",
+              " the object."
+            ),
+            "They will be skipped during evaluation."
+          ))
+
+          # remove unavailable metrics from the nested list
+          metrics <- lapply(
+            metrics,
+            \(gsMetrics) Filter(\(x) !x %in% unavailMetrics, gsMetrics)
           )
-        ))
+        }
+
+        # compute each metric for each input
+        purrr::imap(input, function(to_eval, gsName) {
+          res <- lapply(
+            metrics[[gsName]],
+            function(x) self$metrics[[x]](to_eval, gs[[gsName]])
+          )
+          setNames(res, metrics[[gsName]])
+        })
       }
-      if (any(!gsAvail)) {
-        unavail <- names(input)[!gsAvail]
-        cli::cli_inform(c(
-          paste0(
-            "Gold standard{?s} {.val {unavail}} from {.var input} {?is/are} ",
-            "not available in this object."
-          ),
-          "i" = "Evaluating the following: {.var {names(input)[gsAvail]}}"
-        ))
-      }
-
-      # subset to inputs with available GS
-      input <- input[gsAvail]
-
-      # compute/retrive gold standards
-      gs <- setNames(
-        lapply(names(input), self$getGS) |> unlist(recursive = FALSE),
-        names(input)
-      )
-
-      # get a list of metrics to compute for each gold standard in the data
-      metrics <- setNames(lapply(names(input), self$getMetrics), names(input))
-
-      # get a flat list of available metrics
-      allMetrics <- metrics |>
-        unlist() |>
-        unique()
-      # find metrics that are not available in the trio
-      unavailMetrics <- allMetrics[!allMetrics %in% names(self$metrics)]
-
-      if (length(unavailMetrics) == length(allMetrics)) {
-        cli::cli_abort(c(
-          paste0(
-            "None of the metrics related to the gold standards being evalutaed",
-            " are available in the object."
-          ),
-          "i" = "Add some of the following: {.val {allMetrics}}."
-        ))
-      }
-
-      if (length(unavailMetrics) > 0) {
-        cli::cli_warn(c(
-          paste0(
-            "{.val {unavailMetrics}} metric{?s} {?is/are} not available in",
-            " the object."
-          ),
-          "They will be skipped during evaluation."
-        ))
-
-        # remove unavailable metrics from the nested list
-        metrics <- lapply(
-          metrics,
-          \(gsMetrics) Filter(\(x) !x %in% unavailMetrics, gsMetrics)
-        )
-      }
-
-      # compute each metric for each input
-      purrr::imap(input, function(to_eval, gsName) {
-        res <- lapply(
-          metrics[[gsName]],
-          function(x) self$metrics[[x]](to_eval, gs[[gsName]])
-        )
-        setNames(res, metrics[[gsName]])
-      })
     }
   ),
   private = list(
