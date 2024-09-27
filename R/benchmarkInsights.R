@@ -261,7 +261,7 @@ benchmarkInsights <- R6::R6Class(
         predictor_labels['(Intercept)'] <- paste0(input_model, " (Intercept)")
       }
       
-      to_plot <- relabel_predictors(to_plot, predictor_labels)
+      to_plot <- dotwhisker::relabel_predictors(to_plot, predictor_labels)
       
       g <- dotwhisker::dwplot(to_plot,
                               vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +

@@ -116,6 +116,7 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   # Ensure the heatmap object is not NULL
   expect_true(!is.null(heatmap))
   expect_true(!is.null(grouped_boxplot))
+  expect_true(!is.null(forest_plot))
 })
 
 
@@ -287,40 +288,6 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
   expect_true(!is.null(scatterplot))
 })
 
-
-
-library(dotwhisker)
-library(tidyverse)
-library(broom)
-
-
-
-to_plot <-  benchmark$evalSummary  %>%
-  group_by(metric) %>%
-  do(broom::tidy(lm( result ~  Compare, data = .))) %>%
-  rename(model = metric) %>%  
-  relabel_predictors(c(
-    '(Intercept)' = "ComparescDesign2"))
-
-g <- dotwhisker::dwplot(to_plot,
-            vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) + theme_minimal()  + 
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.background = element_rect(colour = "black", size=1, fill=NA)) 
-
-
-to_plot <-  benchmark$evalSummary  %>%
-  group_by(datasetID) %>%
-  do(broom::tidy(lm( result ~ Compare, data = .))) %>%
-  rename(model = datasetID) %>%  
-  relabel_predictors(c(
-    '(Intercept)' = "metric"))
-
-g <- dotwhisker::dwplot(to_plot,
-                        vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) + theme_minimal()  + 
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.background = element_rect(colour = "black", size=1, fill=NA)) 
 
 
 
