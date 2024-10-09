@@ -17,8 +17,6 @@ library(TrioR)
 - Here, we use the survival data from survBenchmark-figShare. 
 - This survival data is clinical (lung). 
 - The Figshare ID is [26142922/47361046](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361046) 
-
-
 ```{r}
 testCache <- system.file("extdata", "testdata", package = "TrioR")
 trio <- Trio$new("figshare:26142922/47361046", cachePath = testCache)
@@ -57,9 +55,6 @@ surv_risk_pred <- function(model, data) {
     return(unname(stats::predict(model, newdata = data, type = "risk")))
   }
 }
-
-
-
 surv_obj <- function(data) {
   sub_data_test <- data[data[,"index"] == "test", ]
   sub_data_train <- data[data[,"index"] == "train", ]
@@ -67,9 +62,6 @@ surv_obj <- function(data) {
   train_surv_obj <- with(sub_data_train, survival::Surv(time, status))
   return(list(train_surv_obj, test_surv_obj))
 }
-
-
-
 ```
 
 Here are the metrics function
@@ -99,6 +91,7 @@ ghCIndexMetric <- function(to_eval, gs) {
 brierScoreMetric <- function(to_eval, gs) {
   time <- gs[[1]][,"time"]
   brier_score <- survAUC::predErr(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]],times=time, type = "brier", int.type = "unweighted")$error
+  brier_score <- brier_score[is.finite(brier_score)]
   return(mean(brier_score))
 }
 
@@ -109,7 +102,6 @@ timeDependentAUCMetric <- function(to_eval, gs) {
 }
 
 ```
-
 
 # TrioR demo
 
@@ -124,18 +116,18 @@ trio$addMetric("Uno C-Index", unoCIndexMetric)
 trio$addMetric("GHCI C-Index", ghCIndexMetric)
 trio$addMetric("Brier Score", brierScoreMetric)
 trio$addMetric("Time Dependent AUC", timeDependentAUCMetric)
+
+# surv_obj_actual <- surv_obj(data)
+# trio$addGS("surv_obj", surv_obj_actual, c("Harrel C-Index", "Begg C-Index", "Uno C-Index", "GHCI C-Index", "Brier Score", "Time Dependent AUC"))
 trio$addGS("surv_obj", surv_obj, c("Harrel C-Index", "Begg C-Index", "Uno C-Index", "GHCI C-Index", "Brier Score", "Time Dependent AUC"))
+# trio$addGS("surv_obj", surv_obj, c("Harrel C-Index", "Begg C-Index", "Uno C-Index", "GHCI C-Index", "Brier Score", "Time Dependent AUC"))
 
 actual <- trio$getGS("surv_obj") 
-
-
 ```
 
 ```{r}
 evaluation <- trio$evaluate(list(surv_obj = expected))
-
 evaluation
-
 ```
 
 ```{r}
@@ -153,3 +145,5 @@ expect_equal(timeDependentAUCMetric(expected, actual[[1]]), purrr::pluck(evaluat
 ```
 
 
+Note:
+- One TrioR only has one dataset
