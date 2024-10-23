@@ -34,16 +34,18 @@ Trio <- R6::R6Class(
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID, cachePath = FALSE) {
-      # parse user input and set dataSource and dataSourceID
-      private$parseIDString(datasetID)
-
-      self$cachePath <- getTrioCachePath(cachePath)
-      self$data <- private$getData(
-        self$dataSource, self$dataSourceID, self$cachePath
-      )
-      if (!is.null(private$datasetID)) {
-        #private$populateTrio()
+    initialize = function(datasetID = NULL, cachePath = FALSE) {
+      if (!is.null(datasetID)) {
+        # parse user input and set dataSource and dataSourceID
+        private$parseIDString(datasetID)
+        
+        self$cachePath <- getTrioCachePath(cachePath)
+        self$data <- private$getData(
+          self$dataSource, self$dataSourceID, self$cachePath
+        )
+        if (!is.null(private$datasetID)) {
+          #private$populateTrio()
+        }
       }
     },
 
