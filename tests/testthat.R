@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(TrioR)
+library(BenchHub)
 
-test_check("TrioR")
+test_check("BenchHub")

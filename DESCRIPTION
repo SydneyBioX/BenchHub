@@ -1,36 +1,54 @@
-Package: TrioR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Package: BenchHub
+Title: Comprehensive Collection of Curated Benchmarking Datasets and their Evaluation
+Version: 0.0.1
+Authors@R: c(person("Cabiria", "Liang", email = "xiaoqi.liang@sydney.edu.au", role = c("aut")),
+             person("Sanghyun", "Kim", email = "sanghyun.kim@sydney.edu.au", role = c("aut")),
+             person("Nick", "Robertson", email = "nicholas.robertson@sydney.edu.au", role = c("aut", "cre")),
+             person("Marni", "Torkel", email = "marni.torkel@sydney.edu.au", role = c("aut")),
+             person("Yue", "Cao", email = "marni.torkel@sydney.edu.au", role = c("aut")),
+             person("Dario", "Strbenac", email = "dario.strbenac@sydney.edu.au", role = c("aut")),
+             person("Jean", "Yang", email = "jean.yang@sydney.edu.au", role = c("aut")))
+Description: The trio is the combination of a data set, a metric and auxiliary data which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and auxiliary data. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-Imports: 
+RoxygenNote: 7.3.2
+Depends: ggplot2
+Imports:
     cli,
     fs,
     glue,
     R6,
     rlang,
+    readr,
     httr2,
     stringr,
     purrr,
     dplyr,
+    reshape2,
     utils,
     curl,
-    googlesheets4
+    googlesheets4,
+    survAUC,
+    Hmisc,
+    ggrepel,
+    ggsci,
+    ggcorrplot,
+    broom,
+    dotwhisker
 Suggests: 
     anndata,
     GEOquery,
+    ExperimentHub,
     knitr,
     ks,
     rmarkdown,
     SingleCellExperiment,
     SummarizedExperiment,
+    survival,
+    cvTools,
+    funkyheatmap,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3

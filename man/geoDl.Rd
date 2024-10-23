@@ -8,11 +8,11 @@ geoDl(ID, cachePath)
 }
 \arguments{
 \item{ID}{The ID, formatted either "GSEXXXXXX" for the main file or
-"GSEXXXXXX/SupFile.tar.gz" or a supplimentary file.}
+"GSEXXXXXX/SupFile.tar.gz" or a supplementary file.}
 
 \item{cachePath}{The path to store the downloaded file.}
 }
 \description{
-Download main or supplimentary files from GEO.
+Download main or supplementary files from GEO.
 }
 \keyword{internal}

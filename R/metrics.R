@@ -5,11 +5,13 @@ kdeMetric <- function(gs, to_eval) {
   ) |> purrr::pluck("zstat")
 }
 
+#' @importFrom Hmisc rcorr.cens
 harrelCIndexMetric <- function(gs, to_eval) {
   harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
   return(harrelC1["C Index"])
 }
 
+#' @import survAUC
 beggCIndexMetric <- function(gs, to_eval) {
   # cli::cli_abort(c(
   #   "Begg's c-index is not supported yet! :("

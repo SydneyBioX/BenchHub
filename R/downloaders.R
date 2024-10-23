@@ -126,10 +126,10 @@ figshareDl <- function(ID, cachePath) {
 }
 
 #' Download files from geo
-#' @description Download main or supplimentary files from GEO.
+#' @description Download main or supplementary files from GEO.
 #' @param ID
 #'   The ID, formatted either "GSEXXXXXX" for the main file or
-#'   "GSEXXXXXX/SupFile.tar.gz" or a supplimentary file.
+#'   "GSEXXXXXX/SupFile.tar.gz" or a supplementary file.
 #' @param cachePath
 #'   The path to store the downloaded file.
 #' @keywords internal
@@ -137,7 +137,7 @@ geoDl <- function(ID, cachePath) {
   if (!requireNamespace("GEOquery", quietly = TRUE)) {
     cli::cli_abort(c(
       "Install {.pkg GEOquery} to get data from {.url ncbi.nlm.nih.gov/geo}.",
-      "i" = "You can get it by running: {.code install.packages('GEOquery')}"
+      "i" = "You can get it by running: {.code BiocManager::install('GEOquery')}"
     ))
   }
 
@@ -199,6 +199,13 @@ experimenthubDl <- function(ID, cachePath) {
   # cli::cli_abort(c(
   #   "ExperimentHub Downloads are not supported yet! :("
   # ))
+  
+  if (!requireNamespace("ExperimentHub", quietly = TRUE)) {
+    cli::cli_abort(c(
+      "Install {.pkg ExperimentHub} to get data from ExperimentHub.",
+      "i" = "You can get it by running: {.code BiocManager::install('ExperimentHub')}"
+    ))
+  }  
   
   # load ExperimentHub
   eh <- ExperimentHub::ExperimentHub()

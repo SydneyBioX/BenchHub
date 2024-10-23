@@ -25,7 +25,7 @@ loadFile <- function(filePath) {
   } else if (tolower(ext) == "csv") {
     if (!requireNamespace("readr", quietly = TRUE)) {
       cli::cli_abort(c(
-        "Reading H5AD files requires the {.pkg readr} package.",
+        "Reading CSV files requires the {.pkg readr} package.",
         "i" = "Check {.url https://readr.tidyverse.org/} for instuctions."
       ))
     }

@@ -1,10 +1,9 @@
 fraction_zeros <- function(sce) {
-  data <- data.frame(t(SummarizedExperiment::assay(sce, "counts")))
-  sapply(data, function(col) sum(col == 0) / length(col))
+  rowMeans(SummarizedExperiment::assay(sce, "counts") > 0)
 }
 
 test_that("Evaluation works.", {
-  testCache <- system.file("extdata", "testdata", package = "TrioR")
+  testCache <- tempdir()
 
   trio <- Trio$new("figshare:26054188/47112109", cachePath = testCache)
 
@@ -48,7 +47,7 @@ test_that("Evaluation works.", {
 
 
 test_that("get data by name", {
-  testCache <- system.file("extdata", "testdata", package = "TrioR")
+  testCache <- tempdir()
   testthat::expect_no_error(Trio$new("MOBNEW", cachePath = testCache))
 
   testthat::expect_error(Trio$new("InvalidDatasetName"))
