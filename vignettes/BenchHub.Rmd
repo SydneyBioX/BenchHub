@@ -8,8 +8,7 @@ vignette: >
 --- 
 
 ```{r setup, message=FALSE}
-devtools::load_all()
-library(TrioR)
+library(BenchHub)
 ```
 
 # Import data
@@ -18,7 +17,7 @@ library(TrioR)
 - This survival data is clinical (lung). 
 - The Figshare ID is [26142922/47361046](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361046) 
 ```{r}
-testCache <- system.file("extdata", "testdata", package = "TrioR")
+testCache <- tempdir()
 trio <- Trio$new("figshare:26142922/47361046", cachePath = testCache)
 data <- trio |> purrr::pluck("data", 1)
 
@@ -131,17 +130,17 @@ evaluation
 ```
 
 ```{r}
-expect_equal(harrelCIndexMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")) 
+harrelCIndexMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "Harrel C-Index")
 
-expect_equal(beggCIndexMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "Begg C-Index"))  
+beggCIndexMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "Begg C-Index")
 
-expect_equal(unoCIndexMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Uno C-Index")) 
+unoCIndexMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "Uno C-Index")
 
-expect_equal(ghCIndexMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "GHCI C-Index"))  
+ghCIndexMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "GHCI C-Index")
 
-expect_equal(brierScoreMetric(expected, actual[[1]]) , purrr::pluck(evaluation, "surv_obj", "Brier Score")) 
+brierScoreMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "Brier Score")
 
-expect_equal(timeDependentAUCMetric(expected, actual[[1]]), purrr::pluck(evaluation, "surv_obj", "Time Dependent AUC"))  
+timeDependentAUCMetric(expected, actual[[1]]) == purrr::pluck(evaluation, "surv_obj", "Time Dependent AUC")
 ```
 
 

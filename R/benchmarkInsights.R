@@ -1,4 +1,5 @@
 #' @importFrom R6 R6Class
+#' @import ggplot2
 NULL
 
 #' A benchmarkInsights object
@@ -10,7 +11,7 @@ NULL
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'   
 #' @examples
-#' TODO
+#' # TODO
 #' @export
 benchmarkInsights <- R6::R6Class(
   classname = "benchmarkInsights",
@@ -51,10 +52,19 @@ benchmarkInsights <- R6::R6Class(
       }
     },
     
-    #' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
-    #' @param evalSummary A dataframe containing the evaluation summary.
-    #' @return A heatmap object.
+#' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
+#' @param evalSummary A dataframe containing the evaluation summary.
+#' @importFrom reshape2 dcast    
+#' @return A heatmap object.
+  
+    
     getHeatmap = function(evalSummary) {
+      if (!requireNamespace("reshape2", quietly = TRUE)) {
+        cli::cli_abort(c(
+        "Install {.pkg reshape2}.",
+        "i" = "You can get it by running: {.code install.packages('reshape2')}"
+        ))
+      }
       if (is.null(evalSummary)) {
         stop("Evaluation summary is required to generate heatmap.")
       }
@@ -93,11 +103,11 @@ benchmarkInsights <- R6::R6Class(
         stop("Input data must be a dataframe.")
       }
       
-      th <- theme(text=element_text(size=12),
+      th <- ggplot2::theme(text=element_text(size=12),
                   axis.text.x = element_text(angle = 45, hjust = 1),
                   panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank(),
-                  panel.background = element_rect(colour = "black", size=0.2, fill=NA))
+                  panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
 
       minievalSummary_aggreate <- minievalSummary %>%
         group_by(GS, Compare, metric) %>%
@@ -125,12 +135,13 @@ benchmarkInsights <- R6::R6Class(
     #' @description Creates a scatter plot for the same GS, with an two compared metrics.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
     #' @return A ggplot2 line plot object.
+    #' @importFrom ggrepel geom_label_repel
     getScatterplot = function(minievalSummary) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
     
-      minievalSummary_aggreate <- benchmark$evalSummary %>%
+      minievalSummary_aggreate <- minievalSummary %>%
         group_by(Compare, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
@@ -138,7 +149,7 @@ benchmarkInsights <- R6::R6Class(
       metric_types <- unique(minievalSummary_aggreate$metric)
       
       result <- minievalSummary_aggreate %>%
-        pivot_wider(names_from = metric, values_from = average_result) %>%
+        tidyr::pivot_wider(names_from = metric, values_from = average_result) %>%
         rename(metric_a = !!metric_types[1], metric_b = !!metric_types[2])
       
       plot <- ggplot(result, aes(x = metric_a, y = metric_b, label = Compare)) +
@@ -157,6 +168,7 @@ benchmarkInsights <- R6::R6Class(
     #' @description Creates boxplot plots for the mutiple GS, different Compare, one metric.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
     #' @return A ggplot2 line plot object.
+    #' @importFrom ggsci scale_fill_npg
     getBoxplot = function(minievalSummary) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
@@ -168,7 +180,7 @@ benchmarkInsights <- R6::R6Class(
         theme(text=element_text(size=12 ),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
-              panel.background = element_rect(colour = "black", size=0.2, fill=NA)) +
+              panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA)) +
         ggsci::scale_fill_npg()
 
        return(p1)
@@ -179,6 +191,7 @@ benchmarkInsights <- R6::R6Class(
     #' @param minievalSummary A subset of the evaluation summary. It must include columns relevant to the input type (GS, metric, Compare) and the result values.
     #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "GS", "metric", or "Compare".
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
+    #' @importFrom ggcorrplot ggcorrplot
     getCorplot = function(minievalSummary, input_type) {
       
       if (!is.data.frame(minievalSummary)) {
@@ -189,22 +202,22 @@ benchmarkInsights <- R6::R6Class(
         stop("Invalid input_type. Must be 'GS', 'metric', or 'Compare'.")
       }
       
-      df <- benchmark$evalSummary
+      df <- minievalSummary
       
       if (input_type == "metric") {
         pivot_df <- df %>%
           select(datasetID, Compare, metric, result) %>%
-          pivot_wider(names_from = metric, values_from = result, values_fn = mean)
+          tidyr::pivot_wider(names_from = metric, values_from = result, values_fn = mean)
         
       } else if (input_type == "GS") {
         pivot_df <- df %>%
           select(datasetID, Compare, GS, result) %>%
-          pivot_wider(names_from = GS, values_from = result, values_fn = mean)
+          tidyr::pivot_wider(names_from = GS, values_from = result, values_fn = mean)
         
       } else if (input_type == "Compare") {
         pivot_df <- df %>%
           select(datasetID, GS, Compare, result) %>%
-          pivot_wider(names_from = Compare, values_from = result, values_fn = mean)
+          tidyr::pivot_wider(names_from = Compare, values_from = result, values_fn = mean)
       }
       
       cor_matrix <- pivot_df %>%
@@ -234,6 +247,8 @@ benchmarkInsights <- R6::R6Class(
     #' @param input_group A string specifying the grouping variable (only "datasetID", "Compare", or "GS" allowed).
     #' @param input_model A string specifying the model variable (only "datasetID", "Compare", or "GS" allowed).
     #' @return A forest plot showing the comparison of models across groups.
+    #' @importFrom broom tidy
+    #' @importFrom dotwhisker relabel_predictors
     getForestplot = function(minievalSummary, input_group, input_model) {
       
       allowed_values <- c("datasetID", "Compare", "GS", "metric")
@@ -255,7 +270,7 @@ benchmarkInsights <- R6::R6Class(
       
       predictor_labels <- to_plot$term %>%
         unique() %>%
-        set_names(., .)
+        rlang::set_names(., .)
       
       if ('(Intercept)' %in% predictor_labels) {
         predictor_labels['(Intercept)'] <- paste0(input_model, " (Intercept)")
@@ -268,7 +283,7 @@ benchmarkInsights <- R6::R6Class(
         theme_minimal() + 
         theme(panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
-              panel.background = element_rect(colour = "black", size = 1, fill = NA))
+              panel.background = element_rect(colour = "black", linewidth = 1, fill = NA))
       
       return(g)
     }
