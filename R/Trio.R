@@ -34,13 +34,13 @@ Trio <- R6::R6Class(
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID = NULL, data = NULL, cachePath = FALSE) {
+    initialize = function(datasetID = NULL, aux_data = NULL, cachePath = FALSE) {
       # if the user-provided data doesn't have a datasetID
       if (is.null(datasetID)) {
-        if (is.null(data)) {
-          cli::cli_abort("If datasetID is not provided, you must provide a data object!")
+        if (is.null(aux_data)) {
+          cli::cli_abort("If datasetID is not provided, you must provide auxiliary data!")
         } else {
-          self$data = data
+          self$data = aux_data
         }
       } else {
         # parse user input and set dataSource and dataSourceID
