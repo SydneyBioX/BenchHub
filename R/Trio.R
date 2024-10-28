@@ -21,6 +21,7 @@ Trio <- R6::R6Class(
   public = list(
     cachePath = NULL,
     data = NULL,
+    aux_data = NULL,
     goldStandards = list(),
     metrics = list(),
     dataSource = NULL,
@@ -34,14 +35,10 @@ Trio <- R6::R6Class(
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID = NULL, aux_data = NULL, cachePath = FALSE) {
-      # if the user-provided data doesn't have a datasetID
+    initialize = function(datasetID = NULL, cachePath = FALSE) {
+      # if users have their own data without datasetID
       if (is.null(datasetID)) {
-        if (is.null(aux_data)) {
-          cli::cli_abort("If datasetID is not provided, you must provide auxiliary data!")
-        } else {
-          self$data = aux_data
-        }
+        datasetID <- readline(prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: ")
       } else {
         # parse user input and set dataSource and dataSourceID
         private$parseIDString(datasetID)
@@ -170,6 +167,13 @@ Trio <- R6::R6Class(
       }
 
       gs(self$data)
+    },
+    
+    #' @description
+    #' Add auxiliary data to the Trio in case users have their own data.
+    #' @param aux_data Auxiliary data provided by users.
+    addAuxData = function(aux_data) {
+      self$aux_data = aux_data
     },
 
     #' @description
