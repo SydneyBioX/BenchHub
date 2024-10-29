@@ -21,8 +21,7 @@ Trio <- R6::R6Class(
   public = list(
     cachePath = NULL,
     data = NULL,
-    aux_data = NULL,
-    goldStandards = list(),
+    auxData = list(),
     metrics = list(),
     dataSource = NULL,
     dataSourceID = NULL,
@@ -38,6 +37,7 @@ Trio <- R6::R6Class(
     initialize = function(datasetID = NULL, cachePath = FALSE) {
       # if users have their own data without datasetID
       if (is.null(datasetID)) {
+        # prompt users to input their own new datasetID
         datasetID <- readline(prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: ")
       } else {
         # parse user input and set dataSource and dataSourceID
@@ -56,40 +56,40 @@ Trio <- R6::R6Class(
     #' @description
     #' Add a gold standard to the Trio.
     #' @param name A string specifying the name of the gold standard.
-    #' @param gs
-    #'   The goldstandard. An object to be compared or a function to be run on
+    #' @param auxData
+    #'   The auxiliary data. An object to be compared or a function to be run on
     #'   the data.
     #' @param metrics
     #'   A list of one or more metrics names used to campare gs with the input
     #'   to evaluate.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
-    addGS = function(name, gs, metrics, args = NULL) {
-      if (name %in% names(self$goldStandards)) {
+    addAuxData = function(name, auxData, metrics, args = NULL) {
+      if (name %in% names(self$auxData)) {
         cli::cli_warn(c(
           paste0(
-            "A gold standard `{name}` is already present in this Trio,",
+            "Auxiliary data `{name}` is already present in this Trio,",
             " overwriting."
           )
         ))
       }
 
-      if (methods::is(gs, "function")) {
+      if (methods::is(auxData, "function")) {
         # Assign a function that adds args and applies to each element in
         # self$data, returning the result.
-        self$goldStandards[[name]] <- list(
+        self$auxData[[name]] <- list(
           "gs" = function(data) {
             lapply(
               data, # a list of datasets to apply `gs` to
-              \(x) do.call(gs, append(list(x), args))
+              \(x) do.call(auxData, append(list(x), args))
             )
           },
           "metrics" = metrics
         )
       } else {
         # TODO: Validate the gold standard objects.
-        self$goldStandards[[name]] <- list(
-          "gs" = gs,
+        self$auxData[[name]] <- list(
+          "auxData" = auxData,
           "metrics" = metrics
         )
       }
@@ -120,60 +120,53 @@ Trio <- R6::R6Class(
         ))
       }
       # TODO: Validate metric!!
-      # metric functions should follow this format (gs, to_eval)
-      self$metrics[[name]] <- function(gs, to_eval) {
-        do.call(metric, append(list(gs, to_eval), args))
+      # metric functions should follow this format (auxData, to_eval)
+      self$metrics[[name]] <- function(auxData, to_eval) {
+        do.call(metric, append(list(auxData, to_eval), args))
       }
     },
 
     #' @description
     #' Get metrics by gold standard name.
     #' @param gsName A string specifying the name of the gold standard.
-    getMetrics = function(gsName) {
-      if (!gsName %in% names(self$goldStandards)) {
+    getMetrics = function(auxDataName) {
+      if (!auxDataName %in% names(self$auxData)) {
         cli::cli_abort(c(
-          "{.val {gsName} is not a gold standard in this object.}",
-          "i" = "Choose one of {.val {names(self$goldStandards)}}"
+          "{.val {auxDataName} is not auxiliary data in this object.}",
+          "i" = "Choose one of {.val {names(self$auxData)}}"
         ))
       }
-      purrr::pluck(self$goldStandards, gsName, "metrics")
+      purrr::pluck(self$auxData, auxDataName, "metrics")
     },
 
     #' @description
-    #' Get a gold standard by name.
-    #' @param name A string specifying the name of the gold standard.
-    getGS = function(name) {
-      if (length(self$goldStandards) == 0) {
+    #' Get auxiliary data by name.
+    #' @param name A string specifying the name of the auxiliary data.
+    getAuxData = function(name) {
+      if (length(self$auxData) == 0) {
         cli::cli_abort(c(
-          "There are no gold standards in this Trio!",
-          "i" = "Add some using {.code Trio$addGS(...)}."
+          "There is no auxiliary data in this Trio!",
+          "i" = "Add some using {.code Trio$addAuxData(...)}."
         ))
       }
-      if (!name %in% names(self$goldStandards)) {
-        gsNames <- names(self$goldStandards)
+      if (!name %in% names(self$auxData)) {
+        auxDataNames <- names(self$auxData)
         cli::cli_abort(c(
-          "Gold standard {.val {name}} could not be found.",
+          "Auxiliary data {.val {name}} could not be found.",
           "i" = paste0(
-            "Add it using {.code Trio$addGS(.)} or choose one of ",
-            "{.val {gsNames}}"
+            "Add it using {.code Trio$addAuxDataS(.)} or choose one of ",
+            "{.val {auxDataNames}}"
           )
         ))
       }
 
-      gs <- self$goldStandards[[name]]$gs
+      auxData <- self$auxData[[name]]$auxData
 
-      if (!methods::is(gs, "function")) {
-        return(gs)
+      if (!methods::is(auxData, "function")) {
+        return(auxData)
       }
 
-      gs(self$data)
-    },
-    
-    #' @description
-    #' Add auxiliary data to the Trio in case users have their own data.
-    #' @param aux_data Auxiliary data provided by users.
-    addAuxData = function(aux_data) {
-      self$aux_data = aux_data
+      auxData(self$data)
     },
 
     #' @description
@@ -183,38 +176,38 @@ Trio <- R6::R6Class(
     #' @param separateMethods If `input` contains separate sublists to evaluate
     #'   for each method.
     evaluate = function(input, separateMethods = FALSE) {
-      # check if a gold standard is available for each element of the input.
+      # check if auxiliary data is available for each element of the input.
       if (separateMethods) {
         evalList <- lapply(input, self$evaluate)
         return(evalList)
       } else {
-        gsAvail <- names(input) %in% names(self$goldStandards)
-        if (all(!gsAvail)) {
-          gsNames <- names(self$goldStandards)
+        auxDataAvail <- names(input) %in% names(self$auxData)
+        if (all(!auxDataAvail)) {
+          auxDataNames <- names(self$auxData)
           cli::cli_abort(c(
-            "None of the specified gold standards are available in this object.",
+            "None of the specified auxiliary data are available in this object.",
             "i" = (
-              "Add it using {.code Trio$addGS(.)} or choose from {.val {gsNames}}"
+              "Add it using {.code Trio$addAuxData(.)} or choose from {.val {auxDataNames}}"
             )
           ))
         }
-        if (any(!gsAvail)) {
-          unavail <- names(input)[!gsAvail]
+        if (any(!auxDataAvail)) {
+          unavail <- names(input)[!auxDataAvail]
           cli::cli_inform(c(
             paste0(
-              "Gold standard{?s} {.val {unavail}} from {.var input} {?is/are} ",
+              "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
               "not available in this object."
             ),
-            "i" = "Evaluating the following: {.var {names(input)[gsAvail]}}"
+            "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
           ))
         }
 
-        # subset to inputs with available GS
-        input <- input[gsAvail]
+        # subset to inputs with available auxData
+        input <- input[auxDataAvail]
 
-        # compute/retrive gold standards
-        gs <- setNames(
-          lapply(names(input), self$getGS) |> unlist(recursive = FALSE),
+        # compute/retrive auxiliary data
+        auxData <- setNames(
+          lapply(names(input), self$getAuxData) |> unlist(recursive = FALSE),
           names(input)
         )
 
@@ -231,7 +224,7 @@ Trio <- R6::R6Class(
         if (length(unavailMetrics) == length(allMetrics)) {
           cli::cli_abort(c(
             paste0(
-              "None of the metrics related to the gold standards being evalutaed",
+              "None of the metrics related to the auxiliary data being evalutaed",
               " are available in the object."
             ),
             "i" = "Add some of the following: {.val {allMetrics}}."
@@ -250,17 +243,17 @@ Trio <- R6::R6Class(
           # remove unavailable metrics from the nested list
           metrics <- lapply(
             metrics,
-            \(gsMetrics) Filter(\(x) !x %in% unavailMetrics, gsMetrics)
+            \(auxDataMetrics) Filter(\(x) !x %in% unavailMetrics, auxDataMetrics)
           )
         }
 
         # compute each metric for each input
-        purrr::imap(input, function(to_eval, gsName) {
+        purrr::imap(input, function(to_eval, auxDataName) {
           res <- lapply(
-            metrics[[gsName]],
-            function(x) self$metrics[[x]](to_eval, gs[[gsName]])
+            metrics[[auxDataName]],
+            function(x) self$metrics[[x]](to_eval, auxData[[auxDataName]])
           )
-          setNames(res, metrics[[gsName]])
+          setNames(res, metrics[[auxDataName]])
         })
       }
     }
@@ -340,24 +333,24 @@ Trio <- R6::R6Class(
       ) |>
         dplyr::filter(datasetID == private$datasetID))
 
-      goldStandards <- gSMetaData |> purrr::pluck("Gold Standard")
+      auxData <- gSMetaData |> purrr::pluck("Auxiliary Data")
 
       metrics <- suppressMessages(googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Task-GS Type-Metric",
       ) |>
-        dplyr::filter(`GS Type` %in% goldStandards) |>
+        dplyr::filter(`GS Type` %in% auxData) |>
         dplyr::select(`GS Type`, `MetricID`))
 
       # add each gold standard with it's respective metrics
-      apply(gSMetaData, 1, \(gs) {
-        if (gs["is_in_data"]) {
-          if (gs["type"] == "column") {
+      apply(gSMetaData, 1, \(auxData) {
+        if (auxData["is_in_data"]) {
+          if (auxData["type"] == "column") {
             self$addGS(
-              name = gs["Gold Standard"],
-              gs = \() self$data[[1]][gs["name"]],
+              name = auxData["Auxiliary Data"],
+              auxData = \() self$data[[1]][auxData["name"]],
               metrics = metrics |>
-                dplyr::filter(`GS Type` == gs["Gold Standard"]) |>
+                dplyr::filter(`GS Type` == auxData["Auxiliary Data"]) |>
                 purrr::pluck("MetricID")
             )
           } else {
