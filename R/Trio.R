@@ -6,7 +6,7 @@ NULL
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
 #' @field data The data
-#' @field goldStandards The gold standards in the data
+#' @field auxData The auxiliary data in the data
 #' @field metrics The metric for evaluating tasks against the gold standards
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
