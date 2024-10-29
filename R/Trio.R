@@ -346,7 +346,7 @@ Trio <- R6::R6Class(
       apply(gSMetaData, 1, \(auxData) {
         if (auxData["is_in_data"]) {
           if (auxData["type"] == "column") {
-            self$addGS(
+            self$addAuxData(
               name = auxData["Auxiliary Data"],
               auxData = \() self$data[[1]][auxData["name"]],
               metrics = metrics |>
