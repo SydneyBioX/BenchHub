@@ -52,6 +52,8 @@ Trio <- R6::R6Class(
         }
       }
     },
+    
+    redundant code
 
     #' @description
     #' Add a gold standard to the Trio.
