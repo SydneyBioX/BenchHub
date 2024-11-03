@@ -207,8 +207,7 @@ Trio <- R6::R6Class(
 
         # compute/retrive auxiliary data
         auxData <- setNames(
-          lapply(names(input), self$getAuxData) |> unlist(recursive = FALSE),
-          names(input)
+          lapply(names(input), self$getAuxData), names(input)
         )
 
         # get a list of metrics to compute for each gold standard in the data
