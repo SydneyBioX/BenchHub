@@ -11,10 +11,10 @@ test_that("Evaluation works.", {
 
   expected <- fraction_zeros(sce)
 
-  trio$addGS("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
-  trio$addGS("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
+  trio$addAuxData("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
+  trio$addAuxData("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
 
-  actual <- trio$getGS("fracZero") |> purrr::pluck(1)
+  actual <- trio$getAuxData("fracZero") |> purrr::pluck(1)
 
   expect_equal(actual, expected)
 

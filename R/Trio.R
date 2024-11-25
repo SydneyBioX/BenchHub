@@ -78,7 +78,7 @@ Trio <- R6::R6Class(
         # Assign a function that adds args and applies to each element in
         # self$data, returning the result.
         self$auxData[[name]] <- list(
-          "gs" = function(data) {
+          "auxData" = function(data) {
             lapply(
               data, # a list of datasets to apply `gs` to
               \(x) do.call(auxData, append(list(x), args))
