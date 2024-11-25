@@ -7,14 +7,14 @@ test_that("Evaluation works.", {
 
   trio <- Trio$new("figshare:26054188/47112109", cachePath = testCache)
 
-  sce <- trio |> purrr::pluck("data", 1)
+  sce <- trio |> purrr::pluck("data")
 
   expected <- fraction_zeros(sce)
 
   trio$addAuxData("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
   trio$addAuxData("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
 
-  actual <- trio$getAuxData("fracZero") |> purrr::pluck(1)
+  actual <- trio$getAuxData("fracZero")
 
   expect_equal(actual, expected)
 

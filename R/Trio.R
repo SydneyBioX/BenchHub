@@ -42,13 +42,13 @@ Trio <- R6::R6Class(
       } else {
         # parse user input and set dataSource and dataSourceID
         private$parseIDString(datasetID)
-        
+
         self$cachePath <- getTrioCachePath(cachePath)
         self$data <- private$getData(
           self$dataSource, self$dataSourceID, self$cachePath
         )
         if (!is.null(private$datasetID)) {
-          #private$populateTrio()
+          # private$populateTrio()
         }
       }
     },
@@ -75,14 +75,11 @@ Trio <- R6::R6Class(
       }
 
       if (methods::is(auxData, "function")) {
-        # Assign a function that adds args and applies to each element in
+        # Assign a wrapper function that adds args applies to
         # self$data, returning the result.
         self$auxData[[name]] <- list(
           "auxData" = function(data) {
-            lapply(
-              data, # a list of datasets to apply `gs` to
-              \(x) do.call(auxData, append(list(x), args))
-            )
+            do.call(auxData, append(list(data), args))
           },
           "metrics" = metrics
         )
@@ -181,7 +178,10 @@ Trio <- R6::R6Class(
         evalList <- lapply(input, self$evaluate)
         return(evalList)
       } else {
+        # check if all the requested auxData is available
         auxDataAvail <- names(input) %in% names(self$auxData)
+
+        # if none of the auxData are available
         if (all(!auxDataAvail)) {
           auxDataNames <- names(self$auxData)
           cli::cli_abort(c(
@@ -191,6 +191,8 @@ Trio <- R6::R6Class(
             )
           ))
         }
+
+        # if some of the auxData are missing
         if (any(!auxDataAvail)) {
           unavail <- names(input)[!auxDataAvail]
           cli::cli_inform(c(
@@ -207,7 +209,7 @@ Trio <- R6::R6Class(
 
         # compute/retrive auxiliary data
         auxData <- setNames(
-          lapply(names(input), self$getAuxData) |> unlist(recursive = FALSE),
+          lapply(names(input), self$getAuxData),
           names(input)
         )
 
@@ -215,9 +217,11 @@ Trio <- R6::R6Class(
         metrics <- setNames(lapply(names(input), self$getMetrics), names(input))
 
         # get a flat list of available metrics
+        # TODO: only get metrics for current evaluation task
         allMetrics <- metrics |>
           unlist() |>
           unique()
+
         # find metrics that are not available in the trio
         unavailMetrics <- allMetrics[!allMetrics %in% names(self$metrics)]
 
@@ -323,7 +327,12 @@ Trio <- R6::R6Class(
         list("ID" = id, "cachePath" = cachePath)
       )
 
-      lapply(files, loadFile)
+      if (length(files) > 1) {
+        cli::cli_inform("Select a file to load as the dataset:")
+        files <- files[utils::menu(files)]
+      }
+
+      loadFile(files)
     },
     populateTrio = function() {
       # get the gold standard metadata from curated trio datasets
