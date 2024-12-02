@@ -137,6 +137,7 @@ benchmarkInsights <- R6::R6Class(
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
     getScatterplot = function(minievalSummary) {
+      minievalSummary <- benchmark$evalSummary
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
@@ -149,10 +150,9 @@ benchmarkInsights <- R6::R6Class(
       metric_types <- unique(minievalSummary_aggreate$metric)
       
       result <- minievalSummary_aggreate %>%
-        tidyr::pivot_wider(names_from = metric, values_from = average_result) %>%
-        rename(metric_a = !!metric_types[1], metric_b = !!metric_types[2])
+        tidyr::pivot_wider(names_from = metric, values_from = average_result) 
       
-      plot <- ggplot(result, aes(x = metric_a, y = metric_b, label = Compare)) +
+      plot <- ggplot(result, aes(x = sensitivity, y = specificity, label = Compare)) +
               geom_point(alpha = 0.4) + 
               ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = Compare)) +
               coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
@@ -193,7 +193,7 @@ benchmarkInsights <- R6::R6Class(
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
     #' @importFrom ggcorrplot ggcorrplot
     getCorplot = function(minievalSummary, input_type) {
-      
+
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
@@ -206,17 +206,17 @@ benchmarkInsights <- R6::R6Class(
       
       if (input_type == "metric") {
         pivot_df <- df %>%
-          select(datasetID, Compare, metric, result) %>%
+          dplyr::select(datasetID, Compare, metric, result) %>%
           tidyr::pivot_wider(names_from = metric, values_from = result, values_fn = mean)
         
       } else if (input_type == "GS") {
         pivot_df <- df %>%
-          select(datasetID, Compare, GS, result) %>%
+          dplyr::select(datasetID, Compare, GS, result) %>%
           tidyr::pivot_wider(names_from = GS, values_from = result, values_fn = mean)
         
       } else if (input_type == "Compare") {
         pivot_df <- df %>%
-          select(datasetID, GS, Compare, result) %>%
+          dplyr::select(datasetID, GS, Compare, result) %>%
           tidyr::pivot_wider(names_from = Compare, values_from = result, values_fn = mean)
       }
       
@@ -250,7 +250,9 @@ benchmarkInsights <- R6::R6Class(
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
     getForestplot = function(minievalSummary, input_group, input_model) {
-      
+      minievalSummary <- benchmark$evalSummary
+      input_group <- "metric"
+      input_model <- "Compare"
       allowed_values <- c("datasetID", "Compare", "GS", "metric")
       if (!input_group %in% allowed_values) {
         stop("Invalid input_group. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
@@ -262,11 +264,11 @@ benchmarkInsights <- R6::R6Class(
       # minievalSummary <- benchmark$evalSummary
       # input_group <- "metric"
       # input_model <- "Compare"
-      
+
       to_plot <- minievalSummary %>%
         group_by(!!sym(input_group)) %>%
-        do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) %>%
-        rename(model = !!sym(input_group))
+        do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
+      colnames(to_plot)[1] <- "model"
       
       predictor_labels <- to_plot$term %>%
         unique() %>%
