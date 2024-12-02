@@ -36,7 +36,8 @@ Imports:
     ggsci,
     ggcorrplot,
     broom,
-    dotwhisker
+    dotwhisker,
+    splitTools
 Suggests: 
     anndata,
     GEOquery,

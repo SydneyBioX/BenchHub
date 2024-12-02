@@ -11,6 +11,7 @@ NULL
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSouce`
+#' @field splitIndices Indices for cross-validation
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
@@ -25,6 +26,7 @@ Trio <- R6::R6Class(
     metrics = list(),
     dataSource = NULL,
     dataSourceID = NULL,
+    splitIndices = NULL,
 
     # TODO: Implement Trio$sources() (Issue #2)
 
@@ -125,7 +127,7 @@ Trio <- R6::R6Class(
 
     #' @description
     #' Get metrics by gold standard name.
-    #' @param gsName A string specifying the name of the gold standard.
+    #' @param auxDataName A string specifying the name of the gold standard.
     getMetrics = function(auxDataName) {
       if (!auxDataName %in% names(self$auxData)) {
         cli::cli_abort(c(
@@ -260,6 +262,39 @@ Trio <- R6::R6Class(
           setNames(res, metrics[[auxDataName]])
         })
       }
+    },
+
+    #' @description
+    #' Create a cross-validation indices.
+    #' @param y
+    #'   A variable to use for statified sampling. If `stratify` is false, a
+    #'   vector the length of the data.
+    #' @param n_fold Number of folds. Defaults to `5L`.
+    #' @param n_repeat Number of repeats. Defaults to `1L`.
+    #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
+    split = function(y,
+                     n_fold = 5L, n_repeat = 1L, stratify = TRUE) {
+      # If indices already exist.
+      if (!is.null(self$splitIndices)) {
+        # ask user to confirm that they want to overwrite the current split
+        overwrite <- utils::askYesNo(
+          "A split already exists. Would you like to overwrite it? (yes/[no])",
+          default = FALSE
+        )
+        if (!overwrite) {
+          cli::cli_inform(c(
+            "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
+          ))
+          invisible(NULL)
+        }
+      }
+
+      self$splitIndices <- splitTools::create_folds(
+        y,
+        k = n_fold,
+        type = if_else(stratify, "stratified", "basic"),
+        m_rep = n_repeat
+      )
     }
   ),
   private = list(
