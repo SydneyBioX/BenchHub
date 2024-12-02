@@ -137,7 +137,6 @@ benchmarkInsights <- R6::R6Class(
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
     getScatterplot = function(minievalSummary) {
-      minievalSummary <- benchmark$evalSummary
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
@@ -250,9 +249,6 @@ benchmarkInsights <- R6::R6Class(
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
     getForestplot = function(minievalSummary, input_group, input_model) {
-      minievalSummary <- benchmark$evalSummary
-      input_group <- "metric"
-      input_model <- "Compare"
       allowed_values <- c("datasetID", "Compare", "GS", "metric")
       if (!input_group %in% allowed_values) {
         stop("Invalid input_group. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
@@ -268,6 +264,7 @@ benchmarkInsights <- R6::R6Class(
       to_plot <- minievalSummary %>%
         group_by(!!sym(input_group)) %>%
         do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
+      
       colnames(to_plot)[1] <- "model"
       
       predictor_labels <- to_plot$term %>%
