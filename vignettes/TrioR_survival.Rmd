@@ -1,0 +1,324 @@
+---
+title: "TrioR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TrioR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+--- 
+
+```{r setup, message=FALSE}
+devtools::load_all()
+library(BenchHub)
+library(limma)
+```
+
+# TrioB1
+
+Calculate the accuracy of survival model prediction
+
+- Here, we use the survival data from survBenchmark-figShare. 
+- This survival data is clinical (lung). 
+- The Figshare ID is [26142922/47361079](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361079) 
+
+```{r, message=FALSE}
+testCache <- tempdir()
+trioB1 <- Trio$new("figshare:26142922/47361079", cachePath = testCache)
+data <- trioB1 |> purrr::pluck("data")
+```
+
+# Preprocessing: Feature selection of omics data
+
+```{r}
+data_filtered <- data[, !grepl("\\.\\.\\.1|time", colnames(data))]
+data_filtered$status <- factor(data_filtered$status, levels = c(0, 1))
+design <- model.matrix(~ 0 + data_filtered$status)
+colnames(design) <- c("Group0", "Group1")
+
+expression_data <- t(data_filtered[, sapply(data_filtered, is.numeric) & colnames(data_filtered) != "status"])
+
+fit <- lmFit(expression_data, design)
+contrast_matrix <- makeContrasts(Group1 - Group0, levels = design)
+fit2 <- contrasts.fit(fit, contrast_matrix)
+fit2 <- eBayes(fit2)
+
+top_genes <- topTable(fit2, number = 100, adjust = "BH", sort.by = "P")
+
+top_gene_names <- rownames(top_genes)
+data_new <- data[, c(top_gene_names, "time", "status")]
+
+trioB1$data <- data_new
+```
+
+
+Prepare survival model 
+
+In this example, we use Cox proportional hazards regression model. 
+Since we use c-index as evaluation metric, we here usethe Cross-validation folds for an example. 
+
+Preapre function
+
+- surv_risk_pred: risk prediction/expectation
+- surv_obj: survival object, this is for Gold Standard
+
+```{r}
+surv_risk_pred <- function(model, data) {
+  if (is.null(data)) {
+    return(unname(stats::predict(model, type = "risk")))
+  } else {
+    return(unname(stats::predict(model, newdata = data, type = "risk")))
+  }
+}
+surv_obj <- function(data) {
+  sub_data_test <- data[data[,"index"] == "test", ]
+  sub_data_train <- data[data[,"index"] == "train", ]
+  test_surv_obj <- with(sub_data_test, survival::Surv(time, status))
+  train_surv_obj <- with(sub_data_train, survival::Surv(time, status))
+  return(list(train_surv_obj, test_surv_obj))
+}
+
+harrelCIndexMetric <- function(to_eval, gs) {
+  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
+  return(harrelC1["C Index"])
+}
+```
+
+Add the metric and AuxData into the trioB1
+
+```{r}
+trioB1$addMetric("Harrel C-Index", harrelCIndexMetric)
+trioB1$addAuxData("surv_obj", surv_obj, c("Harrel C-Index"))
+```
+
+# 5 repeated 5 fold cross validation
+
+prepare cv index
+
+```{r}
+get_cv_index <- function(data, n, k) {
+  
+  all_repeats <- vector("list", length = n)
+  
+  for (r in 1:n) {  
+    train_indices <- vector("list", length = k)
+    test_indices <- vector("list", length = k)
+
+    shuffled_indices <- sample(1:nrow(data))  
+    fold_size <- ceiling(nrow(data) / k)
+    folds <- split(shuffled_indices, ceiling(seq_along(shuffled_indices) / fold_size))
+
+    for (i in seq_along(folds)) {
+      test_indices[[i]] <- folds[[i]]  
+      train_indices[[i]] <- setdiff(shuffled_indices, folds[[i]])  
+    }
+    
+    all_repeats[[r]] <- list(train = train_indices, test = test_indices)
+  }
+  
+  return(all_repeats)
+}
+
+```
+
+prepare evaluation
+
+```{r}
+eval_repeated_cv_survival <- function(trio, cv_indices) {
+  data <- trioB1 |> purrr::pluck("data")
+
+  cv_repeats <- length(cv_indices) 
+  cv_folds <- length(cv_indices[[1]]$train)  
+  cindex_results <- numeric(cv_repeats * cv_folds)
+  index <- 1
+
+  for (r in seq_len(cv_repeats)) {
+    train_indices_list <- cv_indices[[r]]$train
+    test_indices_list <- cv_indices[[r]]$test
+    
+    for (j in seq_len(cv_folds)) {
+      test_id <- test_indices_list[[j]]
+      train_id <- train_indices_list[[j]]
+
+      test <- data[test_id, ]
+      train <- data[train_id, ]
+
+      fit <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+
+      data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+      trioB1$data <- data
+
+      predicted <- list(
+        ifelse(is.infinite(surv_risk_pred(fit, NULL)), 0, surv_risk_pred(fit, NULL)),
+        ifelse(is.infinite(surv_risk_pred(fit, test)), 0, surv_risk_pred(fit, test))
+      )
+
+      evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+      cindex_results[index] <- evaluation$surv_obj$`Harrel C-Index`
+      index <- index + 1
+    }
+  }
+  
+  return(cindex_results)
+}
+
+
+```
+
+sample case
+
+```{r, message=FALSE, warning=FALSE}
+set.seed(3)
+data <- trioB1 |> purrr::pluck("data")
+cv_indices <- get_cv_index(data, n = 5, k = 5)
+cindex_results <- eval_repeated_cv_survival(trioB1, cv_indices)
+```
+
+Visualization
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+cindex_results <- data.frame(cindex_values = cindex_results)
+
+th <-   theme(text=element_text(size=12 ),
+              axis.text.x = element_text(angle = 45, hjust = 1),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.background = element_rect(colour = "black", size=0.2, fill=NA) )
+
+ggplot(cindex_results, aes(y = cindex_values)) +
+  geom_boxplot() +
+  labs(y = "C-Index") +
+  theme_minimal() +
+  th
+```
+
+# trioA
+
+```{r, message=FALSE}
+library(clusterProfiler)
+library(DOSE)
+library(DO.db)
+library(EnsDb.Hsapiens.v86)
+```
+
+```{r}
+get_DO_data <- function(ont="DO") {
+  ont="DO"
+  if (ont == "DO"){
+      tryCatch(utils::data(list="DO2ALLEG", package="DOSE"))
+      assign("DO2ALLEG", DO2ALLEG )
+      DO2ALLEG <- get("DO2ALLEG")
+
+      tryCatch(utils::data(list="EG2ALLDO", package="DOSE"))
+      assign("EG2ALLDO", EG2ALLDO )
+      EG2ALLDO <- get("EG2ALLDO")
+    
+    PATHID2EXTID <- get("DO2ALLEG" )
+    EXTID2PATHID <- get("EG2ALLDO" )
+    
+    PATH2NAME.df <- toTable(DOTERM)
+    PATH2NAME.df <- PATH2NAME.df[, c("do_id", "Term")]
+    PATH2NAME.df <- unique(PATH2NAME.df)
+    PATH2NAME <- PATH2NAME.df[,2]
+    names(PATH2NAME) <- PATH2NAME.df[,1]
+ 
+  }else if (ont == "DOLite"){
+    
+      tryCatch(utils::data(list="DOLite2EG", package="DOSE"))
+      assign("DOLite2EG", DOLite2EG ) 
+      DOLite2EG <- get("DOLite2EG")
+      
+      tryCatch(utils::data(list="EG2DOLite", package="DOSE"))
+      assign("EG2DOLite", EG2DOLite )
+      EG2DOLite <- get("EG2DOLite")
+      
+      tryCatch(utils::data(list="DOLiteTerm", package="DOSE"))
+      assign("DOLiteTerm", DOLiteTerm )
+      DOLiteTerm <- get("DOLiteTerm")
+    
+    PATHID2EXTID <- get("DOLite2EG")
+    EXTID2PATHID <- get("EG2DOLite")
+    PATH2NAME <- get("DOLiteTerm")
+  }
+   
+  return( list(PATHID2EXTID = PATHID2EXTID , 
+               PATH2NAME  = PATH2NAME 
+               ) )
+}
+
+get_DO_pathway <- function(ont = "DO", patterns = c("diabetes", "cardiovascular", "heart", "cardiac", "hypertension")) {
+  
+  database <- get_DO_data(ont = ont)
+  DOpathway <- database$PATHID2EXTID
+  pathway_name <- database$PATH2NAME
+  
+  selected_pathway <- pathway_name[grep(paste0(patterns, collapse = "|"), pathway_name)]
+  selected_pathway <- selected_pathway[!selected_pathway %in% c("carcinoma", "tumor", "cancer", "defect")]
+  
+  DOpathway <- DOpathway[names(DOpathway) %in% names(selected_pathway)]
+  selected_pathway <- selected_pathway[match(names(DOpathway), names(selected_pathway))]
+  names(DOpathway) <- unname(selected_pathway)
+  
+  DOpathway <- DOpathway[sapply(DOpathway, length) >= 10]
+  
+  for (i in seq_along(DOpathway)) {
+    this <- DOpathway[i]
+    getgene <- ensembldb::select(EnsDb.Hsapiens.v86,
+                                 keys = unname(this)[[1]],
+                                 keytype = "ENTREZID",
+                                 columns = c("SYMBOL", "ENTREZID"))
+    DOpathway[[i]] <- unique(getgene$SYMBOL)
+  }
+  
+  return(DOpathway)
+}
+
+```
+
+```{r, message=FALSE}
+testCache <- tempdir()
+trioA <- Trio$new("figshare:26142922/47361079", cachePath = testCache)
+data <- trioA |> purrr::pluck("data")
+data_log_normalized <- data %>%
+  mutate(across(where(is.numeric), ~ log(. + 1)))
+data <- data_log_normalized
+```
+
+```{r}
+calculate_scores <- function(to_eval, gs) {
+  colnames_data <- colnames(to_eval)
+  scores <- sapply(names(gs), function(pathway) {
+    genes <- intersect(gs[[pathway]], colnames_data)
+    gene_means <- sapply(genes, function(gene) mean(to_eval[[gene]], na.rm = TRUE))
+    sum(gene_means, na.rm = TRUE)
+  })
+  return(scores)
+}
+
+```
+
+```{r}
+trioA$addMetric("disease score", calculate_scores)
+trioA$addAuxData("get_DO_pathway", get_DO_pathway, c("disease score"))
+trioA$data <- data
+# result <- calculate_scores(data, DOpathway)
+
+evaluation <- trioA$evaluate(list(get_DO_pathway = data))
+disease_scores <- evaluation$get_DO_pathway$`disease score`
+
+
+df <- data.frame(
+  Disease = names(disease_scores),
+  Normalized_Score = disease_scores
+)
+
+
+ggplot(df, aes(x = reorder(Disease, Normalized_Score), y = Normalized_Score)) +
+  geom_bar(stat = "identity", fill = "#E64525") +
+  coord_flip() +  # Flip coordinates for better readability
+  labs(x = "Disease", y = "Score") +
+  th
+```
+
+
+
