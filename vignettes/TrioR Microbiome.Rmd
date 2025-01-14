@@ -1,0 +1,100 @@
+---
+title: "TrioR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TrioR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+--- 
+
+```{r setup, message=FALSE}
+devtools::load_all()
+library(TrioR)
+library(PD16Sdata) # to install PD16Sdata see https://sydneybiox.github.io/PD16SData/
+library(tidyverse)
+library(glmnet)
+```
+
+# Import microbiome data
+
+```{r}
+# lubomski dataset obtained through PD16Sdata
+lubom = ps_list$Lubomski
+lubom = lubom %>% 
+  subset_samples(!is.na(samdat_tbl(lubom)$PD))
+
+# extract a gold standard from lubomski data
+lubom_pd = lubom %>% 
+  samdat_tbl() %>% 
+  mutate(PD = as.factor(ifelse(PD == "PD", 1, 0))) %>% 
+  pull(PD)
+
+testCache = system.file("extdata", "testdata", package = "TrioR")
+```
+
+# CV - the trioR split function
+
+```{r}
+set.seed(1234)
+
+# initiate a Trio object without datasetID
+# type any datasetID you want as a string
+trio = Trio$new(cachePath = testCache)
+
+# add a metric to the Trio object
+trio$addMetric(name = "Confusion Matrix", metric = table)
+
+# add auxiliary data to the Trio object
+trio$addAuxData(name = "lubomski_microbiome", auxData = lubom_pd, metrics = "Confusion Matrix")
+
+# get the metric from the Trio object
+metrics = trio$getMetrics("lubomski_microbiome")
+
+# get an OTU table from the phyloseq object
+x = lubom %>% 
+  tax_filter(min_prevalence = 0.05) %>% 
+  tax_transform("compositional") %>% 
+  otu_table() %>% 
+  as.data.frame() %>% 
+  as.matrix()
+
+# get the gold standard from the Trio object
+y = trio$getAuxData("lubomski_microbiome")
+
+# get train and test indices
+trio$split(y = y, n_fold = 5, n_repeat = 10)
+cv_ind = trio$splitIndices
+cv_res = c()
+
+for (i in 1:length(cv_ind)) {
+  train_id = cv_ind[[i]]
+  
+  x_train = x[train_id, ]
+  x_test = x[-train_id, ]
+  y_train = y[train_id]
+  y_test = y[-train_id]
+  
+  # build a CV model to find the best lambda for LASSO regression
+  cv_lasso = cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
+  lam = cv_lasso$lambda.1se
+  
+  # fit a model with the best lambda on training data
+  fit = glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
+  
+  # evaluate the model on test data
+  pred = predict(fit, x_test, s = "lambda.min", type = "class")
+  pred = as.factor(as.vector(pred))
+  
+  # update auxData inside of the Trio
+  trio$addAuxData(name = "lubomski_microbiome", auxData = y_test, metrics = "Confusion Matrix")
+  
+  # get the chosen evaluation metric from the Trio
+  eval_res = trio$evaluate(list(lubomski_microbiome = pred))
+  cv_res[i] = sum(diag(eval_res[[1]][[1]]))/sum(eval_res[[1]][[1]])
+}
+```
+
+```{r}
+boxplot(cv_res)
+```
+
