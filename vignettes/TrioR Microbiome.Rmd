@@ -21,8 +21,8 @@ library(glmnet)
 
 ```{r}
 # lubomski dataset obtained through PD16Sdata
-lubom = ps_list$Lubomski
-lubom = lubom %>% 
+lubom <- ps_list$Lubomski
+lubom <- lubom %>% 
   subset_samples(!is.na(samdat_tbl(lubom)$PD))
 ```
 
@@ -30,7 +30,7 @@ The task we'll be evaluating using `TrioR` is a binary classification task where
 
 ```{r}
 # extract a gold standard from lubomski data
-lubom_pd = lubom %>% 
+lubom_pd <- lubom %>% 
   samdat_tbl() %>% 
   mutate(PD = as.factor(ifelse(PD == "PD", 1, 0))) %>% 
   pull(PD)
@@ -39,7 +39,7 @@ lubom_pd = lubom %>%
 Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
 
 ```{r}
-testCache = system.file("extdata", "testdata", package = "TrioR")
+testCache <- system.file("extdata", "testdata", package = "TrioR")
 ```
 
 # CV - the trioR split function
@@ -48,7 +48,7 @@ To initiate a TrioR object, we use a `new()` function.
 
 ```{r}
 # initiate a Trio object without datasetID
-trio = Trio$new(cachePath = testCache)
+trio <- Trio$new(cachePath = testCache)
 ```
 
 Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose a confusion matrix, we chose a confusion matrix, using the existing R `table` function, and named it `Confusion Matrix`.
@@ -69,14 +69,14 @@ If users want to get evaluation metrics from the `TrioR` object, they can use th
 
 ```{r}
 # get the metric from the Trio object
-metrics = trio$getMetrics("lubomski_microbiome")
+metrics <- trio$getMetrics("lubomski_microbiome")
 ```
 
 Then we'll build a classification model to evaluate. To build a model, the following code will extract an input data `x` matrix from the `Lubomski` data (stored as `lubom`) for the classification model to use. Note that the prediction vector `y` is stored in the `TrioR` object, and users can extract it from the `TrioR` object using the `getAuxData` function by specifying the name of `auxData`.
 
 ```{r}
 # get an OTU table from the phyloseq object
-x = lubom %>% 
+x <- lubom %>% 
   tax_filter(min_prevalence = 0.05) %>% 
   tax_transform("compositional") %>% 
   otu_table() %>% 
@@ -84,7 +84,7 @@ x = lubom %>%
   as.matrix()
 
 # get the gold standard from the Trio object
-y = trio$getAuxData("lubomski_microbiome")
+y <- trio$getAuxData("lubomski_microbiome")
 ```
 
 For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `auxData`) into the number of folds and repeats users want. In this case we used `n_fold = 5` and `n_repeat = 10` (i.e., 5-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`cv_ind`) for each sample, through `splitIndices`. `cv_ind` is a simple list where each element represents a combination of folds and repeats for each sample. Lastly, we initiate an empty vector `cv_res`, which will store cross-validation results.
@@ -92,8 +92,8 @@ For repeated cross-validation, the `split()` function will split the `y` vector 
 ```{r}
 # get train and test indices
 trio$split(y = y, n_fold = 5, n_repeat = 10)
-cv_ind = trio$splitIndices
-cv_res = c()
+cv_ind <- trio$splitIndices
+cv_res <- c()
 ```
 
 Once `TrioR` split the data into the number of folds specified by users, users can build a for loop to cross-validate evaluation results. In this case, it's 50 iterations for 5-fold cross-validation with 10 repeats. At each iteration, users can extract training indices (`train_id`) from the cross-validation indices `cv_ind`.
@@ -107,30 +107,30 @@ Once users get evaluation results at each iteration, the `evaluate()` function w
 set.seed(1234)
 
 for (i in 1:length(cv_ind)) {
-  train_id = cv_ind[[i]]
+  train_id <- cv_ind[[i]]
   
-  x_train = x[train_id, ]
-  x_test = x[-train_id, ]
-  y_train = y[train_id]
-  y_test = y[-train_id]
+  x_train <- x[train_id, ]
+  x_test <- x[-train_id, ]
+  y_train <- y[train_id]
+  y_test <- y[-train_id]
   
   # build a CV model to find the best lambda for LASSO regression
-  cv_lasso = cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
-  lam = cv_lasso$lambda.1se
+  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
+  lam <- cv_lasso$lambda.1se
   
   # fit a model with the best lambda on training data
-  fit = glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
+  fit <- glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
   
   # evaluate the model on test data
-  pred = predict(fit, x_test, s = "lambda.min", type = "class")
-  pred = as.factor(as.vector(pred))
+  pred <- predict(fit, x_test, s = "lambda.min", type = "class")
+  pred <- as.factor(as.vector(pred))
   
   # update auxData inside of the Trio
   trio$addAuxData(name = "lubomski_microbiome", auxData = y_test, metrics = "Confusion Matrix")
   
   # get the chosen evaluation metric from the Trio
-  eval_res = trio$evaluate(list(lubomski_microbiome = pred))
-  cv_res[i] = sum(diag(eval_res[[1]][[1]]))/sum(eval_res[[1]][[1]])
+  eval_res <- trio$evaluate(list(lubomski_microbiome = pred))
+  cv_res[i] <- sum(diag(eval_res[[1]][[1]]))/sum(eval_res[[1]][[1]])
 }
 ```
 
