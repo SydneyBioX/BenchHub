@@ -172,17 +172,30 @@ Trio <- R6::R6Class(
     #' Evalute against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
-    #' @param separateMethods If `input` contains separate sublists to evaluate
-    #'   for each method.
-    evaluate = function(input, separateMethods = FALSE) {
+    evaluate = function(input) {
+      # check if the requested auxData are available
+      auxDataAvail <- names(input) %in% names(self$auxData)
+
+
+      # if input list contains no auxData names, check if first sublist
+      # contains auxData names and set separateMethods based on this
+      if (all(!auxDataAvail)) {
+        if (any(names(input[[1]]) %in% names(self$auxData))) {
+          cli::cli_inform(c(
+            "AuxData names found in sublist.",
+            "i" = "Evaluating as separate methods."
+          ))
+          separateMethods <- TRUE
+        } else {
+          separateMethods <- FALSE
+        }
+      }
+
       # check if auxiliary data is available for each element of the input.
       if (separateMethods) {
         evalList <- lapply(input, self$evaluate)
         return(evalList)
       } else {
-        # check if all the requested auxData is available
-        auxDataAvail <- names(input) %in% names(self$auxData)
-
         # if none of the auxData are available
         if (all(!auxDataAvail)) {
           auxDataNames <- names(self$auxData)
@@ -260,7 +273,7 @@ Trio <- R6::R6Class(
         # compute each metric for each input
         purrr::imap(input, function(to_eval, auxDataName) {
           if (is.null(metrics[[auxDataName]])) {
-             return(to_eval)
+            return(to_eval)
           }
           res <- lapply(
             metrics[[auxDataName]],
