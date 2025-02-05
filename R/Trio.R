@@ -200,23 +200,27 @@ Trio <- R6::R6Class(
           cli::cli_inform(c(
             paste0(
               "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
-              "not available in this object."
+              "not available in this object. Passing through as unevaluated ",
+              "benchmark data."
             ),
             "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
           ))
         }
 
         # subset to inputs with available auxData
-        input <- input[auxDataAvail]
+        # input <- input[auxDataAvail]
 
         # compute/retrive auxiliary data
         auxData <- setNames(
-          lapply(names(input), self$getAuxData),
-          names(input)
+          lapply(names(input[auxDataAvail]), self$getAuxData),
+          names(input[auxDataAvail])
         )
 
         # get a list of metrics to compute for each gold standard in the data
-        metrics <- setNames(lapply(names(input), self$getMetrics), names(input))
+        metrics <- setNames(
+          lapply(names(input[auxDataAvail]), self$getMetrics),
+          names(input[auxDataAvail])
+        )
 
         # get a flat list of available metrics
         # TODO: only get metrics for current evaluation task
@@ -255,6 +259,9 @@ Trio <- R6::R6Class(
 
         # compute each metric for each input
         purrr::imap(input, function(to_eval, auxDataName) {
+          if (is.null(metrics[[auxDataName]])) {
+             return(to_eval)
+          }
           res <- lapply(
             metrics[[auxDataName]],
             function(x) self$metrics[[x]](to_eval, auxData[[auxDataName]])
