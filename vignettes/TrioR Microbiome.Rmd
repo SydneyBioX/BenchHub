@@ -16,7 +16,7 @@ library(glmnet)
 
 # Import microbiome data
 
-`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R. `lubomski_microbiome_data.Rdata` contains two data objects: `x` and `lubom_pd`. `x` is a 575 by 1192 matrix containing the abundance of 1192 micorbial taxa for 575 samples. `lubom_pd` is a factor vector of binary patient classes for 575 samples where where `1` represents `PD` and `0` represents `HC`.
+`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R. `lubomski_microbiome_data.Rdata` contains two data objects: `x` and `lubomPD`. `x` is a 575 by 1192 matrix containing the abundance of 1192 micorbial taxa for 575 samples. `lubom_pd` is a factor vector of binary patient classes for 575 samples where where `1` represents `PD` and `0` represents `HC`.
 
 ```{r}
 # import the microbiome data
@@ -24,7 +24,7 @@ load("../data/lubomski_microbiome_data.Rdata")
 
 # convert the input dataframe to a matrix
 x = as.matrix(x)
-head(lubom_pd)
+head(lubomPD)
 ```
 
 The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
@@ -53,7 +53,7 @@ Then we can add auxiliary data to the `TrioR` object using the `addAuxData` func
 
 ```{r}
 # add auxiliary data to the Trio object
-trio$addAuxData(name = "lubomski_microbiome", auxData = lubom_pd, metrics = "Confusion Matrix")
+trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Confusion Matrix")
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
