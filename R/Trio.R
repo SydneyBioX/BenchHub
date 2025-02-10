@@ -186,9 +186,9 @@ Trio <- R6::R6Class(
             "i" = "Evaluating as separate methods."
           ))
           separateMethods <- TRUE
-        } else {
-          separateMethods <- FALSE
         }
+      } else {
+        separateMethods <- FALSE
       }
 
       # check if auxiliary data is available for each element of the input.
