@@ -194,7 +194,10 @@ Trio <- R6::R6Class(
       # check if auxiliary data is available for each element of the input.
       if (separateMethods) {
         evalList <- lapply(input, self$evaluate)
-        return(evalList)
+        return(
+          purrr::list_rbind(evalList, names_to = "method") %>%
+            dplyr::select(datasetID, dplyr::everything())
+        )
       } else {
         # if none of the auxData are available
         if (all(!auxDataAvail)) {
@@ -271,7 +274,7 @@ Trio <- R6::R6Class(
         }
 
         # compute each metric for each input
-        purrr::imap(input, function(to_eval, auxDataName) {
+        res <- purrr::imap(input, function(to_eval, auxDataName) {
           if (is.null(metrics[[auxDataName]])) {
             return(to_eval)
           }
@@ -281,6 +284,18 @@ Trio <- R6::R6Class(
           )
           setNames(res, metrics[[auxDataName]])
         })
+
+        purrr::map(names(res), function(metric_name) {
+          metric_value <- res[[metric_name]]
+
+          # Create a data frame for each metric
+          dplyr::tibble(
+            datasetID = self$dataSourceID,
+            auxData = metric_name,
+            metric = names(metric_value),
+            result = unlist(metric_value)
+          )
+        }) %>% purrr::list_rbind()
       }
     },
 
