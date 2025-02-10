@@ -5,10 +5,10 @@
 #' 
 #' 
 #' @name lubomski_microbiome_data
-#' @aliases measurements classes
+#' @aliases x lubomPD
 #' @docType data
-#' @format \code{measurements} has a row for each sample and a column for each
-#' taxon. \code{classes} is a factor vector with values 0 representing Healthy Control (HC)
+#' @format \code{x} has a row for each sample and a column for each
+#' taxon. \code{lubomPD} is a factor vector with values 0 representing Healthy Control (HC)
 #' and 1 representing Parkinson's Disease (PD).
 #' @source An R package PD16Sdata, \emph{BMC}, 2023. 
 #' Webpage: \url{https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-023-01475-4}
