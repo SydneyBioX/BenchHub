@@ -2,6 +2,17 @@
 #' @importFrom R6 R6Class
 NULL
 
+#' A separate constructor that conforms to Bioconductor guidelines...
+#'
+#' @description Wrapper for Trio$new(). Creates a Trio object.
+#' @param datasetID
+#'   A string specifying a dataset, either a name from curated-trio-data or
+#'   a format string of the form `source`:`source_id`.
+#' @param cachePath The path to the data cache
+initializeTrio <- function(datasetID = NULL, cachePath = FALSE) {
+  Trio$new(datasetID = NULL, cachePath = FALSE)
+}
+
 #' A Trio object
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
