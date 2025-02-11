@@ -28,7 +28,7 @@ head(lubomPD)
 The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
 
 ```{r}
-testCache <- system.file("extdata", "testdata", package = "TrioR")
+testCache <- system.file("extdata", "testdata", package = "BenchHub")
 ```
 
 # CV - the trioR split function
@@ -37,7 +37,7 @@ To initiate a TrioR object, we use a `new()` function.
 
 ```{r}
 # initiate a Trio object without datasetID
-trio <- Trio$new(cachePath = testCache)
+trio <- Trio$new("figshare:26054188/47112109", cachePath = testCache)
 ```
 
 Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose a confusion matrix, we chose a confusion matrix, using the existing R `table` function, and named it `Confusion Matrix`.
@@ -87,31 +87,32 @@ Once users get evaluation results at each iteration, the `evaluate()` function w
 ```{r}
 set.seed(1234)
 
-for (i in 1:length(cv_ind)) {
+for (i in seq_along(cv_ind)) {
   train_id <- cv_ind[[i]]
-  
+
   x_train <- x[train_id, ]
   x_test <- x[-train_id, ]
   y_train <- y[train_id]
   y_test <- y[-train_id]
-  
+
   # build a CV model to find the best lambda for LASSO regression
-  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
+  cv_lasso <- cv.glmnet(
+    as.matrix(x_train), y_train,
+    alpha = 1, family = "binomial"
+  )
   lam <- cv_lasso$lambda.1se
-  
+
   # fit a model with the best lambda on training data
   fit <- glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
-  
+
   # evaluate the model on test data
   pred <- predict(fit, x_test, s = "lambda.min", type = "class")
   pred <- as.factor(as.vector(pred))
-  
-  # update auxData inside of the Trio
-  trio$addAuxData(name = "lubomski_microbiome", auxData = y_test, metrics = "Confusion Matrix")
-  
+
   # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list(lubomski_microbiome = pred))
-  cv_res[i] <- sum(diag(eval_res[[1]][[1]]))/sum(eval_res[[1]][[1]])
+  eval_res <- trio$evaluate(list(lubomski_microbiome = pred), splitIndex = i)
+  confusionMat <- eval_res %>% pluck("result", 1)
+  cv_res[i] <- sum(diag(confusionMat) / sum(confusionMat))
 }
 ```
 
