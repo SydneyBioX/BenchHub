@@ -9,7 +9,6 @@ vignette: >
 
 ```{r setup, message=FALSE}
 devtools::load_all()
-# library(TrioR)
 library(tidyverse)
 library(glmnet)
 ```
