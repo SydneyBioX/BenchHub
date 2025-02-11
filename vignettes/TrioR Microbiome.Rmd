@@ -23,8 +23,6 @@ data("lubomski_microbiome_data", package = "BenchHub")
 
 # convert the input dataframe to a matrix
 head(lubomPD)
-
-save(x, lubomPD, file = "lubomski_microbiome_data.RData")
 ```
 
 The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
