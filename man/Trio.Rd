@@ -159,6 +159,9 @@ Evalute against gold standards
 \describe{
 \item{\code{input}}{A named list of objects to be evaluated against gold
 standards.}
+
+\item{\code{splitIndex}}{An optional index for subsetting data during evaluation using the
+indices created by the split method.}
 }
 \if{html}{\out{</div>}}
 }

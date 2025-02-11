@@ -345,6 +345,9 @@ Trio <- R6::R6Class(
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
+    #' @importFrom splitTools create_folds
+    #' @importFrom cli cli_inform
+    #' @importFrom utils askYesNo
     split = function(y,
                      n_fold = 5L, n_repeat = 1L, stratify = TRUE) {
       # If indices already exist.
