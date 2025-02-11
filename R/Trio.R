@@ -183,7 +183,12 @@ Trio <- R6::R6Class(
     #' Evalute against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
-    evaluate = function(input) {
+    evaluate = function(input, splitIndex = NULL) {
+      # check if splitIndex is provided but splitIndices is not present
+      if (!is.null(splitIndex) && is.null(self$splitIndices)) {
+        cli::cli_abort("splitIndex is provided but splitIndices is not present in the object.")
+      }
+
       # check if the requested auxData are available
       auxDataAvail <- names(input) %in% names(self$auxData)
 
@@ -234,10 +239,7 @@ Trio <- R6::R6Class(
           ))
         }
 
-        # subset to inputs with available auxData
-        # input <- input[auxDataAvail]
-
-        # compute/retrive auxiliary data
+        # compute/retrieve auxiliary data
         auxData <- setNames(
           lapply(names(input[auxDataAvail]), self$getAuxData),
           names(input[auxDataAvail])
@@ -261,7 +263,7 @@ Trio <- R6::R6Class(
         if (length(unavailMetrics) == length(allMetrics)) {
           cli::cli_abort(c(
             paste0(
-              "None of the metrics related to the auxiliary data being evalutaed",
+              "None of the metrics related to the auxiliary data being evaluated",
               " are available in the object."
             ),
             "i" = "Add some of the following: {.val {allMetrics}}."
@@ -284,6 +286,25 @@ Trio <- R6::R6Class(
           )
         }
 
+        # subset auxiliary data based on splitIndex if provided
+        if (!is.null(splitIndex) && !is.null(self$splitIndices)) {
+          auxData <- lapply(
+            auxData, function(data) {
+              indices <- self$splitIndices[[splitIndex]]
+              if (is.data.frame(data) || is.matrix(data) || is(data, "DataFrame")) {
+                return(data[-indices, , drop = FALSE])
+              } else if (is.vector(data) || is.factor(data) || is.list(data)) {
+                return(data[-indices])
+              } else {
+                cli::cli_abort(c(
+                  "Unsupported data type.",
+                  "x" = "Only vectors and tabular data are supported for auxData subsetting.",
+                  "i" = "Try adding pre-subsetted auxData to the Trio for evaluation."
+                ))
+              }
+            }
+          )
+        }
         # compute each metric for each input
         res <- purrr::imap(input, function(to_eval, auxDataName) {
           if (is.null(metrics[[auxDataName]])) {
@@ -304,7 +325,7 @@ Trio <- R6::R6Class(
             datasetID = self$dataSourceID,
             auxData = metric_name,
             metric = names(metricValues),
-            result = unlist(metricValues)
+            result = metricValues
           )
         }) %>% purrr::list_rbind()
       }
