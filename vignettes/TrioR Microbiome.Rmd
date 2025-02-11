@@ -20,10 +20,9 @@ library(glmnet)
 
 ```{r}
 # import the microbiome data
-load("../data/lubomski_microbiome_data.Rdata")
+data("lubomski_microbiome_data", package = "BenchHub")
 
 # convert the input dataframe to a matrix
-x = as.matrix(x)
 head(lubomPD)
 ```
 
