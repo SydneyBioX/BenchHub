@@ -297,14 +297,14 @@ Trio <- R6::R6Class(
         })
 
         purrr::map(names(res), function(metric_name) {
-          metric_value <- res[[metric_name]]
+          metricValues <- res[[metric_name]]
 
           # Create a data frame for each metric
-          dplyr::tibble(
+          tibble::tibble(
             datasetID = self$dataSourceID,
             auxData = metric_name,
-            metric = names(metric_value),
-            result = unlist(metric_value)
+            metric = names(metricValues),
+            result = unlist(metricValues)
           )
         }) %>% purrr::list_rbind()
       }
