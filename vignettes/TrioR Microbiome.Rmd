@@ -9,34 +9,23 @@ vignette: >
 
 ```{r setup, message=FALSE}
 devtools::load_all()
-library(TrioR)
-library(PD16Sdata) # to install PD16Sdata see https://sydneybiox.github.io/PD16SData/
 library(tidyverse)
 library(glmnet)
 ```
 
 # Import microbiome data
 
-`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R.
+`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R. `lubomski_microbiome_data.Rdata` contains two data objects: `x` and `lubomPD`. `x` is a 575 by 1192 matrix containing the abundance of 1192 microbial taxa for 575 samples. `lubom_pd` is a factor vector of binary patient classes for 575 samples where where `1` represents `PD` and `0` represents `HC`.
 
 ```{r}
-# lubomski dataset obtained through PD16Sdata
-lubom <- ps_list$Lubomski
-lubom <- lubom %>% 
-  subset_samples(!is.na(samdat_tbl(lubom)$PD))
+# import the microbiome data
+data("lubomski_microbiome_data", package = "BenchHub")
+
+# convert the input dataframe to a matrix
+head(lubomPD)
 ```
 
-The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). The following code will extract PD status as a vector for classification from the `Lubomski` data and store it as a vector named `lubom_pd` where `1` represents `PD` and `0` represents `HC`.
-
-```{r}
-# extract a gold standard from lubomski data
-lubom_pd <- lubom %>% 
-  samdat_tbl() %>% 
-  mutate(PD = as.factor(ifelse(PD == "PD", 1, 0))) %>% 
-  pull(PD)
-```
-
-Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
+The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
 
 ```{r}
 testCache <- system.file("extdata", "testdata", package = "TrioR")
@@ -62,7 +51,7 @@ Then we can add auxiliary data to the `TrioR` object using the `addAuxData` func
 
 ```{r}
 # add auxiliary data to the Trio object
-trio$addAuxData(name = "lubomski_microbiome", auxData = lubom_pd, metrics = "Confusion Matrix")
+trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Confusion Matrix")
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
@@ -75,14 +64,6 @@ metrics <- trio$getMetrics("lubomski_microbiome")
 Then we'll build a classification model to evaluate. To build a model, the following code will extract an input data `x` matrix from the `Lubomski` data (stored as `lubom`) for the classification model to use. Note that the prediction vector `y` is stored in the `TrioR` object, and users can extract it from the `TrioR` object using the `getAuxData` function by specifying the name of `auxData`.
 
 ```{r}
-# get an OTU table from the phyloseq object
-x <- lubom %>% 
-  tax_filter(min_prevalence = 0.05) %>% 
-  tax_transform("compositional") %>% 
-  otu_table() %>% 
-  as.data.frame() %>% 
-  as.matrix()
-
 # get the gold standard from the Trio object
 y <- trio$getAuxData("lubomski_microbiome")
 ```
