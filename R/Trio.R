@@ -186,7 +186,10 @@ Trio <- R6::R6Class(
     evaluate = function(input, splitIndex = NULL) {
       # check if splitIndex is provided but splitIndices is not present
       if (!is.null(splitIndex) && is.null(self$splitIndices)) {
-        cli::cli_abort("splitIndex is provided but splitIndices is not present in the object.")
+        cli::cli_abort(c(
+          "splitIndex is provided but self$splitIndices is NULL.",
+          "i" = "Try running {.code trio$split(...)} to generate splits first."
+          ))
       }
 
       # check if the requested auxData are available
