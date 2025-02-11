@@ -151,7 +151,7 @@ Get auxiliary data by name.
 \subsection{Method \code{evaluate()}}{
 Evalute against gold standards
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, separateMethods = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, splitIndex = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -159,9 +159,6 @@ Evalute against gold standards
 \describe{
 \item{\code{input}}{A named list of objects to be evaluated against gold
 standards.}
-
-\item{\code{separateMethods}}{If \code{input} contains separate sublists to evaluate
-for each method.}
 }
 \if{html}{\out{</div>}}
 }
