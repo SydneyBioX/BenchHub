@@ -15,7 +15,7 @@ library(glmnet)
 
 # Import microbiome data
 
-`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R. `lubomski_microbiome_data.Rdata` contains two data objects: `x` and `lubomPD`. `x` is a 575 by 1192 matrix containing the abundance of 1192 micorbial taxa for 575 samples. `lubom_pd` is a factor vector of binary patient classes for 575 samples where where `1` represents `PD` and `0` represents `HC`.
+`TrioR` can take datasets provided by users. To demonstrate, its ability to take user-provided datasets, we'll be using a microbiome dataset called `Lubomski` obtained from the `PD16Sdata` package. The following code will import the `Lubomksi` data into R. `lubomski_microbiome_data.Rdata` contains two data objects: `x` and `lubomPD`. `x` is a 575 by 1192 matrix containing the abundance of 1192 microbial taxa for 575 samples. `lubom_pd` is a factor vector of binary patient classes for 575 samples where where `1` represents `PD` and `0` represents `HC`.
 
 ```{r}
 # import the microbiome data
