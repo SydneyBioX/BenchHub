@@ -15,7 +15,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \describe{
 \item{\code{data}}{The data}
 
-\item{\code{goldStandards}}{The gold standards in the data}
+\item{\code{auxData}}{The auxiliary data in the data}
 
 \item{\code{metrics}}{The metric for evaluating tasks against the gold standards}
 
@@ -24,6 +24,8 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{dataSource}}{The data repository that the data were retrieved from}
 
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSouce}}
+
+\item{\code{splitIndices}}{Indices for cross-validation}
 }
 \if{html}{\out{</div>}}
 }
@@ -31,11 +33,12 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-Trio-new}{\code{Trio$new()}}
-\item \href{#method-Trio-addGS}{\code{Trio$addGS()}}
+\item \href{#method-Trio-addAuxData}{\code{Trio$addAuxData()}}
 \item \href{#method-Trio-addMetric}{\code{Trio$addMetric()}}
 \item \href{#method-Trio-getMetrics}{\code{Trio$getMetrics()}}
-\item \href{#method-Trio-getGS}{\code{Trio$getGS()}}
+\item \href{#method-Trio-getAuxData}{\code{Trio$getAuxData()}}
 \item \href{#method-Trio-evaluate}{\code{Trio$evaluate()}}
+\item \href{#method-Trio-split}{\code{Trio$split()}}
 \item \href{#method-Trio-clone}{\code{Trio$clone()}}
 }
 }
@@ -45,7 +48,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \subsection{Method \code{new()}}{
 Create a Trio object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID, cachePath = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID = NULL, cachePath = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -60,12 +63,12 @@ a format string of the form \code{source}:\code{source_id}.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Trio-addGS"></a>}}
-\if{latex}{\out{\hypertarget{method-Trio-addGS}{}}}
-\subsection{Method \code{addGS()}}{
+\if{html}{\out{<a id="method-Trio-addAuxData"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-addAuxData}{}}}
+\subsection{Method \code{addAuxData()}}{
 Add a gold standard to the Trio.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$addGS(name, gs, metrics, args = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$addAuxData(name, auxData, metrics, args = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -73,7 +76,7 @@ Add a gold standard to the Trio.
 \describe{
 \item{\code{name}}{A string specifying the name of the gold standard.}
 
-\item{\code{gs}}{The goldstandard. An object to be compared or a function to be run on
+\item{\code{auxData}}{The auxiliary data. An object to be compared or a function to be run on
 the data.}
 
 \item{\code{metrics}}{A list of one or more metrics names used to campare gs with the input
@@ -114,30 +117,30 @@ a wrapper function of the desired metric.}
 \subsection{Method \code{getMetrics()}}{
 Get metrics by gold standard name.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$getMetrics(gsName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getMetrics(auxDataName)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{gsName}}{A string specifying the name of the gold standard.}
+\item{\code{auxDataName}}{A string specifying the name of the gold standard.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Trio-getGS"></a>}}
-\if{latex}{\out{\hypertarget{method-Trio-getGS}{}}}
-\subsection{Method \code{getGS()}}{
-Get a gold standard by name.
+\if{html}{\out{<a id="method-Trio-getAuxData"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-getAuxData}{}}}
+\subsection{Method \code{getAuxData()}}{
+Get auxiliary data by name.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$getGS(name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getAuxData(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A string specifying the name of the gold standard.}
+\item{\code{name}}{A string specifying the name of the auxiliary data.}
 }
 \if{html}{\out{</div>}}
 }
@@ -148,7 +151,7 @@ Get a gold standard by name.
 \subsection{Method \code{evaluate()}}{
 Evalute against gold standards
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, separateMethods = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, splitIndex = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -157,8 +160,32 @@ Evalute against gold standards
 \item{\code{input}}{A named list of objects to be evaluated against gold
 standards.}
 
-\item{\code{separateMethods}}{If \code{input} contains separate sublists to evaluate
-for each method.}
+\item{\code{splitIndex}}{An optional index for subsetting data during evaluation using the
+indices created by the split method.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-split"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-split}{}}}
+\subsection{Method \code{split()}}{
+Create a cross-validation indices.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$split(y, n_fold = 5L, n_repeat = 1L, stratify = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{y}}{A variable to use for statified sampling. If \code{stratify} is false, a
+vector the length of the data.}
+
+\item{\code{n_fold}}{Number of folds. Defaults to \code{5L}.}
+
+\item{\code{n_repeat}}{Number of repeats. Defaults to \code{1L}.}
+
+\item{\code{stratify}}{If \code{TRUE}, uses stratified sampling. Defaults to \code{TRUE}.}
 }
 \if{html}{\out{</div>}}
 }

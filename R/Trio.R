@@ -2,6 +2,17 @@
 #' @importFrom R6 R6Class
 NULL
 
+#' A separate constructor that conforms to Bioconductor guidelines...
+#'
+#' @description Wrapper for Trio$new(). Creates a Trio object.
+#' @param datasetID
+#'   A string specifying a dataset, either a name from curated-trio-data or
+#'   a format string of the form `source`:`source_id`.
+#' @param cachePath The path to the data cache
+initializeTrio <- function(datasetID = NULL, cachePath = FALSE) {
+  Trio$new(datasetID = NULL, cachePath = FALSE)
+}
+
 #' A Trio object
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
@@ -172,17 +183,44 @@ Trio <- R6::R6Class(
     #' Evalute against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
-    #' @param separateMethods If `input` contains separate sublists to evaluate
-    #'   for each method.
-    evaluate = function(input, separateMethods = FALSE) {
+    #' @param splitIndex
+    #'   An optional index for subsetting data during evaluation using the
+    #'   indices created by the split method.
+    evaluate = function(input, splitIndex = NULL) {
+      # check if splitIndex is provided but splitIndices is not present
+      if (!is.null(splitIndex) && is.null(self$splitIndices)) {
+        cli::cli_abort(c(
+          "splitIndex is provided but self$splitIndices is NULL.",
+          "i" = "Try running {.code trio$split(...)} to generate splits first."
+        ))
+      }
+
+      # check if the requested auxData are available
+      auxDataAvail <- names(input) %in% names(self$auxData)
+
+
+      # if input list contains no auxData names, check if first sublist
+      # contains auxData names and set separateMethods based on this
+      if (all(!auxDataAvail)) {
+        if (any(names(input[[1]]) %in% names(self$auxData))) {
+          cli::cli_inform(c(
+            "AuxData names found in sublist.",
+            "i" = "Evaluating as separate methods."
+          ))
+          separateMethods <- TRUE
+        }
+      } else {
+        separateMethods <- FALSE
+      }
+
       # check if auxiliary data is available for each element of the input.
       if (separateMethods) {
         evalList <- lapply(input, self$evaluate)
-        return(evalList)
+        return(
+          purrr::list_rbind(evalList, names_to = "method") %>%
+            dplyr::select(datasetID, dplyr::everything())
+        )
       } else {
-        # check if all the requested auxData is available
-        auxDataAvail <- names(input) %in% names(self$auxData)
-
         # if none of the auxData are available
         if (all(!auxDataAvail)) {
           auxDataNames <- names(self$auxData)
@@ -200,23 +238,24 @@ Trio <- R6::R6Class(
           cli::cli_inform(c(
             paste0(
               "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
-              "not available in this object."
+              "not available in this object. Passing through as unevaluated ",
+              "benchmark data."
             ),
             "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
           ))
         }
 
-        # subset to inputs with available auxData
-        input <- input[auxDataAvail]
-
-        # compute/retrive auxiliary data
+        # compute/retrieve auxiliary data
         auxData <- setNames(
-          lapply(names(input), self$getAuxData),
-          names(input)
+          lapply(names(input[auxDataAvail]), self$getAuxData),
+          names(input[auxDataAvail])
         )
 
         # get a list of metrics to compute for each gold standard in the data
-        metrics <- setNames(lapply(names(input), self$getMetrics), names(input))
+        metrics <- setNames(
+          lapply(names(input[auxDataAvail]), self$getMetrics),
+          names(input[auxDataAvail])
+        )
 
         # get a flat list of available metrics
         # TODO: only get metrics for current evaluation task
@@ -230,7 +269,7 @@ Trio <- R6::R6Class(
         if (length(unavailMetrics) == length(allMetrics)) {
           cli::cli_abort(c(
             paste0(
-              "None of the metrics related to the auxiliary data being evalutaed",
+              "None of the metrics related to the auxiliary data being evaluated",
               " are available in the object."
             ),
             "i" = "Add some of the following: {.val {allMetrics}}."
@@ -253,14 +292,48 @@ Trio <- R6::R6Class(
           )
         }
 
+        # subset auxiliary data based on splitIndex if provided
+        if (!is.null(splitIndex) && !is.null(self$splitIndices)) {
+          auxData <- lapply(
+            auxData, function(data) {
+              indices <- self$splitIndices[[splitIndex]]
+              if (is.data.frame(data) || is.matrix(data) || is(data, "DataFrame")) {
+                return(data[-indices, , drop = FALSE])
+              } else if (is.vector(data) || is.factor(data) || is.list(data)) {
+                return(data[-indices])
+              } else {
+                cli::cli_abort(c(
+                  "Unsupported data type.",
+                  "x" = "Only vectors and tabular data are supported for auxData subsetting.",
+                  "i" = "Try adding pre-subsetted auxData to the Trio for evaluation."
+                ))
+              }
+            }
+          )
+        }
         # compute each metric for each input
-        purrr::imap(input, function(to_eval, auxDataName) {
+        res <- purrr::imap(input, function(to_eval, auxDataName) {
+          if (is.null(metrics[[auxDataName]])) {
+            return(to_eval)
+          }
           res <- lapply(
             metrics[[auxDataName]],
             function(x) self$metrics[[x]](to_eval, auxData[[auxDataName]])
           )
           setNames(res, metrics[[auxDataName]])
         })
+
+        purrr::map(names(res), function(metric_name) {
+          metricValues <- res[[metric_name]]
+
+          # Create a data frame for each metric
+          tibble::tibble(
+            datasetID = self$dataSourceID,
+            auxData = metric_name,
+            metric = names(metricValues),
+            result = metricValues
+          )
+        }) %>% purrr::list_rbind()
       }
     },
 
@@ -272,6 +345,9 @@ Trio <- R6::R6Class(
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
+    #' @importFrom splitTools create_folds
+    #' @importFrom cli cli_inform
+    #' @importFrom utils askYesNo
     split = function(y,
                      n_fold = 5L, n_repeat = 1L, stratify = TRUE) {
       # If indices already exist.
