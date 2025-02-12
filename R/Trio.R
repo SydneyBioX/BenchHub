@@ -318,7 +318,15 @@ Trio <- R6::R6Class(
           }
           res <- lapply(
             metrics[[auxDataName]],
-            function(x) self$metrics[[x]](to_eval, auxData[[auxDataName]])
+            function(x) {
+              metric_res <- self$metrics[[x]](to_eval, auxData[[auxDataName]])
+              if (length(metric_res) > 1) {
+                cli::cli_abort(c(
+                  "The result for the {.val {x}} metric is not a single value.",
+                  "i" = "Please ensure that all your metrics only output a single value."
+                ))
+              }
+            }
           )
           setNames(res, metrics[[auxDataName]])
         })
@@ -376,9 +384,9 @@ Trio <- R6::R6Class(
     #' @description
     #' Print method to display key information about the Trio object.
     print = function() {
-      data_str <- capture.output(str(self$data, max.level=2))
+      data_str <- capture.output(str(self$data, max.level = 2))
       data_str <- setNames(data_str, rep(" ", times = length(data_str)))
-      split_ind <- ifelse(is.null(self$splitIndices), 'None', 'Available')
+      split_ind <- ifelse(is.null(self$splitIndices), "None", "Available")
 
       cli::cli_h1("Trio Object")
 
