@@ -20,15 +20,15 @@ Calculate the accuracy of survival model prediction
 
 - Here, we use the survival data from survBenchmark-figShare. 
 - This survival data is clinical (lung). 
-- The Figshare ID is [26142922/47361079](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361079) 
+- The Figshare ID is [figshare:26142922/47361046](https://figshare.com/articles/dataset/SurvBenchmark_comprehensive_benchmarking_study_of_survival_analysis_methods_using_both_omics_data_and_clinical_data/26142922?file=47361079) 
 
 ```{r, message=FALSE}
 testCache <- tempdir()
-trioB1 <- Trio$new("figshare:26142922/47361079", cachePath = testCache)
+trioB1 <- Trio$new("figshare:26142922/47361046", cachePath = testCache)
 data <- trioB1 |> purrr::pluck("data")
 ```
 
-# Preprocessing: Feature selection of omics data
+# Preprocessing: Feature selection of ONLY omics data 
 
 ```{r}
 data_filtered <- data[, !grepl("\\.\\.\\.1|time", colnames(data))]
@@ -70,6 +70,16 @@ surv_risk_pred <- function(model, data) {
     return(unname(stats::predict(model, newdata = data, type = "risk")))
   }
 }
+
+surv_risk_pred_rsf <- function(model, data) {
+  if (is.null(data)) {
+    return(model$predicted)
+  } else {
+    return(predict(model, newdata = data)$predicted)
+  }
+}
+
+
 surv_obj <- function(data) {
   sub_data_test <- data[data[,"index"] == "test", ]
   sub_data_train <- data[data[,"index"] == "train", ]
@@ -82,46 +92,255 @@ harrelCIndexMetric <- function(to_eval, gs) {
   harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
   return(harrelC1["C Index"])
 }
+
+brierScoreMetric <- function(to_eval, gs) {
+  time <- gs[[1]][,"time"]
+  brier_score <- survAUC::predErr(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]],times=time, type = "brier", int.type = "unweighted")$error
+  return(mean(brier_score))
+}
+
+
+timeDependentAUCMetric <- function(to_eval, gs) {
+  time <- gs[[1]][,"time"]
+  AUC_CD <- survAUC::AUC.uno(gs[[1]], gs[[2]], to_eval[[2]], time)
+  return(mean(AUC_CD$auc))
+}
 ```
+
 
 Add the metric and AuxData into the trioB1
 
 ```{r}
 trioB1$addMetric("Harrel C-Index", harrelCIndexMetric)
-trioB1$addAuxData("surv_obj", surv_obj, c("Harrel C-Index"))
+trioB1$addMetric("Brier Score", brierScoreMetric)
+trioB1$addMetric("AUC", timeDependentAUCMetric)
+
+trioB1$addAuxData("surv_obj", surv_obj, c("Harrel C-Index", "Brier Score", "AUC"))
 
 set.seed(1234)
 
 trioB1$split(y = data$status, n_fold = 5, n_repeat = 10)
-cv_ind = trioB1$splitIndices
-cv_res = c()
+cv_ind <- trioB1$splitIndices
+cv_res_harrelCIndex = cv_res_brierScore = cv_res_timeDependentAUC = c()
+```
+
+```{r, warning=FALSE}
+# Model 1: cox model
+for (i in 1:length(cv_ind)) {
+  
+  data <- trioB1 |> purrr::pluck("data")
+  
+  train_id = cv_ind[[i]]
+  test_id <- setdiff(seq_len(nrow(data)), train_id)
+  
+  train = data[train_id, ]
+  test = data[-train_id, ]
+  # Model 1: cox model
+  fit_cox <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+  # Model 2: 
+  # fit_rsf <- randomForestSRC::rfsrc(survival::Surv(time, status) ~ ., data = train)
+  
+  data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+  
+  predicted_cox <- list(
+        ifelse(is.infinite(surv_risk_pred(fit, NULL)), 0, surv_risk_pred(fit, NULL)),
+        ifelse(is.infinite(surv_risk_pred(fit, test)), 0, surv_risk_pred(fit, test))
+      )
+  
+  # predicted_rsf <- list(
+  #       ifelse(is.infinite(surv_risk_pred_rsf(fit, NULL)), 0, surv_risk_pred_rsf(fit, NULL)),
+  #       ifelse(is.infinite(surv_risk_pred_rsf(fit, test)), 0, surv_risk_pred_rsf(fit, test))
+  #     )
+  
+  trioB1$data <- data
+  
+  evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+  
+  
+  # evaluation <- trioB1$evaluate(
+  #   list(
+  #     cox = list(
+  #       surv_obj = predicted_cox
+  #       ),
+  #     rsf = list(
+  #       surv_obj = predicted_rsf
+  #     ),
+  #     separateMethods = TRUE
+  #     )
+  # )
+  
+  trioB1$data <- data[ , -which(names(data) %in% c("index"))]
+  
+  cv_res_harrelCIndex[i] = evaluation$surv_obj$`Harrel C-Index`
+  cv_res_brierScore[i] = evaluation$surv_obj$`Brier Score`
+  cv_res_timeDependentAUC[i] = evaluation$surv_obj$AUC
+  
+  # evaluation$time 
+  # put time/memory into the meta field
+  
+}
 
 ```
 
-```{r}
+```{r, warning=FALSE}
+# Model 2: random forest model
 for (i in 1:length(cv_ind)) {
 
   data <- trioB1 |> purrr::pluck("data")
+  
   train_id = cv_ind[[i]]
   test_id <- setdiff(seq_len(nrow(data)), train_id)
   
   train = data[train_id, ]
   test = data[-train_id, ]
 
-  fit <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+  # Model 2: random forest model
+  fit <- randomForestSRC::rfsrc(survival::Surv(time, status) ~ ., data = train)
   
   data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
   
   predicted <- list(
-        ifelse(is.infinite(surv_risk_pred(fit, NULL)), 0, surv_risk_pred(fit, NULL)),
-        ifelse(is.infinite(surv_risk_pred(fit, test)), 0, surv_risk_pred(fit, test))
+        ifelse(is.infinite(surv_risk_pred_rsf(fit, NULL)), 0, surv_risk_pred_rsf(fit, NULL)),
+        ifelse(is.infinite(surv_risk_pred_rsf(fit, test)), 0, surv_risk_pred_rsf(fit, test))
       )
+  
   trioB1$data <- data
-
+        
   evaluation <- trioB1$evaluate(list(surv_obj = predicted))
   
-  cv_res[i] = evaluation$surv_obj$`Harrel C-Index`
+  trioB1$data <- data[ , -which(names(data) %in% c("index"))]
+  
+  cv_res_harrelCIndex[i] = evaluation$surv_obj$`Harrel C-Index`
+  cv_res_brierScore[i] = evaluation$surv_obj$`Brier Score`
+  cv_res_timeDependentAUC[i] = evaluation$surv_obj$AUC
+  
 }
+
+```
+
+# Model 3: Multitask logistic regression method
+
+```{r, warning=FALSE}
+for (i in 1:length(cv_ind)) {
+ 
+  data <- trioB1 |> purrr::pluck("data")
+  
+  # Define training and testing sets
+  train_id <- cv_ind[[i]]
+  test_id <- setdiff(seq_len(nrow(data)), train_id)
+
+  train <- data[train_id, ]
+  test <- data[-train_id, ]
+
+  se <- MTLR::mtlr_cv(survival::Surv(time, status) ~ . , train, C1_vec = c(0.01, 0.05, 0.1, 0.5, 1, 10))
+  
+  fullMod <- MTLR::mtlr(survival::Surv(time, status) ~ . , data = train, C1 = se$best_C1)
+  
+  # Assign "test" and "train" labels
+  data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+
+# Get predictions
+predicted <- list(
+  predict(fullMod, train, type = "prob_event"),
+  predict(fullMod, test, type = "prob_event")
+)
+  
+  trioB1$data <- data
+  
+  evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+  
+  trioB1$data <- data[ , -which(names(data) %in% c("index"))]
+  
+  cv_res_harrelCIndex[i] = evaluation$surv_obj$`Harrel C-Index`
+  cv_res_brierScore[i] = evaluation$surv_obj$`Brier Score`
+  cv_res_timeDependentAUC[i] = evaluation$surv_obj$AUC
+  
+}
+
+```
+
+# Model 4: Survival support vector machine
+
+```{r, warning=FALSE}
+for (i in 1:length(cv_ind)) {
+  
+  data <- trioB1 |> purrr::pluck("data")
+
+  train_id <- cv_ind[[i]]
+  test_id <- setdiff(seq_len(nrow(data)), train_id)
+
+  train <- data[train_id, ]
+  test <- data[-train_id, ]
+
+  fullMod <- survivalsvm::survivalsvm(
+    formula = survival::Surv(time, status) ~ .,
+    data = train,
+    gamma.mu = 0.1,       
+    kernel = "lin_kernel" 
+)
+
+  data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+
+  predicted <- list(
+    as.vector(predict(fullMod, train)$predicted),
+    as.vector(predict(fullMod, test)$predicted)
+  )
+  
+  trioB1$data <- data
+  
+  evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+  
+  trioB1$data <- data[ , -which(names(data) %in% c("index"))]
+  
+  cv_res_harrelCIndex[i] = evaluation$surv_obj$`Harrel C-Index`
+  cv_res_brierScore[i] = evaluation$surv_obj$`Brier Score`
+  cv_res_timeDependentAUC[i] = evaluation$surv_obj$AUC
+  
+}
+
+```
+
+# Model 5: cox boost model
+
+```{r, warning=FALSE}
+for (i in 1:length(cv_ind)) {
+  
+  data <- trioB1 |> purrr::pluck("data")
+
+  train_id <- cv_ind[[i]]
+  test_id <- setdiff(seq_len(nrow(data)), train_id)
+
+  train <- data[train_id, ]
+  test <- data[-train_id, ]
+
+  tr_predictormatrix=train[,-which(colnames(train)%in% c("time","status"))]
+  tr_predictormatrix=data.matrix(tr_predictormatrix)
+  te_predictormatrix=test[,-which(colnames(test)%in% c("time","status"))]
+  te_predictormatrix=data.matrix(te_predictormatrix)
+  coxboost=CoxBoost::CoxBoost(time=train$time,status=train$status,x=tr_predictormatrix,stepno=10,penalty=100)
+  
+  lpnew <- -predict(coxboost,type="risk",times=median(test$time),newdata=te_predictormatrix)
+  lp <- -predict(coxboost,type="risk",times=median(train$time),newdata=tr_predictormatrix)
+  
+  data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+
+  predicted <- list(
+    lp,
+    lpnew
+  )
+  
+  trioB1$data <- data
+  
+  evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+  
+  trioB1$data <- data[ , -which(names(data) %in% c("index"))]
+  
+  cv_res_harrelCIndex[i] = evaluation$surv_obj$`Harrel C-Index`
+  cv_res_brierScore[i] = evaluation$surv_obj$`Brier Score`
+  cv_res_timeDependentAUC[i] = evaluation$surv_obj$AUC
+  
+}
+
 ```
 
 Visualization
@@ -142,6 +361,7 @@ ggplot(cindex_results, aes(y = cindex_values)) +
   theme_minimal() +
   th
 ```
+
 
 # trioA
 
@@ -271,71 +491,5 @@ ggplot(df, aes(x = reorder(Disease, Normalized_Score), y = Normalized_Score)) +
   th
 ```
 
-```{r}
-samplesSplits <- function(samplesSplits = c("k-Fold", "Permute k-Fold", "Permute Percentage Split", "Leave-k-Out"),
-                          permutations = 100, folds = 5, percentTest = 25, leave = 2, outcome)
-{
-  samplesSplits <- match.arg(samplesSplits)
-  if(samplesSplits %in% c("k-Fold", "Permute k-Fold"))
-  {
-    nPermutations <- ifelse(samplesSplits == "k-Fold", 1, permutations)
-    nFolds <- folds
-    samplesFolds <- lapply(1:nPermutations, function(permutation)
-    {
-      # Create maximally-balanced folds, so class balance is about the same in all.
-      allFolds <- vector(mode = "list", length = nFolds)
-      foldsIndexes <- rep(1:nFolds, length.out = length(outcome))
-      
-      foldsIndex = 1
-      # Balance the non-censored observations across folds.
-      if(is(outcome, "Surv")) outcome <- factor(outcome[, "status"])
-      for(outcomeName in levels(outcome))
-      {
-        # Permute the indexes of samples in the class.
-        whichSamples <- sample(which(outcome == outcomeName))
-        whichFolds <- foldsIndexes[foldsIndex:(foldsIndex + length(whichSamples) - 1)]
-        
-        # Put each sample into its fold.
-        for(sampleIndex in 1:length(whichSamples))
-        {
-          allFolds[[whichFolds[sampleIndex]]] <- c(allFolds[[whichFolds[sampleIndex]]], whichSamples[sampleIndex])
-        }
-        # Move the beginning index to the first new index.
-        foldsIndex <- foldsIndex + length(whichSamples)
-      }
-      
-      list(train = lapply(1:nFolds, function(index) unlist(allFolds[setdiff(1:nFolds, index)])),
-           test = allFolds
-           )
-    })
-    # Reorganise into two separate lists, no more nesting.
-    list(train = unlist(lapply(samplesFolds, '[[', 1), recursive = FALSE),
-         test = unlist(lapply(samplesFolds, '[[', 2), recursive = FALSE))
-  } else if(samplesSplits == "Permute Percentage Split") {
-    # Take the same percentage of samples from each class to be in training set.
-    percent <- percentTest
-    samplesTrain <- round((100 - percent) / 100 * table(outcome))
-    samplesTest <- round(percent / 100 * table(outcome))
-    samplesLists <- lapply(1:permutations, function(permutation)
-    {
-      trainSet <- unlist(mapply(function(outcomeName, number)
-      {
-        sample(which(outcome == outcomeName), number)
-      }, levels(outcome), samplesTrain))
-      testSet <- setdiff(1:length(classes), trainSet)
-      list(trainSet, testSet)
-    })
-    # Reorganise into two lists: training, testing.
-    list(train = lapply(samplesLists, "[[", 1), test = lapply(samplesLists, "[[", 2))
-  } else if(samplesSplits == "Leave-k-Out") { # leave k out. 
-    testSamples <- as.data.frame(utils::combn(length(outcome), leave))
-    trainingSamples <- lapply(testSamples, function(sample) setdiff(1:length(outcome), sample))
-    list(train = as.list(trainingSamples), test = as.list(testSamples))
-  }
-}
-
-classes <- factor(rep(c('A', 'B'), c(15, 5)))
-splitsList <-samplesSplits(permutations = 1, outcome = classes)
-```
 
 

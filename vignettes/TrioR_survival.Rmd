@@ -88,7 +88,41 @@ Add the metric and AuxData into the trioB1
 ```{r}
 trioB1$addMetric("Harrel C-Index", harrelCIndexMetric)
 trioB1$addAuxData("surv_obj", surv_obj, c("Harrel C-Index"))
+
+set.seed(1234)
+
+trioB1$split(y = data$status, n_fold = 5, n_repeat = 10)
+cv_ind = trioB1$splitIndices
+cv_res = c()
+
 ```
+
+```{r}
+for (i in 1:length(cv_ind)) {
+  i <- 1
+  data <- trioB1 |> purrr::pluck("data")
+  train_id = cv_ind[[i]]
+  test_id <- setdiff(seq_len(nrow(data)), train_id)
+  
+  train = data[train_id, ]
+  test = data[-train_id, ]
+
+  fit <- survival::coxph(survival::Surv(time, status) ~ ., data = train)
+  
+  data$index <- ifelse(1:nrow(data) %in% test_id, "test", "train")
+  
+  predicted <- list(
+        ifelse(is.infinite(surv_risk_pred(fit, NULL)), 0, surv_risk_pred(fit, NULL)),
+        ifelse(is.infinite(surv_risk_pred(fit, test)), 0, surv_risk_pred(fit, test))
+      )
+
+  evaluation <- trioB1$evaluate(list(surv_obj = predicted))
+  
+  cv_res[i] = evaluation$surv_obj$`Harrel C-Index`
+}
+```
+
+
 
 # 5 repeated 5 fold cross validation
 
@@ -320,5 +354,71 @@ ggplot(df, aes(x = reorder(Disease, Normalized_Score), y = Normalized_Score)) +
   th
 ```
 
+```{r}
+samplesSplits <- function(samplesSplits = c("k-Fold", "Permute k-Fold", "Permute Percentage Split", "Leave-k-Out"),
+                          permutations = 100, folds = 5, percentTest = 25, leave = 2, outcome)
+{
+  samplesSplits <- match.arg(samplesSplits)
+  if(samplesSplits %in% c("k-Fold", "Permute k-Fold"))
+  {
+    nPermutations <- ifelse(samplesSplits == "k-Fold", 1, permutations)
+    nFolds <- folds
+    samplesFolds <- lapply(1:nPermutations, function(permutation)
+    {
+      # Create maximally-balanced folds, so class balance is about the same in all.
+      allFolds <- vector(mode = "list", length = nFolds)
+      foldsIndexes <- rep(1:nFolds, length.out = length(outcome))
+      
+      foldsIndex = 1
+      # Balance the non-censored observations across folds.
+      if(is(outcome, "Surv")) outcome <- factor(outcome[, "status"])
+      for(outcomeName in levels(outcome))
+      {
+        # Permute the indexes of samples in the class.
+        whichSamples <- sample(which(outcome == outcomeName))
+        whichFolds <- foldsIndexes[foldsIndex:(foldsIndex + length(whichSamples) - 1)]
+        
+        # Put each sample into its fold.
+        for(sampleIndex in 1:length(whichSamples))
+        {
+          allFolds[[whichFolds[sampleIndex]]] <- c(allFolds[[whichFolds[sampleIndex]]], whichSamples[sampleIndex])
+        }
+        # Move the beginning index to the first new index.
+        foldsIndex <- foldsIndex + length(whichSamples)
+      }
+      
+      list(train = lapply(1:nFolds, function(index) unlist(allFolds[setdiff(1:nFolds, index)])),
+           test = allFolds
+           )
+    })
+    # Reorganise into two separate lists, no more nesting.
+    list(train = unlist(lapply(samplesFolds, '[[', 1), recursive = FALSE),
+         test = unlist(lapply(samplesFolds, '[[', 2), recursive = FALSE))
+  } else if(samplesSplits == "Permute Percentage Split") {
+    # Take the same percentage of samples from each class to be in training set.
+    percent <- percentTest
+    samplesTrain <- round((100 - percent) / 100 * table(outcome))
+    samplesTest <- round(percent / 100 * table(outcome))
+    samplesLists <- lapply(1:permutations, function(permutation)
+    {
+      trainSet <- unlist(mapply(function(outcomeName, number)
+      {
+        sample(which(outcome == outcomeName), number)
+      }, levels(outcome), samplesTrain))
+      testSet <- setdiff(1:length(classes), trainSet)
+      list(trainSet, testSet)
+    })
+    # Reorganise into two lists: training, testing.
+    list(train = lapply(samplesLists, "[[", 1), test = lapply(samplesLists, "[[", 2))
+  } else if(samplesSplits == "Leave-k-Out") { # leave k out. 
+    testSamples <- as.data.frame(utils::combn(length(outcome), leave))
+    trainingSamples <- lapply(testSamples, function(sample) setdiff(1:length(outcome), sample))
+    list(train = as.list(trainingSamples), test = as.list(testSamples))
+  }
+}
+
+classes <- factor(rep(c('A', 'B'), c(15, 5)))
+splitsList <-samplesSplits(permutations = 1, outcome = classes)
+```
 
 

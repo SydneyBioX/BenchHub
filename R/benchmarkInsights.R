@@ -6,7 +6,7 @@ NULL
 #' @description An object containing a benchmark result for evaluating
 #'   analytical tasks.
 #' @field evalSummary The evaluation summary is stored by dataframe, where
-#'   each row is the compared identifier, each column is the metric used in 
+#'   each row is the methodd identifier, each column is the metric used in 
 #'   the evaluation task and related information.
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'   
@@ -17,29 +17,44 @@ benchmarkInsights <- R6::R6Class(
   classname = "benchmarkInsights",
   
   public = list(
-    evalSummary = NULL,   # Placeholder for evalSummary
-    metadata = NULL,      # Placeholder for metadata
+    evalSummary = NULL,   
+    metadata = NULL,      
     
-    addevalSummary = function(evalResult, dataID) {
-      result_df <- do.call(rbind, lapply(names(evalResult), function(compare) {
-        do.call(rbind, lapply(names(evalResult[[compare]]), function(GS) {
-          do.call(rbind, lapply(names(evalResult[[compare]][[GS]]), function(expected) {
-            metric_name <- names(evalResult[[compare]][[GS]][[expected]])
-            result_value <- evalResult[[compare]][[GS]][[expected]][[metric_name]]
-            data.frame(datasetID = dataID, GS = GS, Compare = compare, metric = metric_name, result = result_value, stringsAsFactors = FALSE)
-          }))
-        }))
-      }))
-      
-      result_df <- as.data.frame(result_df, stringsAsFactors = FALSE)
-      
-      if (is.null(self$evalSummary)) {
-        self$evalSummary <- result_df
+    #' @description
+    #' Create a benchmarkInsights object
+    #' @param evalResult
+    #'   A dataframe containing initial evaluation results with columns such as datasetID, auxData, metric, and result.
+    initialize = function(evalResult = NULL) {
+      if (!is.null(evalResult)) {
+        if (!is.data.frame(evalResult)) {
+          stop("evalResult must be a dataframe.")
+        }
+        self$evalSummary <- evalResult
       } else {
-        self$evalSummary <- rbind(self$evalSummary, result_df)
+        self$evalSummary <- data.frame()
       }
     },
     
+    #' @description
+    #' Add additional evaluation summary to the existing evalSummary
+    #' @param additional_evalResult
+    #'   A dataframe containing additional evaluation results to be appended.
+    addevalSummary = function(additional_evalResult) {
+      if (!is.data.frame(additional_evalResult)) {
+        stop("additional_evalResult must be a dataframe.")
+      }
+      
+      if (is.null(self$evalSummary) || nrow(self$evalSummary) == 0) {
+        self$evalSummary <- additional_evalResult
+      } else {
+        self$evalSummary <- rbind(self$evalSummary, additional_evalResult)
+      }
+    },
+    
+    #' @description
+    #' Add metadata to the benchmarkInsights object
+    #' @param metadata
+    #'   A dataframe containing metadata information.
     addMetadata = function(metadata) {
       if (!is.data.frame(metadata)) {
         stop("Metadata must be a dataframe.")
@@ -52,12 +67,11 @@ benchmarkInsights <- R6::R6Class(
       }
     },
     
-#' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
-#' @param evalSummary A dataframe containing the evaluation summary.
-#' @importFrom reshape2 dcast    
-#' @return A heatmap object.
-  
-    
+    #' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
+    #' @param evalSummary A dataframe containing the evaluation summary.
+    #' @importFrom reshape2 dcast    
+    #' @return A heatmap object.
+
     getHeatmap = function(evalSummary) {
       if (!requireNamespace("reshape2", quietly = TRUE)) {
         cli::cli_abort(c(
@@ -68,27 +82,27 @@ benchmarkInsights <- R6::R6Class(
       if (is.null(evalSummary)) {
         stop("Evaluation summary is required to generate heatmap.")
       }
-      # Average results across datasets by GS, Compare, and metric
+      # Average results across datasets by auxData, method, and metric
       averaged_df <- evalSummary %>%
-        dplyr::group_by(GS, Compare, metric) %>%
+        dplyr::group_by(auxData, method, metric) %>%
         dplyr::summarise(avg_result = mean(result, na.rm = TRUE)) %>%
         dplyr::ungroup()
       
-      # Detect if there are any duplicated GS names across different metrics
+      # Detect if there are any duplicated auxData names across different metrics
       averaged_df <- averaged_df %>%
         dplyr::mutate(
-          # Check if there are duplicate GS names, and if so, combine GS and metric to distinguish them
-          GS_metric = ifelse(duplicated(GS) | duplicated(GS, fromLast = TRUE), 
-                             paste(GS, metric, sep = "_"), 
-                             GS)
+          # Check if there are duplicate auxData names, and if so, combine auxData and metric to distinguish them
+          auxData_metric = ifelse(duplicated(auxData) | duplicated(auxData, fromLast = TRUE), 
+                             paste(auxData, metric, sep = "_"), 
+                             auxData)
         )
       
-      # Reshape the data into a wide format where Compare is the row and GS_metric is the column
-      reshaped_df <- reshape2::dcast(averaged_df, Compare ~ GS_metric, value.var = "avg_result")
+      # Reshape the data into a wide format where method is the row and auxData_metric is the column
+      reshaped_df <- reshape2::dcast(averaged_df, method ~ auxData_metric, value.var = "avg_result")
       
-      # Set Compare as rownames and remove the Compare column
-      rownames(reshaped_df) <- reshaped_df$Compare
-      reshaped_df$Compare <- NULL
+      # Set method as rownames and remove the method column
+      rownames(reshaped_df) <- reshaped_df$method
+      reshaped_df$method <- NULL
       heatmap <- funkyheatmap::funky_heatmap(reshaped_df)
       
       return(heatmap)
@@ -110,21 +124,21 @@ benchmarkInsights <- R6::R6Class(
                   panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
 
       minievalSummary_aggreate <- minievalSummary %>%
-        group_by(GS, Compare, metric) %>%
+        group_by(auxData, method, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
 
       if (!is.null(order)) {
-        minievalSummary_aggreate$GS <- factor(minievalSummary_aggreate$GS, levels = order)
+        minievalSummary_aggreate$auxData <- factor(minievalSummary_aggreate$auxData, levels = order)
       }
       
       # Create the line plot
       plot <- ggplot(minievalSummary_aggreate, 
-                     aes(x = GS, 
+                     aes(x = auxData, 
                          y = average_result, 
-                         group = Compare, 
-                         color = Compare)) +
-        labs(x = "gold standard", y = "average_value", fill = "compare") +
+                         group = method, 
+                         color = method)) +
+        labs(x = "gold standard", y = "average_value", fill = "method") +
         geom_point() +
         geom_line() +
         th
@@ -132,8 +146,8 @@ benchmarkInsights <- R6::R6Class(
       return(plot)
     },
     
-    #' @description Creates a scatter plot for the same GS, with an two compared metrics.
-    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
+    #' @description Creates a scatter plot for the same auxData, with an two methodd metrics.
+    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
     getScatterplot = function(minievalSummary) {
@@ -142,7 +156,7 @@ benchmarkInsights <- R6::R6Class(
       }
     
       minievalSummary_aggreate <- minievalSummary %>%
-        group_by(Compare, metric) %>%
+        group_by(method, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
       
@@ -151,9 +165,9 @@ benchmarkInsights <- R6::R6Class(
       result <- minievalSummary_aggreate %>%
         tidyr::pivot_wider(names_from = metric, values_from = average_result) 
       
-      plot <- ggplot(result, aes(x = sensitivity, y = specificity, label = Compare)) +
+      plot <- ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
               geom_point(alpha = 0.4) + 
-              ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = Compare)) +
+              ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = method)) +
               coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
               scale_x_continuous(expand = c(0, 0)) +
               scale_y_continuous(expand = c(0, 0)) +
@@ -164,18 +178,18 @@ benchmarkInsights <- R6::R6Class(
       return(plot)
     },
     
-    #' @description Creates boxplot plots for the mutiple GS, different Compare, one metric.
-    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all GS should be same
+    #' @description Creates boxplot plots for the mutiple auxData, different method, one metric.
+    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
-    #' @importFrom ggsci scale_fill_npg
+    #' @importFrom gauxDataci scale_fill_npg
     getBoxplot = function(minievalSummary) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
       
-      p1 <- ggplot(minievalSummary, aes(x=Compare, y=result, fill=Compare)) + 
+      p1 <- ggplot(minievalSummary, aes(x=method, y=result, fill=method)) + 
         geom_boxplot() +
-        facet_wrap(~GS, scale="free") +
+        facet_wrap(~auxData, scale="free") +
         theme(text=element_text(size=12 ),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
@@ -185,10 +199,10 @@ benchmarkInsights <- R6::R6Class(
        return(p1)
     },
     
-    #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "GS", "metric", or "Compare").
-    #' The correlation plot shows the pairwise correlation between results for different categories (GS, metric, or Compare).
-    #' @param minievalSummary A subset of the evaluation summary. It must include columns relevant to the input type (GS, metric, Compare) and the result values.
-    #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "GS", "metric", or "Compare".
+    #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
+    #' The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).
+    #' @param minievalSummary A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.
+    #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
     #' @importFrom ggcorrplot ggcorrplot
     getCorplot = function(minievalSummary, input_type) {
@@ -197,26 +211,26 @@ benchmarkInsights <- R6::R6Class(
         stop("Input data must be a dataframe.")
       }
       
-      if (!input_type %in% c("GS", "metric", "Compare")) {
-        stop("Invalid input_type. Must be 'GS', 'metric', or 'Compare'.")
+      if (!input_type %in% c("auxData", "metric", "method")) {
+        stop("Invalid input_type. Must be 'auxData', 'metric', or 'method'.")
       }
       
       df <- minievalSummary
       
       if (input_type == "metric") {
         pivot_df <- df %>%
-          dplyr::select(datasetID, Compare, metric, result) %>%
+          dplyr::select(datasetID, method, metric, result) %>%
           tidyr::pivot_wider(names_from = metric, values_from = result, values_fn = mean)
         
-      } else if (input_type == "GS") {
+      } else if (input_type == "auxData") {
         pivot_df <- df %>%
-          dplyr::select(datasetID, Compare, GS, result) %>%
-          tidyr::pivot_wider(names_from = GS, values_from = result, values_fn = mean)
+          dplyr::select(datasetID, method, auxData, result) %>%
+          tidyr::pivot_wider(names_from = auxData, values_from = result, values_fn = mean)
         
-      } else if (input_type == "Compare") {
+      } else if (input_type == "method") {
         pivot_df <- df %>%
-          dplyr::select(datasetID, GS, Compare, result) %>%
-          tidyr::pivot_wider(names_from = Compare, values_from = result, values_fn = mean)
+          dplyr::select(datasetID, auxData, method, result) %>%
+          tidyr::pivot_wider(names_from = method, values_from = result, values_fn = mean)
       }
       
       cor_matrix <- pivot_df %>%
@@ -243,23 +257,23 @@ benchmarkInsights <- R6::R6Class(
     #' comparison between groups in the provided evaluation summary. The plot is created
     #' using dotwhisker and broom packages, with custom grouping and labeling.
     #' @param minievalSummary A data frame containing the evaluation summary.
-    #' @param input_group A string specifying the grouping variable (only "datasetID", "Compare", or "GS" allowed).
-    #' @param input_model A string specifying the model variable (only "datasetID", "Compare", or "GS" allowed).
+    #' @param input_group A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).
+    #' @param input_model A string specifying the model variable (only "datasetID", "method", or "auxData" allowed).
     #' @return A forest plot showing the comparison of models across groups.
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
     getForestplot = function(minievalSummary, input_group, input_model) {
-      allowed_values <- c("datasetID", "Compare", "GS", "metric")
+      allowed_values <- c("datasetID", "method", "auxData", "metric")
       if (!input_group %in% allowed_values) {
-        stop("Invalid input_group. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
+        stop("Invalid input_group. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
       }
       if (!input_model %in% allowed_values) {
-        stop("Invalid input_model. Must be 'datasetID', 'Compare', 'GS' or 'metric'.")
+        stop("Invalid input_model. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
       }
       
       # minievalSummary <- benchmark$evalSummary
       # input_group <- "metric"
-      # input_model <- "Compare"
+      # input_model <- "method"
 
       to_plot <- minievalSummary %>%
         group_by(!!sym(input_group)) %>%

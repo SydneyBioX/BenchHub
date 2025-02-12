@@ -1,102 +1,52 @@
 test_that("getHeatmap handles multiple datasets with duplicate GS names by using metrics", {
-  benchmark <- benchmarkInsights$new()
-  library(dplyr)
   # Create evalResult structure with three datasets
-  evalResult1 <- list(
-    SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.5228492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.3692081)),
-      libSize = list(libSize = list("KS" = 0.3692081)),
-      clustering = list(
-        ARI = list("ARI" = 0.45),
-        NMI = list("NMI" = 0.65)
-      )
-    ),
-    scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.1863305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.3556976)),
-      libSize = list(libSize = list("KS" = 1.333087)),
-      clustering = list(
-        ARI = list("ARI" = 0.35),
-        NMI = list("NMI" = 0.65)
-      )
-    ),
-    scDesign2 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.5456492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.4694581)),
-      libSize = list(libSize = list("KS" = 0.3688881)),
-      clustering = list(
-        ARI = list("ARI" = 0.48),
-        NMI = list("NMI" = 0.95)
-      )
-    )
+  evalResult1 <- data.frame(
+    datasetID = rep("dataset1", 15),
+    method = c(rep("SRTsim", 5), rep("scDesign3", 5), rep("scDesign2", 5)),
+    auxData = c("fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+                "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+                "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering"),
+    metric = c("KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI"),
+    result = c(0.5228492, 0.3692081, 0.3692081, 0.45, 0.65,
+               0.1863305, 0.3556976, 1.333087, 0.35, 0.65,
+               0.5456492, 0.4694581, 0.3688881, 0.48, 0.95)
   )
   
-  evalResult2 <- list(
-    SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.7228492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.7892081)),
-      libSize = list(libSize = list("KS" = 0.1232081)),
-      clustering = list(
-        ARI = list("ARI" = 0.85),
-        NMI = list("NMI" = 0.78)
-      )
-    ),
-    scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.1453305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.8956976)),
-      libSize = list(libSize = list("KS" = -1.999087)),
-      clustering = list(
-        ARI = list("ARI" = 0.15),
-        NMI = list("NMI" = 0.28)
-      )
-    ),
-      scDesign2 = list(
-        fracZero_spot = list(fracZero_spot = list("KS" = 0.345662)),
-        fracZero_gene = list(fracZero_gene = list("KS" = 0.4634561)),
-        libSize = list(libSize = list("KS" = 0.300001)),
-        clustering = list(
-          ARI = list("ARI" = 0.23),
-          NMI = list("NMI" = 0.12)
-        )
-      )
-    
+  benchmark <- benchmarkInsights$new(evalResult1)
+  library(dplyr)
+  evalResult2 <- data.frame(
+    datasetID = c(rep("dataset2", 15)),
+    method = c(rep("SRTsim", 5), rep("scDesign3", 5), rep("scDesign2", 5)),
+    auxData = c("fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+           "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+           "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering"),
+    metric = c("KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI"),
+    result = c(0.7228492, 0.7892081, 0.1232081, 0.85, 0.78,
+               0.1453305, 0.8956976, -1.9990870, 0.15, 0.28,
+               0.3456620, 0.4634561, 0.3000010, 0.23, 0.12000008)
   )
   
-  evalResult3 <- list(
-    SRTsim = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.1238492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.5672081)),
-      libSize = list(libSize = list("KS" = 0.7892081)),
-      clustering = list(
-        ARI = list("ARI" = 0.78),
-        NMI = list("NMI" = 0.99)
-      )
-    ),
-    scDesign3 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.6666305)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.2345976)),
-      libSize = list(libSize = list("KS" = 1.888887)),
-      clustering = list(
-        ARI = list("ARI" = 0.89),
-        NMI = list("NMI" = 0.56)
-      )
-    ),
-    scDesign2 = list(
-      fracZero_spot = list(fracZero_spot = list("KS" = 0.1236492)),
-      fracZero_gene = list(fracZero_gene = list("KS" = 0.465678)),
-      libSize = list(libSize = list("KS" = 0.123481)),
-      clustering = list(
-        ARI = list("ARI" = 0.23),
-        NMI = list("NMI" = 0.89)
-      )
-    )
+  evalResult3 <- data.frame(
+    datasetID = rep("dataset3", 15),
+    method = c(rep("SRTsim", 5), rep("scDesign3", 5), rep("scDesign2", 5)),
+    auxData = c("fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+           "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering",
+           "fracZero_spot", "fracZero_gene", "libSize", "clustering", "clustering"),
+    metric = c("KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI",
+               "KS", "KS", "KS", "ARI", "NMI"),
+    result = c(0.1238492, 0.5672081, 0.7892081, 0.78, 0.99,
+               0.6666305, 0.2345976, 1.8888870, 0.89, 0.56,
+               0.1236492, 0.4656780, 0.1234810, 0.23, 0.89)
   )
   
   # Add evaluation summaries
-  benchmark$addevalSummary(evalResult1, "dataset1")
-  benchmark$addevalSummary(evalResult2, "dataset2")
-  benchmark$addevalSummary(evalResult3, "dataset3")
+  benchmark$addevalSummary(evalResult2)
+  benchmark$addevalSummary(evalResult3)
   
   # Generate heatmap and check it was created correctly
   heatmap <- benchmark$getHeatmap(benchmark$evalSummary)
@@ -106,11 +56,11 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   
   grouped_boxplot <- benchmark$getBoxplot(KDE_summary)
   
-  GS_corplot <- benchmark$getCorplot(benchmark$evalSummary, "GS")
+  GS_corplot <- benchmark$getCorplot(benchmark$evalSummary, "auxData")
   metric_corplot <- benchmark$getCorplot(benchmark$evalSummary, "metric")
-  Compare_corplot <- benchmark$getCorplot(benchmark$evalSummary, "Compare")
+  Compare_corplot <- benchmark$getCorplot(benchmark$evalSummary, "method")
   
-  forest_plot <- benchmark$getForestplot(benchmark$evalSummary, "metric", "Compare")
+  forest_plot <- benchmark$getForestplot(benchmark$evalSummary, "metric", "method")
 
   
   # Ensure the heatmap object is not NULL
@@ -161,35 +111,24 @@ test_that("addMetadata handles multiple entries correctly", {
 })
 
 test_that("getScatterplot creates a scatterplot with optional grouping", {
-  benchmark <- benchmarkInsights$new()
-  evalResult1 <- list(
-    SRTsim = list(
-      "1000_200" = list(time = list("time" = 233)),
-      "2000_200" = list(time = list("time" = 543)),
-      "3000_200" = list(time = list("time" = 666))
-    ),
-    scDesign3 = list(
-      "1000_200" = list(time = list("time" = 567)),
-      "2000_200" = list(time = list("time" = 777)),
-      "3000_200" = list(time = list("time" = 890))
-    )
+  evalResult1 <- data.frame(
+    datasetID = rep("dataset1", 6),
+    method = c(rep("SRTsim", 3), rep("scDesign3", 3)),
+    auxData = c("1000_200", "2000_200", "3000_200", "1000_200", "2000_200", "3000_200"),
+    metric = rep("time", 6),
+    result = c(233, 543, 666, 567, 777, 890)
   )
-  
-  evalResult2 <- list(
-    SRTsim = list(
-      "1000_200" = list(time = list("time" = 123)),
-      "2000_200" = list(time = list("time" = 678)),
-      "3000_200" = list(time = list("time" = 888))
-    ),
-    scDesign3 = list(
-      "1000_200" = list(time = list("time" = 456)),
-      "2000_200" = list(time = list("time" = 445)),
-      "3000_200" = list(time = list("time" = 789))
-    )
+  benchmark <- benchmarkInsights$new(evalResult1)
+
+  evalResult2 <- data.frame(
+    datasetID = rep("dataset2", 6),
+    method = c(rep("SRTsim", 3), rep("scDesign3", 3)),
+    auxData = c("1000_200", "2000_200", "3000_200", "1000_200", "2000_200", "3000_200"),
+    metric = rep("time", 6),
+    result = c(123, 678, 888, 456, 445, 789)
   )
 
-  benchmark$addevalSummary(evalResult1, "dataset1")
-  benchmark$addevalSummary(evalResult2, "dataset2")
+  benchmark$addevalSummary(evalResult2)
 
   line_plot <- benchmark$getLineplot(benchmark$evalSummary, c('3000_200', '2000_200', '1000_200'))
   line_plot <- benchmark$getLineplot(benchmark$evalSummary)
@@ -197,89 +136,32 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
 })
 
 test_that("getScatterplot handles multiple datasets with duplicate GS names by using two metrics", {
-  benchmark <- benchmarkInsights$new()
+  
 
-  evalResult1 <- list(
-    SRTsim = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.7),
-        specificity = list("specificity" = 0.8)
-      )
-    ),
-    scDesign3 = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.56),
-        specificity = list("specificity" = 0.7)
-      )
-    ),
-    SPARsim = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.76),
-        specificity = list("specificity" = 0.88)
-      )
-    ),
-    Spider = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.36),
-        specificity = list("specificity" = 0.45)
-      )
-    ),
-    powersimR = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.76),
-        specificity = list("specificity" = 0.88)
-      )
-    ),
-    SPsimSeq = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.12),
-        specificity = list("specificity" = 0.23)
-      )
-    )
+  evalResult1 <- data.frame(
+    datasetID = rep("dataset1", 12),
+    method = c("SRTsim", "SRTsim", "scDesign3", "scDesign3", 
+               "SPARsim", "SPARsim", "Spider", "Spider", 
+               "powersimR", "powersimR", "SPsimSeq", "SPsimSeq"),
+    auxData = rep("SVG", 12),
+    metric = rep(c("sensitivity", "specificity"), 6),
+    result = c(0.70, 0.80, 0.56, 0.70, 0.76, 0.88, 0.36, 0.45, 0.76, 0.88, 0.12, 0.23)
   )
   
-  evalResult2 <- list(
-    SRTsim = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.67),
-        specificity = list("specificity" = 0.80)
-      )
-    ),
-    scDesign3 = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.45),
-        specificity = list("specificity" = 0.78)
-      )
-    ),
-    SPARsim = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.56),
-        specificity = list("specificity" = 0.56)
-      )
-    ),
-    Spider = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.89),
-        specificity = list("specificity" = 0.79)
-      )
-    ),
-    powersimR = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.45),
-        specificity = list("specificity" = 0.56)
-      )
-    ),
-    SPsimSeq = list(
-      SVG = list(
-        sensitivity = list("sensitivity" = 0.32),
-        specificity = list("specificity" = 0.12)
-      )
-    )
+  benchmark <- benchmarkInsights$new(evalResult1)
+  
+  evalResult2 <- data.frame(
+    datasetID = rep("dataset2", 12),
+    method = c("SRTsim", "SRTsim", "scDesign3", "scDesign3", 
+               "SPARsim", "SPARsim", "Spider", "Spider", 
+               "powersimR", "powersimR", "SPsimSeq", "SPsimSeq"),
+    auxData = rep("SVG", 12),
+    metric = rep(c("sensitivity", "specificity"), 6),
+    result = c(0.67, 0.80, 0.45, 0.78, 0.56, 0.56, 0.89, 0.79, 0.45, 0.56, 0.32, 0.12)
   )
   
   # Add evaluation summaries
-  benchmark$addevalSummary(evalResult1, "dataset1")
-  benchmark$addevalSummary(evalResult2, "dataset2")
+  benchmark$addevalSummary(evalResult2)
   
   # Generate scatterplot and check it was created correctly
   scatterplot <- benchmark$getScatterplot(benchmark$evalSummary)
