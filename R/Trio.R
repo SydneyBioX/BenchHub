@@ -371,6 +371,18 @@ Trio <- R6::R6Class(
         type = if_else(stratify, "stratified", "basic"),
         m_rep = n_repeat
       )
+    },
+
+    #' @description
+    #' Print method to display key information about the Trio object.
+    print = function() {
+      cli::cli_h1("Trio Object")
+      cli::cli_text("Dataset ID: {.val {self$dataSourceID}}")
+      cli::cli_text("Data Source: {.val {self$dataSource}}")
+      cli::cli_text("Cache Path: {.val {self$cachePath}}")
+      cli::cli_text("Number of Auxiliary Data: {.val {length(self$auxData)}}")
+      cli::cli_text("Number of Metrics: {.val {length(self$metrics)}}")
+      cli::cli_text("Split Indices: {.val {ifelse(is.null(self$splitIndices), 'None', 'Available')}}")
     }
   ),
   private = list(
