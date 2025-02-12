@@ -40,18 +40,24 @@ To initiate a TrioR object, we use a `new()` function.
 trio <- Trio$new(cachePath = testCache)
 ```
 
-Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose a confusion matrix, we chose a confusion matrix, using the existing R `table` function, and named it `Confusion Matrix`.
+Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose accruacy as our evaluation metric. In this case, we created a user-defined accruacy calculation function, and passed it to the `TrioR` object, naming it `Accuracy`.
 
 ```{r}
+# create a user-defined evaluation metric function
+compute_acc = function(ref, pred) {
+  acc = mean(ref == pred)
+  return(acc)
+}
+
 # add a metric to the Trio object
-trio$addMetric(name = "Confusion Matrix", metric = table)
+trio$addMetric(name = "Accuracy", metric = compute_acc)
 ```
 
 Then we can add auxiliary data to the `TrioR` object using the `addAuxData` function. In our case, the auxiliary data is the gold standard, which is the `lubom_pd` vector that we extracted from the `Lubomski` data above. Similar to addimg a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object. In this case, we used the `Confusion Matrix`.
 
 ```{r}
 # add auxiliary data to the Trio object
-trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Confusion Matrix")
+trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Accuracy")
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
@@ -107,16 +113,15 @@ for (i in 1:length(cv_ind)) {
   pred <- as.factor(as.vector(pred))
   
   # update auxData inside of the Trio
-  trio$addAuxData(name = "lubomski_microbiome", auxData = y_test, metrics = "Confusion Matrix")
+  trio$addAuxData(name = "lubomski_microbiome", auxData = y_test, metrics = "Accuracy")
   
   # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list(lubomski_microbiome = pred))
-  cv_res[i] <- sum(diag(eval_res[[1]][[1]]))/sum(eval_res[[1]][[1]])
+  cv_res[i] <- trio$evaluate(list(lubomski_microbiome = pred))
 }
 ```
 
-After cross-validation, users can visualise cross-validation results.
+After cross-validation, users can visualise cross-validation results. Note that the output of the `evaluate()` function is a list, so we unlist `cv_res` to visualise it.
 
 ```{r}
-boxplot(cv_res)
+boxplot(unlist(cv_res))
 ```
