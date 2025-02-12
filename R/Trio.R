@@ -378,24 +378,25 @@ Trio <- R6::R6Class(
     print = function() {
       data_str <- capture.output(str(self$data, max.level=2))
       data_str <- setNames(data_str, rep(" ", times = length(data_str)))
+      split_ind <- ifelse(is.null(self$splitIndices), 'None', 'Available')
 
       cli::cli_h1("Trio Object")
 
       cli::cli_h3("Dataset")
-      cli::cli_text("Dataset Details:")
+      cli::cli_text("{.strong Dataset Details}:")
       cli::cli_bullets(data_str)
-      cli::cli_text("Dataset ID: {.val {self$dataSourceID}}")
-      cli::cli_text("Data Source: {.val {self$dataSource}}")
-      cli::cli_text("Cache Path: {.val {self$cachePath}}")
-      cli::cli_text("Split Indices: {.val {ifelse(is.null(self$splitIndices), 'None', 'Available')}}")
+      cli::cli_text("{.strong Dataset ID}: {.val {self$dataSourceID}}")
+      cli::cli_text("{.strong Data Source}: {.val {self$dataSource}}")
+      cli::cli_text("{.strong Cache Path}: {.val {self$cachePath}}")
+      cli::cli_text("{.strong Split Indices}: {.val {split_ind}}")
 
       cli::cli_h3("Auxilliary Data")
-      cli::cli_text("Number of Auxiliary Data: {.val {length(self$auxData)}}")
-      cli::cli_text("Names of Auxiliary Data: {.val {names(self$auxData)}}")
+      cli::cli_text("{.strong Number of Auxiliary Data}: {.val {length(self$auxData)}}")
+      cli::cli_text("{.strong Names of Auxiliary Data}: {.val {names(self$auxData)}}")
 
       cli::cli_h3("Metrics")
-      cli::cli_text("Number of Metrics: {.val {length(self$metrics)}}")
-      cli::cli_text("Names of Metrics: {.val {names(self$metrics)}}")
+      cli::cli_text("{.strong Number of Metrics}: {.val {length(self$metrics)}}")
+      cli::cli_text("{.strong Names of Metrics}: {.val {names(self$metrics)}}")
     }
   ),
   private = list(
