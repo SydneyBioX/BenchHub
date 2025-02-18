@@ -344,7 +344,7 @@ Trio <- R6::R6Class(
             datasetID = self$dataSourceID,
             auxData = metric_name,
             metric = names(metricValues),
-            result = metricValues
+            result = unlist(metricValues)
           )
         }) %>% purrr::list_rbind()
       }
