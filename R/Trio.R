@@ -50,8 +50,13 @@ Trio <- R6::R6Class(
     initialize = function(datasetID = NULL, cachePath = FALSE) {
       # if users have their own data without datasetID
       if (is.null(datasetID)) {
+        if (!interactive()) {
+          cli::cli_abort("When Trio is initialised non-interactively, a {.val datasetID} must be specified.")
+        }
         # prompt users to input their own new datasetID
-        datasetID <- readline(prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: ")
+        datasetID <- readline(
+          prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: "
+        )
       } else {
         # parse user input and set dataSource and dataSourceID
         private$parseIDString(datasetID)
