@@ -376,7 +376,7 @@ Trio <- R6::R6Class(
       self$splitIndices <- splitTools::create_folds(
         y,
         k = n_fold,
-        type = if_else(stratify, "stratified", "basic"),
+        type = dplyr::if_else(stratify, "stratified", "basic"),
         m_rep = n_repeat
       )
     },
