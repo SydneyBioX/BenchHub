@@ -1,13 +1,13 @@
 balAccMetric <- function(auxData, predicted)
 {
-  confusionMatrix <- table(iterationClasses, iterationPredictions)
+  confusionMatrix <- table(auxData, predicted)
   classSizes <- rowSums(confusionMatrix)
   mean(diag(confusionMatrix) / classSizes, na.rm = TRUE)
 }
 
 balErrMetric <- function(auxData, predicted)
 {
-  confusionMatrix <- table(iterationClasses, iterationPredictions)
+  confusionMatrix <- table(auxData, predicted)
   classSizes <- rowSums(confusionMatrix)
   classErrors <- classSizes - diag(confusionMatrix)
   mean(classErrors / classSizes, na.rm = TRUE)
