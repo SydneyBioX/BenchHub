@@ -9,6 +9,7 @@ vignette: >
 
 ```{r setup, message=FALSE}
 devtools::load_all()
+library(BenchHub)
 library(tidyverse)
 library(glmnet)
 ```
@@ -40,7 +41,7 @@ Once we create a TrioR object, we can add a metric to it using the `addMetric()`
 
 ```{r}
 # add a metric to the Trio object
-trio$addMetric(name = "Balanced Accuracy", metric = balAccMetric)
+trio$addMetric(name = "Balanced Accuracy", metric = BenchHub:::balAccMetric)
 ```
 
 Then we can add auxiliary data to the `TrioR` object using the `addAuxData` function. In our case, the auxiliary data is the gold standard, which is the `lubom_pd` vector that we extracted from the `Lubomski` data above. Similar to addimg a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object. In this case, we used the `Balanced Accuracy`.
@@ -68,7 +69,7 @@ For repeated cross-validation, the `split()` function will split the `y` vector 
 
 ```{r}
 # get train and test indices
-trio$split(y = y, n_fold = 5, n_repeat = 10)
+trio$split(y = y, n_fold = 2, n_repeat = 5)
 cv_ind <- trio$splitIndices
 cv_res <- c()
 ```
@@ -83,7 +84,10 @@ Once users get evaluation results at each iteration, the `evaluate()` function w
 ```{r}
 set.seed(1234)
 
+result <- data.frame()
+
 for (i in seq_along(cv_ind)) {
+  print(i)
   train_id <- cv_ind[[i]]
 
   x_train <- x[train_id, ]
@@ -107,12 +111,24 @@ for (i in seq_along(cv_ind)) {
 
   # get the chosen evaluation metric from the Trio
   eval_res <- trio$evaluate(list(lubomski_microbiome = pred), splitIndex = i)
-  cv_res[i] <- eval_res %>% pluck("result", 1)
+
+  # keep track of the repeat and fold information
+  eval_res$track <-  names(cv_ind)[[i]]
+  result <- rbind(result,  eval_res )
 }
 ```
 
-After cross-validation, users can visualise cross-validation results.
+After cross-validation, users can visualise cross-validation results by averaging results across folds within each repeats.
 
 ```{r}
-boxplot(cv_res)
+
+result$fold <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 1))
+
+result$repeats <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 2))
+
+result <- result %>% 
+   dplyr::group_by(auxData, metric, repeats) %>%
+   dplyr::summarize(mean_result = mean(result ))
+
+boxplot(result$mean_result )
 ```
