@@ -27,31 +27,27 @@ head(lubomPD)
 
 The task we'll be evaluating using `TrioR` is a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `TrioR`, we can load `TrioR`.
 
-```{r}
-testCache <- system.file("extdata", "testdata", package = "BenchHub")
-```
-
 # CV - the trioR split function
 
 To initiate a TrioR object, we use a `new()` function.
 
 ```{r}
 # initiate a Trio object without datasetID
-trio <- Trio$new("figshare:26054188/47112109", cachePath = testCache)
+trio <- Trio$new(data = lubomPD)
 ```
 
-Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose a confusion matrix, we chose a confusion matrix, using the existing R `table` function, and named it `Confusion Matrix`.
+Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
 
 ```{r}
 # add a metric to the Trio object
-trio$addMetric(name = "Confusion Matrix", metric = table)
+trio$addMetric(name = "Balanced Accuracy", metric = balAccMetric)
 ```
 
-Then we can add auxiliary data to the `TrioR` object using the `addAuxData` function. In our case, the auxiliary data is the gold standard, which is the `lubom_pd` vector that we extracted from the `Lubomski` data above. Similar to addimg a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object. In this case, we used the `Confusion Matrix`.
+Then we can add auxiliary data to the `TrioR` object using the `addAuxData` function. In our case, the auxiliary data is the gold standard, which is the `lubom_pd` vector that we extracted from the `Lubomski` data above. Similar to addimg a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object. In this case, we used the `Balanced Accuracy`.
 
 ```{r}
 # add auxiliary data to the Trio object
-trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Confusion Matrix")
+trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Balanced Accuracy")
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
@@ -111,8 +107,7 @@ for (i in seq_along(cv_ind)) {
 
   # get the chosen evaluation metric from the Trio
   eval_res <- trio$evaluate(list(lubomski_microbiome = pred), splitIndex = i)
-  confusionMat <- eval_res %>% pluck("result", 1)
-  cv_res[i] <- sum(diag(confusionMat) / sum(confusionMat))
+  cv_res[i] <- eval_res %>% pluck("result", 1)
 }
 ```
 
