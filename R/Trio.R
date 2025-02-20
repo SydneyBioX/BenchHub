@@ -46,10 +46,13 @@ Trio <- R6::R6Class(
     #' @param datasetID
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
+    #' @param data An object to use as the Trio dataset.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID = NULL, cachePath = FALSE) {
+    initialize = function(datasetID = NULL, data = NULL, cachePath = FALSE) {
       # if users have their own data without datasetID
-      if (is.null(datasetID)) {
+      if (!is.null(data)) {
+        self$data <- data
+      } else if (is.null(datasetID)) {
         if (!interactive()) {
           cli::cli_abort("When Trio is initialised non-interactively, a {.val datasetID} must be specified.")
         }
@@ -331,11 +334,11 @@ Trio <- R6::R6Class(
                   "i" = "Please ensure that all your metrics only output a single value."
                 ))
               }
+              metric_res
             }
           )
           setNames(res, metrics[[auxDataName]])
         })
-
         purrr::map(names(res), function(metric_name) {
           metricValues <- res[[metric_name]]
 
