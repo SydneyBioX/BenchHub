@@ -39,6 +39,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item \href{#method-Trio-getAuxData}{\code{Trio$getAuxData()}}
 \item \href{#method-Trio-evaluate}{\code{Trio$evaluate()}}
 \item \href{#method-Trio-split}{\code{Trio$split()}}
+\item \href{#method-Trio-print}{\code{Trio$print()}}
 \item \href{#method-Trio-clone}{\code{Trio$clone()}}
 }
 }
@@ -48,7 +49,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \subsection{Method \code{new()}}{
 Create a Trio object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID = NULL, cachePath = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID = NULL, data = NULL, cachePath = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -56,6 +57,8 @@ Create a Trio object
 \describe{
 \item{\code{datasetID}}{A string specifying a dataset, either a name from curated-trio-data or
 a format string of the form \code{source}:\code{source_id}.}
+
+\item{\code{data}}{An object to use as the Trio dataset.}
 
 \item{\code{cachePath}}{The path to the data cache}
 }
@@ -189,6 +192,16 @@ vector the length of the data.}
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-print"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-print}{}}}
+\subsection{Method \code{print()}}{
+Print method to display key information about the Trio object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$print()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Trio-clone"></a>}}
