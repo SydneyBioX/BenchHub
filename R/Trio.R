@@ -51,6 +51,16 @@ Trio <- R6::R6Class(
     initialize = function(datasetID = NULL, data = NULL, cachePath = FALSE) {
       # if users have their own data without datasetID
       if (!is.null(data)) {
+        if (is.null(datasetID) && interactive()) {
+          self$dataSourceID <- readline("Choose a name for this data: ")
+        } else if (!is.null(datasetID)) {
+           self$dataSourceID <- datasetID
+        } else {
+          cli::cli_abort(c(
+            "No {.var datasetID} was provided.",
+            "i" = "Please pass a datasetID when creating Trio with local data."
+          ))
+        }
         self$data <- data
       } else if (is.null(datasetID)) {
         if (!interactive()) {

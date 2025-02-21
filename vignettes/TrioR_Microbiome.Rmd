@@ -33,8 +33,8 @@ The task we'll be evaluating using `TrioR` is a binary classification task where
 To initiate a TrioR object, we use a `new()` function.
 
 ```{r}
-# initiate a Trio object without datasetID
-trio <- Trio$new(data = lubomPD)
+# initiate a Trio object
+trio <- Trio$new(data = lubomPD, datasetID = "lubomPD")
 ```
 
 Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
@@ -127,7 +127,7 @@ result$fold <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 1
 result$repeats <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 2))
 
 result <- result %>% 
-   dplyr::group_by(auxData, metric, repeats) %>%
+   dplyr::group_by(datasetID, auxData, metric, repeats) %>%
    dplyr::summarize(mean_result = mean(result ))
 
 boxplot(result$mean_result )
