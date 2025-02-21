@@ -33,8 +33,8 @@ The task we'll be evaluating using `TrioR` is a binary classification task where
 To initiate a TrioR object, we use a `new()` function.
 
 ```{r}
-# initiate a Trio object
-trio <- Trio$new(data = lubomPD, datasetID = "lubomPD")
+# initiate a Trio object without datasetID
+trio <- Trio$new(data = lubomPD, datasetID = "lubomski_microbiome")
 ```
 
 Once we create a TrioR object, we can add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
@@ -48,21 +48,21 @@ Then we can add auxiliary data to the `TrioR` object using the `addAuxData` func
 
 ```{r}
 # add auxiliary data to the Trio object
-trio$addAuxData(name = "lubomski_microbiome", auxData = lubomPD, metrics = "Balanced Accuracy")
+trio$addAuxData(name = "patient_status", auxData = lubomPD, metrics = "Balanced Accuracy")
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
 
 ```{r}
 # get the metric from the Trio object
-metrics <- trio$getMetrics("lubomski_microbiome")
+metrics <- trio$getMetrics("patient_status")
 ```
 
 Then we'll build a classification model to evaluate. To build a model, the following code will extract an input data `x` matrix from the `Lubomski` data (stored as `lubom`) for the classification model to use. Note that the prediction vector `y` is stored in the `TrioR` object, and users can extract it from the `TrioR` object using the `getAuxData` function by specifying the name of `auxData`.
 
 ```{r}
 # get the gold standard from the Trio object
-y <- trio$getAuxData("lubomski_microbiome")
+y <- trio$getAuxData("patient_status")
 ```
 
 For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `auxData`) into the number of folds and repeats users want. In this case we used `n_fold = 5` and `n_repeat = 10` (i.e., 5-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`cv_ind`) for each sample, through `splitIndices`. `cv_ind` is a simple list where each element represents a combination of folds and repeats for each sample. Lastly, we initiate an empty vector `cv_res`, which will store cross-validation results.
@@ -79,7 +79,7 @@ Once `TrioR` split the data into the number of folds specified by users, users c
 After that, users can subset the input data matrix `x` and the prediction vector and `y` (`auxData`obtained from the `TrioR` object) to training and test data. Then users can build models using training data. As an example, we built a LASSO regression model as a classification model using the `glmnet` function. Then users can make predictions on the test data.
 
 
-Once users get evaluation results at each iteration, the `evaluate()` function will compute a chosen evaluation metric using the prediction results provided by users. In this case, we provided binary prediction results (the `pred` vector) to `TrioR` by referring to the name of `auxData` (`lubomski_microbiome` = `pred`). Then the `evaluate()` function will compare the `pred` vector with auxData `lubomski_microbiome` stored in the `TrioR` object to compute a confusion matrix, the evaluated metric we chose above (`eval_res`). For demonstration purposes, we computed accuracy from the `eval_res` matrix and stored it in the cross-validation result vector `cv_res` at each iteration.
+Once users get evaluation results at each iteration, the `evaluate()` function will compute a chosen evaluation metric using the prediction results provided by users. In this case, we provided binary prediction results (the `pred` vector) to `TrioR` by referring to the name of `auxData` (`patient_status` = `pred`). Then the `evaluate()` function will compare the `pred` vector with auxData `patient_status` stored in the `TrioR` object to compute a confusion matrix, the evaluated metric we chose above (`eval_res`). For demonstration purposes, we computed accuracy from the `eval_res` matrix and stored it in the cross-validation result vector `cv_res` at each iteration.
 
 ```{r}
 set.seed(1234)
@@ -110,7 +110,11 @@ for (i in seq_along(cv_ind)) {
   pred <- as.factor(as.vector(pred))
 
   # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list("lasso" = list(lubomski_microbiome = pred)), splitIndex = i)
+  eval_res <- trio$evaluate(
+                list(
+                  lasso = list(
+                     patient_status = pred)), 
+                splitIndex = i)  
 
   # keep track of the repeat and fold information
   eval_res$track <-  names(cv_ind)[[i]]
@@ -118,7 +122,9 @@ for (i in seq_along(cv_ind)) {
 }
 ```
 
-After cross-validation, users can visualise cross-validation results by averaging results across folds within each repeats.
+
+After cross-validation, users can visualise cross-validation results by averaging results across folds within each repeats. After averaging, please make sure the `result` column is still called `result` if you need to pass this dataframe to BenchmarkInsights for subsequent visualisation.   
+
 
 ```{r}
 
@@ -127,8 +133,8 @@ result$fold <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 1
 result$repeats <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 2))
 
 result <- result %>% 
-   dplyr::group_by(datasetID, method, auxData, metric, repeats) %>%
-   dplyr::summarize(mean_result = mean(result ))
+   dplyr::group_by(auxData, metric, repeats) %>%
+   dplyr::summarize(result = mean(result ))
 
-boxplot(result$mean_result )
+boxplot(result$result )
 ```
