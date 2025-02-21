@@ -110,7 +110,7 @@ for (i in seq_along(cv_ind)) {
   pred <- as.factor(as.vector(pred))
 
   # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list(lubomski_microbiome = pred), splitIndex = i)
+  eval_res <- trio$evaluate(list("lasso" = list(lubomski_microbiome = pred)), splitIndex = i)
 
   # keep track of the repeat and fold information
   eval_res$track <-  names(cv_ind)[[i]]
@@ -127,7 +127,7 @@ result$fold <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 1
 result$repeats <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 2))
 
 result <- result %>% 
-   dplyr::group_by(datasetID, auxData, metric, repeats) %>%
+   dplyr::group_by(datasetID, method, auxData, metric, repeats) %>%
    dplyr::summarize(mean_result = mean(result ))
 
 boxplot(result$mean_result )

@@ -233,7 +233,7 @@ Trio <- R6::R6Class(
 
       # check if auxiliary data is available for each element of the input.
       if (separateMethods) {
-        evalList <- lapply(input, self$evaluate)
+        evalList <- lapply(input, self$evaluate, splitIndex = splitIndex)
         return(
           purrr::list_rbind(evalList, names_to = "method") %>%
             dplyr::select(datasetID, dplyr::everything())
