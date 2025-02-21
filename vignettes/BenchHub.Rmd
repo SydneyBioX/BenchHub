@@ -8,6 +8,7 @@ vignette: >
 --- 
 
 ```{r setup, message=FALSE}
+devtools::load_all()
 library(BenchHub)
 ```
 
