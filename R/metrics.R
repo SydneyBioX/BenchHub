@@ -1,60 +1,134 @@
-kdeMetric <- function(gs, to_eval) {
+balAccMetric <- function(auxData, predicted) {
+  confusionMatrix <- table(auxData, predicted)
+  classSizes <- rowSums(confusionMatrix)
+  mean(diag(confusionMatrix) / classSizes, na.rm = TRUE)
+}
+
+balErrMetric <- function(auxData, predicted) {
+  confusionMatrix <- table(auxData, predicted)
+  classSizes <- rowSums(confusionMatrix)
+  classErrors <- classSizes - diag(confusionMatrix)
+  mean(classErrors / classSizes, na.rm = TRUE)
+}
+
+.positivesNegatives <- function(auxData, predicted) {
+  confusionMatrix <- table(auxData, predicted)
+  truePositives <- diag(confusionMatrix)
+  falsePositives <- colSums(confusionMatrix) - truePositives
+  falseNegatives <- rowSums(confusionMatrix) - truePositives
+  trueNegatives <- sum(truePositives) - truePositives
+  list(
+    TP = truePositives, FP = falsePositives,
+    FN = falseNegatives, TN = trueNegatives
+  )
+}
+
+microPrecMetric <- function(auxData, predicted) {
+  PN <- .positivesNegatives(auxData, predicted)
+  sum(PN[["TP"]]) / sum(PN[["TP"]] + PN[["FP"]])
+}
+
+microRecMetric <- function(auxData, predicted) {
+  PN <- .positivesNegatives(auxData, predicted)
+  sum(PN[["TP"]]) / sum(PN[["TP"]] + PN[["FN"]])
+}
+
+microF1Metric <- function(auxData, predicted) {
+  2 * microPrecMetric(auxData, predicted) * microRecMetric(auxData, predicted) /
+    (microPrecMetric(auxData, predicted) + microRecMetric(auxData, predicted))
+}
+
+
+macroPrecMetric <- function(auxData, predicted) {
+  PN <- .positivesNegatives(auxData, predicted)
+  sum(PN[["TP"]] / (PN[["TP"]] + PN[["FP"]])) / length(levels(auxData))
+}
+
+macroRecMetric <- function(auxData, predicted) {
+  PN <- .positivesNegatives(auxData, predicted)
+  sum(PN[["TP"]] / (PN[["TP"]] + PN[["FN"]])) / length(levels(auxData))
+}
+
+macroF1Metric <- function(auxData, predicted) {
+  2 * macroPrec(auxData, predicted) * macroRec(auxData, predicted) /
+    (macroPrec(auxData, predicted) + macroRec(auxData, predicted))
+}
+
+MCCmetric <- function(auxData, predicted) {
+  nClass <- length(levels(auxData))
+  if (nClass != 2) {
+    cli::cli_abort(c(
+      "Matthews Correlation Coefficient (MCC) calculation failed.",
+      "i" = "Selected data has {nClass} classes ({.val {levels(auxData)}}).",
+      "i" = "MCC only supports 2 classes."
+    ))
+  }
+  PN <- .positivesNegatives(auxData, predicted)
+  (PN[["TP"]][2] * PN[["TN"]][2] - PN[["FP"]][2] * PN[["FN"]][2]) /
+    sqrt(
+      (PN[["TP"]][2] + PN[["FP"]][2]) * (PN[["TP"]][2] + PN[["FN"]][2]) *
+        (PN[["TN"]][2] + PN[["FP"]][2]) * (PN[["TN"]][2] + PN[["FN"]][2])
+    )
+}
+
+# One for numeric auxiliary data.
+MSEmetric <- function(auxData, predicted) {
+  mean((auxData - predicted)^2)
+}
+
+kdeMetric <- function(auxData, predicted) {
   assertSuggestAvail("ks")
   ks::kde.test(
-    x1 = as.numeric(gs), x2 = as.numeric(to_eval)
+    x1 = as.numeric(auxData), x2 = as.numeric(predicted)
   ) |> purrr::pluck("zstat")
 }
 
 #' @importFrom Hmisc rcorr.cens
-harrelCIndexMetric <- function(gs, to_eval) {
-  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
+harrelCIndexMetric <- function(auxData, predicted) {
+  assertSuggestAvail("Hmisc")
+  harrelC1 <- Hmisc::rcorr.cens(-predicted[[2]], auxData[[2]])
   return(harrelC1["C Index"])
 }
 
-#' @import survAUC
-beggCIndexMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "Begg's c-index is not supported yet! :("
-  # ))
-  # gs:list(surv_object[ train_index], surv_object[ test_index])
-  # to_eval: list(predictors[ train_index], predictors[test_index])
-  begg_cindex <- survAUC::BeggC(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]])
-  return(begg_cindex)
+#' @importFrom survAUC BeggC
+beggCIndexMetric <- function(auxData, predicted) {
+  assertSuggestAvail("survAUC")
+
+  survAUC::BeggC(
+    auxData[[1]], auxData[[2]], predicted[[1]], predicted[[2]]
+  )
 }
 
-unoCIndexMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "Uno's c-index is not supported yet! :("
-  # ))
-  
-  uno_cindex <- survAUC::UnoC(gs[[1]], gs[[2]], to_eval)
-  return(uno_cindex)
-  
+#' @importFrom survAUC UnoC
+unoCIndexMetric <- function(auxData, predicted) {
+  assertSuggestAvail("survAUC")
+
+  survAUC::UnoC(auxData[[1]], auxData[[2]], predicted)
 }
 
-ghCIndexMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "GH's c-index is not supported yet! :("
-  # ))
-  gh_cindex <- survAUC::GHCI(to_eval)
-  return(gh_cindex)
+#' @importFrom survAUC GHCI
+ghCIndexMetric <- function(auxData, predicted) {
+  assertSuggestAvail("survAUC")
+
+  survAUC::GHCI(predicted)
 }
 
-brierScoreMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "Brier's score is not supported yet! :("
-  # ))
-  time <- gs[[1]][,"time"]
-  brier_score <- survAUC::predErr(gs[[1]], gs[[2]],to_eval[[1]], to_eval[[2]],times=time, type = "brier", int.type = "unweighted")$error
-  return(brier_score)
+#' @importFrom survAUC predErr
+brierScoreMetric <- function(auxData, predicted) {
+  assertSuggestAvail("survAUC")
+
+  time <- auxData[[1]][, "time"]
+  survAUC::predErr(
+    auxData[[1]], auxData[[2]], predicted[[1]], predicted[[2]],
+    times = time, type = "brier", int.type = "unweighted"
+  )$error
 }
 
-timeDependentAUCMetric <- function(gs, to_eval) {
-  # cli::cli_abort(c(
-  #   "Time dependent AUC is not supported yet! :("
-  # ))
-  time <- gs[[1]][,"time"]
-  AUC_CD <- survAUC::AUC.uno(gs[[1]], gs[[2]], to_eval[[2]], time)
+#' @importFrom survAUC AUC.uno
+timeDependentAUCMetric <- function(auxData, predicted) {
+  assertSuggestAvail("survAUC")
+
+  time <- auxData[[1]][, "time"]
+  AUC_CD <- survAUC::AUC.uno(auxData[[1]], auxData[[2]], predicted[[2]], time)
   return(AUC_CD)
 }
-

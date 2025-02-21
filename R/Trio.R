@@ -46,12 +46,20 @@ Trio <- R6::R6Class(
     #' @param datasetID
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
+    #' @param data An object to use as the Trio dataset.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID = NULL, cachePath = FALSE) {
+    initialize = function(datasetID = NULL, data = NULL, cachePath = FALSE) {
       # if users have their own data without datasetID
-      if (is.null(datasetID)) {
+      if (!is.null(data)) {
+        self$data <- data
+      } else if (is.null(datasetID)) {
+        if (!interactive()) {
+          cli::cli_abort("When Trio is initialised non-interactively, a {.val datasetID} must be specified.")
+        }
         # prompt users to input their own new datasetID
-        datasetID <- readline(prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: ")
+        datasetID <- readline(
+          prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: "
+        )
       } else {
         # parse user input and set dataSource and dataSourceID
         private$parseIDString(datasetID)
@@ -326,11 +334,11 @@ Trio <- R6::R6Class(
                   "i" = "Please ensure that all your metrics only output a single value."
                 ))
               }
+              metric_res
             }
           )
           setNames(res, metrics[[auxDataName]])
         })
-
         purrr::map(names(res), function(metric_name) {
           metricValues <- res[[metric_name]]
 
@@ -339,7 +347,7 @@ Trio <- R6::R6Class(
             datasetID = self$dataSourceID,
             auxData = metric_name,
             metric = names(metricValues),
-            result = metricValues
+            result = unlist(metricValues)
           )
         }) %>% purrr::list_rbind()
       }
@@ -376,7 +384,7 @@ Trio <- R6::R6Class(
       self$splitIndices <- splitTools::create_folds(
         y,
         k = n_fold,
-        type = if_else(stratify, "stratified", "basic"),
+        type = dplyr::if_else(stratify, "stratified", "basic"),
         m_rep = n_repeat
       )
     },
@@ -384,7 +392,7 @@ Trio <- R6::R6Class(
     #' @description
     #' Print method to display key information about the Trio object.
     print = function() {
-      data_str <- capture.output(str(self$data, max.level = 2))
+      data_str <- capture.output(str(self$data, max.level = 1))
       data_str <- setNames(data_str, rep(" ", times = length(data_str)))
       split_ind <- ifelse(is.null(self$splitIndices), "None", "Available")
 
