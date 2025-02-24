@@ -48,8 +48,14 @@ Trio <- R6::R6Class(
     #'   A string specifying a dataset, either a name from curated-trio-data or
     #'   a format string of the form `source`:`source_id`.
     #' @param data An object to use as the Trio dataset.
+    #' @param dataLoader
+    #'   A custom loading fuction that takes the path of a downloaded file and
+    #'   returns a single dataset, ready to be used in evaluation tasks.
     #' @param cachePath The path to the data cache
-    initialize = function(datasetID = NULL, data = NULL, cachePath = FALSE) {
+    initialize = function(datasetID = NULL,
+                          data = NULL,
+                          dataLoader = NULL,
+                          cachePath = FALSE) {
       # if users have their own data without datasetID
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
@@ -77,7 +83,7 @@ Trio <- R6::R6Class(
 
         self$cachePath <- getTrioCachePath(cachePath)
         self$data <- private$getData(
-          self$dataSource, self$dataSourceID, self$cachePath
+          self$dataSource, self$dataSourceID, self$cachePath, dataLoader
         )
         if (!is.null(private$datasetID)) {
           private$populateTrio()
@@ -473,7 +479,7 @@ Trio <- R6::R6Class(
 
       if (!exists(paste0(sourceName, "Dl"))) {
         supported <- stringr::str_remove( # nolint
-          grep("Dl", ls("package:TrioR"), value = TRUE), "Dl"
+          grep("Dl", ls("package:BenchHub"), value = TRUE), "Dl"
         )
         cli::cli_abort(c(
           "Downloading form {.emph {sourceName}} is not supported.",
@@ -485,7 +491,7 @@ Trio <- R6::R6Class(
       self$dataSourceID <- id
     },
     # Send the ID to the appropriate downloader and load the file, if possible.
-    getData = function(sourceName, id, cachePath) {
+    getData = function(sourceName, id, cachePath, dataLoader) {
       # TODO: allow the user to input a custom loading function.
       files <- do.call(
         paste0(sourceName, "Dl"),
@@ -497,7 +503,24 @@ Trio <- R6::R6Class(
         files <- files[utils::menu(files)]
       }
 
-      loadFile(files)
+      if (is.null(dataLoader)) {
+        return(loadFile(files))
+      }
+
+      if (!is.function(dataLoader)) {
+        cli::cli_abort(c(
+          "The provided {.var dataLoader} is not a function!",
+          "i" = "Ensure the dataloader is a function with one argument."
+        ))
+      }
+
+      if (length(formals(dataLoader)) != 1) {
+        cli::cli_abort(c(
+          "The provided dataLoader must have one argument!"
+        ))
+      }
+
+      dataLoader(files)
     },
     populateTrio = function() {
       # get the gold standard metadata from curated trio datasets
