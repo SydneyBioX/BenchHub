@@ -54,7 +54,7 @@ Trio <- R6::R6Class(
         if (is.null(datasetID) && interactive()) {
           self$dataSourceID <- readline("Choose a name for this data: ")
         } else if (!is.null(datasetID)) {
-           self$dataSourceID <- datasetID
+          self$dataSourceID <- datasetID
         } else {
           cli::cli_abort(c(
             "No {.var datasetID} was provided.",
@@ -79,7 +79,7 @@ Trio <- R6::R6Class(
           self$dataSource, self$dataSourceID, self$cachePath
         )
         if (!is.null(private$datasetID)) {
-          # private$populateTrio()
+          private$populateTrio()
         }
       }
     },
@@ -427,6 +427,7 @@ Trio <- R6::R6Class(
   ),
   private = list(
     datasetID = NULL,
+    CTDlinl = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
     parseIDString = function(userInput) {
       parsed <- unlist(stringr::str_split(userInput, ":"))
 
@@ -499,30 +500,65 @@ Trio <- R6::R6Class(
     },
     populateTrio = function() {
       # get the gold standard metadata from curated trio datasets
-      gSMetaData <- suppressMessages(googlesheets4::read_sheet(
+      auxDataMetaData <- suppressMessages(googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        sheet = "Dataset-Gold Standard",
+        sheet = "Dataset-AuxData",
       ) |>
         dplyr::filter(datasetID == private$datasetID))
 
-      auxData <- gSMetaData |> purrr::pluck("Auxiliary Data")
+      if (nrow(auxDataMetaData) == 0) {
+        cli::cli_warn(c(
+          paste0(self$CTDlink, " has no auxData for this dataset."),
+          "i" = "Please add your own auxData for evaluation."
+        ))
+        invisible(NULL)
+      }
 
-      metrics <- suppressMessages(googlesheets4::read_sheet(
-        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        sheet = "Task-GS Type-Metric",
-      ) |>
-        dplyr::filter(`GS Type` %in% auxData) |>
-        dplyr::select(`GS Type`, `MetricID`))
+      auxData <- auxDataMetaData |> purrr::pluck("Auxiliary Data")
+
+      # get the relevant metrics and respective informaiton from the sheet.
+      metrics <- suppressMessages(
+        googlesheets4::read_sheet(
+          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+          sheet = "Task-AuxData Type-Metric",
+        ) |>
+          dplyr::filter(`AuxData Type` %in% auxData) %>%
+          dplyr::left_join(
+            .,
+            googlesheets4::read_sheet(
+              ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+              sheet = "Metrics",
+            )
+          )
+      )
+
+      # create metrics inside the object
+      apply(metrics, 1, \(metric) {
+        if (metric["Metric Type"] == "internal") {
+          self$addMetric(
+            name = metric["MetricID"][[1]],
+            metric = match.fun(metric["wrapper.r"][[1]])
+          )
+        } else {
+          # TODO: Support external metrics.
+          cli::cli_abort(c(
+            "External metrics are not yet supported."
+          ))
+        }
+      })
 
       # add each gold standard with it's respective metrics
-      apply(gSMetaData, 1, \(auxData) {
+      apply(auxDataMetaData, 1, \(auxData) {
         if (auxData["is_in_data"]) {
-          if (auxData["type"] == "column") {
+          if (auxData["type"] == "columns") {
+            auxDataCols <- unlist(strsplit(auxData["name"], ", ", TRUE))
             self$addAuxData(
               name = auxData["Auxiliary Data"],
-              auxData = \() self$data[[1]][auxData["name"]],
+              # TODO: make it so the data is accessed by, rather stored in the
+              #       auxData
+              auxData = self$data[, auxDataCols],
               metrics = metrics |>
-                dplyr::filter(`GS Type` == auxData["Auxiliary Data"]) |>
+                dplyr::filter(`AuxData Type` == auxData["Auxiliary Data"]) |>
                 purrr::pluck("MetricID")
             )
           } else {
