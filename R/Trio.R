@@ -1,5 +1,6 @@
 # Silence check notes about R6 class
 #' @importFrom R6 R6Class
+#' @importFrom magrittr %>%
 NULL
 
 #' A separate constructor that conforms to Bioconductor guidelines...
@@ -511,7 +512,7 @@ Trio <- R6::R6Class(
           paste0(self$CTDlink, " has no auxData for this dataset."),
           "i" = "Please add your own auxData for evaluation."
         ))
-        invisible(NULL)
+        return(NULL)
       }
 
       auxData <- auxDataMetaData |> purrr::pluck("Auxiliary Data")

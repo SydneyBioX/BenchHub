@@ -49,7 +49,7 @@ test_that("Evaluation works.", {
 
 test_that("get data by name", {
   testCache <- tempdir()
-  testthat::expect_no_error(Trio$new("MOBNEW", cachePath = testCache))
+  testthat::expect_warning(Trio$new("MOBNEW", cachePath = testCache))
 
   testthat::expect_error(Trio$new("InvalidDatasetName"))
 })
