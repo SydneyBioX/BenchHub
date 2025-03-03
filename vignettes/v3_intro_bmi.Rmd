@@ -1,0 +1,87 @@
+---
+title: "Introduction of benchmarkInsight Class"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Overview of scFeatures with case studies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=FALSE, warning=FALSE)
+```
+
+```{r}
+devtools::load_all()
+library(BenchHub)
+library(readr)
+library(dplyr)
+```
+
+# Motivation
+
+BenchHub—an R ecosystem to make benchmarking easier. It organizes evaluation metrics, gold standards(Auxiliary Data), and even provides built-in visualization tools to help interpret results. With BenchHub, researchers can quickly compare new methods, gain insights, and actually trust their benchmarking studies. In this vignette, we are going to introduce benchmarkInsight class. 
+
+# Creating benchmarkInsight class
+
+`benchmarkInsight` objects can be created using the corresponding constructor. For example, if you have a benchmark result formatted in dataframe, you can create a Trio object as follows. The dataframe includes fixed name columns: `datasetID`, method, auxData, metric, result. Here I will use the benchmark result from SpatialSimBench to create a new object. 
+
+`benchmarkInsight` object can be instantiated using their respective constructors. For example, if you have a benchmark result stored as a dataframe, you can create a Trio object as follows. The dataframe must include the following fixed columns: `datasetID`, `method`, `auxData`, `metric`, and `result`. Here, I demonstrate this using benchmark results from SpatialSimBench to initialize a new object.
+
+```{r}
+spatialsimbench_result <- read_csv("/Users/cabiria/Desktop/manuscript/TrioR/vignettes/spatialsimbench_result.csv")
+glimpse(spatialsimbench_result)
+```
+
+If you use `trio$evaluation()`, the output will be automatically formatted as the required dataframe. However, if you use your own benchmark evaluation results, you ensure they adhere to the expected format. 
+
+```{r}
+bmi <- benchmarkInsights$new(spatialsimbench_result)
+bmi
+```
+
+If you have additional evaluation result, you can use `addevalSummary()`.
+
+```{r}
+add_result <- data.frame(
+  datasetID = rep("BREAST", 13),
+  method = c("scDesign2", "scDesign3_gau", "scDesign3_nb", "scDesign3_poi", 
+             "SPARsim", "splatter", "SRTsim", "symsim", "zinbwave", 
+             "scDesign3_gau_rf", "scDesign3_nb_rf", "scDesign3_poi_rf", "SRTsim_rf"),
+  auxData = rep("svg", 13),
+  metric = rep("recall", 13),
+  result = c(0.921940928, 0.957805907, 0.964135021, 0.989451477, 0.774261603, 
+             0.890295359, 0.985232068, 0.067510549, 0.888185654, 
+             0.957805907, 0.964135021, 0.989451477, 0.985232068),
+  stringsAsFactors = FALSE
+)
+
+bmi$addevalSummary(add_result)
+```
+
+# Visualization
+
+## heatmap
+
+```{r}
+bmi$getHeatmap(bmi$evalSummary)
+```
+
+## 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
