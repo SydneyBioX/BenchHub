@@ -103,7 +103,7 @@ benchmarkInsights <- R6::R6Class(
       # Set method as rownames and remove the method column
       rownames(reshaped_df) <- reshaped_df$method
       reshaped_df$method <- NULL
-      heatmap <- funkyheatmap::funky_heatmap(reshaped_df)
+      heatmap <- suppressMessages(suppressWarnings(funkyheatmap::funky_heatmap(reshaped_df)))
       
       return(heatmap)
     },
