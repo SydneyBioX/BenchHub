@@ -195,21 +195,24 @@ geoDl <- function(ID, cachePath) {
   dlLoacation
 }
 
+#' Download files from ExperimentHub
+#' @description Get the a dataset from ExperimentHub
+#' @param ID
+#'   The ID, a string, with "EH" followed by a series of numbers (e.g. EH119)
+#' @param cachePath
+#'   The path to store the downloaded file.
+#' @keywords internal
 experimenthubDl <- function(ID, cachePath) {
-  # cli::cli_abort(c(
-  #   "ExperimentHub Downloads are not supported yet! :("
-  # ))
-  
   if (!requireNamespace("ExperimentHub", quietly = TRUE)) {
     cli::cli_abort(c(
       "Install {.pkg ExperimentHub} to get data from ExperimentHub.",
       "i" = "You can get it by running: {.code BiocManager::install('ExperimentHub')}"
     ))
-  }  
-  
+  }
+
   # load ExperimentHub
   eh <- ExperimentHub::ExperimentHub()
-  
+
   # check if the ID is valid
   if (!ID %in% names(eh)) {
     cli::cli_abort(c(
@@ -217,36 +220,36 @@ experimenthubDl <- function(ID, cachePath) {
       "i" = "Check the ID and try again."
     ))
   }
-  
+
   # create a download path
   dlPath <- fs::path_join(c(cachePath, paste("ExperimentHub_", ID)))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
-  
+
   dlLocation <- fs::path_join(c(dlPath, ID))
-  
+
   # check if the file already exists
   alreadyDl <- ID %in% list.files(dlPath)
-  
+
   # download data if not already downloaded
   if (!alreadyDl) {
     cli::cli_inform("Downloading data for ID: {ID}...")
     # download ExperimentHub data
     data <- eh[[ID]]
-    
+
     data_name <- paste(paste("ExperimentHub_", ID), ".rds")
-    
-    # manually save the ExperimentHub data as an RDS file in the working directory
+
+    # manually save the EH data as an RDS file in the working directory
     saveRDS(data, file = fs::path_join(c(dlLocation, data_name)))
   } else {
     cli::cli_inform("File already exists in cache. No download needed.")
   }
-  
+
   if (length(dlLocation) == 0) {
     cli::cli_warn(c(
       "No files found for ExperimentHub ID: {ID}",
       "i" = "Ensure that the ExperimentHub ID is correct and the data is available."
     ))
   }
-  
+
   dlLocation
 }
