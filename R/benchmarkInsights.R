@@ -146,11 +146,48 @@ benchmarkInsights <- R6::R6Class(
       return(plot)
     },
     
+    #' @description Creates a bar plot for the given x and y variables, with an optional grouping and fixed x order.
+    #' @param minievalSummary subset of evaluation summary
+    #' @param order An optional vector specifying the order of x-axis values.
+    #' @return A ggplot2 line plot object.
+    getBarplot = function(minievalSummary, order = NULL) {
+      if (!is.data.frame(minievalSummary)) {
+        stop("Input data must be a dataframe.")
+      }
+      
+      th <- ggplot2::theme(text=element_text(size=12),
+                           axis.text.x = element_text(angle = 45, hjust = 1),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
+      
+      minievalSummary_aggreate <- minievalSummary %>%
+        group_by(auxData, method, metric) %>%
+        summarise(average_result = mean(result, na.rm = TRUE)) %>%
+        ungroup()
+      
+      if (!is.null(order)) {
+        minievalSummary_aggreate$auxData <- factor(minievalSummary_aggreate$auxData, levels = order)
+      }
+      
+      # Create the line plot
+      plot <- ggplot(minievalSummary_aggreate, 
+                     aes(x = auxData, 
+                         y = average_result, 
+                         fill = method)) +
+        labs(x = "Aux data", y = "Average value", fill = "method") +
+        #geom_point() +
+        geom_col(position = "stack") +
+        th
+      
+      return(plot)
+    },
+    
     #' @description Creates a scatter plot for the same auxData, with an two methodd metrics.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
-    getScatterplot = function(minievalSummary) {
+    getScatterplot = function(minievalSummary, variables) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
@@ -165,7 +202,8 @@ benchmarkInsights <- R6::R6Class(
       result <- minievalSummary_aggreate %>%
         tidyr::pivot_wider(names_from = metric, values_from = average_result) 
       
-      plot <- ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
+      plot <- #ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
+        ggplot(result, aes(x = get(variables[1]), y = get(variables[2]), label = method)) +
               geom_point(alpha = 0.4) + 
               ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = method)) +
               coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
@@ -194,6 +232,7 @@ benchmarkInsights <- R6::R6Class(
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
               panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA)) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
         ggsci::scale_fill_npg()
 
        return(p1)
@@ -240,7 +279,8 @@ benchmarkInsights <- R6::R6Class(
       p1 <- ggcorrplot::ggcorrplot(cor_matrix, method = "square", 
                                    type = "lower", 
                                    lab = TRUE, 
-                                   colors = c("white", "grey", "black")) +
+                                   #colors = c("white", "grey", "black")
+                                   ) +
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1), 
               panel.grid.major = element_blank(),
               panel.border = element_blank(),
@@ -271,13 +311,14 @@ benchmarkInsights <- R6::R6Class(
         stop("Invalid input_model. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
       }
       
-      # minievalSummary <- benchmark$evalSummary
+      #minievalSummary <- benchmark$evalSummary
+      # minievalSummary <- spatialsimbenchV1
       # input_group <- "metric"
       # input_model <- "method"
 
       to_plot <- minievalSummary %>%
         group_by(!!sym(input_group)) %>%
-        do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
+        do(broom::tidy(lm(result ~ method, data = .)))
       
       colnames(to_plot)[1] <- "model"
       
