@@ -181,7 +181,7 @@ benchmarkInsights <- R6::R6Class(
     #' @description Creates boxplot plots for the mutiple auxData, different method, one metric.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
-    #' @importFrom gauxDataci scale_fill_npg
+    #' @importFrom ggsci scale_fill_npg
     getBoxplot = function(minievalSummary) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
