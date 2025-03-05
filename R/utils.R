@@ -1,5 +1,7 @@
 #' Load downloaded files.
 #' @param filePath A path to the file to load.
+#' @importFrom withr with_output_sink
+#' @importFrom fs path_join
 #' @noRd
 loadFile <- function(filePath) {
   ext <- tools::file_ext(filePath)

@@ -111,14 +111,17 @@ for (i in seq_along(cv_ind)) {
 
   # get the chosen evaluation metric from the Trio
   eval_res <- trio$evaluate(
-                list(
-                  lasso = list(
-                     patient_status = pred)), 
-                splitIndex = i)  
+    list(
+      lasso = list(
+        patient_status = pred
+      )
+    ),
+    splitIndex = i
+  )
 
   # keep track of the repeat and fold information
-  eval_res$track <-  names(cv_ind)[[i]]
-  result <- rbind(result,  eval_res )
+  eval_res$track <- names(cv_ind)[[i]]
+  result <- rbind(result, eval_res)
 }
 ```
 
@@ -127,14 +130,13 @@ After cross-validation, users can visualise cross-validation results by averagin
 
 
 ```{r}
+result$fold <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 1))
 
-result$fold <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 1))
+result$repeats <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 2))
 
-result$repeats <- unlist( lapply ( strsplit( result$track, ".", fixed = T ), `[`, 2))
+result <- result %>%
+  dplyr::group_by(auxData, metric, repeats) %>%
+  dplyr::summarize(result = mean(result))
 
-result <- result %>% 
-   dplyr::group_by(auxData, metric, repeats) %>%
-   dplyr::summarize(result = mean(result ))
-
-boxplot(result$result )
+boxplot(result$result)
 ```
