@@ -14,7 +14,7 @@ analytical tasks.
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{evalSummary}}{The evaluation summary is stored by dataframe, where
-each row is the compared identifier, each column is the metric used in
+each row is the methodd identifier, each column is the metric used in
 the evaluation task and related information.}
 
 \item{\code{metadata}}{A dataframe to store metadata for the benchmark.}
@@ -24,6 +24,7 @@ the evaluation task and related information.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
+\item \href{#method-benchmarkInsights-new}{\code{benchmarkInsights$new()}}
 \item \href{#method-benchmarkInsights-addevalSummary}{\code{benchmarkInsights$addevalSummary()}}
 \item \href{#method-benchmarkInsights-addMetadata}{\code{benchmarkInsights$addMetadata()}}
 \item \href{#method-benchmarkInsights-getHeatmap}{\code{benchmarkInsights$getHeatmap()}}
@@ -36,22 +37,55 @@ the evaluation task and related information.}
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-benchmarkInsights-new"></a>}}
+\if{latex}{\out{\hypertarget{method-benchmarkInsights-new}{}}}
+\subsection{Method \code{new()}}{
+Create a benchmarkInsights object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$new(evalResult = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{evalResult}}{A dataframe containing initial evaluation results with columns such as datasetID, auxData, metric, and result.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-benchmarkInsights-addevalSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-addevalSummary}{}}}
 \subsection{Method \code{addevalSummary()}}{
+Add additional evaluation summary to the existing evalSummary
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$addevalSummary(evalResult, dataID)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$addevalSummary(additional_evalResult)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{additional_evalResult}}{A dataframe containing additional evaluation results to be appended.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-benchmarkInsights-addMetadata"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-addMetadata}{}}}
 \subsection{Method \code{addMetadata()}}{
+Add metadata to the benchmarkInsights object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$addMetadata(metadata)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{metadata}}{A dataframe containing metadata information.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-benchmarkInsights-getHeatmap"></a>}}
@@ -99,7 +133,7 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getScatterplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getScatterplot}{}}}
 \subsection{Method \code{getScatterplot()}}{
-Creates a scatter plot for the same GS, with an two compared metrics.
+Creates a scatter plot for the same auxData, with an two methodd metrics.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getScatterplot(minievalSummary)}\if{html}{\out{</div>}}
 }
@@ -107,7 +141,7 @@ Creates a scatter plot for the same GS, with an two compared metrics.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all GS should be same}
+\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
 }
 \if{html}{\out{</div>}}
 }
@@ -119,7 +153,7 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getBoxplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getBoxplot}{}}}
 \subsection{Method \code{getBoxplot()}}{
-Creates boxplot plots for the mutiple GS, different Compare, one metric.
+Creates boxplot plots for the mutiple auxData, different method, one metric.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getBoxplot(minievalSummary)}\if{html}{\out{</div>}}
 }
@@ -127,7 +161,7 @@ Creates boxplot plots for the mutiple GS, different Compare, one metric.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all GS should be same}
+\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
 }
 \if{html}{\out{</div>}}
 }
@@ -139,8 +173,8 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getCorplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getCorplot}{}}}
 \subsection{Method \code{getCorplot()}}{
-Creates a correlation plot based on the provided evaluation summary and the specified input type (either "GS", "metric", or "Compare").
-The correlation plot shows the pairwise correlation between results for different categories (GS, metric, or Compare).
+Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
+The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getCorplot(minievalSummary, input_type)}\if{html}{\out{</div>}}
 }
@@ -148,9 +182,9 @@ The correlation plot shows the pairwise correlation between results for differen
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{A subset of the evaluation summary. It must include columns relevant to the input type (GS, metric, Compare) and the result values.}
+\item{\code{minievalSummary}}{A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.}
 
-\item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "GS", "metric", or "Compare".}
+\item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".}
 }
 \if{html}{\out{</div>}}
 }
@@ -174,9 +208,9 @@ using dotwhisker and broom packages, with custom grouping and labeling.
 \describe{
 \item{\code{minievalSummary}}{A data frame containing the evaluation summary.}
 
-\item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "Compare", or "GS" allowed).}
+\item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).}
 
-\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "Compare", or "GS" allowed).}
+\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or "auxData" allowed).}
 }
 \if{html}{\out{</div>}}
 }

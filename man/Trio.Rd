@@ -49,7 +49,13 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \subsection{Method \code{new()}}{
 Create a Trio object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$new(datasetID = NULL, data = NULL, cachePath = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$new(
+  datasetID = NULL,
+  data = NULL,
+  dataLoader = NULL,
+  cachePath = FALSE,
+  verbose = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -60,7 +66,12 @@ a format string of the form \code{source}:\code{source_id}.}
 
 \item{\code{data}}{An object to use as the Trio dataset.}
 
+\item{\code{dataLoader}}{A custom loading fuction that takes the path of a downloaded file and
+returns a single dataset, ready to be used in evaluation tasks.}
+
 \item{\code{cachePath}}{The path to the data cache}
+
+\item{\code{verbose}}{Set the verbosity of Trio}
 }
 \if{html}{\out{</div>}}
 }
