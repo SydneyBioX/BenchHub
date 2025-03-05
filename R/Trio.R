@@ -56,6 +56,7 @@ Trio <- R6::R6Class(
                           data = NULL,
                           dataLoader = NULL,
                           cachePath = FALSE) {
+      googlesheets4::gs4_deauth()
       # if users have their own data without datasetID
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
@@ -532,6 +533,13 @@ Trio <- R6::R6Class(
       dataLoader(files)
     },
     populateTrio = function() {
+      if (!curl::has_internet()) {
+        cli::cli_warn(c(
+          "Couldn't populate Trio from Curated Trio Datasets.",
+          "Check your internet connection and try again."
+        ))
+        return(NULL)
+      }
       # get the gold standard metadata from curated trio datasets
       auxDataMetaData <- suppressMessages(googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
