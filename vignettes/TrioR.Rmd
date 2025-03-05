@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message = FALSE
 )
 ```
 
@@ -22,7 +23,7 @@ devtools::load_all()
 
 ## Method 1: Curated Trio Datasets
 
-You can directly use the name from the Curated Trio Datasets sheet to intialise a Trio object populated with some metrics and auxiliary data.
+You can directly use the name from the Curated Trio Datasets sheet to initialise a Trio object populated with some metrics and auxiliary data. This method is useful when you want to quickly start with a predefined dataset.
 
 ```{r}
 trio <- Trio$new("Veteran_data", cachePath = tempdir())
@@ -32,9 +33,9 @@ trio
 
 ## Method 2: Source and ID
 
-Trio objects can be created by specifying an ID from a source with a valid trio downloader.
+Trio objects can be created by specifying an ID from a source with a valid trio downloader. This method is useful when you have a specific dataset ID from a supported source like Figshare, GEO, or ExperimentHub.
 
-Here, a Trio is initialised with a specific file from a figshare collection.
+Here, a Trio is initialised with a specific file from a Figshare collection.
 
 ```{r}
 trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
@@ -44,7 +45,7 @@ trio
 
 ## Method 3: Load an object directly
 
-Trio can also be created by passing an object directly into the constructor. 
+Trio can also be created by passing an object directly into the constructor. This method is useful when you already have a dataset loaded in your R environment and want to use it with Trio.
 
 ```{r}
 data("lubomski_microbiome_data", package = "BenchHub")
@@ -56,9 +57,7 @@ trio
 
 ## Bonus: Using a custom loader
 
-Trio supports custom loaders for data formats not directly supported by Trio.
-
-A loader is any function that takes in a path, provided by a downloader, and returns an object to be loaded into Trio.
+Trio supports custom loaders for data formats not directly supported by Trio. A loader is any function that takes in a path, provided by a downloader, and returns an object to be loaded into Trio.
 
 Below, we use an anonymous function to wrap `GEOquery::getGEO` and provide it with the path of the downloaded file.
 
@@ -77,8 +76,7 @@ trio
 
 ## Adding metrics
 
-Adding metrics is simple. A metric is any pairwise function of the form `f(expected, predicted)` which returns a single value. 
-
+Adding metrics is simple. A metric is any pairwise function of the form `f(expected, predicted)` which returns a single value. Metrics are used to evaluate the performance of your methods against the gold standard.
 
 ```{r}
 eq <- \(expected, predicted, inequality = FALSE) {
@@ -91,25 +89,21 @@ eq <- \(expected, predicted, inequality = FALSE) {
 
 trio$addMetric("equality", eq)
 
-
-# trio also supports passing through arguments to a metric
+# Trio also supports passing through arguments to a metric
 trio$addMetric("inequality", eq, args = list(inequality = TRUE))
 ```
 
 ## Adding and getting auxData
 
-Auxilliary data is any data that allows you to make an evaluation.
-
-Auxilliary data is added linked to metrics that allow you to evaluate it.
+Auxiliary data is any data that allows you to make an evaluation. Auxiliary data is added linked to metrics that allow you to evaluate it.
 
 ```{r}
-# it can be a fixed quantity
+# It can be a fixed quantity
 trio$addAuxData(
   name = "Number One", auxData = 1, metrics = c("equality", "inequality")
 )
 
-# or it can be a quantity, to be computed from that dataset
-
+# Or it can be a quantity, to be computed from that dataset
 trio$addAuxData(
   name = "length", auxData = length, metrics = c("equality", "inequality")
 )
@@ -117,26 +111,24 @@ trio$addAuxData(
 
 To view the auxiliary data one can use `getAuxData`.
 
-
 ```{r}
-trio$getAuxData("length") # this is equivalent to nrow(trio$data)
+trio$getAuxData("length") # This is equivalent to nrow(trio$data)
 ```
 
 
 # Evaluation
 
-Once Trio is setup with relevant metrics and auxData, evaluation is trivial.
+Once Trio is set up with relevant metrics and auxData, evaluation is trivial.
 
 For simple evaluation:
 ```{r}
 trio$evaluate(list("Number One" = 2, length = 182))
 ```
 
-For multi-method evaluation.
-
+For multi-method evaluation:
 ```{r}
 trio$evaluate(list(
   method1 = list("Number One" = 2, length = 182),
-  method1 = list("Number One" = 1, length = 500)
+  method2 = list("Number One" = 1, length = 500)
 ))
 ```
