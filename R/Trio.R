@@ -60,6 +60,11 @@ Trio <- R6::R6Class(
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
           self$dataSourceID <- readline("Choose a name for this data: ")
+        } else if (is.null(datasetID) && !interactive()) {
+          cli::cli_abort(c(
+            "No {.var datasetID} was provided.",
+            "i" = "Please pass datasetID when creating Trio non-interactively."
+          ))
         } else if (!is.null(datasetID)) {
           self$dataSourceID <- datasetID
         } else {
