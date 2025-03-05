@@ -52,11 +52,20 @@ Trio <- R6::R6Class(
     #'   A custom loading fuction that takes the path of a downloaded file and
     #'   returns a single dataset, ready to be used in evaluation tasks.
     #' @param cachePath The path to the data cache
+    #' @param verbose Set the verbosity of Trio
     initialize = function(datasetID = NULL,
                           data = NULL,
                           dataLoader = NULL,
-                          cachePath = FALSE) {
+                          cachePath = FALSE,
+                          verbose = FALSE) {
       googlesheets4::gs4_deauth()
+
+      if (!verbose) {
+        options(rlib_message_verbosity = "quiet")
+      } else {
+        options(rlib_message_verbosity = "default")
+      }
+
       # if users have their own data without datasetID
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
