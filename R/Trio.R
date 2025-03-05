@@ -24,6 +24,7 @@ initializeTrio <- function(datasetID = NULL, cachePath = FALSE) {
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSouce`
 #' @field splitIndices Indices for cross-validation
+#' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
@@ -39,6 +40,7 @@ Trio <- R6::R6Class(
     dataSource = NULL,
     dataSourceID = NULL,
     splitIndices = NULL,
+    verbose = FALSE,
 
     # TODO: Implement Trio$sources() (Issue #2)
 
@@ -52,20 +54,19 @@ Trio <- R6::R6Class(
     #'   A custom loading fuction that takes the path of a downloaded file and
     #'   returns a single dataset, ready to be used in evaluation tasks.
     #' @param cachePath The path to the data cache
-    #' @param verbose Set the verbosity of Trio
+    #' @param verbose Set the verbosity of Trio. Defaults to `FALSE`.
     initialize = function(datasetID = NULL,
                           data = NULL,
                           dataLoader = NULL,
                           cachePath = FALSE,
                           verbose = FALSE) {
       googlesheets4::gs4_deauth()
-
-      if (!verbose) {
-        options(rlib_message_verbosity = "quiet")
-      } else {
-        options(rlib_message_verbosity = "default")
+      if (!is.logical(verbose)) {
+        cli::cli_abort(c(
+          "The {.var verbose} parameter must be a {.cls logical}."
+        ))
       }
-
+      self$verbose <- verbose
       # if users have their own data without datasetID
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
@@ -247,10 +248,12 @@ Trio <- R6::R6Class(
       # contains auxData names and set separateMethods based on this
       if (all(!auxDataAvail)) {
         if (any(names(input[[1]]) %in% names(self$auxData))) {
-          cli::cli_inform(c(
-            "AuxData names found in sublist.",
-            "i" = "Evaluating as separate methods."
-          ))
+          if (self$verbose) {
+            cli::cli_inform(c(
+              "AuxData names found in sublist.",
+              "i" = "Evaluating as separate methods."
+            ))
+          }
           separateMethods <- TRUE
         }
       } else {
@@ -279,14 +282,16 @@ Trio <- R6::R6Class(
         # if some of the auxData are missing
         if (any(!auxDataAvail)) {
           unavail <- names(input)[!auxDataAvail]
-          cli::cli_inform(c(
-            paste0(
-              "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
-              "not available in this object. Passing through as unevaluated ",
-              "benchmark data."
-            ),
-            "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
-          ))
+          if (self$verbose) {
+            cli::cli_inform(c(
+              paste0(
+                "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
+                "not available in this object. Passing through as unevaluated ",
+                "benchmark data."
+              ),
+              "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
+            ))
+          }
         }
 
         # compute/retrieve auxiliary data
@@ -410,9 +415,11 @@ Trio <- R6::R6Class(
           default = FALSE
         )
         if (!overwrite) {
-          cli::cli_inform(c(
-            "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
-          ))
+          if (self$verbose) {
+            cli::cli_inform(c(
+              "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
+            ))
+          }
           invisible(NULL)
         }
       }
@@ -522,7 +529,7 @@ Trio <- R6::R6Class(
       )
 
       if (length(files) > 1) {
-        cli::cli_inform("Select a file to load as the dataset:")
+        if (self$verbose) cli::cli_inform("Select a file to load as the dataset:")
         files <- files[utils::menu(files)]
       }
 
