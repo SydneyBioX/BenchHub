@@ -5,7 +5,16 @@ loadFile <- function(filePath) {
   ext <- tools::file_ext(filePath)
 
   if (tolower(ext) == "rds") {
-    readRDS(filePath)
+    # silece all the annoying messages
+    con <- file(tempfile(), open = "wt")
+    withr::with_output_sink(
+      new = con,
+      code = {
+        data <- readRDS(filePath)
+      }
+    )
+    close.connection(con)
+    return(data)
   } else if (tolower(ext) == "zip") {
     directory <- dirname(filePath)
     decompressedPath <- utils::unzip(
@@ -29,7 +38,7 @@ loadFile <- function(filePath) {
         "i" = "Check {.url https://readr.tidyverse.org/} for instuctions."
       ))
     }
-    
+
     readr::read_csv(filePath)
   } else {
     cli::cli_abort(c(
