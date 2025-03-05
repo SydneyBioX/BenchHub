@@ -26,6 +26,8 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSouce}}
 
 \item{\code{splitIndices}}{Indices for cross-validation}
+
+\item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -71,7 +73,7 @@ returns a single dataset, ready to be used in evaluation tasks.}
 
 \item{\code{cachePath}}{The path to the data cache}
 
-\item{\code{verbose}}{Set the verbosity of Trio}
+\item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
