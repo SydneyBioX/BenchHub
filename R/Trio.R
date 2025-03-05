@@ -75,25 +75,29 @@ Trio <- R6::R6Class(
           ))
         }
         self$data <- data
-      } else if (is.null(datasetID)) {
+        return(NULL)
+      }
+
+      if (is.null(datasetID)) {
         if (!interactive()) {
-          cli::cli_abort("When Trio is initialised non-interactively, a {.val datasetID} must be specified.")
+          cli::cli_abort(
+            "When Trio is initialised non-interactively, a {.val datasetID} must be specified."
+          )
         }
         # prompt users to input their own new datasetID
         datasetID <- readline(
           prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: "
         )
-      } else {
-        # parse user input and set dataSource and dataSourceID
-        private$parseIDString(datasetID)
+      }
+      # parse user input and set dataSource and dataSourceID
+      private$parseIDString(datasetID)
 
-        self$cachePath <- getTrioCachePath(cachePath)
-        self$data <- private$getData(
-          self$dataSource, self$dataSourceID, self$cachePath, dataLoader
-        )
-        if (!is.null(private$datasetID)) {
-          private$populateTrio()
-        }
+      self$cachePath <- getTrioCachePath(cachePath)
+      self$data <- private$getData(
+        self$dataSource, self$dataSourceID, self$cachePath, dataLoader
+      )
+      if (!is.null(private$datasetID)) {
+        private$populateTrio()
       }
     },
 
