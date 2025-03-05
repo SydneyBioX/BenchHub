@@ -1,6 +1,10 @@
 ---
 title: "How to create and use a Trio object"
-output: rmarkdown::html_vignette
+date: "`r BiocStyle::doc_date()`"
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{How to create and use a Trio object}
   %\VignetteEngine{knitr::rmarkdown}
@@ -62,13 +66,13 @@ Trio supports custom loaders for data formats not directly supported by Trio. A 
 Below, we use an anonymous function to wrap `GEOquery::getGEO` and provide it with the path of the downloaded file.
 
 ```{r}
-trio <- Trio$new(
+trioGEO <- Trio$new(
   "GEO:GSE46474",
-  dataLoader = \(x) suppressMessages(GEOquery::getGEO(filename = x)),
+  dataLoader = \(path) suppressMessages(GEOquery::getGEO(filename = path)),
   cachePath = tempdir()
 )
 
-trio
+trioGEO
 ```
 
 
@@ -122,13 +126,13 @@ Once Trio is set up with relevant metrics and auxData, evaluation is trivial.
 
 For simple evaluation:
 ```{r}
-trio$evaluate(list("Number One" = 2, length = 182))
+trio$evaluate(list("Number One" = 1, length = 182))
 ```
 
 For multi-method evaluation:
 ```{r}
 trio$evaluate(list(
-  method1 = list("Number One" = 2, length = 182),
-  method2 = list("Number One" = 1, length = 500)
+  great_method = list("Number One" = 1, length = 575),
+  poor_method = list("Number One" = 2, length = 182)
 ))
 ```
