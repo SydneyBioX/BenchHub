@@ -30,6 +30,7 @@ Trio <- R6::R6Class(
     dataSource = NULL,
     dataSourceID = NULL,
     splitIndices = NULL,
+    splitSeed = NULL,
     verbose = FALSE,
 
     # TODO: Implement Trio$sources() (Issue #2)
@@ -444,8 +445,8 @@ Trio <- R6::R6Class(
         cli::cli_h3("Dataset")
         cli::cli_text("{.strong Dataset Details}:")
         cli::cli_bullets(data_str)
-        cli::cli_text("{.strong Dataset ID}: {.val {self$dataSourceID}}")
         cli::cli_text("{.strong Data Source}: {.val {self$dataSource}}")
+        cli::cli_text("{.strong Dataset ID}: {.val {self$dataSourceID}}")
         cli::cli_text("{.strong Cache Path}: {.val {self$cachePath}}")
         cli::cli_text("{.strong Split Indices}: {.val {split_ind}}")
 
@@ -456,6 +457,13 @@ Trio <- R6::R6Class(
         cli::cli_h3("Metrics")
         cli::cli_text("{.strong Number of Metrics}: {.val {length(self$metrics)}}")
         cli::cli_text("{.strong Names of Metrics}: {.val {names(self$metrics)}}")
+
+        if (!is.null(self$splitIndices)) {
+          cli::cli_h3("CV Split Indices")
+          cli::cli_text("{.strong Seed}: {.val {self$splitSeed}}")
+          cli::cli_text("{.strong Number of Folds}: {.val {length(self$splitIndices)}}")
+          cli::cli_text("{.strong Number of Repeats}: {.val {length(self$splitIndices[[1]])}}")
+        }
       })
 
       cat(msg, sep = "\n")
