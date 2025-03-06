@@ -57,6 +57,7 @@ Suggests:
     clusterProfiler,
     DOSE,
     DO.db,
-    EnsDb.Hsapiens.v86
+    EnsDb.Hsapiens.v86,
+    BiocStyle
 VignetteBuilder: knitr
 Config/testthat/edition: 3
