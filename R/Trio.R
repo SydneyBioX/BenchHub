@@ -393,34 +393,33 @@ Trio <- R6::R6Class(
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
-    #' @param seed An optional seed for split generation. Defaults to `NULL`.
+    #' @param overwrite
+    #'   If `TRUE`, overwrites the current split. Defaults to `FALSE`.
+    #' @param seed
+    #'   An optional seed for split generation. Defaults to `NULL`. If `NULL`,
+    #'   the seed is set to the current time.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
     split = function(y,
-                     n_fold = 5L, n_repeat = 1L, stratify = TRUE, seed = NULL) {
+                     n_fold = 5L, n_repeat = 1L, stratify = TRUE,
+                     seed = NULL, overwrite = FALSE) {
       # choose a seed if not provided
       if (is.null(seed)) {
         seed <- as.integer(Sys.time()) * sample(c(1, -1), 1)
       }
-      # If indices already exist.
-      if (!is.null(self$splitIndices)) {
-        if (interactive()) {
-          # ask user to confirm that they want to overwrite the current split
-          overwrite <- utils::askYesNo(
-            "A split already exists. Would you like to overwrite it? (yes/[no])",
-            default = FALSE
-          )
-        } else {
-          overwrite <- FALSE
-        }
-        if (!overwrite) {
-          cli::cli_warn(c(
-            "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
+
+      if (!overwrite && !is.null(self$splitIndices)) {
+        if (self$verbose) {
+          cli::cli_inform(c(
+            "Not overwriting, keeping the existing split indices.",
+            "i" = "Use {.code trio$split(..., overwrite = TRUE)} to overwrite.",
+            "i" = "To get current indices, access {.code trio$splitIndices}"
           ))
-          invisible(NULL)
         }
+        return(NULL)
       }
+
       # save split indices and seed
       self$splitSeed <- seed
       self$splitIndices <- splitTools::create_folds(
