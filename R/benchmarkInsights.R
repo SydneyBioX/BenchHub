@@ -210,8 +210,8 @@ benchmarkInsights <- R6::R6Class(
               scale_x_continuous(expand = c(0, 0)) +
               scale_y_continuous(expand = c(0, 0)) +
               theme_minimal() +
-              ylab(metric_types[2]) + 
-              xlab(metric_types[1])
+              ylab(variables[2]) + 
+              xlab(variables[1])
       
       return(plot)
     },
