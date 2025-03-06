@@ -1,0 +1,266 @@
+---
+title: "Introduction to the Trio Class"
+date: "`r BiocStyle::doc_date()`"
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Introduction to the Trio Class}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE
+)
+```
+
+```{r, message=FALSE, warning=FALSE}
+devtools::load_all()
+library(BenchHub)
+library(clusterProfiler)
+library(DOSE)
+library(DO.db)
+library(EnsDb.Hsapiens.v86)
+```
+
+# Motivation
+
+BenchHub—an R ecosystem to make benchmarking easier. It organizes evaluation metrics, gold standards(Auxiliary Data), and even provides built-in visualization tools to help interpret results. With BenchHub, researchers can quickly compare new methods, gain insights, and actually trust their benchmarking studies. 
+
+# Creating Trio object
+
+Trio objects can be created using the `Trio$new` constructor. There are 3 ways to create a Trio object:
+
+- Curated Trio Datasets
+- Source and ID
+- Load an object directly
+
+If the dataset can't be loaded using Trio's inbuilt loader, a custom loader can be provided.
+
+## Method 1: Curated Trio Datasets
+
+You can directly use the name from the Curated Trio Datasets sheet to initialise a Trio object populated with some metrics and auxiliary data. This method is useful when you want to quickly start with a predefined dataset.
+
+```{r}
+tempCache <- tempdir()
+trio <- Trio$new("Veteran_data", cachePath = tempCache)
+
+trio
+```
+
+The above output shows that we have a Trio with a dataset, metrics, and auxiliary data. The dataset contains 137 rows and 9 columns, and the metrics and auxiliary data are already populated and printed.
+
+This Trio is ready for use in survival prediction evaluation.
+
+## Method 2: Source and ID
+
+Trio objects can be created by specifying an ID from a source with a valid trio downloader. This method is useful when you have a specific dataset ID from a supported source like Figshare, GEO, or ExperimentHub.
+
+For example, if you have a dataset ID from Figshare, GEO, or ExperimentHub, you can create a Trio object as follows:
+
+- figshare: `Trio$new("figshare:figshareID[/fileID]")`
+  - `fileID` can optionally be provided to specify a specific file in the collection.
+- GEO: `Trio$new("geo:GSEID[/Supplementary_filename]")`
+  - `Supplementary_filename` can optionally be provided to specify a specific supplementary file in the series.
+- experiementhub: `Trio$new("experiementhub:experimenthubID")`
+
+The example below shows how to create a Trio object using a Figshare dataset with a `fileID`.
+
+```{r, message=FALSE, warning=FALSE}
+trioA <- Trio$new("figshare:26142922/47361079", cachePath = tempCache)
+
+trioA
+```
+
+## Method 3: Load an object directly
+
+Trio can also be created by passing an object directly into the constructor. This method is useful when you already have a dataset loaded in your R environment and want to use it with Trio.
+
+If you have your own dataset, you can easily create a trio object as well. Below is an example using a microbiome dataset.
+
+```{r}
+data("lubomski_microbiome_data", package = "BenchHub")
+trioB <- Trio$new(data = lubomPD, datasetID = "lubomski_microbiome")
+trioB
+```
+
+## Bonus: Using a custom loader
+
+Trio supports custom loaders for data formats not directly supported by Trio. A loader is any function that takes in a path, provided by a downloader, and returns an object to be loaded into Trio.
+
+Below, we use an anonymous function to wrap `GEOquery::getGEO` and provide it with the path of the downloaded file.
+
+```{r}
+trioGEO <- Trio$new(
+  "GEO:GSE46474",
+  dataLoader = \(path) suppressMessages(GEOquery::getGEO(filename = path)),
+  cachePath = tempdir()
+)
+
+trioGEO
+```
+
+# Adding components to Trio
+
+## Adding metrics
+
+In benchmarking studies, a metric refers to the measurement used to evaluate a specific task. In this example, we define a task called survival model prediction.
+
+As our evaluation metric, we use Harrel C Index statistics to assess the prediction.
+
+First, we define a function, getHarrelCIndex, which computes Harrel C Index statistics:
+
+```{r}
+# @littlecabiria - this metric is the wrong way round!
+getHarrelCIndex <- function(to_eval, gs) {
+  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
+  return(harrelC1["C Index"])
+}
+```
+
+After defining the metric function, we use the addMetric() function to incorporate it into the Trio object.
+
+- The first argument specifies the metric name to be stored in the Trio object.
+- The second argument is the function that defines the metric calculation.
+
+In this case, we add the previously created getHarrelCIndex function as a metric named "Harrel C-Index":
+
+```{r}
+trioA$addMetric("Harrel C-Index", getHarrelCIndex)
+```
+
+### Simple Example
+
+Adding a metric is simple. A metric is any pairwise function of the form `f(expected, predicted)` which returns a single value
+
+We can also add metrics that have additional arguments by passing a list of arguments to the args parameter.
+
+```{r}
+eq <- \(expected, predicted, inequality = FALSE) {
+  if (inequality) {
+    return(!expected == predicted)
+  }
+
+  expected == predicted
+}
+
+trio$addMetric("equality", eq)
+
+# Trio also supports passing through arguments to a metric
+# Note: parameter names added for clarity
+trio$addMetric(
+  name = "inequality", metric = eq, args = list(inequality = TRUE)
+)
+```
+
+In the above example, we added two metrics based on the same function: "equality" and "inequality". The "equality" metric checks if the expected and predicted values are equal, while the "inequality" metric checks if they are not equal.
+
+Underneeth the hood, Trio creates a wrapper function that calls the metric function with the specified arguments.
+
+```{r}
+trio$metrics$inequality
+```
+
+## Adding and getting `auxData`
+
+`auxData` (Auxiliary Data) refers to gold standard in evaluation tasks and falls into two categories:
+
+- Internal: Extracted directly from the Trio dataset. This may include metadata such as cell types (e.g., B cells, CD4, CD8), patient conditions (e.g., healthy, disease), and spatial domain information. The specific content depends on the dataset itself.
+- External: Retrieved from external databases, such as disease pathway databases or gene marker databases.
+
+### Internal
+
+First, we define a function, getSurObj, which generate the survival object:
+
+```{r}
+getSurObj <- function(data) {
+  sub_data_test <- data[data[, "index"] == "test", ]
+  sub_data_train <- data[data[, "index"] == "train", ]
+  test_surv_obj <- with(sub_data_test, survival::Surv(time, status))
+  train_surv_obj <- with(sub_data_train, survival::Surv(time, status))
+  return(list(train_surv_obj, test_surv_obj))
+}
+```
+
+After defining the internal AuxData function, we use the addAuxData() function to incorporate it into the Trio object.
+
+- The first argument specifies the AuxData name to be stored in the Trio object.
+- The second argument is the function that defines the AuxData calculation.
+- The third argument is the metric
+
+In this case, we add the previously created getSurObj function as a AuxData named "survObj":
+
+```{r}
+trioA$addAuxData("survObj", getSurObj, c("Harrel C-Index"))
+```
+
+### External
+
+This database contains a list of disease pathways, where each pathway is represented by a set of associated genes. The data was extracted from the Disease Ontology (DO) database and processed using the DOSE package to map disease terms to gene symbols. Once loaded, users can access the pathway information for further analysis, such as pathway enrichment or pathway activity scoring.
+
+```{r, eval=FALSE}
+DO_pathway <- load("~/Desktop/manuscript/TrioR/vignettes/DO_pathway.RData")
+```
+
+Next, we add this external database into trioA object. 
+
+```{r, eval=FALSE}
+trioA$addAuxData("getDOpathway", DO_pathway, c("diseaseScore"))
+```
+
+## Toy Example
+
+With the equality and inequality metrics added, we can now evaluate the equality of two values using the equality metric.
+
+Auxiliary data is any data that allows you to make an evaluation. Auxiliary data is added linked to metrics that allow you to evaluate it.
+
+```{r}
+# It can be a fixed quantity
+trio$addAuxData(
+  name = "Number One", auxData = 1, metrics = c("equality", "inequality")
+)
+
+# Or it can be a quantity, to be computed from that dataset
+trio$addAuxData(
+  name = "length", auxData = length, metrics = c("equality", "inequality")
+)
+```
+
+To view the auxiliary data one can use `getAuxData`.
+
+```{r}
+trio$getAuxData("length") # This is equivalent to nrow(trio$data)
+```
+
+
+### Evaluation
+
+Once Trio is set up with relevant metrics and auxData, evaluation is trivial.
+
+For simple evaluation:
+```{r}
+trio$evaluate(list("Number One" = 1, length = 182))
+```
+
+For multi-method evaluation:
+```{r}
+trio$evaluate(list(
+  great_method = list("Number One" = 1, length = 575),
+  poor_method = list("Number One" = 2, length = 182)
+))
+```
+
+
+# Conclusion
+
+In this vignette, we introduced the Trio class and demonstrated how to create a Trio object using curated datasets, source and ID, or loading an object directly. We also showed how to add metrics and auxiliary data to a Trio object and evaluate the performance of different methods using these metrics and auxiliary data. We hope this vignette helps you get started with Trio and conduct benchmarking studies more effectively.
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

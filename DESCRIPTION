@@ -53,6 +53,10 @@ Suggests:
     survival,
     cvTools,
     funkyheatmap,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    clusterProfiler,
+    DOSE,
+    DO.db,
+    EnsDb.Hsapiens.v86
 VignetteBuilder: knitr
 Config/testthat/edition: 3
