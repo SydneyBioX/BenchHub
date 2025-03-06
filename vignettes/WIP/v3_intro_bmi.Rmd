@@ -29,7 +29,8 @@ BenchHub—an R ecosystem to make benchmarking easier. It organizes evaluation m
 `benchmarkInsight` object can be instantiated using their respective constructors. For example, if you have a benchmark result stored as a dataframe, you can create a Trio object as follows. The dataframe must include the following fixed columns: `datasetID`, `method`, `auxData`, `metric`, and `result`. Here, I demonstrate this using benchmark results from SpatialSimBench to initialize a new object.
 
 ```{r}
-spatialsimbench_result <- read_csv("/Users/cabiria/Desktop/manuscript/TrioR/vignettes/spatialsimbench_result.csv")
+result_path <- system.file("extdata", "spatialsimbench_result.csv", package = "BenchHub")
+spatialsimbench_result <- read_csv(result_path)
 glimpse(spatialsimbench_result)
 ```
 
