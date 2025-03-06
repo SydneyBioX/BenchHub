@@ -13,6 +13,7 @@ NULL
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSouce`
 #' @field splitIndices Indices for cross-validation
+#' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
 #'
 #' @examples
@@ -391,33 +392,42 @@ Trio <- R6::R6Class(
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
+    #' @param seed An optional seed for split generation. Defaults to `NULL`.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
     split = function(y,
                      n_fold = 5L, n_repeat = 1L, stratify = TRUE, seed = NULL) {
+      # choose a seed if not provided
+      if (is.null(seed)) {
+        seed <- as.integer(Sys.time()) * sample(c(1, -1), 1)
+      }
       # If indices already exist.
       if (!is.null(self$splitIndices)) {
-        # ask user to confirm that they want to overwrite the current split
-        overwrite <- utils::askYesNo(
-          "A split already exists. Would you like to overwrite it? (yes/[no])",
-          default = FALSE
-        )
+        if (interactive()) {
+          # ask user to confirm that they want to overwrite the current split
+          overwrite <- utils::askYesNo(
+            "A split already exists. Would you like to overwrite it? (yes/[no])",
+            default = FALSE
+          )
+        } else {
+          overwrite <- FALSE
+        }
         if (!overwrite) {
-          if (self$verbose) {
-            cli::cli_inform(c(
-              "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
-            ))
-          }
+          cli::cli_warn(c(
+            "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
+          ))
           invisible(NULL)
         }
       }
-
+      # save split indices and seed
+      self$splitSeed <- seed
       self$splitIndices <- splitTools::create_folds(
         y,
         k = n_fold,
         type = dplyr::if_else(stratify, "stratified", "basic"),
-        m_rep = n_repeat
+        m_rep = n_repeat,
+        seed = seed
       )
     },
 
