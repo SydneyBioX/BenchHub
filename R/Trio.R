@@ -3,17 +3,6 @@
 #' @importFrom magrittr %>%
 NULL
 
-#' A separate constructor that conforms to Bioconductor guidelines...
-#'
-#' @description Wrapper for Trio$new(). Creates a Trio object.
-#' @param datasetID
-#'   A string specifying a dataset, either a name from curated-trio-data or
-#'   a format string of the form `source`:`source_id`.
-#' @param cachePath The path to the data cache
-initializeTrio <- function(datasetID = NULL, cachePath = FALSE) {
-  Trio$new(datasetID = NULL, cachePath = FALSE)
-}
-
 #' A Trio object
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
@@ -406,7 +395,7 @@ Trio <- R6::R6Class(
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
     split = function(y,
-                     n_fold = 5L, n_repeat = 1L, stratify = TRUE) {
+                     n_fold = 5L, n_repeat = 1L, stratify = TRUE, seed = NULL) {
       # If indices already exist.
       if (!is.null(self$splitIndices)) {
         # ask user to confirm that they want to overwrite the current split
