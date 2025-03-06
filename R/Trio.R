@@ -435,6 +435,9 @@ Trio <- R6::R6Class(
     #' Print method to display key information about the Trio object.
     print = function() {
       data_str <- capture.output(str(self$data, max.level = 1))
+      if (length(data_str) > 15) {
+        data_str <- c(data_str[1:15], "... (truncated)")
+      }
       data_str <- setNames(data_str, rep(" ", times = length(data_str)))
       split_ind <- ifelse(is.null(self$splitIndices), "None", "Available")
 
