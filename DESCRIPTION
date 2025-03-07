@@ -9,7 +9,7 @@ Authors@R: c(person("Cabiria", "Liang", email = "xiaoqi.liang@sydney.edu.au", ro
              person("Dario", "Strbenac", email = "dario.strbenac@sydney.edu.au", role = c("aut")),
              person("Jean", "Yang", email = "jean.yang@sydney.edu.au", role = c("aut")))
 Description: The trio is the combination of a data set, a metric and auxiliary data which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and auxiliary data. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.
-biocViews: Infrastructure, DataImport, DataRepresentation, Data, Annotation, Software, WorkflowStep, Visualization
+biocViews: Infrastructure, DataImport, DataRepresentation, Software, WorkflowStep, Visualization
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
@@ -61,3 +61,4 @@ Suggests:
     BiocStyle
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+BugReports: https://github.com/SydneyBioX/BenchHub/issues
