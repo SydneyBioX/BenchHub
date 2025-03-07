@@ -124,7 +124,7 @@ dataset.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361073"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpmjDg6N"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/Rtmpj6hOqa"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Auxilliary Data </span></span>
@@ -192,7 +192,7 @@ dataset with a <code>fileID</code>.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361079"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpmjDg6N"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/Rtmpj6hOqa"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Auxilliary Data </span></span>
@@ -296,7 +296,7 @@ metric function with the specified arguments.</p>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     do.call(metric, append(list(auxData, to_eval), args))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55e8b3cd3470&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x556698362df8&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="adding-and-getting-auxdata">Adding and getting <code>auxData</code><a class="anchor" aria-label="anchor" href="#adding-and-getting-auxdata"></a>
@@ -457,18 +457,17 @@ vignette 2.</p>
 <div class="section level2">
 <h2 id="other-features">Other Features<a class="anchor" aria-label="anchor" href="#other-features"></a>
 </h2>
-</div>
-<div class="section level2">
-<h2 id="caching">Caching<a class="anchor" aria-label="anchor" href="#caching"></a>
-</h2>
+<div class="section level3">
+<h3 id="caching">Caching<a class="anchor" aria-label="anchor" href="#caching"></a>
+</h3>
 <p>Trio uses caching to avoid lengthy downloads after the first time a
 data set is accessed. The <code>cachePath</code> parameter specifies the
 path to the cache directory. If not specified, the cache directory
 defaults to <code>~/.cache/R/TrioR/</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="data-splitting">Data Splitting<a class="anchor" aria-label="anchor" href="#data-splitting"></a>
-</h2>
+<div class="section level3">
+<h3 id="data-splitting">Data Splitting<a class="anchor" aria-label="anchor" href="#data-splitting"></a>
+</h3>
 <p>Trio supports data splitting for cross-validation. The
 <code>split</code> method splits the data into training and test sets
 for cross-validation. The <code>splitIndices</code> attribute stores the
@@ -539,6 +538,7 @@ stratify the outcome variable.</p>
 <span><span class="co">## [20]  44  48  49  50  53  55  58  59  63  64  65  70  71  73  74  75  77  78  80</span></span>
 <span><span class="co">## [39]  82  83  84  85  88  89  90  91  92  95  96  98  99 104 105 109 110 112 113</span></span>
 <span><span class="co">## [58] 114 120 121 122 124 125 130 131 133 135 136 137</span></span></code></pre>
+</div>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
