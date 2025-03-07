@@ -34,10 +34,9 @@ The task we'll be evaluating using `TrioR` is a binary classification task where
 
 # Initialise a TrioR object
 
-To initiate a TrioR object, we use a `new()` function.
+To initialise a TrioR object, we use a `new()` method.
 
 ```{r}
-# initiate a Trio object without datasetID
 trio <- Trio$new(data = x, datasetID = "lubomski_microbiome")
 ```
 
@@ -48,21 +47,27 @@ Next we will use this microbiome data to illustrate two examples, 1) evaluation 
 
 In this example, we show a typical classification scenario to classify the patient status, where we need to split the data into training and testing set.  
 
-Step 1: Add a metric to it using the `addMetric()` function. Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
+## Step 1: Add a metric to it using `Trio$addMetric()`
+
+Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
 
 ```{r}
 # add a metric to the Trio object
-trio$addMetric(name = "Balanced Accuracy", metric = BenchHub:::balAccMetric)
+trio$addMetric(name = "Balanced Accuracy", metric = balAccMetric)
 ```
 
-Step 2: Add auxiliary data to the `TrioR` object using the `addAuxData` function. The auxiliary data is the patient status, which is the `lubomPD` vector that we extracted from the `Lubomski` data above. Similar to adding a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object.  
+## Step 2: Add auxiliary data to the `TrioR` object using `Trio$addAuxData`
+
+The auxiliary data is the patient status, which is the `lubomPD` vector that we extracted from the `Lubomski` data above. Similar to adding a metric, users can name their auxiliary data by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `TrioR` object.  
 
 ```{r}
 # add auxiliary data to the Trio object
-# name is the user-defined name, can be anything 
+# name is the user-defined name, can be anything
 # auxData is the value of the auxiliary data
-# metric needs to be same name of the metric that has been added to the Trio object 
-trio$addAuxData(name = "patient_status", auxData = lubomPD, metrics = "Balanced Accuracy")
+# metric needs to be same name of the metric that has been added to the Trio object
+trio$addAuxData(
+  name = "patient_status", auxData = lubomPD, metrics = "Balanced Accuracy"
+)
 ```
 
 If users want to get evaluation metrics from the `TrioR` object, they can use the `getMetrics` function by referring the name of `auxData`.
@@ -99,7 +104,7 @@ set.seed(1234)
 
 result <- data.frame()
 
-# loop through the 2 folds x 5 repeats = 10 runs 
+# loop through the 2 folds x 5 repeats = 10 runs
 for (i in seq_along(cv_ind)) {
   train_id <- cv_ind[[i]]
 
@@ -109,8 +114,9 @@ for (i in seq_along(cv_ind)) {
   y_test <- y[-train_id]
 
   #  find the best lambda for LASSO regression
-  cv_lasso <- cv.glmnet( as.matrix(x_train), y_train,
-                         alpha = 1, family = "binomial" )
+  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train,
+    alpha = 1, family = "binomial"
+  )
   lam <- cv_lasso$lambda.1se
 
   # fit a model with the best lambda on training data
@@ -122,7 +128,7 @@ for (i in seq_along(cv_ind)) {
 
   # get the chosen evaluation metric from the Trio
   eval_res <- trio$evaluate(
-    list(  lasso = list(     patient_status = pred    )  ),
+    list(lasso = list(patient_status = pred)),
     splitIndex = i
   )
 
@@ -145,10 +151,10 @@ result <- result %>%
   dplyr::group_by(datasetID, method, auxData, metric, repeats) %>%
   dplyr::summarize(result = mean(result))
 
-# visualise the result 
+# visualise the result
 boxplot(result$result)
 
-# look at the format of the result output 
+# look at the format of the result output
 result
 ```
 
@@ -165,44 +171,39 @@ Step 3: Define a metric that compare difference of two values.
 Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.    
 
 ```{r}
-
 set.seed(1)
 
 # generate a simulated matrix
-sim <- rnbinom( nrow(x) * ncol(x), size = 1, mu = 1)
-sim  <- Matrix(sim, nrow = nrow(x), ncol = ncol(x) )
+sim <- rnbinom(nrow(x) * ncol(x), size = 1, mu = 1)
+sim <- Matrix(sim, nrow = nrow(x), ncol = ncol(x))
 
-# function that calculate the sparsity of a matrix 
-calc_sparsity <- function(data){
+# function that calculate the sparsity of a matrix
+calc_sparsity <- function(data) {
   sparsity <- sum(data == 0) / length(data)
   return(sparsity)
-} 
-
-
-# metric that compare the difference of two values
-calc_diff <- function(pred, gt){
-  return( gt - pred )
 }
 
 
-
+# metric that compare the difference of two values
+calc_diff <- function(pred, gt) {
+  return(gt - pred)
+}
 ```
 
 ```{r}
-
- 
-# add metric that we just defined 
+# add metric that we just defined
 trio$addMetric(name = "Difference", metric = calc_diff)
 
 # calculate the sparsity of the data, and then input into the auxillary data
-trio$addAuxData(name = "Sparsity", auxData = calc_sparsity(x)  , metrics = "Difference")
+trio$addAuxData(name = "Sparsity", auxData = calc_sparsity(x), metrics = "Difference")
 
 
 # because we used negative binomial to simulate a matrix
 # we will name the method as "negative binomial"
-# then calculate the sparsity of the simulated matrix and compare with the Sparsity auxiliary data 
+# then calculate the sparsity of the simulated matrix and compare with the Sparsity auxiliary data
 eval_res <- trio$evaluate(
-    list(   negative_binomial = list(  Sparsity = calc_sparsity(sim) )    )   )
+  list(negative_binomial = list(Sparsity = calc_sparsity(sim)))
+)
 
 eval_res
 ```
@@ -223,11 +224,11 @@ Note, to make the result dataframe compatible for BenchmarkInsights, please make
 
 
 ```{r}
-# in the with cross validation result, we need to average the results from multiple repeats to give one value 
+# in the with cross validation result, we need to average the results from multiple repeats to give one value
 result <- result %>%
   dplyr::group_by(datasetID, method, auxData, metric) %>%
   dplyr::summarize(result = mean(result))
- 
+
 result <- rbind(result, eval_res)
 result
 ```
