@@ -1,9 +1,13 @@
 #' Balanced Accuracy Metric
-#' 
+#'
 #' @description Computes the balanced accuracy of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The balanced accuracy.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' balAccMetric(auxData, predicted)
 #' @export
 balAccMetric <- function(auxData, predicted) {
   confusionMatrix <- table(auxData, predicted)
@@ -12,11 +16,15 @@ balAccMetric <- function(auxData, predicted) {
 }
 
 #' Balanced Error Metric
-#' 
+#'
 #' @description Computes the balanced error of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The balanced error.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' balErrMetric(auxData, predicted)
 #' @export
 balErrMetric <- function(auxData, predicted) {
   confusionMatrix <- table(auxData, predicted)
@@ -26,11 +34,15 @@ balErrMetric <- function(auxData, predicted) {
 }
 
 #' Compute Positives and Negatives
-#' 
+#'
 #' @description Computes the true positives, false positives, false negatives, and true negatives.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return A list containing the true positives, false positives, false negatives, and true negatives.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' .positivesNegatives(auxData, predicted)
 #' @export
 .positivesNegatives <- function(auxData, predicted) {
   confusionMatrix <- table(auxData, predicted)
@@ -45,11 +57,15 @@ balErrMetric <- function(auxData, predicted) {
 }
 
 #' Micro Precision Metric
-#' 
+#'
 #' @description Computes the micro precision of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The micro precision.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' microPrecMetric(auxData, predicted)
 #' @export
 microPrecMetric <- function(auxData, predicted) {
   PN <- .positivesNegatives(auxData, predicted)
@@ -57,11 +73,15 @@ microPrecMetric <- function(auxData, predicted) {
 }
 
 #' Micro Recall Metric
-#' 
+#'
 #' @description Computes the micro recall of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The micro recall.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' microRecMetric(auxData, predicted)
 #' @export
 microRecMetric <- function(auxData, predicted) {
   PN <- .positivesNegatives(auxData, predicted)
@@ -69,11 +89,15 @@ microRecMetric <- function(auxData, predicted) {
 }
 
 #' Micro F1 Score Metric
-#' 
+#'
 #' @description Computes the micro F1 score of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The micro F1 score.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' microF1Metric(auxData, predicted)
 #' @export
 microF1Metric <- function(auxData, predicted) {
   2 * microPrecMetric(auxData, predicted) * microRecMetric(auxData, predicted) /
@@ -81,11 +105,15 @@ microF1Metric <- function(auxData, predicted) {
 }
 
 #' Macro Precision Metric
-#' 
+#'
 #' @description Computes the macro precision of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The macro precision.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' macroPrecMetric(auxData, predicted)
 #' @export
 macroPrecMetric <- function(auxData, predicted) {
   PN <- .positivesNegatives(auxData, predicted)
@@ -93,11 +121,15 @@ macroPrecMetric <- function(auxData, predicted) {
 }
 
 #' Macro Recall Metric
-#' 
+#'
 #' @description Computes the macro recall of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The macro recall.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' macroRecMetric(auxData, predicted)
 #' @export
 macroRecMetric <- function(auxData, predicted) {
   PN <- .positivesNegatives(auxData, predicted)
@@ -105,11 +137,15 @@ macroRecMetric <- function(auxData, predicted) {
 }
 
 #' Macro F1 Score Metric
-#' 
+#'
 #' @description Computes the macro F1 score of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The macro F1 score.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' macroF1Metric(auxData, predicted)
 #' @export
 macroF1Metric <- function(auxData, predicted) {
   2 * macroPrecMetric(auxData, predicted) * macroRecMetric(auxData, predicted) /
@@ -117,11 +153,15 @@ macroF1Metric <- function(auxData, predicted) {
 }
 
 #' Matthews Correlation Coefficient (MCC) Metric
-#' 
+#'
 #' @description Computes the Matthews Correlation Coefficient (MCC) of the predictions.
 #' @param auxData The true labels.
 #' @param predicted The predicted labels.
 #' @return The MCC.
+#' @examples
+#' auxData <- factor(c("A", "B", "A", "B"))
+#' predicted <- factor(c("A", "A", "A", "B"))
+#' MCCmetric(auxData, predicted)
 #' @export
 MCCmetric <- function(auxData, predicted) {
   nClass <- length(levels(auxData))
@@ -141,22 +181,30 @@ MCCmetric <- function(auxData, predicted) {
 }
 
 #' Mean Squared Error (MSE) Metric
-#' 
+#'
 #' @description Computes the mean squared error of the predictions.
 #' @param auxData The true values.
 #' @param predicted The predicted values.
 #' @return The mean squared error.
+#' @examples
+#' auxData <- c(1, 2, 3, 4)
+#' predicted <- c(1.1, 2.1, 2.9, 4.2)
+#' MSEmetric(auxData, predicted)
 #' @export
 MSEmetric <- function(auxData, predicted) {
   mean((auxData - predicted)^2)
 }
 
 #' Kernel Density Estimation (KDE) Metric
-#' 
+#'
 #' @description Computes the kernel density estimation test statistic.
 #' @param auxData The true values.
 #' @param predicted The predicted values.
 #' @return The KDE test statistic.
+#' @examples
+#' auxData <- c(1, 2, 3, 4)
+#' predicted <- c(1.1, 2.1, 2.9, 4.2)
+#' kdeMetric(auxData, predicted)
 #' @export
 kdeMetric <- function(auxData, predicted) {
   assertSuggestAvail("ks")
@@ -166,11 +214,30 @@ kdeMetric <- function(auxData, predicted) {
 }
 
 #' Harrel's C-Index Metric
-#' 
+#'
 #' @description Computes Harrel's C-Index for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return Harrel's C-Index.
+#' @examples
+#' auxData <- list(
+#'   survival::Surv(
+#'     time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
+#'   ),
+#'   survival::Surv(
+#'     time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
+#'   )
+#' )
+#' predicted <- list(
+#'   survival::Surv(
+#'     time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
+#'   ),
+#'   survival::Surv(
+#'     time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
+#'   )
+#' )
+#' #harrelCIndexMetric(auxData, predicted)
+#' #Error in Ops.Surv(to_eval[[2]]) : Invalid operation on a survival time
 #' @importFrom Hmisc rcorr.cens
 #' @export
 harrelCIndexMetric <- function(auxData, predicted) {
@@ -180,7 +247,7 @@ harrelCIndexMetric <- function(auxData, predicted) {
 }
 
 #' Begg's C-Index Metric
-#' 
+#'
 #' @description Computes Begg's C-Index for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
@@ -196,7 +263,7 @@ beggCIndexMetric <- function(auxData, predicted) {
 }
 
 #' Uno's C-Index Metric
-#' 
+#'
 #' @description Computes Uno's C-Index for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
@@ -210,7 +277,7 @@ unoCIndexMetric <- function(auxData, predicted) {
 }
 
 #' GH C-Index Metric
-#' 
+#'
 #' @description Computes the GH C-Index for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
@@ -224,7 +291,7 @@ ghCIndexMetric <- function(auxData, predicted) {
 }
 
 #' Brier Score Metric
-#' 
+#'
 #' @description Computes the Brier score for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
@@ -242,7 +309,7 @@ brierScoreMetric <- function(auxData, predicted) {
 }
 
 #' Time-Dependent AUC Metric
-#' 
+#'
 #' @description Computes the time-dependent AUC for survival analysis.
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
