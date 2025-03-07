@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   v01_intro_trio: v01_intro_trio.html
   v02_Evaluation_using_Trio: v02_Evaluation_using_Trio.html
-last_built: 2025-03-07T10:33Z
+last_built: 2025-03-07T13:46Z
 urls:
   reference: https://sydneybiox.github.io/BenchHub/reference
   article: https://sydneybiox.github.io/BenchHub/articles
