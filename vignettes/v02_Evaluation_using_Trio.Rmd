@@ -2,7 +2,7 @@
 title: "2 Evaluation using TrioR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{TrioR_evaluation}
+  %\VignetteIndexEntry{2 Evaluation using TrioR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 --- 

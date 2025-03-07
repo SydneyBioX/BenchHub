@@ -1,12 +1,12 @@
 ---
-title: "Introduction to the Trio Class"
+title: "1 Introduction to the Trio Class"
 date: "`r BiocStyle::doc_date()`"
 output: 
   BiocStyle::html_document:
     toc_float: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Introduction to the Trio Class}
+  %\VignetteIndexEntry{1 Introduction to the Trio Class}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -29,7 +29,9 @@ library(EnsDb.Hsapiens.v86)
 
 # Motivation
 
-BenchHub—an R ecosystem to make benchmarking easier. It organizes evaluation metrics, gold standards(Auxiliary Data), and even provides built-in visualization tools to help interpret results. With BenchHub, researchers can quickly compare new methods, gain insights, and actually trust their benchmarking studies. 
+BenchHub is an R ecosystem built to make benchmarking easier.
+
+It organizes data, evaluation metrics, gold standards (auxiliary data), and even provides built-in visualization tools to help interpret results. With BenchHub, researchers can quickly compare new methods, gain insights, and produce trustworthy their benchmarking studies. 
 
 # Creating Trio object
 
@@ -94,7 +96,9 @@ Trio supports custom loaders for data formats not directly supported by Trio. A 
 
 Below, we use an anonymous function to wrap `GEOquery::getGEO` and provide it with the path of the downloaded file.
 
-```{r}
+```{r, eval=FALSE}
+# This code will not run as it requires a GEO dataset to be downloaded
+# GEO is unreliable
 trioGEO <- Trio$new(
   "GEO:GSE46474",
   dataLoader = \(path) suppressMessages(GEOquery::getGEO(filename = path)),
@@ -110,32 +114,7 @@ trioGEO
 
 In benchmarking studies, a metric refers to the measurement used to evaluate a specific task. In this example, we define a task called survival model prediction.
 
-As our evaluation metric, we use Harrel C Index statistics to assess the prediction.
-
-First, we define a function, getHarrelCIndex, which computes Harrel C Index statistics:
-
-```{r}
-# @littlecabiria - this metric is the wrong way round!
-getHarrelCIndex <- function(to_eval, gs) {
-  harrelC1 <- Hmisc::rcorr.cens(-to_eval[[2]], gs[[2]])
-  return(harrelC1["C Index"])
-}
-```
-
-After defining the metric function, we use the addMetric() function to incorporate it into the Trio object.
-
-- The first argument specifies the metric name to be stored in the Trio object.
-- The second argument is the function that defines the metric calculation.
-
-In this case, we add the previously created getHarrelCIndex function as a metric named "Harrel C-Index":
-
-```{r}
-trioA$addMetric("Harrel C-Index", getHarrelCIndex)
-```
-
-### Simple Example
-
-Adding a metric is simple. A metric is any pairwise function of the form `f(expected, predicted)` which returns a single value
+In Trio, a metric is any pairwise function of the form `f(expected, predicted)` which returns a single value.
 
 We can also add metrics that have additional arguments by passing a list of arguments to the args parameter.
 
@@ -172,49 +151,9 @@ trio$metrics$inequality
 - Internal: Extracted directly from the Trio dataset. This may include metadata such as cell types (e.g., B cells, CD4, CD8), patient conditions (e.g., healthy, disease), and spatial domain information. The specific content depends on the dataset itself.
 - External: Retrieved from external databases, such as disease pathway databases or gene marker databases.
 
-### Internal
+With the `equality` and `inequality` metrics added above, we can now run an evaluation.
 
-First, we define a function, getSurObj, which generate the survival object:
-
-```{r}
-getSurObj <- function(data) {
-  sub_data_test <- data[data[, "index"] == "test", ]
-  sub_data_train <- data[data[, "index"] == "train", ]
-  test_surv_obj <- with(sub_data_test, survival::Surv(time, status))
-  train_surv_obj <- with(sub_data_train, survival::Surv(time, status))
-  return(list(train_surv_obj, test_surv_obj))
-}
-```
-
-After defining the internal AuxData function, we use the addAuxData() function to incorporate it into the Trio object.
-
-- The first argument specifies the AuxData name to be stored in the Trio object.
-- The second argument is the function that defines the AuxData calculation.
-- The third argument is the metric
-
-In this case, we add the previously created getSurObj function as a AuxData named "survObj":
-
-```{r}
-trioA$addAuxData("survObj", getSurObj, c("Harrel C-Index"))
-```
-
-### External
-
-This database contains a list of disease pathways, where each pathway is represented by a set of associated genes. The data was extracted from the Disease Ontology (DO) database and processed using the DOSE package to map disease terms to gene symbols. Once loaded, users can access the pathway information for further analysis, such as pathway enrichment or pathway activity scoring.
-
-```{r, eval=FALSE}
-DO_pathway <- load("~/Desktop/manuscript/TrioR/vignettes/DO_pathway.RData")
-```
-
-Next, we add this external database into trioA object. 
-
-```{r, eval=FALSE}
-trioA$addAuxData("getDOpathway", DO_pathway, c("diseaseScore"))
-```
-
-## Toy Example
-
-With the equality and inequality metrics added, we can now evaluate the equality of two values using the equality metric.
+First we add some auxiliary data to the Trio object to evaluate against.
 
 Auxiliary data is any data that allows you to make an evaluation. Auxiliary data is added linked to metrics that allow you to evaluate it.
 
@@ -224,7 +163,7 @@ trio$addAuxData(
   name = "Number One", auxData = 1, metrics = c("equality", "inequality")
 )
 
-# Or it can be a quantity, to be computed from that dataset
+# Or it can be a function that acts on the data
 trio$addAuxData(
   name = "length", auxData = length, metrics = c("equality", "inequality")
 )
@@ -233,27 +172,48 @@ trio$addAuxData(
 To view the auxiliary data one can use `getAuxData`.
 
 ```{r}
-trio$getAuxData("length") # This is equivalent to nrow(trio$data)
+trio$getAuxData("length") # This is equivalent to `length(trio$data)`
 ```
 
 
-### Evaluation
+## Evaluation Example
 
-Once Trio is set up with relevant metrics and auxData, evaluation is trivial.
+Once Trio is set up with relevant metrics and auxData, we are ready to evaluate.
 
 For simple evaluation:
 ```{r}
-trio$evaluate(list("Number One" = 1, length = 182))
+result <- trio$evaluate(list("Number One" = 1, length = 182))
+knitr::kable(result)
 ```
 
 For multi-method evaluation:
 ```{r}
-trio$evaluate(list(
+result <- trio$evaluate(list(
   great_method = list("Number One" = 1, length = 575),
   poor_method = list("Number One" = 2, length = 182)
 ))
+knitr::kable(result)
 ```
 
+For a more detailed look at evaluation using Trio, please refer to vignette 2.
+
+
+# Other Features 
+
+# Caching
+
+Trio uses caching to avoid lengthy downloads after the first time a data set is accessed. The `cachePath` parameter specifies the path to the cache directory. If not specified, the cache directory defaults to `~/.cache/R/TrioR/`.
+
+# Data Splitting
+
+Trio supports data splitting for cross-validation. The `split` method splits the data into training and test sets for cross-validation. The `splitIndices` attribute stores the indices for each sample.
+
+Indices are generated using the `splitTools` package. The `split` method takes in the outcome variable and the number of folds and repeats. The `stratify` parameter can be used to stratify the outcome variable.
+
+```{r}
+trio$split(y = 1:137, n_fold = 2, n_repeat = 5, seed = 1234, stratify = FALSE)
+trio$splitIndices
+```
 
 # Conclusion
 
