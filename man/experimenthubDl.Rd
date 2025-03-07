@@ -11,6 +11,9 @@ experimenthubDl(ID, cachePath)
 
 \item{cachePath}{The path to store the downloaded file.}
 }
+\value{
+The path to the downloaded file.
+}
 \description{
 Get the a dataset from ExperimentHub
 }

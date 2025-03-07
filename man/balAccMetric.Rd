@@ -17,3 +17,8 @@ The balanced accuracy.
 \description{
 Computes the balanced accuracy of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+balAccMetric(auxData, predicted)
+}

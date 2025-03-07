@@ -12,6 +12,9 @@ figshareDl(ID, cachePath)
 
 \item{cachePath}{The path to store the downloaded file.}
 }
+\value{
+The path to the downloaded file.
+}
 \description{
 Download main or supplimentary files from GEO.
 }

@@ -17,3 +17,8 @@ The macro F1 score.
 \description{
 Computes the macro F1 score of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+macroF1Metric(auxData, predicted)
+}

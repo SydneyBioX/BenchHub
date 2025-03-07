@@ -17,3 +17,8 @@ The micro precision.
 \description{
 Computes the micro precision of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+microPrecMetric(auxData, predicted)
+}

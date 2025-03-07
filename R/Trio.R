@@ -16,6 +16,7 @@ NULL
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
+#' @return A Trio object
 #' @export
 #' @importFrom googlesheets4 read_sheet
 Trio <- R6::R6Class(

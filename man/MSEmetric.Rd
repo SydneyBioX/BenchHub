@@ -17,3 +17,8 @@ The mean squared error.
 \description{
 Computes the mean squared error of the predictions.
 }
+\examples{
+auxData <- c(1, 2, 3, 4)
+predicted <- c(1.1, 2.1, 2.9, 4.2)
+MSEmetric(auxData, predicted)
+}

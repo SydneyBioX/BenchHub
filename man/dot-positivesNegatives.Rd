@@ -17,3 +17,9 @@ A list containing the true positives, false positives, false negatives, and true
 \description{
 Computes the true positives, false positives, false negatives, and true negatives.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+.positivesNegatives(auxData, predicted)
+}
+\keyword{internal}

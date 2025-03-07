@@ -17,3 +17,8 @@ The micro F1 score.
 \description{
 Computes the micro F1 score of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+microF1Metric(auxData, predicted)
+}

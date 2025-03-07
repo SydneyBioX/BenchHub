@@ -17,3 +17,8 @@ The MCC.
 \description{
 Computes the Matthews Correlation Coefficient (MCC) of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+MCCmetric(auxData, predicted)
+}

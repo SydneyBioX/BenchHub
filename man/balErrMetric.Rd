@@ -17,3 +17,8 @@ The balanced error.
 \description{
 Computes the balanced error of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+balErrMetric(auxData, predicted)
+}

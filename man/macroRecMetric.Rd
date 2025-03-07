@@ -17,3 +17,8 @@ The macro recall.
 \description{
 Computes the macro recall of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+macroRecMetric(auxData, predicted)
+}

@@ -17,3 +17,8 @@ The KDE test statistic.
 \description{
 Computes the kernel density estimation test statistic.
 }
+\examples{
+auxData <- c(1, 2, 3, 4)
+predicted <- c(1.1, 2.1, 2.9, 4.2)
+kdeMetric(auxData, predicted)
+}

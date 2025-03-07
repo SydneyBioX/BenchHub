@@ -3,6 +3,9 @@
 \name{Trio}
 \alias{Trio}
 \title{A Trio object}
+\value{
+A Trio object
+}
 \description{
 An object containing a dataset and methods for evaluating
 analytical tasks against ground truths for the dataset.

@@ -17,3 +17,23 @@ Harrel's C-Index.
 \description{
 Computes Harrel's C-Index for survival analysis.
 }
+\examples{
+auxData <- list(
+  survival::Surv(
+    time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
+  ),
+  survival::Surv(
+    time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
+  )
+)
+predicted <- list(
+  survival::Surv(
+    time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
+  ),
+  survival::Surv(
+    time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
+  )
+)
+#harrelCIndexMetric(auxData, predicted)
+#Error in Ops.Surv(to_eval[[2]]) : Invalid operation on a survival time
+}

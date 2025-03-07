@@ -17,3 +17,8 @@ The macro precision.
 \description{
 Computes the macro precision of the predictions.
 }
+\examples{
+auxData <- factor(c("A", "B", "A", "B"))
+predicted <- factor(c("A", "A", "A", "B"))
+macroPrecMetric(auxData, predicted)
+}
