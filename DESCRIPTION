@@ -62,3 +62,4 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 BugReports: https://github.com/SydneyBioX/BenchHub/issues
+URL: https://sydneybiox.github.io/BenchHub/
