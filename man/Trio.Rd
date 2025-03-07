@@ -29,6 +29,10 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSouce}}
 
 \item{\code{splitIndices}}{Indices for cross-validation}
+
+\item{\code{splitSeed}}{The seed used to generate the split indices}
+
+\item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -74,7 +78,7 @@ returns a single dataset, ready to be used in evaluation tasks.}
 
 \item{\code{cachePath}}{The path to the data cache}
 
-\item{\code{verbose}}{Set the verbosity of Trio}
+\item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -189,7 +193,14 @@ indices created by the split method.}
 \subsection{Method \code{split()}}{
 Create a cross-validation indices.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$split(y, n_fold = 5L, n_repeat = 1L, stratify = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$split(
+  y,
+  n_fold = 5L,
+  n_repeat = 1L,
+  stratify = TRUE,
+  seed = NULL,
+  overwrite = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -203,6 +214,11 @@ vector the length of the data.}
 \item{\code{n_repeat}}{Number of repeats. Defaults to \code{1L}.}
 
 \item{\code{stratify}}{If \code{TRUE}, uses stratified sampling. Defaults to \code{TRUE}.}
+
+\item{\code{seed}}{An optional seed for split generation. Defaults to \code{NULL}. If \code{NULL},
+the seed is set to the current time.}
+
+\item{\code{overwrite}}{If \code{TRUE}, overwrites the current split. Defaults to \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }

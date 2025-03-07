@@ -13,6 +13,8 @@ NULL
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSouce`
 #' @field splitIndices Indices for cross-validation
+#' @field splitSeed The seed used to generate the split indices
+#' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
@@ -29,6 +31,8 @@ Trio <- R6::R6Class(
     dataSource = NULL,
     dataSourceID = NULL,
     splitIndices = NULL,
+    splitSeed = NULL,
+    verbose = FALSE,
 
     # TODO: Implement Trio$sources() (Issue #2)
 
@@ -42,20 +46,19 @@ Trio <- R6::R6Class(
     #'   A custom loading fuction that takes the path of a downloaded file and
     #'   returns a single dataset, ready to be used in evaluation tasks.
     #' @param cachePath The path to the data cache
-    #' @param verbose Set the verbosity of Trio
+    #' @param verbose Set the verbosity of Trio. Defaults to `FALSE`.
     initialize = function(datasetID = NULL,
                           data = NULL,
                           dataLoader = NULL,
                           cachePath = FALSE,
                           verbose = FALSE) {
       googlesheets4::gs4_deauth()
-
-      if (!verbose) {
-        options(rlib_message_verbosity = "quiet")
-      } else {
-        options(rlib_message_verbosity = "default")
+      if (!is.logical(verbose)) {
+        cli::cli_abort(c(
+          "The {.var verbose} parameter must be a {.cls logical}."
+        ))
       }
-
+      self$verbose <- verbose
       # if users have their own data without datasetID
       if (!is.null(data)) {
         if (is.null(datasetID) && interactive()) {
@@ -237,10 +240,12 @@ Trio <- R6::R6Class(
       # contains auxData names and set separateMethods based on this
       if (all(!auxDataAvail)) {
         if (any(names(input[[1]]) %in% names(self$auxData))) {
-          cli::cli_inform(c(
-            "AuxData names found in sublist.",
-            "i" = "Evaluating as separate methods."
-          ))
+          if (self$verbose) {
+            cli::cli_inform(c(
+              "AuxData names found in sublist.",
+              "i" = "Evaluating as separate methods."
+            ))
+          }
           separateMethods <- TRUE
         }
       } else {
@@ -269,14 +274,16 @@ Trio <- R6::R6Class(
         # if some of the auxData are missing
         if (any(!auxDataAvail)) {
           unavail <- names(input)[!auxDataAvail]
-          cli::cli_inform(c(
-            paste0(
-              "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
-              "not available in this object. Passing through as unevaluated ",
-              "benchmark data."
-            ),
-            "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
-          ))
+          if (self$verbose) {
+            cli::cli_inform(c(
+              paste0(
+                "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
+                "not available in this object. Passing through as unevaluated ",
+                "benchmark data."
+              ),
+              "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
+            ))
+          }
         }
 
         # compute/retrieve auxiliary data
@@ -387,31 +394,41 @@ Trio <- R6::R6Class(
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
+    #' @param overwrite
+    #'   If `TRUE`, overwrites the current split. Defaults to `FALSE`.
+    #' @param seed
+    #'   An optional seed for split generation. Defaults to `NULL`. If `NULL`,
+    #'   the seed is set to the current time.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
     split = function(y,
-                     n_fold = 5L, n_repeat = 1L, stratify = TRUE) {
-      # If indices already exist.
-      if (!is.null(self$splitIndices)) {
-        # ask user to confirm that they want to overwrite the current split
-        overwrite <- utils::askYesNo(
-          "A split already exists. Would you like to overwrite it? (yes/[no])",
-          default = FALSE
-        )
-        if (!overwrite) {
-          cli::cli_inform(c(
-            "i" = "Not overwriting, to get current indices, access {.code trio$splitIndices}"
-          ))
-          invisible(NULL)
-        }
+                     n_fold = 5L, n_repeat = 1L, stratify = TRUE,
+                     seed = NULL, overwrite = FALSE) {
+      # choose a seed if not provided
+      if (is.null(seed)) {
+        seed <- as.integer(Sys.time()) * sample(c(1, -1), 1)
       }
 
+      if (!overwrite && !is.null(self$splitIndices)) {
+        if (self$verbose) {
+          cli::cli_inform(c(
+            "Not overwriting, keeping the existing split indices.",
+            "i" = "Use {.code trio$split(..., overwrite = TRUE)} to overwrite.",
+            "i" = "To get current indices, access {.code trio$splitIndices}"
+          ))
+        }
+        return(NULL)
+      }
+
+      # save split indices and seed
+      self$splitSeed <- seed
       self$splitIndices <- splitTools::create_folds(
         y,
         k = n_fold,
         type = dplyr::if_else(stratify, "stratified", "basic"),
-        m_rep = n_repeat
+        m_rep = n_repeat,
+        seed = seed
       )
     },
 
@@ -431,8 +448,8 @@ Trio <- R6::R6Class(
         cli::cli_h3("Dataset")
         cli::cli_text("{.strong Dataset Details}:")
         cli::cli_bullets(data_str)
-        cli::cli_text("{.strong Dataset ID}: {.val {self$dataSourceID}}")
         cli::cli_text("{.strong Data Source}: {.val {self$dataSource}}")
+        cli::cli_text("{.strong Dataset ID}: {.val {self$dataSourceID}}")
         cli::cli_text("{.strong Cache Path}: {.val {self$cachePath}}")
         cli::cli_text("{.strong Split Indices}: {.val {split_ind}}")
 
@@ -443,6 +460,13 @@ Trio <- R6::R6Class(
         cli::cli_h3("Metrics")
         cli::cli_text("{.strong Number of Metrics}: {.val {length(self$metrics)}}")
         cli::cli_text("{.strong Names of Metrics}: {.val {names(self$metrics)}}")
+
+        if (!is.null(self$splitIndices)) {
+          cli::cli_h3("CV Split Indices")
+          cli::cli_text("{.strong Seed}: {.val {self$splitSeed}}")
+          cli::cli_text("{.strong Number of Folds}: {.val {length(self$splitIndices)}}")
+          cli::cli_text("{.strong Number of Repeats}: {.val {length(self$splitIndices[[1]])}}")
+        }
       })
 
       cat(msg, sep = "\n")
@@ -515,7 +539,7 @@ Trio <- R6::R6Class(
       )
 
       if (length(files) > 1) {
-        cli::cli_inform("Select a file to load as the dataset:")
+        if (self$verbose) cli::cli_inform("Select a file to load as the dataset:")
         files <- files[utils::menu(files)]
       }
 
