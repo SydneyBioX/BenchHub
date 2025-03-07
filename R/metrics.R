@@ -240,6 +240,7 @@ kdeMetric <- function(auxData, predicted) {
 #' #harrelCIndexMetric(auxData, predicted)
 #' #Error in Ops.Surv(to_eval[[2]]) : Invalid operation on a survival time
 #' @importFrom Hmisc rcorr.cens
+#' @export
 harrelCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("Hmisc")
   harrelC1 <- Hmisc::rcorr.cens(-predicted[[2]], auxData[[2]])
@@ -253,6 +254,7 @@ harrelCIndexMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return Begg's C-Index.
 #' @importFrom survAUC BeggC
+#' @export
 beggCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
@@ -268,6 +270,7 @@ beggCIndexMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return Uno's C-Index.
 #' @importFrom survAUC UnoC
+#' @export
 unoCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
@@ -281,6 +284,7 @@ unoCIndexMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return The GH C-Index.
 #' @importFrom survAUC GHCI
+#' @export
 ghCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
@@ -294,6 +298,7 @@ ghCIndexMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return The Brier score.
 #' @importFrom survAUC predErr
+#' @export
 brierScoreMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
@@ -311,6 +316,7 @@ brierScoreMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return The time-dependent AUC.
 #' @importFrom survAUC AUC.uno
+#' @export
 timeDependentAUCMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
