@@ -235,5 +235,8 @@ result
 Please see Vignette xxxxx for the details on the visualisations and functions in BenchmarkInsights.     
 
 
+# Session Info
 
-
+```{r}
+sessionInfo()
+```
