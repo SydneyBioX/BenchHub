@@ -7,6 +7,7 @@
 #'   "ARTICLE_ID/FILE_ID" for a specific file.
 #' @param cachePath
 #'   The path to store the downloaded file.
+#' @return The path to the downloaded file.
 #' @keywords internal
 figshareDl <- function(ID, cachePath) {
   API_URL <- "https://api.figshare.com/v2/"
@@ -132,6 +133,7 @@ figshareDl <- function(ID, cachePath) {
 #'   "GSEXXXXXX/SupFile.tar.gz" or a supplementary file.
 #' @param cachePath
 #'   The path to store the downloaded file.
+#' @return The path to the downloaded file.
 #' @keywords internal
 geoDl <- function(ID, cachePath) {
   if (!requireNamespace("GEOquery", quietly = TRUE)) {
@@ -201,6 +203,7 @@ geoDl <- function(ID, cachePath) {
 #'   The ID, a string, with "EH" followed by a series of numbers (e.g. EH119)
 #' @param cachePath
 #'   The path to store the downloaded file.
+#' @return The path to the downloaded file.
 #' @keywords internal
 experimenthubDl <- function(ID, cachePath) {
   if (!requireNamespace("ExperimentHub", quietly = TRUE)) {
