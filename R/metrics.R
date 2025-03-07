@@ -43,6 +43,7 @@ balErrMetric <- function(auxData, predicted) {
 #' auxData <- factor(c("A", "B", "A", "B"))
 #' predicted <- factor(c("A", "A", "A", "B"))
 #' .positivesNegatives(auxData, predicted)
+#' @keywords internal
 #' @export
 .positivesNegatives <- function(auxData, predicted) {
   confusionMatrix <- table(auxData, predicted)
