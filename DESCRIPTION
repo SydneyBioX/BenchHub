@@ -58,7 +58,9 @@ Suggests:
     DOSE,
     DO.db,
     EnsDb.Hsapiens.v86,
-    BiocStyle
+    BiocStyle,
+    tidyverse,
+    glmnet
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 BugReports: https://github.com/SydneyBioX/BenchHub/issues
