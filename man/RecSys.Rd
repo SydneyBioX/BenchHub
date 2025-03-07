@@ -8,7 +8,7 @@ An object containing a recommender system for data-driven
 specific task.
 }
 \examples{
-# TODO
+RecSys$new()
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

@@ -11,7 +11,7 @@ NULL
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'   
 #' @examples
-#' # TODO
+#' benchmarkInsights$new()
 #' @export
 benchmarkInsights <- R6::R6Class(
   classname = "benchmarkInsights",

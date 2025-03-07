@@ -8,7 +8,7 @@ An object containing a benchmark result for evaluating
 analytical tasks.
 }
 \examples{
-# TODO
+benchmarkInsights$new()
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

@@ -10,7 +10,7 @@ NULL
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'   
 #' @examples
-#' # TODO
+#' RecSys$new()
 #' @export
 RecSys <- R6::R6Class(
   classname = "RecSys",
