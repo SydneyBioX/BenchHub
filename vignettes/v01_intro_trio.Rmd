@@ -200,11 +200,11 @@ For a more detailed look at evaluation using Trio, please refer to vignette 2.
 
 # Other Features 
 
-# Caching
+## Caching
 
 Trio uses caching to avoid lengthy downloads after the first time a data set is accessed. The `cachePath` parameter specifies the path to the cache directory. If not specified, the cache directory defaults to `~/.cache/R/TrioR/`.
 
-# Data Splitting
+## Data Splitting
 
 Trio supports data splitting for cross-validation. The `split` method splits the data into training and test sets for cross-validation. The `splitIndices` attribute stores the indices for each sample.
 
