@@ -149,8 +149,8 @@ macroRecMetric <- function(auxData, predicted) {
 #' macroF1Metric(auxData, predicted)
 #' @export
 macroF1Metric <- function(auxData, predicted) {
-  2 * macroPrec(auxData, predicted) * macroRec(auxData, predicted) /
-    (macroPrec(auxData, predicted) + macroRec(auxData, predicted))
+  2 * macroPrecMetric(auxData, predicted) * macroRecMetric(auxData, predicted) /
+    (macroPrecMetric(auxData, predicted) + macroRecMetric(auxData, predicted))
 }
 
 #' Matthews Correlation Coefficient (MCC) Metric
@@ -225,8 +225,8 @@ kdeMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32),
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #' # Predicted risk scores
 #' predicted <- list(
@@ -254,8 +254,8 @@ harrelCIndexMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32), 
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #' # Predicted risk scores
 #' predicted <- list(
@@ -285,8 +285,8 @@ beggCIndexMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32),
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #' # Predicted risk scores
 #' predicted <- list(
@@ -315,8 +315,8 @@ unoCIndexMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32), 
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #' # Predicted risk scores
 #' predicted <- list(
@@ -344,8 +344,8 @@ ghCIndexMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32),
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #' # Predicted risk scores
 #' predicted <- list(
@@ -377,8 +377,8 @@ brierScoreMetric <- function(auxData, predicted) {
 #' auxData <- list(
 #'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
 #'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
-#'   survival::Surv(time = c(12, 18, 25, 32), e
-#'   vent = c(1, 0, 1, 0))  # Testing
+#'   survival::Surv(time = c(12, 18, 25, 32),
+#'   event = c(1, 0, 1, 0))  # Testing
 #' )
 #'
 #' # Predicted risk scores
