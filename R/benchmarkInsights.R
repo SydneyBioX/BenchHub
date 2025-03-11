@@ -111,13 +111,15 @@ benchmarkInsights <- R6::R6Class(
     },
     
     #' @description Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
-    #' @param minievalSummary subset of evaluation summary
+    #' @param evalResult subset of evaluation summary
     #' @param order An optional vector specifying the order of x-axis values.
     #' @return A ggplot2 line plot object.
-    getLineplot = function(minievalSummary, order = NULL) {
-      if (!is.data.frame(minievalSummary)) {
+    getLineplot = function(evalResult, order = NULL, metricVariable) {
+      if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
+      
+      evalResult <- evalResult[evalResult$metric == metricVariable, ]
       
       th <- ggplot2::theme(text=element_text(size=12),
                   axis.text.x = element_text(angle = 45, hjust = 1),
@@ -125,17 +127,21 @@ benchmarkInsights <- R6::R6Class(
                   panel.grid.minor = element_blank(),
                   panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
 
-      minievalSummary_aggreate <- minievalSummary %>%
+      evalResult_aggreate <- evalResult %>%
         group_by(auxData, method) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
 
       if (!is.null(order)) {
-        minievalSummary_aggreate$auxData <- factor(minievalSummary_aggreate$auxData, levels = order)
+        evalResult_aggreate$auxData <- factor(evalResult_aggreate$auxData, levels = order)
       }
       
-      # Create the line plot
-      plot <- ggplot(minievalSummary_aggreate, 
+      evalResult_aggreate <- evalResult_aggreate %>%
+        mutate(auxData_numeric = as.numeric(auxData)) %>%
+        arrange(auxData_numeric) %>%
+        mutate(auxData = factor(auxData, levels = unique(auxData[order(auxData_numeric)])))
+      
+      plot <- ggplot(evalResult_aggreate, 
                      aes(x = auxData, 
                          y = average_result, 
                          group = method, 
@@ -149,12 +155,12 @@ benchmarkInsights <- R6::R6Class(
     },
     
     #' @description Creates a scatter plot for the same auxData, with an two methodd metrics.
-    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
+    #' @param evalResult subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @param variables A character vector of length two specifying the metric names to be used for the x and y axes.
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
-    getScatterplot = function(minievalSummary, variables) {
-      if (!is.data.frame(minievalSummary)) {
+    getScatterplot = function(evalResult, variables) {
+      if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
       
@@ -164,14 +170,14 @@ benchmarkInsights <- R6::R6Class(
                            panel.grid.minor = element_blank(),
                            panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
       
-      minievalSummary_aggreate <- minievalSummary %>%
+      evalResult_aggreate <- evalResult %>%
         group_by(method, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
       
-      metric_types <- unique(minievalSummary_aggreate$metric)
+      metric_types <- unique(evalResult_aggreate$metric)
       
-      result <- minievalSummary_aggreate %>%
+      result <- evalResult_aggreate %>%
         tidyr::pivot_wider(names_from = metric, values_from = average_result) 
       
       plot <- #ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
@@ -188,15 +194,22 @@ benchmarkInsights <- R6::R6Class(
       return(plot)
     },
     #' @description Creates boxplot plots for the mutiple auxData, different method, one metric.
-    #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
+    #' @param evalResult subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
     #' @importFrom ggsci scale_fill_npg
-    getBoxplot = function(minievalSummary) {
-      if (!is.data.frame(minievalSummary)) {
+    getBoxplot = function(evalResult, metricVariable, auxDataVariable) {
+      if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
+
+      subsetData <- evalResult[evalResult$metric == metricVariable & 
+                                      evalResult$auxData == auxDataVariable, ]
       
-      p1 <- ggplot(minievalSummary, aes(x=method, y=result, fill = method)) + 
+      if (nrow(subsetData) == 0) {
+        stop("No data available for the given metric and auxData values.")
+      }
+      
+      p1 <- ggplot(subsetData, aes(x=method, y=result, fill = method)) + 
         geom_boxplot() +
         facet_wrap(~auxData, scale="free") +
         theme(text=element_text(size=12 ),
@@ -210,13 +223,13 @@ benchmarkInsights <- R6::R6Class(
     
     #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
     #' The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).
-    #' @param minievalSummary A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.
+    #' @param evalResult A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.
     #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
     #' @importFrom ggcorrplot ggcorrplot
-    getCorplot = function(minievalSummary, input_type) {
+    getCorplot = function(evalResult, input_type) {
 
-      if (!is.data.frame(minievalSummary)) {
+      if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
       
@@ -224,7 +237,7 @@ benchmarkInsights <- R6::R6Class(
         stop("Invalid input_type. Must be 'auxData', 'metric', or 'method'.")
       }
       
-      df <- minievalSummary
+      df <- evalResult
       
       if (input_type == "metric") {
         pivot_df <- df %>%
@@ -265,13 +278,13 @@ benchmarkInsights <- R6::R6Class(
     #' @description This function generates a forest plot using linear models based on the 
     #' comparison between groups in the provided evaluation summary. The plot is created
     #' using dotwhisker and broom packages, with custom grouping and labeling.
-    #' @param minievalSummary A data frame containing the evaluation summary.
+    #' @param evalResult A data frame containing the evaluation summary.
     #' @param input_group A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).
     #' @param input_model A string specifying the model variable (only "datasetID", "method", or  "auxData" allowed).
     #' @return A forest plot showing the comparison of models across groups.
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
-    getForestplot = function(minievalSummary, input_group, input_model) {
+    getForestplot = function(evalResult, input_group, input_model) {
       allowed_values <- c("datasetID", "method", "auxData", "metric")
       if (!input_group %in% allowed_values) {
         stop("Invalid input_group. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
@@ -280,15 +293,15 @@ benchmarkInsights <- R6::R6Class(
         stop("Invalid input_model. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
       }
       
-      # minievalSummary <- benchmark$evalSummary
+      # evalResult <- benchmark$evalSummary
       # input_group <- "metric"
       # input_model <- "method"
       
-      minievalSummary <- bmi$evalSummary
+      evalResult <- bmi$evalSummary
       input_group <- "metric"
       input_model <- "method"
       
-      to_plot <- minievalSummary %>%
+      to_plot <- evalResult %>%
         group_by(!!sym(input_group)) %>%
         dplyr::do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
       
