@@ -229,3 +229,10 @@ bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", auxDataVariable = "s
 |   Metric-Model Impact (Modeling)   | `getForestplot(evalReuslt, input_group, input_model)` |
 | Method Variability Across Datasets | `getBoxplot(evalReuslt)`                              |
 |        Metric Relationship         | `getScatterplot(evalReuslt, variables)`               |
+
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

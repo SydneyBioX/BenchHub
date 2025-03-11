@@ -3,6 +3,9 @@
 \name{benchmarkInsights}
 \alias{benchmarkInsights}
 \title{A benchmarkInsights object}
+\value{
+A benchmarkInsights object.
+}
 \description{
 An object containing a benchmark result for evaluating
 analytical tasks.

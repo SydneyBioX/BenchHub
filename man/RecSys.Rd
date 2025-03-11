@@ -3,6 +3,9 @@
 \name{RecSys}
 \alias{RecSys}
 \title{A RecSys object}
+\value{
+A RecSys object.
+}
 \description{
 An object containing a recommender system for data-driven
 specific task.

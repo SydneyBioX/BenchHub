@@ -8,7 +8,7 @@ NULL
 #'   each row is the compared identifier, each column is the metric used in 
 #'   the evaluation task and related information.
 #' @field metadata A dataframe to store metadata for the benchmark.
-#'   
+#' @return A RecSys object.
 #' @examples
 #' RecSys$new()
 #' @export
