@@ -48,13 +48,9 @@ include the following fixed columns: `datasetID`, `method`, `auxData`,
 from SpatialSimBench to initialize a new object.
 
 ```{r}
-<<<<<<< Updated upstream:vignettes/WIP/_v3_intro_bmi.Rmd
 result_path <- system.file("extdata", "spatialsimbench_result.csv", package = "BenchHub")
 spatialsimbench_result <- read_csv(result_path)
 glimpse(spatialsimbench_result)
-=======
-spatialsimbench_result <- read_csv("spatialsimbenchV1.csv")
->>>>>>> Stashed changes:vignettes/v3_intro_bmi.Rmd
 ```
 
 If you use `trio$evaluation()`, the output will be automatically
