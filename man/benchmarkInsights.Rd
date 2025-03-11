@@ -113,13 +113,13 @@ A heatmap object.
 \subsection{Method \code{getLineplot()}}{
 Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getLineplot(minievalSummary, order = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getLineplot(evalResult, order = NULL, metricVariable)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{subset of evaluation summary}
+\item{\code{evalResult}}{subset of evaluation summary}
 
 \item{\code{order}}{An optional vector specifying the order of x-axis values.}
 }
@@ -135,13 +135,15 @@ A ggplot2 line plot object.
 \subsection{Method \code{getScatterplot()}}{
 Creates a scatter plot for the same auxData, with an two methodd metrics.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getScatterplot(minievalSummary)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getScatterplot(evalResult, variables)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
+\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
+
+\item{\code{variables}}{A character vector of length two specifying the metric names to be used for the x and y axes.}
 }
 \if{html}{\out{</div>}}
 }
@@ -155,13 +157,13 @@ A ggplot2 line plot object.
 \subsection{Method \code{getBoxplot()}}{
 Creates boxplot plots for the mutiple auxData, different method, one metric.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getBoxplot(minievalSummary)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getBoxplot(evalResult, metricVariable, auxDataVariable)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
+\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
 }
 \if{html}{\out{</div>}}
 }
@@ -176,13 +178,13 @@ A ggplot2 line plot object.
 Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
 The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getCorplot(minievalSummary, input_type)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getCorplot(evalResult, input_type)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.}
+\item{\code{evalResult}}{A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.}
 
 \item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".}
 }
@@ -200,17 +202,17 @@ This function generates a forest plot using linear models based on the
 comparison between groups in the provided evaluation summary. The plot is created
 using dotwhisker and broom packages, with custom grouping and labeling.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getForestplot(minievalSummary, input_group, input_model)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getForestplot(evalResult, input_group, input_model)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{minievalSummary}}{A data frame containing the evaluation summary.}
+\item{\code{evalResult}}{A data frame containing the evaluation summary.}
 
 \item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).}
 
-\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or "auxData" allowed).}
+\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or  "auxData" allowed).}
 }
 \if{html}{\out{</div>}}
 }
