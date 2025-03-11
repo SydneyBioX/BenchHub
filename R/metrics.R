@@ -221,24 +221,20 @@ kdeMetric <- function(auxData, predicted) {
 #' @param predicted The predicted survival times.
 #' @return Harrel's C-Index.
 #' @examples
+#' # More realistic training dataset (8 patients)
 #' auxData <- list(
-#'   survival::Surv(
-#'     time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
-#'   ),
-#'   survival::Surv(
-#'     time = c(1, 2, 3, 4), event = c(1, 0, 1, 0)
-#'   )
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
 #' )
+#' # Predicted risk scores
 #' predicted <- list(
-#'   survival::Surv(
-#'     time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
-#'   ),
-#'   survival::Surv(
-#'     time = c(1.1, 2.1, 2.9, 4.2), event = c(1, 0, 1, 0)
-#'   )
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
 #' )
-#' #harrelCIndexMetric(auxData, predicted)
-#' #Error in Ops.Surv(to_eval[[2]]) : Invalid operation on a survival time
+#' harrelCIndexMetric(auxData, predicted)
 #' @importFrom Hmisc rcorr.cens
 #' @export
 harrelCIndexMetric <- function(auxData, predicted) {
@@ -253,6 +249,21 @@ harrelCIndexMetric <- function(auxData, predicted) {
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return Begg's C-Index.
+#' @examples
+#' # More realistic training dataset (8 patients)
+#' auxData <- list(
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
+#' )
+#' # Predicted risk scores
+#' predicted <- list(
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
+#' )
+#' beggCIndexMetric(auxData, predicted)
 #' @importFrom survAUC BeggC
 #' @export
 beggCIndexMetric <- function(auxData, predicted) {
@@ -269,12 +280,28 @@ beggCIndexMetric <- function(auxData, predicted) {
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return Uno's C-Index.
+#' @examples
+#' # More realistic training dataset (8 patients)
+#' auxData <- list(
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
+#' )
+#' # Predicted risk scores
+#' predicted <- list(
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
+#' )
+#' unoCIndexMetric(auxData, predicted)
 #' @importFrom survAUC UnoC
 #' @export
 unoCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
-  survAUC::UnoC(auxData[[1]], auxData[[2]], predicted)
+  survAUC::UnoC(Surv.rsp = auxData[[2]], Surv.rsp.new = auxData[[2]], 
+                lpnew = predicted[[2]])
 }
 
 #' GH C-Index Metric
@@ -283,12 +310,27 @@ unoCIndexMetric <- function(auxData, predicted) {
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return The GH C-Index.
+#' @examples
+#' # More realistic training dataset (8 patients)
+#' auxData <- list(
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
+#' )
+#' # Predicted risk scores
+#' predicted <- list(
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
+#' )
+#' ghCIndexMetric(auxData, predicted)
 #' @importFrom survAUC GHCI
 #' @export
 ghCIndexMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
-  survAUC::GHCI(predicted)
+  survAUC::GHCI(predicted[[2]])
 }
 
 #' Brier Score Metric
@@ -297,6 +339,21 @@ ghCIndexMetric <- function(auxData, predicted) {
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return The Brier score.
+#' @examples
+#' # More realistic training dataset (8 patients)
+#' auxData <- list(
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
+#' )
+#' # Predicted risk scores
+#' predicted <- list(
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
+#' )
+#' brierScoreMetric(auxData, predicted)
 #' @importFrom survAUC predErr
 #' @export
 brierScoreMetric <- function(auxData, predicted) {
@@ -315,12 +372,28 @@ brierScoreMetric <- function(auxData, predicted) {
 #' @param auxData The true survival times and event indicators.
 #' @param predicted The predicted survival times.
 #' @return The time-dependent AUC.
+#' @examples
+#' # More realistic training dataset (8 patients)
+#' auxData <- list(
+#'   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
+#'   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
+#'   survival::Surv(time = c(12, 18, 25, 32), e
+#'   vent = c(1, 0, 1, 0))  # Testing
+#' )
+#'
+#' # Predicted risk scores
+#' predicted <- list(
+#'   c(0.5142118, 0.3902035, 0.9057381, 0.4469696, 
+#'   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
+#'   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
+#' )
+#' timeDependentAUCMetric(auxData, predicted)
 #' @importFrom survAUC AUC.uno
 #' @export
 timeDependentAUCMetric <- function(auxData, predicted) {
   assertSuggestAvail("survAUC")
 
   time <- auxData[[1]][, "time"]
-  AUC_CD <- survAUC::AUC.uno(auxData[[1]], auxData[[2]], predicted[[2]], time)
+  AUC_CD <- survAUC::AUC.uno(auxData[[1]], auxData[[2]], predicted[[2]], time)$auc
   return(AUC_CD)
 }
