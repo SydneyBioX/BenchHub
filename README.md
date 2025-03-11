@@ -29,30 +29,33 @@ The two components currently in BenchHub are:
 
 Trio is built around three key components:
 
-Dataset: Data used by the methods to generate output.   
-Auxiliary Data: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.      
-Metric: Evaluation metrics used to compare output of methods with auxiliary data. 
+**Data**: Data used by the methods to generate output.   
+**Auxiliary Data**: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.      
+**Metric**: Evaluation metrics used to compare output of methods with auxiliary data. 
 
-
-![TrioOverview](https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png)
-
+ 
 Trio is implemented as R6 object with fields to store each of the components. 
  
 
 
-![TrioDataStructure](https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png" width="35%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png" width="55%" />
+</p>
+
 
 ### BenchmarkInsight 
 
 BenchmarkInsight serves as a visualisation and analysis tool for benchmarking results. It contains multiple visualisation techniques to help researchers analyse benchmarking results in terms of data, methods and metrics. 
 
+ 
+Once results are evaluated using Trio, the output can be directly passed into the benchmarkInsight object. BenchmarkInsight currently supports the following plot types. 
+ 
 
-![benchmarkinsight1](https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png)
-
-It currently supports the following plot types. 
-
-![benchmarkinsight1](https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png)
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png" width="55%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png" width="35%" />
+</p>
 
 
 
@@ -65,5 +68,5 @@ Please refer to the [website](https://sydneybiox.github.io/BenchHub/) to see all
 | -------------  | ------------- |
 | 1  Introduction to the Trio Class    |    </li><li>  How to set up trio  <br> </li><li>  How to add auxData <br>  </li><li> How to add metric <br>  </li><li> Evaluation example
 | 2 Evaluation using TrioR      |      </li><li>  Cross-validation with Trio  <br> </li><li>  Evaluation without cross-validation    <br> </li><li>  Importing result to benchmarkInsights  |
-| 3 Introduction of benchmarkInsight Class  |      </li><li>  Creating bnechmarkInsights Class <br> </li><li>  Collection of visualisations    <br> </li><li>  Collection of analytical questions |
+| 3 Introduction of benchmarkInsight Class  |      </li><li>  Creating bnechmarkInsights Class <br> </li><li>  Collection of visualisations    <br> </li><li>  Collection of analytical questions that can be answered with benchmarkInsight|
 
