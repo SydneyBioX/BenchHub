@@ -57,6 +57,7 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
+<p><img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchhub_sticker.png" align="right" width="200"></p>
 <div class="section level2">
 <h2 id="installation-instruction">Installation instruction<a class="anchor" aria-label="anchor" href="#installation-instruction"></a>
 </h2>
@@ -64,83 +65,69 @@
 <code class="sourceCode R"><span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"SydneyBioX/BenchHub"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="goals">Goals<a class="anchor" aria-label="anchor" href="#goals"></a>
+<h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
-<ul>
-<li>Clean and simple user interface (API), with clear information and error messages using modern CLI outputs (progress bars, stack tracing, colours, …).</li>
-<li>Data handling, including caching and data integrity verification (MD5 checksum?).</li>
-<li>Simplify novel method evaluation by providing sample code and inputs for the evaluate function.</li>
-<li>Ensure that it is easy and highly flexible to add new datasets from various sources.
-<ul>
-<li>Use YAML to encode dataset metadata to ensure language interoperability.</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="finding-datasets">Finding Datasets<a class="anchor" aria-label="anchor" href="#finding-datasets"></a>
-</h2>
-<p>We could find datasets by datatype, task and patterns.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sydneybiox.github.io/BenchHub/">BenchHub</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">findData</span><span class="op">(</span>dataType <span class="op">=</span> <span class="st">"SST"</span>, task <span class="op">=</span> <span class="st">"Celltype Classification"</span><span class="op">)</span></span>
-<span><span class="co">#outputs a data frame with metadata about the matched datasets</span></span>
-<span></span>
-<span><span class="fu">findData</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"*IMC*"</span><span class="op">)</span> <span class="co"># match datasets which have IMC in their name</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="getting-data">Getting Data<a class="anchor" aria-label="anchor" href="#getting-data"></a>
-</h2>
-<p>Get data from various sources.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="fu">getTrio</span><span class="op">(</span><span class="st">"openproblems_v1/tenx_1k_pbmc"</span><span class="op">)</span> <span class="co"># some automatic caching, etc.</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">tasks</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># outputs information about tasks, metrics and "gold standards" of the included data</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="method-evaluation">Method Evaluation<a class="anchor" aria-label="anchor" href="#method-evaluation"></a>
-</h2>
-<p>Evaluate your method.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">myCellTypes</span> <span class="op">&lt;-</span> <span class="fu">myMethod1</span><span class="op">(</span><span class="va">trio</span><span class="op">$</span><span class="fu">getSCE</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">mySegementation</span> <span class="op">&lt;-</span> <span class="fu">myMethod2</span><span class="op">(</span><span class="va">trio</span><span class="op">$</span><span class="fu">getRaster</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cellTypes"</span> <span class="op">=</span> <span class="va">myCellTypes</span>, <span class="st">"segmentation"</span> <span class="op">=</span> <span class="va">mySegementation</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">evaluation</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">outputs</span><span class="op">)</span> </span></code></pre></div>
+<p>BenchHub is a data storage framework to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.</p>
+<p>The two components currently in BenchHub are:<br>
+- <strong>Trio</strong>: A data structure consisting of Dataset, Auxiliary and Metric to faciliate the sharing of benchmarking datasets within the community.<br>
+- <strong>BenchmarkInsight</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results.</p>
 <div class="section level3">
-<h3 id="get-an-evaluation-template">Get an evaluation template<a class="anchor" aria-label="anchor" href="#get-an-evaluation-template"></a>
+<h3 id="trio">Trio<a class="anchor" aria-label="anchor" href="#trio"></a>
 </h3>
-<p>Generate a temple of what an input to <code>trio$evaluate()</code> would have to look like for a successful evaluation.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">template</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">getTemplate</span><span class="op">(</span>task <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Celltype Classification"</span>, <span class="st">"Cell Segmentation"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">template</span><span class="op">)</span> <span class="co"># [1] "celltype"     "segmentation"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">template</span><span class="op">$</span><span class="va">celltype</span><span class="op">)</span> <span class="co"># [1] 1000</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="va">template</span><span class="op">$</span><span class="va">celltype</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="co"># [1] "character"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">template</span><span class="op">$</span><span class="va">celltype</span><span class="op">)</span> <span class="co"># [1] "a" "b"</span></span></code></pre></div>
-<p>Generate an assertion that checks the format of the method output.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">checkInput</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">checkInput</span><span class="op">(</span><span class="va">myCelltypes</span>, task <span class="op">=</span> <span class="st">"Celltype Classification"</span><span class="op">)</span></span>
-<span><span class="co"># informative errors that allow the user to make their outputs conform to the input of trio$evaluate()</span></span></code></pre></div>
+<p>Trio is built around three key components:</p>
+<p>Dataset: Data used by the methods to generate output.<br>
+Auxiliary Data: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br>
+Metric: Evaluation metrics used to compare output of methods with auxiliary data.</p>
+<div class="float">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png" alt="TrioOverview"><div class="figcaption">TrioOverview</div>
 </div>
+<p>Trio is implemented as R6 object with fields to store each of the components.</p>
+<div class="float">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png" alt="TrioDataStructure"><div class="figcaption">TrioDataStructure</div>
 </div>
-<div class="section level2">
-<h2 id="potential-features">Potential Features<a class="anchor" aria-label="anchor" href="#potential-features"></a>
-</h2>
-<div class="section level3">
-<h3 id="multiple-datasets">Multiple Datasets<a class="anchor" aria-label="anchor" href="#multiple-datasets"></a>
-</h3>
-<p>Get multiple datasets in one trio and perform the evaluation on all relevant dataset within the trio.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="fu">getTrio</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"openproblems_v1/tenx_1k_pbmc"</span>, <span class="st">"openproblems_v1/tenx_5k_pbmc"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="user-defined-cache-directory">User Defined Cache Directory<a class="anchor" aria-label="anchor" href="#user-defined-cache-directory"></a>
+<h3 id="benchmarkinsight">BenchmarkInsight<a class="anchor" aria-label="anchor" href="#benchmarkinsight"></a>
 </h3>
-<p>Allow users to define a cache directory for the datasets (i.e., in our case, <code>biostat</code> folder).</p>
+<p>BenchmarkInsight serves as a visualisation and analysis tool for benchmarking results. It contains multiple visualisation techniques to help researchers analyse benchmarking results in terms of data, methods and metrics.</p>
+<div class="float">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png" alt="benchmarkinsight1"><div class="figcaption">benchmarkinsight1</div>
 </div>
+<p>It currently supports the following plot types.</p>
+<div class="float">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png" alt="benchmarkinsight1"><div class="figcaption">benchmarkinsight1</div>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<p>We provide a comprehensive list of vignettes for every key step of BenchHub.<br>
+Please refer to the <a href="https://sydneybiox.github.io/BenchHub/">website</a> to see all vignettes listed below:</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Vignette</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1 Introduction to the Trio Class</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>2 Evaluation using TrioR</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>3 Introduction of benchmarkInsight Class</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
