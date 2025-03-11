@@ -201,13 +201,13 @@ because this is the metric we have specified.</p>
 <span>  <span class="va">y_test</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="va">train_id</span><span class="op">]</span></span>
 <span></span>
 <span>  <span class="co">#  find the best lambda for LASSO regression</span></span>
-<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>, <span class="va">y_train</span>,</span>
+<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>, <span class="va">y_train</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="st">"binomial"</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">lam</span> <span class="op">&lt;-</span> <span class="va">cv_lasso</span><span class="op">$</span><span class="va">lambda.1se</span></span>
 <span></span>
 <span>  <span class="co"># fit a model with the best lambda on training data</span></span>
-<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span><span class="va">x_train</span>, <span class="va">y_train</span>, alpha <span class="op">=</span> <span class="fl">1</span>, lambda <span class="op">=</span> <span class="va">lam</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span><span class="va">x_train</span>, <span class="va">y_train</span>, alpha <span class="op">=</span> <span class="fl">1</span>, lambda <span class="op">=</span> <span class="va">lam</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># evaluate the model on test data</span></span>
 <span>  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">x_test</span>, s <span class="op">=</span> <span class="st">"lambda.min"</span>, type <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
@@ -246,11 +246,11 @@ averaging results across folds within each repeats.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData, metric [1]</span></span></span>
 <span><span class="co">##   datasetID           method auxData        metric            repeats result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.717</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.706</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.713</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.700</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.719</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.735</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.725</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.685</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.730</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.734</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -338,7 +338,7 @@ and that there is one row for each result.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData [2]</span></span></span>
 <span><span class="co">##   datasetID           method            auxData        metric            result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.711</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.722</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome negative_binomial Sparsity       Difference         0.323</span></span></code></pre>
 <p>Please see Vignette xxxxx for the details on the visualisations and
 functions in BenchmarkInsights.</p>

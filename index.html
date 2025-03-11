@@ -75,28 +75,18 @@
 <h3 id="trio">Trio<a class="anchor" aria-label="anchor" href="#trio"></a>
 </h3>
 <p>Trio is built around three key components:</p>
-<p>Dataset: Data used by the methods to generate output.<br>
-Auxiliary Data: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br>
-Metric: Evaluation metrics used to compare output of methods with auxiliary data.</p>
-<div class="float">
-<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png" alt="TrioOverview"><div class="figcaption">TrioOverview</div>
-</div>
+<p><strong>Data</strong>: Data used by the methods to generate output.<br><strong>Auxiliary Data</strong>: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br><strong>Metric</strong>: Evaluation metrics used to compare output of methods with auxiliary data.</p>
 <p>Trio is implemented as R6 object with fields to store each of the components.</p>
-<div class="float">
-<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png" alt="TrioDataStructure"><div class="figcaption">TrioDataStructure</div>
-</div>
+<p align="center">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png" width="35%"><img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png" width="55%"></p>
 </div>
 <div class="section level3">
 <h3 id="benchmarkinsight">BenchmarkInsight<a class="anchor" aria-label="anchor" href="#benchmarkinsight"></a>
 </h3>
 <p>BenchmarkInsight serves as a visualisation and analysis tool for benchmarking results. It contains multiple visualisation techniques to help researchers analyse benchmarking results in terms of data, methods and metrics.</p>
-<div class="float">
-<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png" alt="benchmarkinsight1"><div class="figcaption">benchmarkinsight1</div>
-</div>
-<p>It currently supports the following plot types.</p>
-<div class="float">
-<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png" alt="benchmarkinsight1"><div class="figcaption">benchmarkinsight1</div>
-</div>
+<p>Once results are evaluated using Trio, the output can be directly passed into the benchmarkInsight object. BenchmarkInsight currently supports the following plot types.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png" width="55%"><img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png" width="35%"></p>
 </div>
 </div>
 <div class="section level2">
