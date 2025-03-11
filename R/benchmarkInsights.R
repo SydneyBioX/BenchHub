@@ -83,6 +83,8 @@ benchmarkInsights <- R6::R6Class(
         stop("Evaluation summary is required to generate heatmap.")
       }
       # Average results across datasets by auxData, method, and metric
+      
+      evalSummary$result <- -evalSummary$result
       averaged_df <- evalSummary %>%
         dplyr::group_by(auxData, method, metric) %>%
         dplyr::summarise(avg_result = mean(result, na.rm = TRUE)) %>%
@@ -124,7 +126,7 @@ benchmarkInsights <- R6::R6Class(
                   panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
 
       minievalSummary_aggreate <- minievalSummary %>%
-        group_by(auxData, method, metric) %>%
+        group_by(auxData, method) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
         ungroup()
 
@@ -148,13 +150,20 @@ benchmarkInsights <- R6::R6Class(
     
     #' @description Creates a scatter plot for the same auxData, with an two methodd metrics.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
+    #' @param variables A character vector of length two specifying the metric names to be used for the x and y axes.
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
-    getScatterplot = function(minievalSummary) {
+    getScatterplot = function(minievalSummary, variables) {
       if (!is.data.frame(minievalSummary)) {
         stop("Input data must be a dataframe.")
       }
-    
+      
+      th <- ggplot2::theme(text=element_text(size=12),
+                           axis.text.x = element_text(angle = 45, hjust = 1),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA))
+      
       minievalSummary_aggreate <- minievalSummary %>%
         group_by(method, metric) %>%
         summarise(average_result = mean(result, na.rm = TRUE)) %>%
@@ -165,19 +174,19 @@ benchmarkInsights <- R6::R6Class(
       result <- minievalSummary_aggreate %>%
         tidyr::pivot_wider(names_from = metric, values_from = average_result) 
       
-      plot <- ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
-              geom_point(alpha = 0.4) + 
-              ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = method)) +
-              coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
-              scale_x_continuous(expand = c(0, 0)) +
-              scale_y_continuous(expand = c(0, 0)) +
-              theme_minimal() +
-              ylab(metric_types[2]) + 
-              xlab(metric_types[1])
+      plot <- #ggplot(result, aes(x = sensitivity, y = specificity, label = method)) +
+        ggplot(result, aes(x = get(variables[1]), y = get(variables[2]), label = method)) +
+        geom_point(alpha = 0.4) + 
+        ggrepel::geom_label_repel(size = 3, show.legend = FALSE, aes(colour = method)) +
+        coord_fixed(ratio = 1, xlim = c(0, NA), ylim = c(0, NA)) + 
+        scale_x_continuous(expand = c(0, 0)) +
+        scale_y_continuous(expand = c(0, 0)) +
+        th +
+        ylab(variables[2]) + 
+        xlab(variables[1])
       
       return(plot)
     },
-    
     #' @description Creates boxplot plots for the mutiple auxData, different method, one metric.
     #' @param minievalSummary subset of evaluation summary, only include two different metrics, all auxData should be same
     #' @return A ggplot2 line plot object.
@@ -187,14 +196,14 @@ benchmarkInsights <- R6::R6Class(
         stop("Input data must be a dataframe.")
       }
       
-      p1 <- ggplot(minievalSummary, aes(x=method, y=result, fill=method)) + 
+      p1 <- ggplot(minievalSummary, aes(x=method, y=result, fill = method)) + 
         geom_boxplot() +
         facet_wrap(~auxData, scale="free") +
         theme(text=element_text(size=12 ),
+              axis.text.x = element_text(angle = 45, hjust = 1),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
-              panel.background = element_rect(colour = "black", linewidth = 0.2, fill = NA)) +
-        ggsci::scale_fill_npg()
+              panel.background = element_rect(colour = "black", size=0.2, fill=NA) )
 
        return(p1)
     },
@@ -258,7 +267,7 @@ benchmarkInsights <- R6::R6Class(
     #' using dotwhisker and broom packages, with custom grouping and labeling.
     #' @param minievalSummary A data frame containing the evaluation summary.
     #' @param input_group A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).
-    #' @param input_model A string specifying the model variable (only "datasetID", "method", or "auxData" allowed).
+    #' @param input_model A string specifying the model variable (only "datasetID", "method", or  "auxData" allowed).
     #' @return A forest plot showing the comparison of models across groups.
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
@@ -274,10 +283,14 @@ benchmarkInsights <- R6::R6Class(
       # minievalSummary <- benchmark$evalSummary
       # input_group <- "metric"
       # input_model <- "method"
-
+      
+      minievalSummary <- bmi$evalSummary
+      input_group <- "metric"
+      input_model <- "method"
+      
       to_plot <- minievalSummary %>%
         group_by(!!sym(input_group)) %>%
-        do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
+        dplyr::do(broom::tidy(lm(result ~ !!sym(input_model), data = .))) 
       
       colnames(to_plot)[1] <- "model"
       

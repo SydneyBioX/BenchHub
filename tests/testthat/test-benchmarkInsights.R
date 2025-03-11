@@ -164,7 +164,7 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
   benchmark$addevalSummary(evalResult2)
   
   # Generate scatterplot and check it was created correctly
-  scatterplot <- benchmark$getScatterplot(benchmark$evalSummary)
+  scatterplot <- benchmark$getScatterplot(benchmark$evalSummary, c("sensitivity", "specificity"))
   
   # Ensure the scatterplot object is not NULL
   expect_true(!is.null(scatterplot))
