@@ -66,7 +66,7 @@ Please refer to the [website](https://sydneybiox.github.io/BenchHub/) to see all
 
 | Vignette       | Description |
 | -------------  | ------------- |
-| 1  Introduction to the Trio Class    |    </li><li>  How to set up trio  <br> </li><li>  How to add auxData <br>  </li><li> How to add metric <br>  </li><li> Evaluation example
-| 2 Evaluation using TrioR      |      </li><li>  Cross-validation with Trio  <br> </li><li>  Evaluation without cross-validation    <br> </li><li>  Importing result to benchmarkInsights  |
+| 1  [Introduction to the Trio Class](https://sydneybiox.github.io/BenchHub/articles/v01_intro_trio.html)    |    </li><li>  How to set up trio  <br> </li><li>  How to add auxData <br>  </li><li> How to add metric <br>  </li><li> Evaluation example
+| 2 [Evaluation using TrioR](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.html)      |      </li><li>  Cross-validation with Trio  <br> </li><li>  Evaluation without cross-validation    <br> </li><li>  Importing result to benchmarkInsights  |
 | 3 Introduction of benchmarkInsight Class  |      </li><li>  Creating bnechmarkInsights Class <br> </li><li>  Collection of visualisations    <br> </li><li>  Collection of analytical questions that can be answered with benchmarkInsight|
 
