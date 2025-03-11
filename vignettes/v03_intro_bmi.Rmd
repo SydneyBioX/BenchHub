@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE, warning=FALSE)
 ```
 
 ```{r}
-devtools::load_all()
+# devtools::load_all()
 library(BenchHub)
 library(readr)
 library(dplyr)
