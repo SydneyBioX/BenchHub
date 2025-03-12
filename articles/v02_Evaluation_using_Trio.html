@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using TrioR</a></li>
+    <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">Introduction of benchmarkInsight class</a></li>
   </ul>
 </li>
       </ul>
@@ -246,11 +247,11 @@ averaging results across folds within each repeats.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData, metric [1]</span></span></span>
 <span><span class="co">##   datasetID           method auxData        metric            repeats result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.727</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.689</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.675</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.710</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.701</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.700</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.700</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.724</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.748</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.715</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -338,7 +339,7 @@ and that there is one row for each result.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData [2]</span></span></span>
 <span><span class="co">##   datasetID           method            auxData        metric            result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.700</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.717</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome negative_binomial Sparsity       Difference         0.323</span></span></code></pre>
 <p>Please see Vignette xxxxx for the details on the visualisations and
 functions in BenchmarkInsights.</p>
