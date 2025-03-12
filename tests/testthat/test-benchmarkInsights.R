@@ -54,7 +54,7 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   KDE_summary <- benchmark$evalSummary |>
     dplyr::filter(metric == "KS")
   
-  grouped_boxplot <- benchmark$getBoxplot(KDE_summary)
+  grouped_boxplot <- benchmark$getBoxplot(KDE_summary, "KS", "fracZero_spot")
   
   GS_corplot <- benchmark$getCorplot(benchmark$evalSummary, "auxData")
   metric_corplot <- benchmark$getCorplot(benchmark$evalSummary, "metric")
@@ -114,7 +114,7 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
   evalResult1 <- data.frame(
     datasetID = rep("dataset1", 6),
     method = c(rep("SRTsim", 3), rep("scDesign3", 3)),
-    auxData = c("1000_200", "2000_200", "3000_200", "1000_200", "2000_200", "3000_200"),
+    auxData = c(200000, 400000, 600000, 200000, 400000, 600000),
     metric = rep("time", 6),
     result = c(233, 543, 666, 567, 777, 890)
   )
@@ -123,15 +123,14 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
   evalResult2 <- data.frame(
     datasetID = rep("dataset2", 6),
     method = c(rep("SRTsim", 3), rep("scDesign3", 3)),
-    auxData = c("1000_200", "2000_200", "3000_200", "1000_200", "2000_200", "3000_200"),
+    auxData = c(200000, 400000, 600000, 200000, 400000, 600000),
     metric = rep("time", 6),
     result = c(123, 678, 888, 456, 445, 789)
   )
 
   benchmark$addevalSummary(evalResult2)
 
-  line_plot <- benchmark$getLineplot(benchmark$evalSummary, c('3000_200', '2000_200', '1000_200'))
-  line_plot <- benchmark$getLineplot(benchmark$evalSummary)
+  line_plot <- benchmark$getLineplot(benchmark$evalSummary, metricVariable = "time")
   expect_true(inherits(line_plot, "ggplot"))
 })
 

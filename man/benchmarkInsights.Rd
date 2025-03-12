@@ -122,9 +122,11 @@ Creates a line plot for the given x and y variables, with an optional grouping a
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary}
+\item{\code{evalResult}}{subset of evaluation summary.}
 
 \item{\code{order}}{An optional vector specifying the order of x-axis values.}
+
+\item{\code{metricVariable}}{Specify subset value in metric column.}
 }
 \if{html}{\out{</div>}}
 }
@@ -166,7 +168,11 @@ Creates boxplot plots for the mutiple auxData, different method, one metric.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
+\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same.}
+
+\item{\code{metricVariable}}{Specify subset value in metric column.}
+
+\item{\code{auxDataVariable}}{Specify subset value in auxData column.}
 }
 \if{html}{\out{</div>}}
 }

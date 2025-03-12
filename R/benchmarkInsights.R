@@ -112,8 +112,9 @@ benchmarkInsights <- R6::R6Class(
     },
     
     #' @description Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
-    #' @param evalResult subset of evaluation summary
+    #' @param evalResult subset of evaluation summary.
     #' @param order An optional vector specifying the order of x-axis values.
+    #' @param metricVariable Specify subset value in metric column.
     #' @return A ggplot2 line plot object.
     getLineplot = function(evalResult, order = NULL, metricVariable) {
       if (!is.data.frame(evalResult)) {
@@ -195,7 +196,9 @@ benchmarkInsights <- R6::R6Class(
       return(plot)
     },
     #' @description Creates boxplot plots for the mutiple auxData, different method, one metric.
-    #' @param evalResult subset of evaluation summary, only include two different metrics, all auxData should be same
+    #' @param evalResult subset of evaluation summary, only include two different metrics, all auxData should be same.
+    #' @param metricVariable Specify subset value in metric column.
+    #' @param auxDataVariable Specify subset value in auxData column.
     #' @return A ggplot2 line plot object.
     #' @importFrom ggsci scale_fill_npg
     getBoxplot = function(evalResult, metricVariable, auxDataVariable) {
@@ -293,14 +296,6 @@ benchmarkInsights <- R6::R6Class(
       if (!input_model %in% allowed_values) {
         stop("Invalid input_model. Must be 'datasetID', 'method', 'auxData' or 'metric'.")
       }
-      
-      # evalResult <- benchmark$evalSummary
-      # input_group <- "metric"
-      # input_model <- "method"
-      
-      evalResult <- bmi$evalSummary
-      input_group <- "metric"
-      input_model <- "method"
       
       to_plot <- evalResult %>%
         group_by(!!sym(input_group)) %>%
