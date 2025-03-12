@@ -49,13 +49,7 @@ from SpatialSimBench to initialize a new object.
 
 ```{r}
 result_path <- system.file("extdata", "spatialsimbench_result.csv", package = "BenchHub")
-# spatialsimbench_result <- read_csv(result_path)
-spatialsimbench_result <-  read_csv("spatialsimbenchV1.csv")
-spatialsimbench_result <- spatialsimbench_result %>%
-  mutate(auxData = ifelse(metric %in% c("time", "memory"), 
-                          as.numeric(sub("_.*", "", auxData)) * as.numeric(sub(".*_", "", auxData)), 
-                          auxData))
-
+spatialsimbench_result <- read_csv(result_path)
 glimpse(spatialsimbench_result)
 ```
 
@@ -116,8 +110,8 @@ by averaging results across datasets.
 -   evalResult: A dataframe containing the evaluation summary.
 -   Note: In this heatmap, it averages results across datasets.
 
-`getCorplot(evalReuslt, input_type)`: Creates a correlation plot
-based on the provided evaluation summary.
+`getCorplot(evalReuslt, input_type)`: Creates a correlation plot based
+on the provided evaluation summary.
 
 -   evalResult: A dataframe containing the evaluation summary.
 -   input_type: either "auxData", "metric", or "method".
@@ -128,9 +122,9 @@ evaluation summary.
 -   evalReuslt: A dataframe containing the evaluation summary.
 -   input_type: either "auxData", "metric", or "method".
 
-`getForestplot(evalReuslt, input_group, input_model)`: Create a
-forest plot using linear models based on the comparison between groups
-in the provided evaluation summary.
+`getForestplot(evalReuslt, input_group, input_model)`: Create a forest
+plot using linear models based on the comparison between groups in the
+provided evaluation summary.
 
 -   evalReuslt: A dataframe containing the evaluation summary.
 -   input_group: A string specifying the grouping variable (only
@@ -138,16 +132,16 @@ in the provided evaluation summary.
 -   input_model: A string specifying the model variable (only
     "datasetID", "method", or "auxData" allowed).
 
-`getScatterplot(evalReuslt, variables)`: a scatter plot for the
-same auxData, with an two methodd metrics.
+`getScatterplot(evalReuslt, variables)`: a scatter plot for the same
+auxData, with an two methodd metrics.
 
--   evalReuslt: A dataframe containing the evaluation summary, only include two
-    different metrics, all auxData should be same
+-   evalReuslt: A dataframe containing the evaluation summary, only
+    include two different metrics, all auxData should be same
 -   variables: A character vector of length two specifying the metric
     names to be used for the x and y axes.
 
-`getLineplot(evalReuslt, order)`: Creates a line plot for the given
-x and y variables, with an optional grouping and fixed x order.
+`getLineplot(evalReuslt, order)`: Creates a line plot for the given x
+and y variables, with an optional grouping and fixed x order.
 
 -   evalReuslt: A dataframe containing the evaluation summary.
 -   order: An optional vector specifying the order of x-axis values.
@@ -193,7 +187,7 @@ conditions. This helps identify how methods perform as data complexity
 increases, revealing potential efficiency trade-offs.
 
 ```{r}
-bmi$getLineplot(bmi$evalSummary, "memory")
+bmi$getLineplot(bmi$evalSummary, metricVariable = "memory")
 ```
 
 ### Case Study: Which metric is most effective on the method?
@@ -221,15 +215,14 @@ bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", auxDataVariable = "s
 
 ## Cheatsheet
 
-|              Question              | Code                                                       |
-|:-----------------------:|:-----------------------------------------------|
-|          Summary Overview          | `getHeatmap(evalReuslt)`                                   |
+|              Question              | Code                                                  |
+|:-----------------------:|:----------------------------------------------|
+|          Summary Overview          | `getHeatmap(evalReuslt)`                              |
 |        Correlation Analysis        | `getCorplot(evalReuslt, input_type)`                  |
 |  Scalability Trend (Time/ Memory)  | `getLineplot(evalReuslt, order)`                      |
 |   Metric-Model Impact (Modeling)   | `getForestplot(evalReuslt, input_group, input_model)` |
 | Method Variability Across Datasets | `getBoxplot(evalReuslt)`                              |
 |        Metric Relationship         | `getScatterplot(evalReuslt, variables)`               |
-
 
 # Session Info
 

@@ -232,7 +232,7 @@ benchmarkInsights <- R6::R6Class(
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
     #' @importFrom ggcorrplot ggcorrplot
     getCorplot = function(evalResult, input_type) {
-
+      
       if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
@@ -265,8 +265,7 @@ benchmarkInsights <- R6::R6Class(
       
       p1 <- ggcorrplot::ggcorrplot(cor_matrix, method = "square", 
                                    type = "lower", 
-                                   lab = TRUE, 
-                                   colors = c("white", "grey", "black")) +
+                                   lab = TRUE) +
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1), 
               panel.grid.major = element_blank(),
               panel.border = element_blank(),
