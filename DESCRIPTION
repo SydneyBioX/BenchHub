@@ -1,6 +1,6 @@
 Package: BenchHub
 Title: Comprehensive Collection of Curated Benchmarking Datasets and their Evaluation
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: c(
     person("Cabiria", "Liang", , "xiaoqi.liang@sydney.edu.au", role = "aut"),
     person("Sanghyun", "Kim", , "sanghyun.kim@sydney.edu.au", role = "aut"),
