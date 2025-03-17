@@ -68,15 +68,13 @@ If you have additional evaluation result, you can use
 
 ```{r}
 add_result <- data.frame(
-  datasetID = rep("BREAST", 13),
+  datasetID = rep("BREAST", 9),
   method = c("scDesign2", "scDesign3_gau", "scDesign3_nb", "scDesign3_poi", 
-             "SPARsim", "splatter", "SRTsim", "symsim", "zinbwave", 
-             "scDesign3_gau(rf)", "scDesign3_nb(rf)", "scDesign3_poi(rf)", "SRTsim(rf)"),
-  auxData = rep("svg", 13),
-  metric = rep("recall", 13),
+             "SPARsim", "splatter", "SRTsim", "symsim", "zinbwave"),
+  auxData = rep("svg", 9),
+  metric = rep("recall", 9),
   result = c(0.921940928, 0.957805907, 0.964135021, 0.989451477, 0.774261603, 
-             0.890295359, 0.985232068, 0.067510549, 0.888185654, 
-             0.957805907, 0.964135021, 0.989451477, 0.985232068),
+             0.890295359, 0.985232068, 0.067510549, 0.888185654),
   stringsAsFactors = FALSE
 )
 
@@ -216,7 +214,7 @@ bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", auxDataVariable = "s
 ## Cheatsheet
 
 |              Question              | Code                                                  |
-|:-----------------------:|:----------------------------------------------|
+|:-----------------------:|:---------------------------------------------|
 |          Summary Overview          | `getHeatmap(evalReuslt)`                              |
 |        Correlation Analysis        | `getCorplot(evalReuslt, input_type)`                  |
 |  Scalability Trend (Time/ Memory)  | `getLineplot(evalReuslt, order)`                      |
