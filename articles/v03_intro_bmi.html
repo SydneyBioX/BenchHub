@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Introduction of benchmarkInsight class • BenchHub</title>
+<title>3 Introduction of benchmarkInsights class • BenchHub</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction of benchmarkInsight class">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="3 Introduction of benchmarkInsights class">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using TrioR</a></li>
-    <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">Introduction of benchmarkInsight class</a></li>
+    <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of benchmarkInsights class</a></li>
   </ul>
 </li>
       </ul>
@@ -57,7 +57,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Introduction of benchmarkInsight class</h1>
+      <h1>3 Introduction of benchmarkInsights class</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/main/vignettes/v03_intro_bmi.Rmd" class="external-link"><code>vignettes/v03_intro_bmi.Rmd</code></a></small>
@@ -103,7 +103,7 @@ object.</p>
 <code class="sourceCode R"><span><span class="va">result_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"spatialsimbench_result.csv"</span>, package <span class="op">=</span> <span class="st">"BenchHub"</span><span class="op">)</span></span>
 <span><span class="va">spatialsimbench_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">result_path</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">spatialsimbench_result</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Rows: 3,861</span></span>
+<pre><code><span><span class="co">## Rows: 1,260</span></span>
 <span><span class="co">## Columns: 5</span></span>
 <span><span class="co">## $ datasetID <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "BREAST", "HOSTEOSARCOMA", "HPROSTATE", "MBRAIN", "MCATUMOR"…</span></span>
 <span><span class="co">## $ method    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "scDesign2", "scDesign2", "scDesign2", "scDesign2", "scDesig…</span></span>
@@ -135,15 +135,13 @@ expected format.</p>
 <code>addevalSummary()</code>. Here is the example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">add_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  datasetID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"BREAST"</span>, <span class="fl">13</span><span class="op">)</span>,</span>
+<span>  datasetID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"BREAST"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scDesign2"</span>, <span class="st">"scDesign3_gau"</span>, <span class="st">"scDesign3_nb"</span>, <span class="st">"scDesign3_poi"</span>, </span>
-<span>             <span class="st">"SPARsim"</span>, <span class="st">"splatter"</span>, <span class="st">"SRTsim"</span>, <span class="st">"symsim"</span>, <span class="st">"zinbwave"</span>, </span>
-<span>             <span class="st">"scDesign3_gau(rf)"</span>, <span class="st">"scDesign3_nb(rf)"</span>, <span class="st">"scDesign3_poi(rf)"</span>, <span class="st">"SRTsim(rf)"</span><span class="op">)</span>,</span>
-<span>  auxData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"svg"</span>, <span class="fl">13</span><span class="op">)</span>,</span>
-<span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="fl">13</span><span class="op">)</span>,</span>
+<span>             <span class="st">"SPARsim"</span>, <span class="st">"splatter"</span>, <span class="st">"SRTsim"</span>, <span class="st">"symsim"</span>, <span class="st">"zinbwave"</span><span class="op">)</span>,</span>
+<span>  auxData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"svg"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  result <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.921940928</span>, <span class="fl">0.957805907</span>, <span class="fl">0.964135021</span>, <span class="fl">0.989451477</span>, <span class="fl">0.774261603</span>, </span>
-<span>             <span class="fl">0.890295359</span>, <span class="fl">0.985232068</span>, <span class="fl">0.067510549</span>, <span class="fl">0.888185654</span>, </span>
-<span>             <span class="fl">0.957805907</span>, <span class="fl">0.964135021</span>, <span class="fl">0.989451477</span>, <span class="fl">0.985232068</span><span class="op">)</span>,</span>
+<span>             <span class="fl">0.890295359</span>, <span class="fl">0.985232068</span>, <span class="fl">0.067510549</span>, <span class="fl">0.888185654</span><span class="op">)</span>,</span>
 <span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
