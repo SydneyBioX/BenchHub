@@ -101,7 +101,9 @@ benchmarkInsights <- R6::R6Class(
         )
       
       # Reshape the data into a wide format where method is the row and auxData_metric is the column
-      reshaped_df <- reshape2::dcast(averaged_df, method ~ auxData_metric, value.var = "avg_result")
+      reshaped_df <- reshape2::dcast(
+        averaged_df, method ~ auxData_metric, value.var = "avg_result"
+      ) %>% replace(is.na(.), 0)
       
       # Set method as rownames and remove the method column
       rownames(reshaped_df) <- reshaped_df$method
