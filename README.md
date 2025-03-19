@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchhub_sticker.png" align="right" width="200">
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchhub_sticker.png" align="right" width="200">
 
 
 ## Installation instruction
@@ -39,8 +39,8 @@ Trio is implemented as R6 object with fields to store each of the components.
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triooverview.png" width="35%" />
-  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/triodatastructure.png" width="55%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/triooverview.png" width="35%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/triodatastructure.png" width="55%" />
 </p>
 
 
@@ -53,8 +53,8 @@ Once results are evaluated using Trio, the output can be directly passed into th
  
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight1.png" width="55%" />
-  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/main/inst/benchmarkinsight2.png" width="35%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkinsight1.png" width="55%" />
+  <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkinsight2.png" width="35%" />
 </p>
 
 
@@ -68,5 +68,5 @@ Please refer to the [website](https://sydneybiox.github.io/BenchHub/) to see all
 | -------------  | ------------- |
 | 1  [Introduction to the Trio Class](https://sydneybiox.github.io/BenchHub/articles/v01_intro_trio.html)    |    </li><li>  How to set up trio  <br> </li><li>  How to add auxData <br>  </li><li> How to add metric <br>  </li><li> Evaluation example
 | 2 [Evaluation using TrioR](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.html)      |      </li><li>  Cross-validation with Trio  <br> </li><li>  Evaluation without cross-validation    <br> </li><li>  Importing result to benchmarkInsights  |
-| 3 Introduction of benchmarkInsight Class  |      </li><li>  Creating bnechmarkInsights Class <br> </li><li>  Collection of visualisations    <br> </li><li>  Collection of analytical questions that can be answered with benchmarkInsight|
+| 3 [Introduction of benchmarkInsight Class](https://sydneybiox.github.io/BenchHub/articles/v03_intro_bmi.html)  |      </li><li>  Creating bnechmarkInsights Class <br> </li><li>  Collection of visualisations    <br> </li><li>  Collection of analytical questions that can be answered with benchmarkInsight|
 
