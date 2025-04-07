@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -202,13 +202,13 @@ because this is the metric we have specified.</p>
 <span>  <span class="va">y_test</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="va">train_id</span><span class="op">]</span></span>
 <span></span>
 <span>  <span class="co">#  find the best lambda for LASSO regression</span></span>
-<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>, <span class="va">y_train</span>,</span>
+<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>, <span class="va">y_train</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">1</span>, family <span class="op">=</span> <span class="st">"binomial"</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">lam</span> <span class="op">&lt;-</span> <span class="va">cv_lasso</span><span class="op">$</span><span class="va">lambda.1se</span></span>
 <span></span>
 <span>  <span class="co"># fit a model with the best lambda on training data</span></span>
-<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span><span class="va">x_train</span>, <span class="va">y_train</span>, alpha <span class="op">=</span> <span class="fl">1</span>, lambda <span class="op">=</span> <span class="va">lam</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span><span class="va">x_train</span>, <span class="va">y_train</span>, alpha <span class="op">=</span> <span class="fl">1</span>, lambda <span class="op">=</span> <span class="va">lam</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># evaluate the model on test data</span></span>
 <span>  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">x_test</span>, s <span class="op">=</span> <span class="st">"lambda.min"</span>, type <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
@@ -247,11 +247,11 @@ averaging results across folds within each repeats.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData, metric [1]</span></span></span>
 <span><span class="co">##   datasetID           method auxData        metric            repeats result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.707</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.721</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.700</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.740</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.720</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.701</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.724</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.716</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.710</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.739</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -372,7 +372,7 @@ functions in BenchmarkInsights.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] glmnet_4.1-8    Matrix_1.7-2    lubridate_1.9.4 forcats_1.0.0  </span></span>
 <span><span class="co">##  [5] stringr_1.5.1   dplyr_1.1.4     purrr_1.0.4     readr_2.1.5    </span></span>
-<span><span class="co">##  [9] tidyr_1.3.1     tibble_3.2.1    tidyverse_2.0.0 BenchHub_0.99.2</span></span>
+<span><span class="co">##  [9] tidyr_1.3.1     tibble_3.2.1    tidyverse_2.0.0 BenchHub_0.99.3</span></span>
 <span><span class="co">## [13] ggplot2_3.5.1  </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
