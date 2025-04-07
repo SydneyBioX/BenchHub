@@ -5,3 +5,4 @@ inst/doc
 BenchHub.BiocCheck
 docs
 .DS_Store
+*/.DS_Store
