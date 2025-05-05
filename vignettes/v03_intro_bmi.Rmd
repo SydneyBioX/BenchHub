@@ -2,7 +2,7 @@
 title: "3 Introduction of benchmarkInsights class"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Overview of scFeatures with case studies}
+  %\VignetteIndexEntry{Introduction of benchmarkInsights class}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

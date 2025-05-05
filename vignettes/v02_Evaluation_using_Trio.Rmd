@@ -1,6 +1,6 @@
 ---
 title: "2 Evaluation using TrioR"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{2 Evaluation using TrioR}
   %\VignetteEngine{knitr::rmarkdown}
