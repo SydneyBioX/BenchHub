@@ -29,11 +29,19 @@ library(EnsDb.Hsapiens.v86)
 
 # Motivation
 
-BenchHub is an R ecosystem built to make benchmarking easier.
+BenchHub is an R ecosystem built to make benchmarking easier.   
 
-It organizes data, evaluation metrics, gold standards (auxiliary data), and even provides built-in visualization tools to help interpret results. With BenchHub, researchers can quickly compare new methods, gain insights, and produce trustworthy their benchmarking studies. 
+BenchHub contains two key components: `Trio` and `BenchmarkInsight`:    
+- `Trio` object constucts benchmarking data by organising data, evaluation metrics, gold standards (auxiliary data).    
+- `BenchmarkInsight` is a visualization tool that helps interpret the results of benchmarking studies.   
+
+With BenchHub, researchers can quickly compare new methods, gain insights, and produce trustworthy their benchmarking studies. 
+
 
 # Creating Trio object
+
+The Trio class is designed to facilitate the storing and sharing of benchmarking datasets. 
+Each Trio is structured around a single dataset but can include multiple metrics and multiple auxiliary data (such as references or gold standards). 
 
 Trio objects can be created using the `Trio$new` constructor. There are 3 ways to create a Trio object:
 
