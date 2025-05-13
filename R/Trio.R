@@ -548,7 +548,7 @@ Trio <- R6::R6Class(
           # generate the md5 hash of the file
           md5 <- tools::md5sum(filename)
           cli::cli_inform(c(
-            "Saved the dataset to {.file {filename)}}."
+            "Saved the dataset to {.file {filename}}."
           ))
 
           saveAuxData <- utils::askYesNo(
@@ -564,14 +564,14 @@ Trio <- R6::R6Class(
                 compress = "xz"
               )
               cli::cli_inform(c(
-                "Saved the {name} auxData {.file {filename)}}."
+                "Saved the {name} auxData {.file {filename}}."
               ))
             }
           }
         }
 
         cli::cli_inform(c(
-          "Please upload the data and auxData to Figshare and provide the URL",
+          "Please upload the data and auxData to Figshare and provide the URL"
         ))
         self$dataSource <- "figshare"
         url <- readline("Dataset URL: ")
@@ -601,8 +601,8 @@ Trio <- R6::R6Class(
       # calculate the next datasetID
       if (is.null(private$datasetID)) {
         private$datasetID <- formatC(
-          max(datasets$datasetID) + 1,
-          width = 3,
+          max(as.integer(datasets$datasetID)) + 1,
+          width = 4,
           flag = "0"
         )
       } else {
@@ -641,7 +641,7 @@ Trio <- R6::R6Class(
 
       googlesheets4::write_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        data = list(
+        data = data.frame(
           datasetID = private$datasetID,
           name = name,
           source = self$dataSource,
