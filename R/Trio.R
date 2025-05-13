@@ -56,7 +56,6 @@ Trio <- R6::R6Class(
       cachePath = FALSE,
       verbose = FALSE
     ) {
-      googlesheets4::gs4_deauth()
       if (!is.logical(verbose)) {
         cli::cli_abort(c(
           "The {.var verbose} parameter must be a {.cls logical}."
@@ -639,7 +638,7 @@ Trio <- R6::R6Class(
       }
       dataType <- dataTypes[dataType]
 
-      googlesheets4::write_sheet(
+      googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = data.frame(
           datasetID = private$datasetID,
@@ -663,14 +662,16 @@ Trio <- R6::R6Class(
 
         if (uploadAuxData) {
           auxDataMetaData <- data.frame(
-            datasetID = private$datasetID,
+            datasetID = rep(private$datasetID, times = length(self$auxData)),
             Auxiliary_Data = names(self$auxData),
-            name = NULL,
-            type = "figshare",
-            is_in_data = FALSE,
+            is_in_data = rep(FALSE, times = length(self$auxData)),
+            type = rep("figshare", times = length(self$auxData)),
+            validated = rep(FALSE, times = length(self$auxData)),
+            name = rep("", times = length(self$auxData)),
+            on_load = rep("", times = length(self$auxData)),
             stringsAsFactors = FALSE
           )
-          googlesheets4::write_sheet(
+          googlesheets4::sheet_append(
             ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
             data = auxDataMetaData,
             sheet = "Dataset-AuxData"
@@ -721,16 +722,29 @@ Trio <- R6::R6Class(
       # add the metrics to the sheet
       metricsMetaData <- data.frame(
         MetricID = names(self$metrics),
-        `Metric Type` = "gist",
-        gist_url = gist$html_url,
+        wrapper.r = rep("", times = length(self$metrics)),
+        `Metric Type` = rep("gist", times = length(self$metrics)),
+        r_deps = rep("", times = length(self$metrics)),
+        wrapper.py = rep("", times = length(self$metrics)),
+        py_deps = rep("", times = length(self$metrics)),
+        gist_url = rep(gist$html_url, times = length(self$metrics)),
+        validated = rep(FALSE, times = length(self$metrics)),
         stringsAsFactors = FALSE
       )
+
+      googlesheets4::sheet_append(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        data = metricsMetaData,
+        sheet = "Metrics"
+      )
+
+      # TODO: Figure out the auxData and metric relationships
 
       cli::cli_inform(c(
         "Added the dataset to the Curated Trio Datasets sheet.",
         "i" = paste0(
           "Please check the details at ",
-          "{.href [this link]({self$CTDlink})}"
+          "{.href [this link]({private$CTDlink})}"
         )
       ))
     }
