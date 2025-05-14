@@ -536,6 +536,8 @@ Trio <- R6::R6Class(
           ))
         }
       }
+      
+      md5 <- ""
 
       # prompt the user to upload the data to figshare
       if (is.null(self$dataSourceID)) {
