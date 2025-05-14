@@ -31,6 +31,16 @@ Sys.setenv(GITHUB_PAT = "your_personal_access_token")
 
 Replace `"your_personal_access_token"` with the token you copied.
 
+### Ensure `googlesheets4` is set up
+
+1. Install the `googlesheets4` package if you haven't already:
+   ```r
+   install.packages("googlesheets4")
+   ```
+2. Authenticate with your Google account:
+   ```r
+   googlesheets4::gs4_auth()
+   ```
 ---
 
 ## Step 2: Add the Trio to Curated Trio Datasets
