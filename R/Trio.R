@@ -56,6 +56,9 @@ Trio <- R6::R6Class(
       cachePath = FALSE,
       verbose = FALSE
     ) {
+      if (!interactive()) {
+        googlesheets4::gs4_deauth()
+      }
       if (!is.logical(verbose)) {
         cli::cli_abort(c(
           "The {.var verbose} parameter must be a {.cls logical}."
