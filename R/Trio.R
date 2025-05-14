@@ -538,14 +538,13 @@ Trio <- R6::R6Class(
       }
 
       md5 <- ""
-
+      saveAuxData <- FALSE
       # prompt the user to upload the data to figshare
       if (is.null(self$dataSourceID)) {
         # ask user  whether to save the dataset to the an RDS file in the CWD
         save <- utils::askYesNo(
           "Do you want to save the data to an RDS file in the current dir?"
         )
-        saveAuxData <- FALSE
         if (save) {
           # save the dataset to an RDS file
           filename <- paste0(name, "_dataset.rds")
