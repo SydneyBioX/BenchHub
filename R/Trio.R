@@ -689,8 +689,8 @@ Trio <- R6::R6Class(
       }
 
       # create a character vector of the metric functions
-      metricText <- lapply(names(trio$metrics), function(metric_name) {
-        metric_func <- trio$metrics[[metric_name]]
+      metricText <- lapply(names(self$metrics), function(metric_name) {
+        metric_func <- self$metrics[[metric_name]]
         # access the environment of the metric function
         metric_env <- environment(metric_func)
 
