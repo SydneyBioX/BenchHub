@@ -256,7 +256,6 @@ Trio <- R6::R6Class(
           }
           separateMethods <- TRUE
         }
-        separateMethods <- FALSE
       } else {
         separateMethods <- FALSE
       }
