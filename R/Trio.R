@@ -602,6 +602,11 @@ Trio <- R6::R6Class(
         sheet = "Datasets"
       )
 
+      # very ugly hack for testing
+      if (Sys.info()["nodename"] == "nick-latitude5430") {
+        private$datasetID <- NULL # DELETE THIS LINE
+      }
+
       # calculate the next datasetID
       if (is.null(private$datasetID)) {
         private$datasetID <- formatC(
@@ -743,7 +748,26 @@ Trio <- R6::R6Class(
         sheet = "Metrics"
       )
 
-      # TODO: Figure out the auxData and metric relationships
+      # create a table of auxData-metric relationships for each auxData
+      taskAuxDataMetaData <- tibble::tibble(
+        `Task ID` = "TXXX",
+        `Task Name` = "",
+        Topic = paste0(name, "Tasks"),
+        `AuxData Type` = lapply(names(self$auxData), \(auxDataName) {
+          metrics <- self$getMetrics(auxDataName)
+          rep(auxDataName, times = length(metrics))
+        }) |>
+          unlist(),
+        MetricID = lapply(names(self$auxData), self$getMetrics) |>
+          unlist(),
+        validated = FALSE
+      )
+
+      googlesheets4::sheet_append(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        data = taskAuxDataMetaData,
+        sheet = "Task-AuxData Type-Metric"
+      )
 
       cli::cli_inform(c(
         "Added the dataset to the Curated Trio Datasets sheet.",

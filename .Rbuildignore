@@ -6,3 +6,4 @@
 ^pkgdown$
 ^\.github$
 ^\.httr-oauth$
+^ignore$
