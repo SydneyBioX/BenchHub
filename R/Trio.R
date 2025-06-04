@@ -418,6 +418,7 @@ Trio <- R6::R6Class(
     #' @param seed
     #'   An optional seed for split generation. Defaults to `NULL`. If `NULL`,
     #'   the seed is set to the current time.
+    #' @param ... Additional arguments passed to `splitTools::create_folds`.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
@@ -427,7 +428,8 @@ Trio <- R6::R6Class(
       n_repeat = 1L,
       stratify = TRUE,
       seed = NULL,
-      overwrite = FALSE
+      overwrite = FALSE,
+      ...
     ) {
       # choose a seed if not provided
       if (is.null(seed)) {
@@ -452,7 +454,8 @@ Trio <- R6::R6Class(
         k = n_fold,
         type = dplyr::if_else(stratify, "stratified", "basic"),
         m_rep = n_repeat,
-        seed = seed
+        seed = seed,
+        ...
       )
     },
 
