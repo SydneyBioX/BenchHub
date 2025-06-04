@@ -963,3 +963,32 @@ Trio <- R6::R6Class(
     }
   )
 )
+
+#' List the curated Trio datasets
+#' #' @return A data frame with the dataset names and IDs.
+#' @export
+listCuratedTrioDatasets <- function() {
+  # TODO: Add filtering conditions.
+  if (!curl::has_internet()) {
+    cli::cli_warn(c(
+      "Couldn't list Curated Trio Datasets.",
+      "Check your internet connection and try again."
+    ))
+    return(NULL)
+  }
+  datasets <- googlesheets4::read_sheet(
+    ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+    sheet = "Datasets"
+  ) |>
+    dplyr::select(name, datasetID, source, sourceID, dataType) |>
+    dplyr::mutate(
+      source = dplyr::case_when(
+        source == "figshare" ~ "Figshare",
+        source == "geo" ~ "GEO",
+        source == "experimenthub" ~ "ExperimentHub",
+        TRUE ~ source
+      )
+    ) |>
+    dplyr::arrange(name)
+  datasets
+}
