@@ -75,7 +75,15 @@ Trio <- R6::R6Class(
             "i" = "Please pass datasetID when creating Trio non-interactively."
           ))
         } else if (!is.null(datasetID)) {
-          self$dataSourceID <- datasetID
+          parsed <- unlist(stringr::str_split(userInput, ":"))
+          if (length(parsed) != 2) {
+            cli::cli_abort(c(
+              "The {.var datasetID} should be in the format {.val source:source_id}.",
+              "i" = "Please provide a valid datasetID."
+            ))
+          }
+          self$dataSource <- parsed[1]
+          self$dataSourceID <- parsed[2]
         } else {
           cli::cli_abort(c(
             "No {.var datasetID} was provided.",
