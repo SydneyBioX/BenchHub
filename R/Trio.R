@@ -75,11 +75,15 @@ Trio <- R6::R6Class(
             "i" = "Please pass datasetID when creating Trio non-interactively."
           ))
         } else if (!is.null(datasetID)) {
-          parsed <- unlist(stringr::str_split(userInput, ":"))
-          if (length(parsed) != 2) {
+          parsed <- unlist(stringr::str_split(datasetID, ":"))
+          if (length(parsed) == 2) { # pass
+          } else if (length(parsed) == 1) {
+            # if only one part is provided, assume it's a name
+            parsed <- c("local", parsed)
+          } else {
             cli::cli_abort(c(
-              "The {.var datasetID} should be in the format {.val source:source_id}.",
-              "i" = "Please provide a valid datasetID."
+              "Unsupported datasetID format.",
+              "i" = "Please provide a string like {.emph source:source_id} or just a name."
             ))
           }
           self$dataSource <- parsed[1]
