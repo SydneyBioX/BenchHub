@@ -108,16 +108,17 @@ Describe the benchmark task and dataset.
       message(paste("Vignette template written to:", output_path))
     },
 
-    evaluate = function(trioName, mappingName, input) {
+    #' @description
+    #' Evaluate a trio with input data
+    #' @param trioName A character string naming the trio to evaluate.
+    #' @param input The input data to evaluate the trio against.
+    #' @return The evaluation result from the trio.
+    evaluate = function(trioName, input) {
       if (!(trioName %in% names(self$trios))) {
         stop(paste0("Trio '", trioName, "' not found."))
       }
-      if (!(mappingName %in% names(self$mapping_functions))) {
-        stop(paste0("Mapping function '", mappingName, "' not found."))
-      }
       trio <- self$trios[[trioName]]
-      mapping_func <- self$mapping_functions[[mappingName]]$func
-      trio$evaluate(mapping_func, input)
+      trio$evaluate(input)
     }
   )
 )
