@@ -75,7 +75,19 @@ Trio <- R6::R6Class(
             "i" = "Please pass datasetID when creating Trio non-interactively."
           ))
         } else if (!is.null(datasetID)) {
-          self$dataSourceID <- datasetID
+          parsed <- unlist(stringr::str_split(datasetID, ":"))
+          if (length(parsed) == 2) { # pass
+          } else if (length(parsed) == 1) {
+            # if only one part is provided, assume it's a name
+            parsed <- c("local", parsed)
+          } else {
+            cli::cli_abort(c(
+              "Unsupported datasetID format.",
+              "i" = "Please provide a string like {.emph source:source_id} or just a name."
+            ))
+          }
+          self$dataSource <- parsed[1]
+          self$dataSourceID <- parsed[2]
         } else {
           cli::cli_abort(c(
             "No {.var datasetID} was provided.",
@@ -410,6 +422,7 @@ Trio <- R6::R6Class(
     #' @param seed
     #'   An optional seed for split generation. Defaults to `NULL`. If `NULL`,
     #'   the seed is set to the current time.
+    #' @param ... Additional arguments passed to `splitTools::create_folds`.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
     #' @importFrom utils askYesNo
@@ -419,7 +432,8 @@ Trio <- R6::R6Class(
       n_repeat = 1L,
       stratify = TRUE,
       seed = NULL,
-      overwrite = FALSE
+      overwrite = FALSE,
+      ...
     ) {
       # choose a seed if not provided
       if (is.null(seed)) {
@@ -444,7 +458,8 @@ Trio <- R6::R6Class(
         k = n_fold,
         type = dplyr::if_else(stratify, "stratified", "basic"),
         m_rep = n_repeat,
-        seed = seed
+        seed = seed,
+        ...
       )
     },
 
@@ -955,3 +970,32 @@ Trio <- R6::R6Class(
     }
   )
 )
+
+#' List the curated Trio datasets
+#' #' @return A data frame with the dataset names and IDs.
+#' @export
+listCuratedTrioDatasets <- function() {
+  # TODO: Add filtering conditions.
+  if (!curl::has_internet()) {
+    cli::cli_warn(c(
+      "Couldn't list Curated Trio Datasets.",
+      "Check your internet connection and try again."
+    ))
+    return(NULL)
+  }
+  datasets <- googlesheets4::read_sheet(
+    ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+    sheet = "Datasets"
+  ) |>
+    dplyr::select(name, datasetID, source, sourceID, dataType) |>
+    dplyr::mutate(
+      source = dplyr::case_when(
+        source == "figshare" ~ "Figshare",
+        source == "geo" ~ "GEO",
+        source == "experimenthub" ~ "ExperimentHub",
+        TRUE ~ source
+      )
+    ) |>
+    dplyr::arrange(name)
+  datasets
+}

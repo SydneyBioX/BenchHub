@@ -1,0 +1,96 @@
+```{r}
+# starting from a benchmarker perspective
+
+# Initialize study
+study <- BenchHubStudy$new()
+
+# Add a trio
+# here assume the benchmark already created a trio
+example_trio <- readRDS("example_trio.rds")
+study$add_trio("example_trio_1", example_trio)
+
+
+
+# Define a mapping function
+proportion_zero_gene <- function(data) {
+  return(colMeans(counts(data) == 0))
+}
+
+# Add this mapping function to benchhubstudy
+study$add_mapping_function(
+  name = "Fraction Zero Genes",
+  func = proportion_zero_gene,
+  input_description = "SingleCellExperiment or Matrix object with gene expression counts.",
+  output_description = "Numeric vector of fraction of zero counts per gene."
+)
+
+
+# Define another mapping function
+norm_lib_size <- function(real) {
+  lib_size <- log1p(rowSums(counts(real)))
+
+  real_dge <- edgeR::DGEList(counts = Matrix::t(counts(real)))
+  norm_factors <- edgeR::calcNormFactors(real_dge, method = "TMM")
+  norm_factors <- norm_factors$samples$norm.factors
+  result <- unname(lib_size * norm_factors)
+
+  return(result)
+}
+
+
+
+
+# Add this mapping function to benchhubstudy
+study$add_mapping_function(
+  name = "normalized library size",
+  func = norm_lib_size,
+  input_description = "SingleCellExperiment or Matrix object with gene expression counts.",
+  output_description = "Numeric vector of normalised library size per cell."
+)
+
+saveRDS(study, "example_benchmarkstudy.rds")
+
+
+
+# Generate vignette template for user to fill in
+study$generate_vignette_template()
+
+
+# starting the user perspective
+study <- readRDS("example_benchmarkstudy.rds")
+
+# first they need to see what trios are available
+study$trios
+
+# suppose the user has generated a new data from a method
+# here I'm just using exactly the same data from the trio as an example output
+# can think of this is benchmarking a positive control
+new_data <- study$trios$example_trio_1$data
+
+# next, the user also needs to see what are the mapping functions available
+study$list_mapping_functions()
+
+
+# suppose they are interested in the function "Fraction Zero Genes"
+# print out the mapping documentation so the user know what the input and output are
+study$get_mapping_function_documentation("Fraction Zero Genes")
+
+
+# Run mapping
+mydata_prop_zero_gene <- study$run_mapping("Fraction Zero Genes", new_data)
+mydata_lib_size <- study$run_mapping("normalized library size", new_data)
+
+
+
+# Evaluate by comparing to the ground truth of a trio
+example_trio_1 <- study$trios$example_trio_1
+result <- example_trio_1$evaluate(list("Fraction zero genes" = mydata_prop_zero_gene))
+result <- example_trio_1$evaluate(list("normalized library size" = mydata_lib_size))
+
+
+# Question for Nick, I wonder if this is possible
+# ie, instead of having to take the trio out of the study to evaluate
+# Can I just specify the name of the trio that I am comparing to inside the benchmarkstudy object
+result <- study$evaluate("example_trio_1", (list("Fraction zero genes" = mydata_prop_zero_gene)))
+```
+
