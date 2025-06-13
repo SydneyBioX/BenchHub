@@ -248,11 +248,11 @@ averaging results across folds within each repeats.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData, metric [1]</span></span></span>
 <span><span class="co">##   datasetID           method auxData        metric            repeats result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.725</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.729</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.721</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.708</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.731</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.726</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.716</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.686</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.734</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.709</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -340,7 +340,7 @@ and that there is one row for each result.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData [2]</span></span></span>
 <span><span class="co">##   datasetID           method            auxData        metric            result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.723</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.714</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome negative_binomial Sparsity       Difference         0.323</span></span></code></pre>
 <p>Please see Vignette 3 for the details on the visualisations and
 functions in <code>BenchmarkInsights</code>.</p>
@@ -373,7 +373,7 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] glmnet_4.1-9     Matrix_1.7-3     lubridate_1.9.4  forcats_1.0.0   </span></span>
 <span><span class="co">##  [5] stringr_1.5.1    dplyr_1.1.4      purrr_1.0.4      readr_2.1.5     </span></span>
-<span><span class="co">##  [9] tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.2    tidyverse_2.0.0 </span></span>
+<span><span class="co">##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_3.5.2    tidyverse_2.0.0 </span></span>
 <span><span class="co">## [13] BenchHub_0.99.5  BiocStyle_2.36.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
@@ -382,7 +382,7 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">##   [7] compiler_4.5.0         survAUC_1.3-0          systemfonts_1.2.3     </span></span>
 <span><span class="co">##  [10] vctrs_0.6.5            reshape2_1.4.4         quantreg_6.1          </span></span>
 <span><span class="co">##  [13] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         </span></span>
-<span><span class="co">##  [16] backports_1.5.0        utf8_1.2.5             ggstance_0.3.7        </span></span>
+<span><span class="co">##  [16] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        </span></span>
 <span><span class="co">##  [19] rmarkdown_2.29         tzdb_0.5.0             ragg_1.4.0            </span></span>
 <span><span class="co">##  [22] MatrixModels_0.5-4     xfun_0.52              cachem_1.1.0          </span></span>
 <span><span class="co">##  [25] jsonlite_2.0.0         broom_1.0.8            cluster_2.1.8.1       </span></span>
@@ -393,10 +393,10 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">##  [40] base64enc_0.1-3        parameters_0.26.0      timechange_0.3.0      </span></span>
 <span><span class="co">##  [43] splines_4.5.0          nnet_7.3-20            tidyselect_1.2.1      </span></span>
 <span><span class="co">##  [46] rstudioapi_0.17.1      yaml_2.3.10            codetools_0.2-20      </span></span>
-<span><span class="co">##  [49] curl_6.2.3             lattice_0.22-6         plyr_1.8.9            </span></span>
+<span><span class="co">##  [49] curl_6.3.0             lattice_0.22-6         plyr_1.8.9            </span></span>
 <span><span class="co">##  [52] withr_3.0.2            bayestestR_0.16.0      evaluate_1.0.3        </span></span>
-<span><span class="co">##  [55] marginaleffects_0.26.0 foreign_0.8-90         desc_1.4.3            </span></span>
-<span><span class="co">##  [58] survival_3.8-3         pillar_1.10.2          BiocManager_1.30.25   </span></span>
+<span><span class="co">##  [55] marginaleffects_0.27.0 foreign_0.8-90         desc_1.4.3            </span></span>
+<span><span class="co">##  [58] survival_3.8-3         pillar_1.10.2          BiocManager_1.30.26   </span></span>
 <span><span class="co">##  [61] foreach_1.5.2          checkmate_2.3.2        insight_1.3.0         </span></span>
 <span><span class="co">##  [64] generics_0.1.4         hms_1.1.3              scales_1.4.0          </span></span>
 <span><span class="co">##  [67] glue_1.8.0             rms_8.0-0              Hmisc_5.2-3           </span></span>
