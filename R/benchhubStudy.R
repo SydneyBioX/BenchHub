@@ -9,12 +9,14 @@ BenchHubStudy <- R6Class(
   "BenchHubStudy",
   public = list(
     # Fields
+    name = NULL,
     trios = list(),
     mapping_functions = list(),
 
     #` @desctription Create a new BenchHubStudy object
     #' @param trios A list of Trio objects to initialize the study.
-    initialize = function(trios = list()) {
+    initialize = function(name = NULL, trios = list()) {
+      self$name <- name
       self$trios <- trios
       if (!length(trios) == 0 && !all(sapply(trios, inherits, "Trio"))) {
         stop("All trios must be Trio objects.")
