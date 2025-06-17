@@ -50,6 +50,7 @@ Suggests:
     readr,
     GEOquery,
     ExperimentHub,
+    zen4R,
     knitr,
     ks,
     rmarkdown,

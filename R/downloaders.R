@@ -1,7 +1,7 @@
-# Download inferfaces for each source that Trio supports
+# Download interfaces for each source that Trio supports
 
-#' Download files from geo
-#' @description Download main or supplimentary files from GEO.
+#' Download files from Gene Expression Omnibus
+#' @description Download main or supplementary files from GEO.
 #' @param ID
 #'   The ID, formatted either "ARTICLE_ID" for the main file or
 #'   "ARTICLE_ID/FILE_ID" for a specific file.
@@ -89,7 +89,7 @@ figshareDl <- function(ID, cachePath) {
   dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
-  dlLoacation <- fs::path_join(c(dlPath, datasets$name))
+  dlLocation <- fs::path_join(c(dlPath, datasets$name))
 
   # check if files already exist
   alreadyDl <- datasets$name %in% list.files(dlPath)
@@ -98,23 +98,23 @@ figshareDl <- function(ID, cachePath) {
   # delete files that need redownloading
   if (alreadyDl) {
     validDl <- cli::hash_file_md5(
-      dlLoacation[alreadyDl]
+      dlLocation[alreadyDl]
     ) == datasets$computed_md5[alreadyDl]
     alreadyDl <- alreadyDl && validDl
 
     if (!validDl) {
-      fs::file_delete(dlLoacation)
+      fs::file_delete(dlLocation)
     }
   }
 
   # download datasets which are not available locally
   if (!alreadyDl) {
     curl::curl_download(
-      datasets$download_url, dlLoacation
+      datasets$download_url, dlLocation
     )
   }
   # Check md5 checksums
-  MD5equal <- cli::hash_file_md5(dlLoacation) == datasets$computed_md5
+  MD5equal <- cli::hash_file_md5(dlLocation) == datasets$computed_md5
 
   if (!MD5equal) {
     cli::cli_warn(c(
@@ -123,7 +123,7 @@ figshareDl <- function(ID, cachePath) {
     ))
   }
 
-  dlLoacation
+  dlLocation
 }
 
 #' Download files from geo
@@ -146,14 +146,14 @@ geoDl <- function(ID, cachePath) {
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
 
-  dlPath <- fs::path_join(c(cachePath, paste0("GEO_", splitID[1])))
+  dlPath <- fs::path_join(c(cachePath, splitID[2]))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
   if (length(splitID) == 1) {
     # download GEO data
     tryCatch(
       {
-        dlLoacation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
+        dlLocation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
       },
       error = function(e) {
         cli::cli_abort(c(
@@ -170,7 +170,7 @@ geoDl <- function(ID, cachePath) {
     # download GEO supplementary data
     tryCatch(
       {
-        dlLoacation <- GEOquery::getGEOSuppFiles(
+        dlLocation <- GEOquery::getGEOSuppFiles(
           GEO = mainID, makeDirectory = FALSE,
           baseDir = dlPath, filter_regex = suppID
         ) |>
@@ -187,14 +187,14 @@ geoDl <- function(ID, cachePath) {
     )
   }
 
-  if (length(dlLoacation) == 0) {
+  if (length(dlLocation) == 0) {
     cli::cli_warn(c(
       "No files found for GEO ID: {ID}",
       "i" = "Ensure that the GEO ID is correct and the data is available."
     ))
   }
 
-  dlLoacation
+  dlLocation
 }
 
 #' Download files from ExperimentHub
@@ -254,5 +254,54 @@ experimenthubDl <- function(ID, cachePath) {
     ))
   }
 
+  dlLocation
+}
+
+#' Download files from Zenodo
+#' @description Get a dataset from Zenodo
+#' @param ID
+#'   The ID, a string, with D.O.I., optionally followed by a / and a file name.
+#' @param cachePath
+#'   The path to store the downloaded file.
+#' @return The path to the downloaded file or containing folder if multiple files.
+#' @keywords internal
+zenodoDl <- function(ID, cachePath) {
+  if (!requireNamespace("zen4R", quietly = TRUE)) {
+    cli::cli_abort(c(
+      "Install {.pkg zen4R} to get data from Zenodo",
+      "i" = "You can get it by running: {.code install.packages('zen4R')}"
+    ))
+  }
+  
+  splitID <- unlist(stringr::str_split(ID, "/"))
+  if(length(splitID) == 3) specificFile <- splitID[3] else specificFile <- list()
+  DOI <- paste(splitID[1:2], collapse = '/')
+  
+  zenodoManager <- ZenodoManager$new()
+  requestedRecord <- zenodoManager$getRecordByDOI(DOI)
+  if(is.null(requestedRecord))
+    cli::cli_abort(c(
+      "Invalid Zenodo ID: {ID}",
+      "i" = "Check the ID and try again."
+    ))
+  
+  # create a download path
+  dlPath <- fs::path_join(c(cachePath, paste0("Zenodo_", splitID[1])))
+  if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
+  
+  # check if the file already exists
+  if(length(splitID) == 3) allFiles <- splitID[3] else allFiles <- names(requestedRecord$files)
+  alreadyDl <- all(allFiles %in% list.files(dlPath))
+  
+  # download data if not already downloaded
+  if (!alreadyDl) {
+    cli::cli_inform("Downloading data for ID: {DOI}...")
+    # download Zenodo data
+    zen4R::download_zenodo(DOI, dlPath, specificFile, timeout = Inf)
+  } else {
+    cli::cli_inform("File already exists in cache. No download needed.")
+  }
+  
+  if(length(splitID) == 3) dlLocation <- fs::path_join(c(dlPath, specificFile)) else dlLocation <- dlPath
   dlLocation
 }
