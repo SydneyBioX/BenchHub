@@ -2,8 +2,8 @@
 #' @description
 #' This class manages a collection of benchmark trios and mapping functions.
 #' It allows adding new trios, mapping functions, and running mappings on data.
-#' @param trios A list to store benchmark trios.
-#' @param mapping_functions A list to store mapping functions with metadata.
+#' @field trios A list to store benchmark trios.
+#' @field mapping_functions A list to store mapping functions with metadata.
 #' @export
 BenchHubStudy <- R6Class(
   "BenchHubStudy",
@@ -21,7 +21,7 @@ BenchHubStudy <- R6Class(
       }
     },
     #' @description
-    # Add a new trio to the study
+    #' Add a new trio to the study
     #' @param name A character string to name the trio.
     #' @param trio_object A Trio object to be added.
     add_trio = function(name, trio_object) {
@@ -30,7 +30,7 @@ BenchHubStudy <- R6Class(
     },
 
     #' @description
-    # Add a mapping function with metadata
+    #' Add a mapping function with metadata
     #' @param name A character string to name the mapping function.
     #' @param func A function that takes data as input and returns transformed data.
     #' @param input_description A character string describing the input data.
@@ -55,7 +55,7 @@ BenchHubStudy <- R6Class(
     },
 
     #' @description
-    # Apply a mapping function to data
+    #' Apply a mapping function to data
     #' @param mapping_name A character string naming the mapping function to apply.
     #' @param data The data to which the mapping function will be applied.
     #' @return The transformed data after applying the mapping function.
@@ -68,7 +68,7 @@ BenchHubStudy <- R6Class(
     },
 
     #' @description
-    # Documentation getter for mapping function
+    #' Documentation getter for mapping function
     #' @param mapping_name A character string naming the mapping function.
     #' @return A list containing the input description, output description, and example usage.
     get_mapping_function_documentation = function(mapping_name) {
@@ -87,7 +87,7 @@ BenchHubStudy <- R6Class(
     },
 
     #' @description
-    # Generate R Markdown vignette template
+    #' Generate R Markdown vignette template
     #' @param output_path A character string specifying the path to save the vignette template.
     generate_vignette_template = function(
       output_path = "benchmark_study_template.Rmd"

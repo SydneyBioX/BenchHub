@@ -15,6 +15,7 @@ NULL
 #' @field splitIndices Indices for cross-validation
 #' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
+#' @field description A description of the dataset.
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())

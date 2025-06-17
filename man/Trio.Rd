@@ -33,6 +33,8 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{splitSeed}}{The seed used to generate the split indices}
 
 \item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
+
+\item{\code{description}}{A description of the dataset.}
 }
 \if{html}{\out{</div>}}
 }
@@ -47,6 +49,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item \href{#method-Trio-evaluate}{\code{Trio$evaluate()}}
 \item \href{#method-Trio-split}{\code{Trio$split()}}
 \item \href{#method-Trio-print}{\code{Trio$print()}}
+\item \href{#method-Trio-writeCTD}{\code{Trio$writeCTD()}}
 \item \href{#method-Trio-clone}{\code{Trio$clone()}}
 }
 }
@@ -79,6 +82,8 @@ returns a single dataset, ready to be used in evaluation tasks.}
 \item{\code{cachePath}}{The path to the data cache}
 
 \item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
+
+\item{\code{description}}{A description of the dataset.}
 }
 \if{html}{\out{</div>}}
 }
@@ -199,7 +204,8 @@ Create a cross-validation indices.
   n_repeat = 1L,
   stratify = TRUE,
   seed = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -219,6 +225,8 @@ vector the length of the data.}
 the seed is set to the current time.}
 
 \item{\code{overwrite}}{If \code{TRUE}, overwrites the current split. Defaults to \code{FALSE}.}
+
+\item{\code{...}}{Additional arguments passed to \code{splitTools::create_folds}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -232,6 +240,23 @@ Print method to display key information about the Trio object.
 \if{html}{\out{<div class="r">}}\preformatted{Trio$print()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Trio-writeCTD"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-writeCTD}{}}}
+\subsection{Method \code{writeCTD()}}{
+Write the Trio Metadata to Curated Trio Datasets sheet.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Trio$writeCTD(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{the name of the dataset to be added.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Trio-clone"></a>}}
