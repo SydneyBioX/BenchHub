@@ -73,13 +73,14 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 <li><p><a href="#method-BenchHubStudy-list_mapping_functions"><code>BenchHubStudy$list_mapping_functions()</code></a></p></li>
 <li><p><a href="#method-BenchHubStudy-generate_vignette_template"><code>BenchHubStudy$generate_vignette_template()</code></a></p></li>
 <li><p><a href="#method-BenchHubStudy-evaluate"><code>BenchHubStudy$evaluate()</code></a></p></li>
+<li><p><a href="#method-BenchHubStudy-writeBenchHubStudy"><code>BenchHubStudy$writeBenchHubStudy()</code></a></p></li>
 <li><p><a href="#method-BenchHubStudy-clone"><code>BenchHubStudy$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-BenchHubStudy-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 
 <div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/BenchHubStudy.html">BenchHubStudy</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>trios <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/BenchHubStudy.html">BenchHubStudy</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>, trios <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -247,10 +248,18 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 <p>The evaluation result from the trio.</p>
 </div>
 
+</div><p></p><hr><a id="method-BenchHubStudy-writeBenchHubStudy"></a><div class="section">
+<h3 id="method-writebenchhubstudy-">Method <code>writeBenchHubStudy()</code><a class="anchor" aria-label="anchor" href="#method-writebenchhubstudy-"></a></h3>
+<p>Write the BenchHubStudy metadata to Curated Trio Datasets sheet.</p><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchHubStudy</span><span class="op">$</span><span class="fu">writeBenchHubStudy</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-BenchHubStudy-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchHubStudy</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
