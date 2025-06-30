@@ -44,7 +44,8 @@ Imports:
     magrittr,
     withr,
     ggplot2,
-    gistr
+    gistr,
+    data.table
 Suggests: 
     anndata,
     readr,
