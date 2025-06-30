@@ -125,135 +125,134 @@ Describe the benchmark task and dataset.
       }
       trio <- self$trios[[trioName]]
       trio$evaluate(input)
-    }
-  ),
-  #' @description
-  #' Write the BenchHubStudy metadata to Curated Trio Datasets sheet.
-  #' @param name the name of the study to be added.
-  writeBenchHubStudy = function(name) {
-    if (!curl::has_internet()) {
-      cli::cli_warn(c(
-        "Couldn't write to Curated Trio Datasets.",
-        "Check your internet connection and try again."
-      ))
-      return(NULL)
-    }
+    },
+    #' @description
+    #' Write the BenchHubStudy metadata to Curated Trio Datasets sheet.
+    writeBenchHubStudy = function() {
+      if (!curl::has_internet()) {
+        cli::cli_warn(c(
+          "Couldn't write to Curated Trio Datasets.",
+          "Check your internet connection and try again."
+        ))
+        return(NULL)
+      }
 
-    # check if GITHUB_PAT is set and ask the user to set it if not
-    if (is.null(Sys.getenv("GITHUB_PAT"))) {
-      cli::cli_inform(c(
-        "The GITHUB_PAT environment variable is not set.",
-        "Please set it to your GitHub personal access token with gist access."
-      ))
-      if (interactive()) {
-        set_github_pat <- utils::askYesNo(
-          "Do you want to set the GITHUB_PAT environment variable?"
-        )
-        if (set_github_pat) {
-          pat <- readline("Enter your GitHub personal access token: ")
-          Sys.setenv(GITHUB_PAT = pat)
+      # check if GITHUB_PAT is set and ask the user to set it if not
+      if (is.null(Sys.getenv("GITHUB_PAT"))) {
+        cli::cli_inform(c(
+          "The GITHUB_PAT environment variable is not set.",
+          "Please set it to your GitHub personal access token with gist access."
+        ))
+        if (interactive()) {
+          set_github_pat <- utils::askYesNo(
+            "Do you want to set the GITHUB_PAT environment variable?"
+          )
+          if (set_github_pat) {
+            pat <- readline("Enter your GitHub personal access token: ")
+            Sys.setenv(GITHUB_PAT = pat)
+          } else {
+            cli::cli_abort(c(
+              "The GITHUB_PAT environment variable is not set.",
+              "i" = "Please set it to your GitHub personal access token with gist access."
+            ))
+          }
         } else {
           cli::cli_abort(c(
-            "The GITHUB_PAT environment variable is not set.",
-            "i" = "Please set it to your GitHub personal access token with gist access."
+            "This function must be run interactively.",
           ))
         }
+      }
+
+      # Read existing studies
+      studies <- googlesheets4::read_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Studies"
+      )
+
+      # Calculate the next studyID
+      if (!"studyID" %in% names(studies)) {
+        studyID <- "0001"
       } else {
+        studyID <- formatC(
+          max(as.integer(studies$studyID), na.rm = TRUE) + 1,
+          width = 4,
+          flag = "0"
+        )
+      }
+
+      # Check if the name is already in the studies
+      if (name %in% studies$name) {
         cli::cli_abort(c(
-          "This function must be run interactively.",
+          "The study name {.val {name}} is already in the studies sheet.",
+          "i" = "Please choose a different name."
         ))
       }
-    }
 
-    # Read existing studies
-    studies <- googlesheets4::read_sheet(
-      ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-      sheet = "Studies"
-    )
+      # Prompt for description if not set
+      if (is.null(self$description)) {
+        self$description <- readline(
+          prompt = "Please provide a description for the study: "
+        )
+      }
 
-    # Calculate the next studyID
-    if (!"studyID" %in% names(studies)) {
-      studyID <- "0001"
-    } else {
-      studyID <- formatC(
-        max(as.integer(studies$studyID), na.rm = TRUE) + 1,
-        width = 4,
-        flag = "0"
+      # Prompt for version
+      version <- readline(
+        prompt = "Enter the version for the study (e.g., 1.0.0): "
       )
-    }
 
-    # Check if the name is already in the studies
-    if (name %in% studies$name) {
-      cli::cli_abort(c(
-        "The study name {.val {name}} is already in the studies sheet.",
-        "i" = "Please choose a different name."
+      studyType <- studyTypes[studyType]
+
+      # Prompt for related datasets (comma-separated)
+      relatedDatasets <- readline(
+        prompt = "Enter related dataset IDs (comma-separated, or leave blank): "
+      )
+
+      # Optionally, upload study protocol or code as a gist
+      protocolText <- NULL
+      uploadProtocol <- utils::askYesNo(
+        "Do you want to upload a study protocol or code as a GitHub Gist?"
+      )
+      gist_url <- ""
+      if (uploadProtocol) {
+        protocolFile <- readline("Enter the path to the protocol/code file: ")
+        if (file.exists(protocolFile)) {
+          protocolText <- readLines(protocolFile)
+          gist <- gistr::gist_create(
+            code = protocolText,
+            description = paste0("Protocol for BenchHubStudy ", name),
+            public = TRUE,
+            filename = basename(protocolFile)
+          )
+          gist_url <- gist$html_url
+        } else {
+          cli::cli_warn("File not found. Skipping protocol upload.")
+        }
+      }
+
+      # Write to the Studies sheet
+      googlesheets4::sheet_append(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        data = data.frame(
+          studyID = studyID,
+          name = name,
+          description = self$description,
+          version = version,
+          studyType = studyType,
+          relatedDatasets = relatedDatasets,
+          protocol_gist = gist_url,
+          validated = FALSE,
+          stringsAsFactors = FALSE
+        ),
+        sheet = "Studies"
+      )
+
+      cli::cli_inform(c(
+        "Added the study to the Curated Trio Datasets sheet.",
+        "i" = paste0(
+          "Please check the details at ",
+          "{.href [this link](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}"
+        )
       ))
     }
-
-    # Prompt for description if not set
-    if (is.null(self$description)) {
-      self$description <- readline(
-        prompt = "Please provide a description for the study: "
-      )
-    }
-
-    # Prompt for version
-    version <- readline(
-      prompt = "Enter the version for the study (e.g., 1.0.0): "
-    )
-
-    studyType <- studyTypes[studyType]
-
-    # Prompt for related datasets (comma-separated)
-    relatedDatasets <- readline(
-      prompt = "Enter related dataset IDs (comma-separated, or leave blank): "
-    )
-
-    # Optionally, upload study protocol or code as a gist
-    protocolText <- NULL
-    uploadProtocol <- utils::askYesNo(
-      "Do you want to upload a study protocol or code as a GitHub Gist?"
-    )
-    gist_url <- ""
-    if (uploadProtocol) {
-      protocolFile <- readline("Enter the path to the protocol/code file: ")
-      if (file.exists(protocolFile)) {
-        protocolText <- readLines(protocolFile)
-        gist <- gistr::gist_create(
-          code = protocolText,
-          description = paste0("Protocol for BenchHubStudy ", name),
-          public = TRUE,
-          filename = basename(protocolFile)
-        )
-        gist_url <- gist$html_url
-      } else {
-        cli::cli_warn("File not found. Skipping protocol upload.")
-      }
-    }
-
-    # Write to the Studies sheet
-    googlesheets4::sheet_append(
-      ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-      data = data.frame(
-        studyID = studyID,
-        name = name,
-        description = self$description,
-        version = version,
-        studyType = studyType,
-        relatedDatasets = relatedDatasets,
-        protocol_gist = gist_url,
-        validated = FALSE,
-        stringsAsFactors = FALSE
-      ),
-      sheet = "Studies"
-    )
-
-    cli::cli_inform(c(
-      "Added the study to the Curated Trio Datasets sheet.",
-      "i" = paste0(
-        "Please check the details at ",
-        "{.href [this link](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}"
-      )
-    ))
-  }
+  )
 )
