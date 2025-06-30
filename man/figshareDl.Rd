@@ -2,7 +2,7 @@
 % Please edit documentation in R/downloaders.R
 \name{figshareDl}
 \alias{figshareDl}
-\title{Download files from geo}
+\title{Download files from Gene Expression Omnibus}
 \usage{
 figshareDl(ID, cachePath)
 }
@@ -16,6 +16,6 @@ figshareDl(ID, cachePath)
 The path to the downloaded file.
 }
 \description{
-Download main or supplimentary files from GEO.
+Download main or supplementary files from GEO.
 }
 \keyword{internal}

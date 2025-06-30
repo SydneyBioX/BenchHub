@@ -27,6 +27,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \item \href{#method-BenchHubStudy-list_mapping_functions}{\code{BenchHubStudy$list_mapping_functions()}}
 \item \href{#method-BenchHubStudy-generate_vignette_template}{\code{BenchHubStudy$generate_vignette_template()}}
 \item \href{#method-BenchHubStudy-evaluate}{\code{BenchHubStudy$evaluate()}}
+\item \href{#method-BenchHubStudy-writeBenchHubStudy}{\code{BenchHubStudy$writeBenchHubStudy()}}
 \item \href{#method-BenchHubStudy-clone}{\code{BenchHubStudy$clone()}}
 }
 }
@@ -35,7 +36,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \if{latex}{\out{\hypertarget{method-BenchHubStudy-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$new(trios = list())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$new(name = NULL, trios = list())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -191,6 +192,16 @@ Evaluate a trio with input data
 \subsection{Returns}{
 The evaluation result from the trio.
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-BenchHubStudy-writeBenchHubStudy"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-writeBenchHubStudy}{}}}
+\subsection{Method \code{writeBenchHubStudy()}}{
+Write the BenchHubStudy metadata to Curated Trio Datasets sheet.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$writeBenchHubStudy()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-BenchHubStudy-clone"></a>}}
