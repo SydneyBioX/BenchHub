@@ -618,11 +618,6 @@ Trio <- R6::R6Class(
         sheet = "Datasets"
       )
 
-      # very ugly hack for testing
-      if (Sys.info()["nodename"] == "nick-latitude5430") {
-        private$datasetID <- NULL # DELETE THIS LINE
-      }
-
       # calculate the next datasetID
       if (is.null(private$datasetID)) {
         private$datasetID <- formatC(
