@@ -9,6 +9,7 @@ loadFile <- function(filePath) {
   if (tolower(ext) == "rds") {
     # silece all the annoying messages
     con <- file(tempfile(), open = "wt")
+    
     withr::with_output_sink(
       new = con,
       code = {
