@@ -7,3 +7,4 @@
 ^\.github$
 ^\.httr-oauth$
 ^ignore$
+^\.vscode$
