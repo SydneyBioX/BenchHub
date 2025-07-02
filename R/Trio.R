@@ -963,7 +963,7 @@ Trio <- R6::R6Class(
   ),
   private = list(
     datasetID = NULL,
-    CTDlinl = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
+    CTDlink = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
     parseIDString = function(userInput) {
       parsed <- unlist(stringr::str_split(userInput, ":"))
 
