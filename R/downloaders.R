@@ -146,7 +146,7 @@ geoDl <- function(ID, cachePath) {
   # get file ID from ID if it is available
   splitID <- unlist(stringr::str_split(ID, "/"))
 
-  dlPath <- fs::path_join(c(cachePath, splitID[2]))
+  dlPath <- fs::path_join(c(cachePath, splitID[1]))
   if (!fs::dir_exists(dlPath)) fs::dir_create(dlPath)
 
   if (length(splitID) == 1) {
