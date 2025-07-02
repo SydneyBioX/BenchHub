@@ -74,7 +74,15 @@ analytical tasks against ground truths for the dataset.</p>
 
 
 <dt><code>dataSourceID</code></dt>
-<dd><p>The dataset ID for <code>dataSouce</code></p></dd>
+<dd><p>The dataset ID for <code>dataSource</code></p></dd>
+
+
+<dt><code>auxDataSource</code></dt>
+<dd><p>The data repository that the auxiliary data were retrieved from</p></dd>
+
+
+<dt><code>auxDataSourceID</code></dt>
+<dd><p>The dataset ID for <code>auxDataSource</code></p></dd>
 
 
 <dt><code>splitIndices</code></dt>
@@ -136,7 +144,7 @@ a format string of the form <code>source</code>:<code>source_id</code>.</p></dd>
 
 
 <dt><code>dataLoader</code></dt>
-<dd><p>A custom loading fuction that takes the path of a downloaded file and
+<dd><p>A custom loading function that takes the path of a downloaded file and
 returns a single dataset, ready to be used in evaluation tasks.</p></dd>
 
 
@@ -174,7 +182,7 @@ the data.</p></dd>
 
 
 <dt><code>metrics</code></dt>
-<dd><p>A list of one or more metrics names used to campare gs with the input
+<dd><p>A list of one or more metrics names used to compare gs with the input
 to evaluate.</p></dd>
 
 
@@ -246,7 +254,7 @@ a wrapper function of the desired metric.</p></dd>
 
 </div><p></p><hr><a id="method-Trio-evaluate"></a><div class="section">
 <h3 id="method-evaluate-">Method <code>evaluate()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-"></a></h3>
-<p>Evalute against gold standards</p><div class="section">
+<p>Evaluate against gold standards</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">input</span>, splitIndex <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -259,7 +267,7 @@ standards.</p></dd>
 
 
 <dt><code>splitIndex</code></dt>
-<dd><p>An optional index for subsetting data during evaluation using the
+<dd><p>An optional index for sub-setting data during evaluation using the
 indices created by the split method.</p></dd>
 
 
@@ -284,7 +292,7 @@ indices created by the split method.</p></dd>
 <div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>y</code></dt>
-<dd><p>A variable to use for statified sampling. If <code>stratify</code> is false, a
+<dd><p>A variable to use for stratified sampling. If <code>stratify</code> is false, a
 vector the length of the data.</p></dd>
 
 
