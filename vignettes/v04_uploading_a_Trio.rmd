@@ -1,13 +1,17 @@
 ---
-title: "Uploading a Trio to Curated Trio Datasets"
+title: "4 Uploading a Trio to Curated Trio Datasets"
 author: "BenchHub Team"
 date: "`r Sys.Date()`"
-output: html_document
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Introduction of benchmarkInsights class}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 # Instructions for Uploading a Trio to Curated Trio Datasets
 
-This guide provides step-by-step instructions for uploading a Trio object to the Curated Trio Datasets. It includes creating a GitHub Personal Access Token (PAT) with gist write access and uploading data to Figshare.
+This guide provides step-by-step instructions for uploading a Trio object to the [Curated Trio Datasets sheet](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/edit). Curated Trio Dataset is a list of datasets with proven utility. It includes creating a GitHub Personal Access Token (PAT) with gist write access and uploading data to Figshare.
 
 ---
 
