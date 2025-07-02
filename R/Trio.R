@@ -590,7 +590,42 @@ Trio <- R6::R6Class(
       }
 
       md5 <- ""
+      save <- FALSE
       saveAuxData <- FALSE
+
+      # check if the data/auxData are already saved in the current directory
+      files <- list.files(
+        path = getwd(),
+        pattern = ".rds",
+        full.names = TRUE
+      )
+      if (any(grepl(paste0(name, "_dataset.rds"), files))) {
+        # if the dataset is already saved, prompt the user to use it
+        cli::cli_inform(c(
+          "The dataset {.file {name}_dataset.rds} is already saved in the",
+          "current directory. This will be used as the dataset."
+        ))
+        filename <- paste0(name, "_dataset.rds")
+        md5 <- tools::md5sum(filename)
+        save <- TRUE
+      }
+
+      # check if the auxData is already saved in the current directory
+      if (
+        lapply(names(self$auxData), function(aux) {
+          any(grepl(paste0(aux, ".rds"), files))
+        }) |>
+          unlist() |>
+          all()
+      ) {
+        # if the auxData is already saved, prompt the user to use it
+        cli::cli_inform(c(
+          "The auxData is already saved in the current directory.",
+          "This will be used as the auxData."
+        ))
+        saveAuxData <- TRUE
+      }
+
       # prompt the user to upload the data to figshare
       if (is.null(self$dataSourceID)) {
         # ask user  whether to save the dataset to the an RDS file in the CWD
