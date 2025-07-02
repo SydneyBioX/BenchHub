@@ -26,7 +26,11 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 
 \item{\code{dataSource}}{The data repository that the data were retrieved from}
 
-\item{\code{dataSourceID}}{The dataset ID for \code{dataSouce}}
+\item{\code{dataSourceID}}{The dataset ID for \code{dataSource}}
+
+\item{\code{auxDataSource}}{The data repository that the auxiliary data were retrieved from}
+
+\item{\code{auxDataSourceID}}{The dataset ID for \code{auxDataSource}}
 
 \item{\code{splitIndices}}{Indices for cross-validation}
 
@@ -76,7 +80,7 @@ a format string of the form \code{source}:\code{source_id}.}
 
 \item{\code{data}}{An object to use as the Trio dataset.}
 
-\item{\code{dataLoader}}{A custom loading fuction that takes the path of a downloaded file and
+\item{\code{dataLoader}}{A custom loading function that takes the path of a downloaded file and
 returns a single dataset, ready to be used in evaluation tasks.}
 
 \item{\code{cachePath}}{The path to the data cache}
@@ -105,7 +109,7 @@ Add a gold standard to the Trio.
 \item{\code{auxData}}{The auxiliary data. An object to be compared or a function to be run on
 the data.}
 
-\item{\code{metrics}}{A list of one or more metrics names used to campare gs with the input
+\item{\code{metrics}}{A list of one or more metrics names used to compare gs with the input
 to evaluate.}
 
 \item{\code{args}}{A named list of parameters and values to be passed to the function.}
@@ -175,7 +179,7 @@ Get auxiliary data by name.
 \if{html}{\out{<a id="method-Trio-evaluate"></a>}}
 \if{latex}{\out{\hypertarget{method-Trio-evaluate}{}}}
 \subsection{Method \code{evaluate()}}{
-Evalute against gold standards
+Evaluate against gold standards
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, splitIndex = NULL)}\if{html}{\out{</div>}}
 }
@@ -186,7 +190,7 @@ Evalute against gold standards
 \item{\code{input}}{A named list of objects to be evaluated against gold
 standards.}
 
-\item{\code{splitIndex}}{An optional index for subsetting data during evaluation using the
+\item{\code{splitIndex}}{An optional index for sub-setting data during evaluation using the
 indices created by the split method.}
 }
 \if{html}{\out{</div>}}
@@ -212,7 +216,7 @@ Create a cross-validation indices.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{y}}{A variable to use for statified sampling. If \code{stratify} is false, a
+\item{\code{y}}{A variable to use for stratified sampling. If \code{stratify} is false, a
 vector the length of the data.}
 
 \item{\code{n_fold}}{Number of folds. Defaults to \code{5L}.}
