@@ -11,7 +11,7 @@ NULL
 #' @field metrics The metric for evaluating tasks against the gold standards
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
-#' @field dataSourceID The dataset ID for `dataSouce`
+#' @field dataSourceID The dataset ID for `dataSource`
 #' @field splitIndices Indices for cross-validation
 #' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
@@ -45,7 +45,7 @@ Trio <- R6::R6Class(
     #'   a format string of the form `source`:`source_id`.
     #' @param data An object to use as the Trio dataset.
     #' @param dataLoader
-    #'   A custom loading fuction that takes the path of a downloaded file and
+    #'   A custom loading function that takes the path of a downloaded file and
     #'   returns a single dataset, ready to be used in evaluation tasks.
     #' @param cachePath The path to the data cache
     #' @param verbose Set the verbosity of Trio. Defaults to `FALSE`.
@@ -77,14 +77,18 @@ Trio <- R6::R6Class(
           ))
         } else if (!is.null(datasetID)) {
           parsed <- unlist(stringr::str_split(datasetID, ":"))
-          if (length(parsed) == 2) { # pass
+          if (length(parsed) == 2) {
+            # pass
           } else if (length(parsed) == 1) {
             # if only one part is provided, assume it's a name
             parsed <- c("local", parsed)
           } else {
             cli::cli_abort(c(
               "Unsupported datasetID format.",
-              "i" = "Please provide a string like {.emph source:source_id} or just a name."
+              "i" = paste0(
+                "Please provide a string like {.emph source:source_id}",
+                " or just a name."
+              )
             ))
           }
           self$dataSource <- parsed[1]
@@ -102,12 +106,18 @@ Trio <- R6::R6Class(
       if (is.null(datasetID)) {
         if (!interactive()) {
           cli::cli_abort(
-            "When Trio is initialised non-interactively, a {.val datasetID} must be specified."
+            paste0(
+              "When Trio is initialised non-interactively, a",
+              " {.val datasetID} must be specified."
+            )
           )
         }
         # prompt users to input their own new datasetID
         datasetID <- readline(
-          prompt = "If you don't have a Figshare/GEO/ExperimentHub datasetID, please provide a new datasetID: "
+          prompt = paste0(
+            "If you don't have a Figshare/GEO/ExperimentHub datasetID",
+            ", please provide a new datasetID: "
+          )
         )
       }
       # parse user input and set dataSource and dataSourceID
@@ -132,7 +142,7 @@ Trio <- R6::R6Class(
     #'   The auxiliary data. An object to be compared or a function to be run on
     #'   the data.
     #' @param metrics
-    #'   A list of one or more metrics names used to campare gs with the input
+    #'   A list of one or more metrics names used to compare gs with the input
     #'   to evaluate.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
@@ -239,11 +249,11 @@ Trio <- R6::R6Class(
     },
 
     #' @description
-    #' Evalute against gold standards
+    #' Evaluate against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
     #' @param splitIndex
-    #'   An optional index for subsetting data during evaluation using the
+    #'   An optional index for sub-setting data during evaluation using the
     #'   indices created by the split method.
     evaluate = function(input, splitIndex = NULL) {
       # check if splitIndex is provided but splitIndices is not present
@@ -257,7 +267,7 @@ Trio <- R6::R6Class(
       # check if the requested auxData are available
       auxDataAvail <- names(input) %in% names(self$auxData)
 
-      # if input list contains no auxData names, check if first sublist
+      # if input list contains no auxData names, check if first sub-list
       # contains auxData names and set separateMethods based on this
       if (all(!auxDataAvail)) {
         if (any(names(input[[1]]) %in% names(self$auxData))) {
@@ -285,8 +295,11 @@ Trio <- R6::R6Class(
         if (all(!auxDataAvail)) {
           auxDataNames <- names(self$auxData)
           cli::cli_abort(c(
-            "None of the specified auxiliary data are available in this object.",
-            "i" = ("Add it using {.code Trio$addAuxData(.)} or choose from {.val {auxDataNames}}")
+            "None of the specified auxiliary data are available in the object.",
+            "i" = paste0(
+              "Add it using {.code Trio$addAuxData(.)} or choose",
+              " from {.val {auxDataNames}}"
+            )
           ))
         }
 
@@ -296,11 +309,14 @@ Trio <- R6::R6Class(
           if (self$verbose) {
             cli::cli_inform(c(
               paste0(
-                "Auxiliary data{?s} {.val {unavail}} from {.var input} {?is/are} ",
-                "not available in this object. Passing through as unevaluated ",
-                "benchmark data."
+                "Auxiliary data{?s} {.val {unavail}} from {.var input} ",
+                "{?is/are} not available in this object. Passing through as ",
+                "unevaluated benchmark data."
               ),
-              "i" = "Evaluating the following: {.var {names(input)[auxDataAvail]}}"
+              "i" = paste0(
+                "Evaluating the following:",
+                " {.var {names(input)[auxDataAvail]}}"
+              )
             ))
           }
         }
@@ -329,8 +345,8 @@ Trio <- R6::R6Class(
         if (length(unavailMetrics) == length(allMetrics)) {
           cli::cli_abort(c(
             paste0(
-              "None of the metrics related to the auxiliary data being evaluated",
-              " are available in the object."
+              "None of the metrics related to the auxiliary data being ",
+              "evaluated are available in the object."
             ),
             "i" = "Add some of the following: {.val {allMetrics}}."
           ))
@@ -348,8 +364,9 @@ Trio <- R6::R6Class(
           # remove unavailable metrics from the nested list
           metrics <- lapply(
             metrics,
-            \(auxDataMetrics)
+            \(auxDataMetrics) {
               Filter(\(x) !x %in% unavailMetrics, auxDataMetrics)
+            }
           )
         }
 
@@ -368,8 +385,14 @@ Trio <- R6::R6Class(
               } else {
                 cli::cli_abort(c(
                   "Unsupported data type.",
-                  "x" = "Only vectors and tabular data are supported for auxData subsetting.",
-                  "i" = "Try adding pre-subsetted auxData to the Trio for evaluation."
+                  "x" = paste0(
+                    "Only vectors and tabular data are supported for",
+                    " auxData subsetting."
+                  ),
+                  "i" = paste0(
+                    "Try adding pre-subsetted auxData to the Trio for",
+                    " evaluation."
+                  )
                 ))
               }
             }
@@ -387,7 +410,10 @@ Trio <- R6::R6Class(
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
                   "The result for the {.val {x}} metric is not a single value.",
-                  "i" = "Please ensure that all your metrics only output a single value."
+                  "i" = paste0(
+                    "Please ensure that all your metrics only output",
+                    " a single value."
+                  )
                 ))
               }
               metric_res
@@ -413,7 +439,7 @@ Trio <- R6::R6Class(
     #' @description
     #' Create a cross-validation indices.
     #' @param y
-    #'   A variable to use for statified sampling. If `stratify` is false, a
+    #'   A variable to use for stratified sampling. If `stratify` is false, a
     #'   vector the length of the data.
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
@@ -485,7 +511,7 @@ Trio <- R6::R6Class(
         cli::cli_text("{.strong Cache Path}: {.val {self$cachePath}}")
         cli::cli_text("{.strong Split Indices}: {.val {split_ind}}")
 
-        cli::cli_h3("Auxilliary Data")
+        cli::cli_h3("Auxiliary Data")
         cli::cli_text(
           "{.strong Number of Auxiliary Data}: {.val {length(self$auxData)}}"
         )
@@ -508,7 +534,10 @@ Trio <- R6::R6Class(
             "{.strong Number of Folds}: {.val {length(self$splitIndices)}}"
           )
           cli::cli_text(
-            "{.strong Number of Repeats}: {.val {length(self$splitIndices[[1]])}}"
+            paste0(
+              "{.strong Number of Repeats}:",
+              " {.val {length(self$splitIndices[[1]])}}"
+            )
           )
         }
       })
@@ -543,7 +572,10 @@ Trio <- R6::R6Class(
           } else {
             cli::cli_abort(c(
               "The GITHUB_PAT environment variable is not set.",
-              "i" = "Please set it to your GitHub personal access token with gist access."
+              "i" = paste0(
+                "Please set it to your GitHub personal access token",
+                " with gist access."
+              )
             ))
           }
         } else {
@@ -570,40 +602,54 @@ Trio <- R6::R6Class(
           cli::cli_inform(c(
             "Saved the dataset to {.file {filename}}."
           ))
-
-          saveAuxData <- utils::askYesNo(
-            "Also save the auxData to RDS files in the current directory?"
-          )
-          if (saveAuxData) {
-            # save the each auxData to an RDS file
-            for (auxData in names(self$auxData)) {
-              filename <- paste0(auxData, ".rds")
-              saveRDS(
-                self$getAuxData(auxData),
-                file = filename,
-                compress = "xz"
-              )
-              cli::cli_inform(c(
-                "Saved the {name} auxData {.file {filename}}."
-              ))
-            }
-          }
         }
 
-        cli::cli_inform(c(
-          "Please upload the data and auxData to Figshare and provide the URL"
-        ))
-        self$dataSource <- "figshare"
-        url <- readline("Dataset URL: ")
-        # get the datasetID from the URL
-        if (grepl("figshare", url)) {
-          # extract the articleID from the URL
-          self$dataSourceID <- stringr::str_extract(url, "(?<=/)[0-9]+")
-        } else {
+        saveAuxData <- utils::askYesNo(
+          "Also save the auxData to RDS files in the current directory?"
+        )
+        if (saveAuxData) {
+          # save the each auxData to an RDS file
+          for (auxData in names(self$auxData)) {
+            filename <- paste0(auxData, ".rds")
+            saveRDS(
+              self$getAuxData(auxData),
+              file = filename,
+              compress = "xz"
+            )
+            cli::cli_inform(c(
+              "Saved the {name} auxData {.file {filename}}."
+            ))
+          }
+        }
+        if (!save && self$dataSourceID) {
           cli::cli_abort(c(
-            "The provided URL is not a Figshare URL.",
-            "i" = "Please provide a Figshare URL."
+            paste0(
+              "In order to write to the Curated Trio Datasets you the",
+              " dataset must be available for download."
+            ),
+            "i" = paste0(
+              "Please save the dataset to an RDS file and upload it",
+              " to Figshare."
+            )
           ))
+        }
+
+        if (save || saveAuxData) {
+          cli::cli_inform(c(
+            "Upload the data and/or auxData to Figshare and provide the URL"
+          ))
+          self$dataSource <- "figshare"
+          url <- readline("Dataset URL: ")
+          # get the datasetID from the URL
+          if (grepl("figshare", url)) {
+            # extract the articleID from the URL
+            self$dataSourceID <- stringr::str_extract(url, "(?<=/)[0-9]+")
+          } else {
+            cli::cli_abort(c(
+              "The provided URL is not a Figshare URL.",
+              "i" = "Please provide a Figshare URL."
+            ))
+          }
         }
       }
       # if the dataset doesn't have a description, prompt the user to input one
@@ -699,7 +745,7 @@ Trio <- R6::R6Class(
           )
         } else {
           cli::cli_inform(c(
-            "Please fill indetails about the auxData manually."
+            "Please fill in details about the auxData manually."
           ))
         }
       }
@@ -828,13 +874,15 @@ Trio <- R6::R6Class(
       } else {
         cli::cli_abort(c(
           "Unsupported data specification string",
-          "i" = ("Input a dataset name or a string like {.emph source}:{.emph ID}")
+          "i" = paste0(
+            "Input a dataset name or a string like",
+            " {.emph source}:{.emph ID}"
+          )
         ))
       }
 
       if (!exists(paste0(sourceName, "Dl"))) {
         supported <- stringr::str_remove(
-          # nolint
           grep("Dl", ls("package:BenchHub"), value = TRUE),
           "Dl"
         )
@@ -856,8 +904,9 @@ Trio <- R6::R6Class(
       )
 
       if (length(files) > 1) {
-        if (self$verbose)
+        if (self$verbose) {
           cli::cli_inform("Select a file to load as the dataset:")
+        }
         files <- files[utils::menu(files)]
       }
 
@@ -907,7 +956,7 @@ Trio <- R6::R6Class(
 
       auxData <- auxDataMetaData |> purrr::pluck("Auxiliary Data")
 
-      # get the relevant metrics and respective informaiton from the sheet.
+      # get the relevant metrics and respective information from the sheet.
       metrics <- suppressMessages(
         googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
@@ -959,7 +1008,7 @@ Trio <- R6::R6Class(
           }
         } else {
           cli::cli_abort(c(
-            "Gold standards that are not in the data are not supoorted yet."
+            "Gold standards that are not in the data are not supported yet."
           ))
         }
       })
