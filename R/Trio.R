@@ -627,7 +627,7 @@ Trio <- R6::R6Class(
       }
 
       # prompt the user to upload the data to figshare
-      if (is.null(self$dataSourceID)) {
+      if (is.null(self$dataSourceID && !save)) {
         # ask user  whether to save the dataset to the an RDS file in the CWD
         save <- utils::askYesNo(
           "Do you want to save the data to an RDS file in the current dir?"
@@ -642,9 +642,24 @@ Trio <- R6::R6Class(
             "Saved the dataset to {.file {filename}}."
           ))
         }
+      }
 
+      if (!save && is.null(self$dataSourceID)) {
+        cli::cli_abort(c(
+          paste0(
+            "In order to write to the Curated Trio Datasets you the",
+            " dataset must be available for download."
+          ),
+          "i" = paste0(
+            "Please save the dataset to an RDS file and upload it",
+            " to Figshare."
+          )
+        ))
+      }
+
+      if (!saveAuxData) {
         saveAuxData <- utils::askYesNo(
-          "Also save the auxData to RDS files in the current directory?"
+          "Save the auxData to RDS files in the current directory?"
         )
         if (saveAuxData) {
           # save the each auxData to an RDS file
@@ -660,37 +675,109 @@ Trio <- R6::R6Class(
             ))
           }
         }
-        if (!save && self$dataSourceID) {
-          cli::cli_abort(c(
-            paste0(
-              "In order to write to the Curated Trio Datasets you the",
-              " dataset must be available for download."
-            ),
-            "i" = paste0(
-              "Please save the dataset to an RDS file and upload it",
-              " to Figshare."
-            )
-          ))
-        }
-
-        if (save || saveAuxData) {
-          cli::cli_inform(c(
-            "Upload the data and/or auxData to Figshare and provide the URL"
-          ))
-          self$dataSource <- "figshare"
+      }
+      if (save || saveAuxData) {
+        cli::cli_inform(c(
+          paste0(
+            "Please upload the data and/or auxData to Figshare and provide",
+            " the URL"
+          )
+        ))
+        while (TRUE) {
+          auxDataUploaded <- FALSE
           url <- readline("Dataset URL: ")
           # get the datasetID from the URL
           if (grepl("figshare", url)) {
             # extract the articleID from the URL
-            self$dataSourceID <- stringr::str_extract(url, "(?<=/)[0-9]+")
+            id <- stringr::str_extract(url, "(?<=/)[0-9]+")
+            if (curl::has_internet()) {
+              datasetUploaded <- FALSE
+              auxDataUploaded <- rep(FALSE, length(self$auxData))
+              # check if the files in realated to the ID are correct
+              body <- figshareListFiles(id)
+              fileNames <- unlist(
+                do.call(rbind, lapply(body, data.frame))["name"]
+              )
+              if (
+                !grepl(
+                  # paste0(name, "_dataset.rds"),
+                  name, # for testing
+                  fileNames
+                )
+              ) {
+                cli::cli_inform(c(
+                  "The dataset file {.file {name}_dataset.rds} is not found",
+                  "in the Figshare article with ID {.val {id}}.",
+                  "i" = "Please upload the dataset to Figshare."
+                ))
+                next()
+              } else {
+                self$dataSource <- "figshare"
+                self$dataSourceID <- id
+                datasetUploaded <- TRUE
+              }
+
+              for (i in seq_along(self$auxData)) {
+                auxDataName <- names(self$auxData)[i]
+                if (
+                  !grepl(
+                    paste0(auxDataName, ".rds"),
+                    fileNames,
+                    ignore.case = TRUE
+                  )
+                ) {
+                  cli::cli_inform(c(
+                    paste0(
+                      "The auxData file {.file {auxDataName}.rds} is not found",
+                      " in the Figshare article with ID {.val {id}}."
+                    ),
+                    "i" = "Please upload the auxData to Figshare."
+                  ))
+                } else {
+                  auxDataUploaded[i] <- TRUE
+                }
+              }
+              if (any(!auxDataUploaded)) {
+                cli::cli_inform(c(
+                  "Some auxData files were not found in the Figshare article.",
+                  "i" = paste0(
+                    "Please upload the following auxData: ",
+                    "{.val {names(self$auxData)[!auxDataUploaded]}}"
+                  )
+                ))
+                next()
+              } else {
+                self$auxDataSource <- "figshare"
+                self$auxDataSourceID <- id
+              }
+            } else {
+              if (save && saveAuxData) {
+                self$dataSource <- "figshare"
+                self$auxDataSource <- "figshare"
+                self$dataSourceID <- id
+                self$auxDataSourceID <- id
+              } else if (save) {
+                self$dataSource <- "figshare"
+                self$auxDataSource <- NULL
+                self$dataSourceID <- id
+                self$auxDataSourceID <- NULL
+              } else {
+                self$dataSource <- NULL
+                self$auxDataSource <- "figshare"
+                self$dataSourceID <- NULL
+                self$auxDataSourceID <- id
+              }
+              break()
+            }
           } else {
-            cli::cli_abort(c(
+            cli::cli_inform(c(
               "The provided URL is not a Figshare URL.",
               "i" = "Please provide a Figshare URL."
             ))
           }
         }
       }
+
       # if the dataset doesn't have a description, prompt the user to input one
       if (is.null(self$description)) {
         self$description <- readline(
@@ -762,19 +849,18 @@ Trio <- R6::R6Class(
       # add the auxData to the sheet
       if (saveAuxData) {
         # ask the user if they uploaded the auxData to figshare
-        uploadAuxData <- utils::askYesNo(
-          "Did you upload the auxData to Figshare?"
-        )
+        writeAuxData <- all(auxDataUploaded)
 
-        if (uploadAuxData) {
+        if (writeAuxData) {
           auxDataMetaData <- data.frame(
             datasetID = rep(private$datasetID, times = length(self$auxData)),
             Auxiliary_Data = names(self$auxData),
             is_in_data = rep(FALSE, times = length(self$auxData)),
             type = rep("figshare", times = length(self$auxData)),
-            validated = rep(FALSE, times = length(self$auxData)),
+            sourceID = rep(self$auxDataSourceID, times = length(self$auxData)),
             name = rep("", times = length(self$auxData)),
             on_load = rep("", times = length(self$auxData)),
+            validated = rep(FALSE, times = length(self$auxData)),
             stringsAsFactors = FALSE
           )
           googlesheets4::sheet_append(
@@ -784,7 +870,8 @@ Trio <- R6::R6Class(
           )
         } else {
           cli::cli_inform(c(
-            "Please fill in details about the auxData manually."
+            "Could not confirm whether the auxData was uploaded to Figshare",
+            "i" = "Please fill in details about the auxData manually."
           ))
         }
       }
