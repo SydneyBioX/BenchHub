@@ -9,7 +9,7 @@ loadFile <- function(filePath) {
   if (tolower(ext) == "rds") {
     # silece all the annoying messages
     con <- file(tempfile(), open = "wt")
-    
+
     withr::with_output_sink(
       new = con,
       code = {
@@ -170,4 +170,45 @@ assertSuggestAvail <- function(packages) {
       ))
     }
   })
+}
+
+
+figshareListFiles <- function(articleID, fileID = NULL) {
+  API_URL <- "https://api.figshare.com/v2/"
+
+  # Create request URL
+  requestUrl <- glue::glue(
+    API_URL, "articles/{articleID}/files",
+    ifelse(!is.null(fileID), paste0("/", fileID), "")
+  )
+
+  # Execute request
+  req <- httr2::request(requestUrl)
+  resp <- req |>
+    httr2::req_error(is_error = \(resp) FALSE) |>
+    httr2::req_perform()
+
+  body <- resp |> httr2::resp_body_json()
+
+  # Informative error if API query fails
+  if (resp |> httr2::resp_is_error()) {
+    status <- paste(httr2::resp_status(resp), httr2::resp_status_desc(resp))
+    apiMessage <- stringr::str_split(body$message, "\n")
+
+    errorMessage <- paste0(
+      cli::format_error(c(
+        "API Request to figshare failed. Code: {status}",
+        "i" = "Check the figshare article ID and try again.",
+        "i" = "Figshare API error message:"
+      )),
+      "\n",
+      stringr::str_flatten(
+        unlist(lapply(apiMessage, \(x) paste0("> ", x))),
+        collapse = "\n"
+      )
+    )
+    rlang::abort(message = errorMessage)
+  }
+
+  body
 }
