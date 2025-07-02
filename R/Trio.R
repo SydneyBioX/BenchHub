@@ -12,6 +12,8 @@ NULL
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSource`
+#' @field auxDataSource The data repository that the auxiliary data were retrieved from
+#' @field auxDataSourceID The dataset ID for `auxDataSource`
 #' @field splitIndices Indices for cross-validation
 #' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
@@ -31,6 +33,8 @@ Trio <- R6::R6Class(
     metrics = list(),
     dataSource = NULL,
     dataSourceID = NULL,
+    auxDataSource = NULL,
+    auxDataSourceID = NULL,
     splitIndices = NULL,
     splitSeed = NULL,
     verbose = FALSE,
