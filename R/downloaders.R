@@ -28,15 +28,11 @@ figshareDl <- function(ID, cachePath) {
     ))
   }
 
-  body <- figshareListFiles(articleID, fileID = fileID)
+  fileData <- figshareListFiles(articleID, fileID = fileID)
 
-  # check if query returned a single item
-  if (!is.null(fileID) || !is.null(names(body))) {
-    body <- list(body)
-  }
   # for files with the same name, get the most recent ID (deals with versions)
   # TODO: Deal with files that have been deleted in newer versions
-  datasets <- do.call(rbind, lapply(body, data.frame)) |>
+  datasets <- fileData |>
     dplyr::arrange(dplyr::desc(id)) |>
     dplyr::group_by(name) |>
     dplyr::slice(1) |>

@@ -86,7 +86,9 @@ getTrioCachePath <- function(cachePath) {
     cachePath <- fs::path_join(
       c(tools::R_user_dir("", which = "cache"), "TrioR")
     )
-    if (!fs::dir_exists(cachePath)) fs::dir_create(cachePath)
+    if (!fs::dir_exists(cachePath)) {
+      fs::dir_create(cachePath)
+    }
     return(cachePath)
   }
 
@@ -127,7 +129,9 @@ getTrioCachePath <- function(cachePath) {
   }
 
   if (keep) {
-    if (!cacheExists) fs::dir_create(cachePath)
+    if (!cacheExists) {
+      fs::dir_create(cachePath)
+    }
 
     return(cachePath)
   }
@@ -178,7 +182,8 @@ figshareListFiles <- function(articleID, fileID = NULL) {
 
   # Create request URL
   requestUrl <- glue::glue(
-    API_URL, "articles/{articleID}/files",
+    API_URL,
+    "articles/{articleID}/files",
     ifelse(!is.null(fileID), paste0("/", fileID), "")
   )
 
@@ -210,5 +215,10 @@ figshareListFiles <- function(articleID, fileID = NULL) {
     rlang::abort(message = errorMessage)
   }
 
-  body
+  # check if query returned a single item
+  if (!is.null(fileID) || !is.null(names(body))) {
+    body <- list(body)
+  }
+
+  do.call(rbind, lapply(body, data.frame))
 }
