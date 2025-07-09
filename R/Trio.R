@@ -35,8 +35,8 @@ Trio <- R6::R6Class(
     metrics = list(),
     dataSource = NULL,
     dataSourceID = NULL,
-    auxDataSource = NULL,
-    auxDataSourceID = NULL,
+    auxDataSource = list(),
+    auxDataSourceID = list(),
     splitIndices = NULL,
     splitSeed = NULL,
     verbose = FALSE,
@@ -562,11 +562,10 @@ Trio <- R6::R6Class(
         ))
       }
       if (!curl::has_internet()) {
-        cli::cli_warn(c(
+        cli::cli_abort(c(
           "Couldn't write to Curated Trio Datasets.",
           "Check your internet connection and try again."
         ))
-        return(NULL)
       }
       if (!interactive()) {
         cli::cli_abort(c(
@@ -580,25 +579,19 @@ Trio <- R6::R6Class(
           "The GITHUB_PAT environment variable is not set.",
           "Please set it to your GitHub personal access token with gist access."
         ))
-        if (interactive()) {
-          set_github_pat <- utils::askYesNo(
-            "Do you want to set the GITHUB_PAT environment variable?"
-          )
-          if (set_github_pat) {
-            pat <- readline("Enter your GitHub personal access token: ")
-            Sys.setenv(GITHUB_PAT = pat)
-          } else {
-            cli::cli_abort(c(
-              "The GITHUB_PAT environment variable is not set.",
-              "i" = paste0(
-                "Please set it to your GitHub personal access token",
-                " with gist access."
-              )
-            ))
-          }
+        set_github_pat <- utils::askYesNo(
+          "Do you want to set the GITHUB_PAT environment variable?"
+        )
+        if (set_github_pat) {
+          pat <- readline("Enter your GitHub personal access token: ")
+          Sys.setenv(GITHUB_PAT = pat)
         } else {
           cli::cli_abort(c(
-            "This function must be run interactively.",
+            "The GITHUB_PAT environment variable is not set.",
+            "i" = paste0(
+              "Please set it to your GitHub personal access token",
+              " with gist access."
+            )
           ))
         }
       }
@@ -606,39 +599,6 @@ Trio <- R6::R6Class(
       md5 <- ""
       save <- FALSE
       saveAuxData <- FALSE
-
-      # check if the data/auxData are already saved in the current directory
-      files <- list.files(
-        path = getwd(),
-        pattern = ".rds",
-        full.names = TRUE
-      )
-      if (any(grepl(paste0(name, "_dataset.rds"), files))) {
-        # if the dataset is already saved, prompt the user to use it
-        cli::cli_inform(c(
-          "The dataset {.file {name}_dataset.rds} is already saved in the",
-          "current directory. This will be used as the dataset."
-        ))
-        filename <- paste0(name, "_dataset.rds")
-        md5 <- tools::md5sum(filename)
-        save <- TRUE
-      }
-
-      # check if the auxData is already saved in the current directory
-      if (
-        lapply(names(self$auxData), function(aux) {
-          any(grepl(paste0(aux, ".rds"), files, ignore.case = ))
-        }) |>
-          unlist() |>
-          all()
-      ) {
-        # if the auxData is already saved, prompt the user to use it
-        cli::cli_inform(c(
-          "The auxData is already saved in the current directory.",
-          "This will be used as the auxData."
-        ))
-        saveAuxData <- TRUE
-      }
 
       # prompt the user to upload the data to figshare
       if (is.null(self$dataSourceID) && !save) {
@@ -659,6 +619,8 @@ Trio <- R6::R6Class(
       }
 
       if (!save && is.null(self$dataSourceID)) {
+        #TODO: ask the user if the dataset is available in one of the databases
+        #      with an implemented downloader in downloaders.R
         cli::cli_abort(c(
           paste0(
             "In order to write to the Curated Trio Datasets you the",
@@ -690,6 +652,7 @@ Trio <- R6::R6Class(
           }
         }
       }
+
       if (save || saveAuxData) {
         cli::cli_inform(c(
           paste0(
@@ -701,7 +664,7 @@ Trio <- R6::R6Class(
         maxAttempts <- 4
         while (attempts < maxAttempts) {
           attempts <- attempts + 1
-          auxDataUploaded <- FALSE
+          auxDataUploaded <- rep(FALSE, length(self$auxData))
           url <- readline("Dataset/AuxData URL: ")
           # get the datasetID from the URL
           if (!grepl("figshare", url)) {
@@ -807,10 +770,36 @@ Trio <- R6::R6Class(
                   "The auxData file {.file {auxDataName}.rds} is not found",
                   " in the Figshare article with ID {.val {id}}."
                 ),
-                "i" = "Please upload the auxData to Figshare."
               ))
+              auxDataFile <- utils::menu(
+                fileNames,
+                paste0(
+                  "Are any of the files the auxData you want to use?",
+                  " If so, select it or press 0 to skip."
+                )
+              )
+              if (auxDataFile == 0) {
+                cli::cli_inform(c(
+                  "Skipping the auxData file.",
+                ))
+                auxDataUploaded[i] <- FALSE
+              } else {
+                auxDataUploaded[i] <- TRUE
+                # figure out the auxData fileID
+                fileID <- fileDF[auxDataFile]$id
+                self$auxDataSource[i] <- "figshare"
+                self$auxDataSourceID[i] <- paste0(id, "/", fileID)
+              }
             } else {
               auxDataUploaded[i] <- TRUE
+              self$auxDataSource[i] <- "figshare"
+              # figure out the auxData fileID
+              fileID <- fileDF[grepl(
+                paste0(auxDataName, ".rds"),
+                fileNames,
+                ignore.case = TRUE
+              )]$id[1]
+              self$auxDataSourceID[i] <- paste0(id, "/", fileID)
             }
           }
           if (any(!auxDataUploaded)) {
@@ -822,9 +811,6 @@ Trio <- R6::R6Class(
               )
             ))
             next()
-          } else {
-            self$auxDataSource <- "figshare"
-            self$auxDataSourceID <- id
           }
         }
         if (attempts >= maxAttempts) {
@@ -908,7 +894,6 @@ Trio <- R6::R6Class(
 
       # add the auxData to the sheet
       if (saveAuxData) {
-        # ask the user if they uploaded the auxData to figshare
         writeAuxData <- all(auxDataUploaded)
 
         if (writeAuxData) {
@@ -916,8 +901,8 @@ Trio <- R6::R6Class(
             datasetID = rep(private$datasetID, times = length(self$auxData)),
             Auxiliary_Data = names(self$auxData),
             is_in_data = rep(FALSE, times = length(self$auxData)),
-            type = rep("figshare", times = length(self$auxData)),
-            sourceID = rep(self$auxDataSourceID, times = length(self$auxData)),
+            type = unlist(self$auxDataSource),
+            sourceID = unlist(self$auxDataSourceID),
             name = rep("", times = length(self$auxData)),
             on_load = rep("", times = length(self$auxData)),
             validated = rep(FALSE, times = length(self$auxData)),
@@ -958,12 +943,6 @@ Trio <- R6::R6Class(
       }) |>
         unlist()
 
-      file <- tempfile(fileext = ".R")
-      writeLines(
-        metricText,
-        con = file
-      )
-
       # create a gist of the metrics
       gist <- gistr::gist_create(
         code = metricText,
@@ -991,10 +970,23 @@ Trio <- R6::R6Class(
         sheet = "Metrics"
       )
 
+      # get the next task ID
+      # read the existing datasets
+      tasks <- googlesheets4::read_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Task-AuxData Type-Metric"
+      )
+
+      taskID <- formatC(
+        max(as.integer(substring(tasks$`Task ID`, 2))) + 1,
+        width = 4,
+        flag = "0"
+      )
+
       # create a table of auxData-metric relationships for each auxData
       taskAuxDataMetaData <- tibble::tibble(
-        `Task ID` = "TXXX",
-        `Task Name` = "",
+        `Task ID` = paste0("T", taskID),
+        `Task Name` = name,
         Topic = paste0(name, "Tasks"),
         `AuxData Type` = lapply(names(self$auxData), \(auxDataName) {
           metrics <- self$getMetrics(auxDataName)
