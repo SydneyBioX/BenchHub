@@ -10,6 +10,8 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
+\item{\code{name}}{A character string to name the study.}
+
 \item{\code{trios}}{A list to store benchmark trios.}
 
 \item{\code{mapping_functions}}{A list to store mapping functions with metadata.}
@@ -42,6 +44,8 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{name}}{A character string to name the study.}
+
 \item{\code{trios}}{A list of Trio objects to initialize the study.}
 }
 \if{html}{\out{</div>}}

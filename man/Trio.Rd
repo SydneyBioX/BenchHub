@@ -28,7 +28,8 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSource}}
 
-\item{\code{auxDataSource}}{The data repository that the auxiliary data were retrieved from}
+\item{\code{auxDataSource}}{The data repository that the auxiliary data were
+retrieved from}
 
 \item{\code{auxDataSourceID}}{The dataset ID for \code{auxDataSource}}
 

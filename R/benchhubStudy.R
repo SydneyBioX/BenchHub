@@ -2,6 +2,7 @@
 #' @description
 #' This class manages a collection of benchmark trios and mapping functions.
 #' It allows adding new trios, mapping functions, and running mappings on data.
+#' @field name A character string to name the study.
 #' @field trios A list to store benchmark trios.
 #' @field mapping_functions A list to store mapping functions with metadata.
 #' @export
@@ -14,6 +15,7 @@ BenchHubStudy <- R6Class(
     mapping_functions = list(),
 
     #` @description Create a new BenchHubStudy object
+    #' @param name A character string to name the study.
     #' @param trios A list of Trio objects to initialize the study.
     initialize = function(name = NULL, trios = list()) {
       self$name <- name
