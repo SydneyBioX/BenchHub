@@ -625,7 +625,7 @@ Trio <- R6::R6Class(
       # check if the auxData is already saved in the current directory
       if (
         lapply(names(self$auxData), function(aux) {
-          any(grepl(paste0(aux, ".rds"), files))
+          any(grepl(paste0(aux, ".rds"), files, ignore.case = TRUE))
         }) |>
           unlist() |>
           all()
