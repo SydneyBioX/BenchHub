@@ -13,7 +13,7 @@ BenchHubStudy <- R6Class(
     trios = list(),
     mapping_functions = list(),
 
-    #` @desctription Create a new BenchHubStudy object
+    #` @description Create a new BenchHubStudy object
     #' @param trios A list of Trio objects to initialize the study.
     initialize = function(name = NULL, trios = list()) {
       self$name <- name

@@ -12,7 +12,9 @@ NULL
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSource`
-#' @field auxDataSource The data repository that the auxiliary data were retrieved from
+#' @field
+#'   auxDataSource The data repository that the auxiliary data were
+#'   retrieved from
 #' @field auxDataSourceID The dataset ID for `auxDataSource`
 #' @field splitIndices Indices for cross-validation
 #' @field splitSeed The seed used to generate the split indices
@@ -625,7 +627,7 @@ Trio <- R6::R6Class(
       # check if the auxData is already saved in the current directory
       if (
         lapply(names(self$auxData), function(aux) {
-          any(grepl(paste0(aux, ".rds"), files, ignore.case = TRUE))
+          any(grepl(paste0(aux, ".rds"), files, ignore.case = ))
         }) |>
           unlist() |>
           all()
@@ -722,7 +724,7 @@ Trio <- R6::R6Class(
           }
           datasetUploaded <- FALSE
           auxDataUploaded <- rep(FALSE, length(self$auxData))
-          # check if the files in realated to the ID are correct
+          # check if the files in related to the ID are correct
           fileDF <- figshareListFiles(id)
           fileNames <- fileDF$name
           if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
