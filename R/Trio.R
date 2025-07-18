@@ -74,36 +74,8 @@ Trio <- R6::R6Class(
       self$verbose <- verbose
       # if users have their own data without datasetID
       if (!is.null(data)) {
-        if (is.null(datasetID) && interactive()) {
-          self$dataSourceID <- readline("Choose a name for this data: ")
-        } else if (is.null(datasetID) && !interactive()) {
-          cli::cli_abort(c(
-            "No {.var datasetID} was provided.",
-            "i" = "Please pass datasetID when creating Trio non-interactively."
-          ))
-        } else if (!is.null(datasetID)) {
-          parsed <- unlist(stringr::str_split(datasetID, ":"))
-          if (length(parsed) == 2) {
-            # pass
-          } else if (length(parsed) == 1) {
-            # if only one part is provided, assume it's a name
-            parsed <- c("local", parsed)
-          } else {
-            cli::cli_abort(c(
-              "Unsupported datasetID format.",
-              "i" = paste0(
-                "Please provide a string like {.emph source:source_id}",
-                " or just a name."
-              )
-            ))
-          }
-          self$dataSource <- parsed[1]
-          self$dataSourceID <- parsed[2]
-        } else {
-          cli::cli_abort(c(
-            "No {.var datasetID} was provided.",
-            "i" = "Please pass a datasetID when creating Trio with local data."
-          ))
+        if (interactive()) {
+          self$description <- readline("Briefly describe the dataset: ")
         }
         self$data <- data
         return(NULL)
@@ -1186,7 +1158,7 @@ Trio <- R6::R6Class(
           }
         } else {
           cli::cli_abort(c(
-            "Gold standards that are not in the data are not supported yet."
+            "AuxData that are not in the data are not supported yet."
           ))
         }
       })
