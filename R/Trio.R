@@ -571,18 +571,17 @@ Trio <- R6::R6Class(
       md5 <- ""
       save <- FALSE
       saveAuxData <- FALSE
+      auxDataFilename <- paste0(name, "_auxData.rds")
+      auxDataMd5 <- ""
 
-      # prompt the user to upload the data to figshare
+      # Save dataset if needed
       if (is.null(self$dataSourceID) && !save) {
-        # ask user  whether to save the dataset to the an RDS file in the CWD
         save <- utils::askYesNo(
           "Do you want to save the data to an RDS file in the current dir?"
         )
         if (save) {
-          # save the dataset to an RDS file
           filename <- paste0(name, "_dataset.rds")
           saveRDS(self$data, file = filename, compress = "xz")
-          # generate the md5 hash of the file
           md5 <- tools::md5sum(filename)
           cli::cli_inform(c(
             "Saved the dataset to {.file {filename}}."
@@ -605,195 +604,130 @@ Trio <- R6::R6Class(
         ))
       }
 
-      if (!saveAuxData) {
-        saveAuxData <- utils::askYesNo(
-          "Save the auxData to RDS files in the current directory?"
+      # Save all auxData as a single file (required for CTD)
+      cli::cli_inform(c(
+        "Saving auxiliary data to RDS file..."
+      ))
+      saveAuxData <- TRUE
+      auxDataList <- self$auxData
+      saveRDS(auxDataList, file = auxDataFilename, compress = "xz")
+      auxDataMd5 <- tools::md5sum(auxDataFilename)
+      cli::cli_inform(c(
+        "Saved all auxData to {.file {auxDataFilename}}."
+      ))
+
+      # Upload verification using md5
+      cli::cli_inform(c(
+        paste0(
+          "Please upload the data and/or auxData to Figshare and provide",
+          " the URL"
         )
-        if (saveAuxData) {
-          # save the each auxData to an RDS file
-          for (auxData in names(self$auxData)) {
-            filename <- paste0(auxData, ".rds")
-            saveRDS(
-              self$getAuxData(auxData),
-              file = filename,
-              compress = "xz"
-            )
-            cli::cli_inform(c(
-              "Saved the {name} auxData {.file {filename}}."
-            ))
+      ))
+      attempts <- 0
+      maxAttempts <- 4
+      verified <- FALSE
+      while (attempts < maxAttempts && !verified) {
+        attempts <- attempts + 1
+        url <- readline("Dataset/AuxData Figshare URL: ")
+        if (!grepl("figshare", url)) {
+          cli::cli_inform(c(
+            "The provided URL is not a Figshare URL.",
+            "i" = "Please provide a Figshare URL."
+          ))
+          next()
+        }
+        id <- stringr::str_extract(url, "(?<=/)[0-9]+")
+        if (is.na(id)) {
+          cli::cli_inform(c(
+            "The provided URL does not contain a valid Figshare ID.",
+            "i" = "Please provide a Figshare URL with a valid ID."
+          ))
+          next()
+        }
+        fileDF <- figshareListFiles(id)
+        fileNames <- fileDF$name
+        # Check dataset file
+        datasetUploaded <- FALSE
+        # Compute md5 if not present
+        if (is.null(md5) || md5 == "") {
+          localFile <- paste0(name, "_dataset.rds")
+          if (file.exists(localFile)) {
+            md5 <- tools::md5sum(localFile)
+          } else {
+            # Create temporary file if local doesn't exist
+            tmpFile <- file.path(tempdir(), paste0(name, "_dataset.rds"))
+            saveRDS(self$data, file = tmpFile, compress = "xz")
+            md5 <- tools::md5sum(tmpFile)
+            unlink(tmpFile) # Clean up temporary file
           }
         }
-      }
-
-      if (save || saveAuxData) {
-        cli::cli_inform(c(
-          paste0(
-            "Please upload the data and/or auxData to Figshare and provide",
-            " the URL"
-          )
-        ))
-        attempts <- 0
-        maxAttempts <- 4
-        while (attempts < maxAttempts) {
-          attempts <- attempts + 1
-          auxDataUploaded <- rep(FALSE, length(self$auxData))
-          url <- readline("Dataset/AuxData URL: ")
-          # get the datasetID from the URL
-          if (!grepl("figshare", url)) {
-            cli::cli_inform(c(
-              "The provided URL is not a Figshare URL.",
-              "i" = "Please provide a Figshare URL."
-            ))
-            next()
-          }
-
-          # extract the articleID from the URL
-          # assumption: the first number after a slash is the ID
-          id <- stringr::str_extract(url, "(?<=/)[0-9]+")
-          if (is.na(id)) {
-            cli::cli_inform(c(
-              "The provided URL does not contain a valid Figshare ID.",
-              "i" = "Please provide a Figshare URL with a valid ID."
-            ))
-            next()
-          }
-          datasetUploaded <- FALSE
-          auxDataUploaded <- rep(FALSE, length(self$auxData))
-          # check if the files in related to the ID are correct
-          fileDF <- figshareListFiles(id)
-          fileNames <- fileDF$name
-          if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
-            datasetUploaded <- TRUE
-          } else if (
-            grepl(
-              paste0(name, "_dataset.rds"),
-              fileNames,
-              ignore.case = TRUE
-            )
-          ) {
+        if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
+          datasetUploaded <- TRUE
+        } else if (
+          grepl(paste0(name, "_dataset.rds"), fileNames, ignore.case = TRUE)
+        ) {
+          idx <- which(
+            grepl(paste0(name, "_dataset.rds"), fileNames, ignore.case = TRUE)
+          )[1]
+          fileID <- fileDF$id[idx]
+          # Check md5
+          fileMd5 <- fileDF$computed_md5[idx]
+          if (!is.null(md5) && md5 == fileMd5) {
             datasetUploaded <- TRUE
             self$dataSource <- "figshare"
-            self$dataSourceID <- paste0(
-              id,
-              "/",
-              fileDF$id[grepl(
-                paste0(name, "_dataset.rds"),
-                fileNames,
-                ignore.case = TRUE
-              )]
-            )
-          } else if (
-            !grepl(
-              paste0(name, "_dataset.rds"),
-              fileNames,
-              ignore.case = TRUE
-            )
-          ) {
+            self$dataSourceID <- paste0(id, "/", fileID)
+          } else {
             cli::cli_inform(c(
-              "The dataset file {.file {name}_dataset.rds} is not found",
-              "in the Figshare article with ID {.val {id}}.",
+              "The uploaded dataset file md5 does not match.",
+              "i" = "Please re-upload the correct file.",
+              "i" = "Otherwise, set self$dataSource and self$dataSourceID."
             ))
-            datasetName <- utils::menu(
-              fileNames,
-              paste0(
-                "Are any of the files the dataset you want to use?",
-                " If so, select it or press 0 to skip."
-              )
-            )
-            if (datasetName == 0) {
+            next()
+          }
+        } else {
+          cli::cli_inform(c(
+            "The dataset file {.file {name}_dataset.rds} is not found in the Figshare article.",
+            "i" = "Please upload the dataset file."
+          ))
+          next()
+        }
+        # Check auxData file
+        auxDataUploaded <- FALSE
+        if (saveAuxData) {
+          idxAux <- which(grepl(
+            auxDataFilename,
+            fileNames,
+            ignore.case = TRUE
+          ))[1]
+          if (!is.na(idxAux)) {
+            fileIDaux <- fileDF$id[idxAux]
+            fileMd5aux <- fileDF$computed_md5[idxAux]
+            if (!is.null(auxDataMd5) && auxDataMd5 == fileMd5aux) {
+              auxDataUploaded <- TRUE
+              self$auxDataSource <- "figshare"
+              self$auxDataSourceID <- paste0(id, "/", fileIDaux)
+            } else {
               cli::cli_inform(c(
-                "Trying again.",
-                "i" = paste0(
-                  "Please input the figshare URL of the dataset."
-                )
+                "The uploaded auxData file md5 does not match.",
+                "i" = "Please re-upload the correct auxData file."
               ))
               next()
-            } else {
-              datasetUploaded <- TRUE
-              self$dataSource <- "figshare"
-              # figure out the dataset fileID
-              fileID <- fileDF$id[datasetName]
-              self$dataSourceID <- paste0(id, "/", fileID)
             }
-          }
-
-          if (!datasetUploaded) {
+          } else {
             cli::cli_inform(c(
-              "The dataset file {.file {name}_dataset.rds} is not found",
-              "in the Figshare article with ID {.val {id}}.",
-              "i" = "Please upload the dataset to Figshare."
-            ))
-            next()
-          }
-          self$dataSource <- "figshare"
-          self$dataSourceID <- id
-
-          for (i in seq_along(self$auxData)) {
-            auxDataName <- names(self$auxData)[i]
-            if (
-              !grepl(
-                paste0(auxDataName, ".rds"),
-                fileNames,
-                ignore.case = TRUE
-              )
-            ) {
-              cli::cli_inform(c(
-                paste0(
-                  "The auxData file {.file {auxDataName}.rds} is not found",
-                  " in the Figshare article with ID {.val {id}}."
-                ),
-              ))
-              auxDataFile <- utils::menu(
-                fileNames,
-                paste0(
-                  "Are any of the files the auxData you want to use?",
-                  " If so, select it or press 0 to skip."
-                )
-              )
-              if (auxDataFile == 0) {
-                cli::cli_inform(c(
-                  "Skipping the auxData file.",
-                ))
-                auxDataUploaded[i] <- FALSE
-              } else {
-                auxDataUploaded[i] <- TRUE
-                # figure out the auxData fileID
-                fileID <- fileDF[auxDataFile]$id
-                self$auxDataSource[i] <- "figshare"
-                self$auxDataSourceID[i] <- paste0(id, "/", fileID)
-              }
-            } else {
-              auxDataUploaded[i] <- TRUE
-              self$auxDataSource[i] <- "figshare"
-              # figure out the auxData fileID
-              fileID <- fileDF[grepl(
-                paste0(auxDataName, ".rds"),
-                fileNames,
-                ignore.case = TRUE
-              )]$id[1]
-              self$auxDataSourceID[i] <- paste0(id, "/", fileID)
-            }
-          }
-          if (any(!auxDataUploaded)) {
-            cli::cli_inform(c(
-              "Some auxData files were not found in the Figshare article.",
-              "i" = paste0(
-                "Please upload the following auxData: ",
-                "{.val {names(self$auxData)[!auxDataUploaded]}}"
-              )
+              "The auxData file {.file {auxDataFilename}} is not found in the Figshare article.",
+              "i" = "Please upload the auxData file."
             ))
             next()
           }
         }
-        if (attempts >= maxAttempts) {
-          cli::cli_abort(c(
-            "Failed to upload the data to Figshare after 3 attempts.",
-            "i" = paste0(
-              "Please ensure that the data are uploaded to Figshare and",
-              " try again."
-            )
-          ))
-        }
+        verified <- datasetUploaded && (auxDataUploaded || !saveAuxData)
+      }
+      if (!verified) {
+        cli::cli_abort(c(
+          "Failed to verify upload to Figshare after 4 attempts.",
+          "i" = "Please ensure the files are uploaded and try again."
+        ))
       }
 
       # if the dataset doesn't have a description, prompt the user to input one
