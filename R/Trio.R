@@ -538,55 +538,60 @@ Trio <- R6::R6Class(
     #' Write the Trio Metadata to Curated Trio Datasets sheet.
     #' @param name the name of the dataset to be added.
     writeCTD = function(name) {
+      # Initialize state list
+      state <- list(
+        name = name,
+        md5 = "",
+        save = FALSE,
+        saveAuxData = FALSE,
+        auxDataFilename = paste0(name, "_auxData.rds"),
+        auxDataMd5 = "",
+        dataSource = self$dataSource,
+        dataSourceID = self$dataSourceID,
+        auxDataSource = self$auxDataSource,
+        auxDataSourceID = self$auxDataSourceID,
+        datasetID = private$datasetID,
+        dataType = NULL
+      )
+      
       # Perform initial validation checks
-      private$validateWriteCTD()
+      state <- private$validateWriteCTD(state)
       
       # Handle GitHub PAT
-      private$handleGitHubPAT()
-      
-      # Initialize variables
-      md5 <- ""
-      save <- FALSE
-      saveAuxData <- FALSE
-      auxDataFilename <- paste0(name, "_auxData.rds")
-      auxDataMd5 <- ""
+      state <- private$handleGitHubPAT(state)
       
       # Handle data saving
-      result <- private$handleDataSaving(name, md5, save)
-      md5 <- result$md5
-      save <- result$save
+      state <- private$handleDataSaving(state)
       
       # Validate dataset availability
-      private$validateDatasetAvailability(name, save)
+      state <- private$validateDatasetAvailability(state)
       
       # Save auxiliary data
-      auxDataResult <- private$saveAuxiliaryData(name, auxDataFilename)
-      saveAuxData <- auxDataResult$saveAuxData
-      auxDataMd5 <- auxDataResult$auxDataMd5
+      state <- private$saveAuxiliaryData(state)
       
       # Verify Figshare upload
-      uploadResult <- private$verifyFigshareUpload(name, md5, auxDataFilename, auxDataMd5, saveAuxData)
-      self$dataSource <- uploadResult$dataSource
-      self$dataSourceID <- uploadResult$dataSourceID
-      self$auxDataSource <- uploadResult$auxDataSource
-      self$auxDataSourceID <- uploadResult$auxDataSourceID
+      state <- private$verifyFigshareUpload(state)
+      self$dataSource <- state$dataSource
+      self$dataSourceID <- state$dataSourceID
+      self$auxDataSource <- state$auxDataSource
+      self$auxDataSourceID <- state$auxDataSourceID
       
       # Handle dataset description
-      private$handleDatasetDescription()
+      state <- private$handleDatasetDescription(state)
       
       # Process Google Sheets data
-      sheetsResult <- private$processGoogleSheetsData(name)
-      private$datasetID <- sheetsResult$datasetID
-      dataType <- sheetsResult$dataType
+      state <- private$processGoogleSheetsData(state)
+      private$datasetID <- state$datasetID
+      state$dataType <- state$dataType
       
       # Add dataset to sheets
-      private$addDatasetToSheets(name, dataType, md5)
+      state <- private$addDatasetToSheets(state)
       
       # Add auxiliary data to sheets
-      private$addAuxDataToSheets(name, saveAuxData)
+      state <- private$addAuxDataToSheets(state)
       
       # Process metrics and tasks
-      private$processMetricsAndTasks(name)
+      state <- private$processMetricsAndTasks(state)
       
       cli::cli_inform(c(
         "Added the dataset to the Curated Trio Datasets sheet.",
@@ -601,7 +606,7 @@ Trio <- R6::R6Class(
     datasetID = NULL,
     CTDlink = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
     
-    validateWriteCTD = function() {
+    validateWriteCTD = function(state) {
       if (length(self$auxData) == 0) {
         cli::cli_abort(c(
           "There is no auxiliary data in this Trio!",
@@ -620,9 +625,10 @@ Trio <- R6::R6Class(
           "i" = "Please run it in an interactive session."
         ))
       }
+      return(state)
     },
     
-    handleGitHubPAT = function() {
+    handleGitHubPAT = function(state) {
       # check if GITHUB_PAT is set and ask the user to set it if not
       if (Sys.getenv("GITHUB_PAT") == "") {
         cli::cli_inform(c(
@@ -645,28 +651,29 @@ Trio <- R6::R6Class(
           ))
         }
       }
+      return(state)
     },
     
-    handleDataSaving = function(name, md5, save) {
+    handleDataSaving = function(state) {
       # Save dataset if needed
-      if (is.null(self$dataSourceID) && !save) {
-        save <- utils::askYesNo(
+      if (is.null(self$dataSourceID) && !state$save) {
+        state$save <- utils::askYesNo(
           "Do you want to save the data to an RDS file in the current dir?"
         )
-        if (save) {
-          filename <- paste0(name, "_dataset.rds")
+        if (state$save) {
+          filename <- paste0(state$name, "_dataset.rds")
           saveRDS(self$data, file = filename, compress = "xz")
-          md5 <- tools::md5sum(filename)
+          state$md5 <- tools::md5sum(filename)
           cli::cli_inform(c(
             "Saved the dataset to {.file {filename}}."
           ))
         }
       }
-      return(list(md5 = md5, save = save))
+      return(state)
     },
     
-    validateDatasetAvailability = function(name, save) {
-      if (!save && is.null(self$dataSourceID)) {
+    validateDatasetAvailability = function(state) {
+      if (!state$save && is.null(self$dataSourceID)) {
         #TODO: ask the user if the dataset is available in one of the databases
         #      with an implemented downloader in downloaders.R
         cli::cli_abort(c(
@@ -680,23 +687,24 @@ Trio <- R6::R6Class(
           )
         ))
       }
+      return(state)
     },
     
-    saveAuxiliaryData = function(name, auxDataFilename) {
+    saveAuxiliaryData = function(state) {
       # Save all auxData as a single file (required for CTD)
       cli::cli_inform(c(
         "Saving auxiliary data to RDS file..."
       ))
-      saveAuxData <- TRUE
-      saveRDS(self$auxData, file = auxDataFilename, compress = "xz")
-      auxDataMd5 <- tools::md5sum(auxDataFilename)
+      state$saveAuxData <- TRUE
+      saveRDS(self$auxData, file = state$auxDataFilename, compress = "xz")
+      state$auxDataMd5 <- tools::md5sum(state$auxDataFilename)
       cli::cli_inform(c(
-        "Saved all auxData to {.file {auxDataFilename}}."
+        "Saved all auxData to {.file {state$auxDataFilename}}."
       ))
-      return(list(saveAuxData = saveAuxData, auxDataMd5 = auxDataMd5))
+      return(state)
     },
     
-    verifyFigshareUpload = function(name, md5, auxDataFilename, auxDataMd5, saveAuxData) {
+    verifyFigshareUpload = function(state) {
       # Upload verification using md5
       cli::cli_inform(c(
         paste0(
@@ -707,10 +715,6 @@ Trio <- R6::R6Class(
       attempts <- 0
       maxAttempts <- 4
       verified <- FALSE
-      dataSource <- self$dataSource
-      dataSourceID <- self$dataSourceID
-      auxDataSource <- self$auxDataSource
-      auxDataSourceID <- self$auxDataSourceID
       
       while (attempts < maxAttempts && !verified) {
         attempts <- attempts + 1
@@ -735,33 +739,33 @@ Trio <- R6::R6Class(
         # Check dataset file
         datasetUploaded <- FALSE
         # Compute md5 if not present
-        if (is.null(md5) || md5 == "") {
-          localFile <- paste0(name, "_dataset.rds")
+        if (is.null(state$md5) || state$md5 == "") {
+          localFile <- paste0(state$name, "_dataset.rds")
           if (file.exists(localFile)) {
-            md5 <- tools::md5sum(localFile)
+            state$md5 <- tools::md5sum(localFile)
           } else {
             # Create temporary file if local doesn't exist
-            tmpFile <- file.path(tempdir(), paste0(name, "_dataset.rds"))
+            tmpFile <- file.path(tempdir(), paste0(state$name, "_dataset.rds"))
             saveRDS(self$data, file = tmpFile, compress = "xz")
-            md5 <- tools::md5sum(tmpFile)
+            state$md5 <- tools::md5sum(tmpFile)
             unlink(tmpFile) # Clean up temporary file
           }
         }
         if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
           datasetUploaded <- TRUE
         } else if (
-          grepl(paste0(name, "_dataset.rds"), fileNames, ignore.case = TRUE)
+          grepl(paste0(state$name, "_dataset.rds"), fileNames, ignore.case = TRUE)
         ) {
           idx <- which(
-            grepl(paste0(name, "_dataset.rds"), fileNames, ignore.case = TRUE)
+            grepl(paste0(state$name, "_dataset.rds"), fileNames, ignore.case = TRUE)
           )[1]
           fileID <- fileDF$id[idx]
           # Check md5
           fileMd5 <- fileDF$computed_md5[idx]
-          if (!is.null(md5) && md5 == fileMd5) {
+          if (!is.null(state$md5) && state$md5 == fileMd5) {
             datasetUploaded <- TRUE
-            dataSource <- "figshare"
-            dataSourceID <- paste0(id, "/", fileID)
+            state$dataSource <- "figshare"
+            state$dataSourceID <- paste0(id, "/", fileID)
           } else {
             cli::cli_inform(c(
               "The uploaded dataset file md5 does not match.",
@@ -772,26 +776,26 @@ Trio <- R6::R6Class(
           }
         } else {
           cli::cli_inform(c(
-            "The dataset file {.file {name}_dataset.rds} is not found in the Figshare article.",
+            "The dataset file {.file {state$name}_dataset.rds} is not found in the Figshare article.",
             "i" = "Please upload the dataset file."
           ))
           next()
         }
         # Check auxData file
         auxDataUploaded <- FALSE
-        if (saveAuxData) {
+        if (state$saveAuxData) {
           idxAux <- which(grepl(
-            auxDataFilename,
+            state$auxDataFilename,
             fileNames,
             ignore.case = TRUE
           ))[1]
           if (!is.na(idxAux)) {
             fileIDaux <- fileDF$id[idxAux]
             fileMd5aux <- fileDF$computed_md5[idxAux]
-            if (!is.null(auxDataMd5) && auxDataMd5 == fileMd5aux) {
+            if (!is.null(state$auxDataMd5) && state$auxDataMd5 == fileMd5aux) {
               auxDataUploaded <- TRUE
-              auxDataSource <- "figshare"
-              auxDataSourceID <- paste0(id, "/", fileIDaux)
+              state$auxDataSource <- "figshare"
+              state$auxDataSourceID <- paste0(id, "/", fileIDaux)
             } else {
               cli::cli_inform(c(
                 "The uploaded auxData file md5 does not match.",
@@ -801,13 +805,13 @@ Trio <- R6::R6Class(
             }
           } else {
             cli::cli_inform(c(
-              "The auxData file {.file {auxDataFilename}} is not found in the Figshare article.",
+              "The auxData file {.file {state$auxDataFilename}} is not found in the Figshare article.",
               "i" = "Please upload the auxData file."
             ))
             next()
           }
         }
-        verified <- datasetUploaded && (auxDataUploaded || !saveAuxData)
+        verified <- datasetUploaded && (auxDataUploaded || !state$saveAuxData)
       }
       if (!verified) {
         cli::cli_abort(c(
@@ -815,24 +819,20 @@ Trio <- R6::R6Class(
           "i" = "Please ensure the files are uploaded and try again."
         ))
       }
-      return(list(
-        dataSource = dataSource,
-        dataSourceID = dataSourceID,
-        auxDataSource = auxDataSource,
-        auxDataSourceID = auxDataSourceID
-      ))
+      return(state)
     },
     
-    handleDatasetDescription = function() {
+    handleDatasetDescription = function(state) {
       # if the dataset doesn't have a description, prompt the user to input one
       if (is.null(self$description)) {
         self$description <- readline(
           prompt = "Please provide a description for the dataset: "
         )
       }
+      return(state)
     },
     
-    processGoogleSheetsData = function(name) {
+    processGoogleSheetsData = function(state) {
       # read the existing datasets
       datasets <- googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
@@ -840,24 +840,23 @@ Trio <- R6::R6Class(
       )
       
       # calculate the next datasetID
-      datasetID <- private$datasetID
-      if (is.null(datasetID)) {
-        datasetID <- formatC(
+      if (is.null(state$datasetID)) {
+        state$datasetID <- formatC(
           max(as.integer(datasets$datasetID)) + 1,
           width = 4,
           flag = "0"
         )
       } else {
         cli::cli_abort(c(
-          "The datasetID is already set to {.val {private$datasetID}}.",
+          "The datasetID is already set to {.val {state$datasetID}}.",
           "i" = "Is this dataset already in the Curated Trio Datasets?"
         ))
       }
       
       # check if the name is already in the datasets
-      if (name %in% datasets$name) {
+      if (state$name %in% datasets$name) {
         cli::cli_abort(c(
-          "The dataset name {.val {name}} is already in the datasets sheet.",
+          "The dataset name {.val {state$name}} is already in the datasets sheet.",
           "i" = "Please choose a different name."
         ))
       }
@@ -879,37 +878,38 @@ Trio <- R6::R6Class(
           "i" = "Please select a data type."
         ))
       }
-      dataType <- dataTypes[dataType]
+      state$dataType <- dataTypes[dataType]
       
-      return(list(datasetID = datasetID, dataType = dataType))
+      return(state)
     },
     
-    addDatasetToSheets = function(name, dataType, md5) {
+    addDatasetToSheets = function(state) {
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = data.frame(
-          datasetID = private$datasetID,
-          name = name,
-          source = self$dataSource,
-          sourceID = self$dataSourceID,
-          md5 = md5,
-          dataType = dataType,
+          datasetID = state$datasetID,
+          name = state$name,
+          source = state$dataSource,
+          sourceID = state$dataSourceID,
+          md5 = state$md5,
+          dataType = state$dataType,
           description = self$description,
           validated = FALSE
         ),
         sheet = "Datasets"
       )
+      return(state)
     },
     
-    addAuxDataToSheets = function(name, saveAuxData) {
+    addAuxDataToSheets = function(state) {
       # add the auxData to the sheet
-      if (saveAuxData) {
+      if (state$saveAuxData) {
         auxDataMetaData <- data.frame(
-          datasetID = rep(private$datasetID, times = length(self$auxData)),
+          datasetID = rep(state$datasetID, times = length(self$auxData)),
           Auxiliary_Data = names(self$auxData),
           is_in_data = rep(FALSE, times = length(self$auxData)),
-          type = unlist(self$auxDataSource),
-          sourceID = unlist(self$auxDataSourceID),
+          type = unlist(state$auxDataSource),
+          sourceID = unlist(state$auxDataSourceID),
           name = rep("", times = length(self$auxData)),
           on_load = rep("", times = length(self$auxData)),
           validated = rep(FALSE, times = length(self$auxData)),
@@ -921,9 +921,10 @@ Trio <- R6::R6Class(
           sheet = "Dataset-AuxData"
         )
       }
+      return(state)
     },
     
-    processMetricsAndTasks = function(name) {
+    processMetricsAndTasks = function(state) {
       # create a character vector of the metric functions
       metricText <- lapply(names(self$metrics), function(metric_name) {
         metric_func <- self$metrics[[metric_name]]
@@ -949,9 +950,9 @@ Trio <- R6::R6Class(
       # create a gist of the metrics
       gist <- gistr::gist_create(
         code = metricText,
-        description = paste0("Metrics for Trio ", name),
+        description = paste0("Metrics for Trio ", state$name),
         public = TRUE,
-        filename = paste0(name, "_metrics.R")
+        filename = paste0(state$name, "_metrics.R")
       )
       
       # add the metrics to the sheet
@@ -989,8 +990,8 @@ Trio <- R6::R6Class(
       # create a table of auxData-metric relationships for each auxData
       taskAuxDataMetaData <- tibble::tibble(
         `Task ID` = paste0("T", taskID),
-        `Task Name` = name,
-        Topic = paste0(name, "Tasks"),
+        `Task Name` = state$name,
+        Topic = paste0(state$name, "Tasks"),
         `AuxData Type` = lapply(names(self$auxData), \(auxDataName) {
           metrics <- self$getMetrics(auxDataName)
           rep(auxDataName, times = length(metrics))
@@ -1006,6 +1007,7 @@ Trio <- R6::R6Class(
         data = taskAuxDataMetaData,
         sheet = "Task-AuxData Type-Metric"
       )
+      return(state)
     },
     
     parseIDString = function(userInput) {
