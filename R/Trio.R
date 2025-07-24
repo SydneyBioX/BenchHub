@@ -736,8 +736,21 @@ Trio <- R6::R6Class(
         }
         fileDF <- figshareListFiles(id)
         fileNames <- fileDF$name
+        
+        # Display available files for user selection
+        if (nrow(fileDF) > 0) {
+          cli::cli_inform(c(
+            "Available files in Figshare article:",
+            setNames(fileNames, rep("*", length(fileNames)))
+          ))
+        } else {
+          cli::cli_inform("No files found in the Figshare article.")
+          next()
+        }
+        
         # Check dataset file
         datasetUploaded <- FALSE
+        datasetFileName <- NULL
         # Compute md5 if not present
         if (is.null(state$md5) || state$md5 == "") {
           localFile <- paste0(state$name, "_dataset.rds")
@@ -753,12 +766,17 @@ Trio <- R6::R6Class(
         }
         if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
           datasetUploaded <- TRUE
-        } else if (
-          grepl(paste0(state$name, "_dataset.rds"), fileNames, ignore.case = TRUE)
-        ) {
-          idx <- which(
-            grepl(paste0(state$name, "_dataset.rds"), fileNames, ignore.case = TRUE)
-          )[1]
+        } else {
+          # Let user choose the dataset file from available files
+          cli::cli_inform("Please select the dataset file from the list above.")
+          datasetChoice <- utils::menu(fileNames)
+          if (datasetChoice == 0) {
+            cli::cli_inform("No dataset file selected. Please try again.")
+            next()
+          }
+          datasetFileName <- fileNames[datasetChoice]
+          
+          idx <- which(fileNames == datasetFileName)[1]
           fileID <- fileDF$id[idx]
           # Check md5
           fileMd5 <- fileDF$computed_md5[idx]
@@ -772,23 +790,32 @@ Trio <- R6::R6Class(
               "i" = "Please re-upload the correct file.",
               "i" = "Otherwise, set self$dataSource and self$dataSourceID."
             ))
-            next()
+            # Ask user if they want to override MD5 verification
+            overrideMD5 <- utils::askYesNo("Do you want to override the MD5 verification for the dataset file?")
+            if (overrideMD5) {
+              cli::cli_inform("MD5 verification overridden for dataset file.")
+              datasetUploaded <- TRUE
+              state$dataSource <- "figshare"
+              state$dataSourceID <- paste0(id, "/", fileID)
+            } else {
+              next()
+            }
           }
-        } else {
-          cli::cli_inform(c(
-            "The dataset file {.file {state$name}_dataset.rds} is not found in the Figshare article.",
-            "i" = "Please upload the dataset file."
-          ))
-          next()
         }
         # Check auxData file
         auxDataUploaded <- FALSE
+        auxDataFileName <- NULL
         if (state$saveAuxData) {
-          idxAux <- which(grepl(
-            state$auxDataFilename,
-            fileNames,
-            ignore.case = TRUE
-          ))[1]
+          # Let user choose the auxData file from available files
+          cli::cli_inform("Please select the auxData file from the list above.")
+          auxDataChoice <- utils::menu(fileNames, title = "AuxData file")
+          if (auxDataChoice == 0) {
+            cli::cli_inform("No auxData file selected. Please try again.")
+            next()
+          }
+          auxDataFileName <- fileNames[auxDataChoice]
+          
+          idxAux <- which(fileNames == auxDataFileName)[1]
           if (!is.na(idxAux)) {
             fileIDaux <- fileDF$id[idxAux]
             fileMd5aux <- fileDF$computed_md5[idxAux]
@@ -801,12 +828,21 @@ Trio <- R6::R6Class(
                 "The uploaded auxData file md5 does not match.",
                 "i" = "Please re-upload the correct auxData file."
               ))
-              next()
+              # Ask user if they want to override MD5 verification
+              overrideMD5Aux <- utils::askYesNo("Do you want to override the MD5 verification for the auxData file?")
+              if (overrideMD5Aux) {
+                cli::cli_inform("MD5 verification overridden for auxData file.")
+                auxDataUploaded <- TRUE
+                state$auxDataSource <- "figshare"
+                state$auxDataSourceID <- paste0(id, "/", fileIDaux)
+              } else {
+                next()
+              }
             }
           } else {
             cli::cli_inform(c(
-              "The auxData file {.file {state$auxDataFilename}} is not found in the Figshare article.",
-              "i" = "Please upload the auxData file."
+              "The selected auxData file is not found in the Figshare article.",
+              "i" = "Please try again."
             ))
             next()
           }
