@@ -76,6 +76,17 @@ Trio <- R6::R6Class(
       if (!is.null(data)) {
         if (interactive()) {
           self$description <- readline("Briefly describe the dataset: ")
+          self$dataSourceID <- ifelse(
+            is.null(datasetID) || datasetID == "",
+            readline("Name the dataset: "),
+            datasetID
+          )
+        } else {
+          self$dataSourceID <- ifelse(
+            is.null(datasetID) || datasetID == "",
+            "local_data",
+            datasetID
+          )
         }
         self$data <- data
         return(NULL)
