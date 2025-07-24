@@ -538,6 +538,70 @@ Trio <- R6::R6Class(
     #' Write the Trio Metadata to Curated Trio Datasets sheet.
     #' @param name the name of the dataset to be added.
     writeCTD = function(name) {
+      # Perform initial validation checks
+      private$validateWriteCTD()
+      
+      # Handle GitHub PAT
+      private$handleGitHubPAT()
+      
+      # Initialize variables
+      md5 <- ""
+      save <- FALSE
+      saveAuxData <- FALSE
+      auxDataFilename <- paste0(name, "_auxData.rds")
+      auxDataMd5 <- ""
+      
+      # Handle data saving
+      result <- private$handleDataSaving(name, md5, save)
+      md5 <- result$md5
+      save <- result$save
+      
+      # Validate dataset availability
+      private$validateDatasetAvailability(name, save)
+      
+      # Save auxiliary data
+      auxDataResult <- private$saveAuxiliaryData(name, auxDataFilename)
+      saveAuxData <- auxDataResult$saveAuxData
+      auxDataMd5 <- auxDataResult$auxDataMd5
+      
+      # Verify Figshare upload
+      uploadResult <- private$verifyFigshareUpload(name, md5, auxDataFilename, auxDataMd5, saveAuxData)
+      self$dataSource <- uploadResult$dataSource
+      self$dataSourceID <- uploadResult$dataSourceID
+      self$auxDataSource <- uploadResult$auxDataSource
+      self$auxDataSourceID <- uploadResult$auxDataSourceID
+      
+      # Handle dataset description
+      private$handleDatasetDescription()
+      
+      # Process Google Sheets data
+      sheetsResult <- private$processGoogleSheetsData(name)
+      private$datasetID <- sheetsResult$datasetID
+      dataType <- sheetsResult$dataType
+      
+      # Add dataset to sheets
+      private$addDatasetToSheets(name, dataType, md5)
+      
+      # Add auxiliary data to sheets
+      private$addAuxDataToSheets(name, saveAuxData)
+      
+      # Process metrics and tasks
+      private$processMetricsAndTasks(name)
+      
+      cli::cli_inform(c(
+        "Added the dataset to the Curated Trio Datasets sheet.",
+        "i" = paste0(
+          "Please check the details at ",
+          "{.href [this link]({private$CTDlink})}"
+        )
+      ))
+    }
+  ),
+  private = list(
+    datasetID = NULL,
+    CTDlink = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
+    
+    validateWriteCTD = function() {
       if (length(self$auxData) == 0) {
         cli::cli_abort(c(
           "There is no auxiliary data in this Trio!",
@@ -556,6 +620,9 @@ Trio <- R6::R6Class(
           "i" = "Please run it in an interactive session."
         ))
       }
+    },
+    
+    handleGitHubPAT = function() {
       # check if GITHUB_PAT is set and ask the user to set it if not
       if (Sys.getenv("GITHUB_PAT") == "") {
         cli::cli_inform(c(
@@ -578,13 +645,9 @@ Trio <- R6::R6Class(
           ))
         }
       }
-
-      md5 <- ""
-      save <- FALSE
-      saveAuxData <- FALSE
-      auxDataFilename <- paste0(name, "_auxData.rds")
-      auxDataMd5 <- ""
-
+    },
+    
+    handleDataSaving = function(name, md5, save) {
       # Save dataset if needed
       if (is.null(self$dataSourceID) && !save) {
         save <- utils::askYesNo(
@@ -599,7 +662,10 @@ Trio <- R6::R6Class(
           ))
         }
       }
-
+      return(list(md5 = md5, save = save))
+    },
+    
+    validateDatasetAvailability = function(name, save) {
       if (!save && is.null(self$dataSourceID)) {
         #TODO: ask the user if the dataset is available in one of the databases
         #      with an implemented downloader in downloaders.R
@@ -614,19 +680,23 @@ Trio <- R6::R6Class(
           )
         ))
       }
-
+    },
+    
+    saveAuxiliaryData = function(name, auxDataFilename) {
       # Save all auxData as a single file (required for CTD)
       cli::cli_inform(c(
         "Saving auxiliary data to RDS file..."
       ))
       saveAuxData <- TRUE
-      auxDataList <- self$auxData
-      saveRDS(auxDataList, file = auxDataFilename, compress = "xz")
+      saveRDS(self$auxData, file = auxDataFilename, compress = "xz")
       auxDataMd5 <- tools::md5sum(auxDataFilename)
       cli::cli_inform(c(
         "Saved all auxData to {.file {auxDataFilename}}."
       ))
-
+      return(list(saveAuxData = saveAuxData, auxDataMd5 = auxDataMd5))
+    },
+    
+    verifyFigshareUpload = function(name, md5, auxDataFilename, auxDataMd5, saveAuxData) {
       # Upload verification using md5
       cli::cli_inform(c(
         paste0(
@@ -637,6 +707,11 @@ Trio <- R6::R6Class(
       attempts <- 0
       maxAttempts <- 4
       verified <- FALSE
+      dataSource <- self$dataSource
+      dataSourceID <- self$dataSourceID
+      auxDataSource <- self$auxDataSource
+      auxDataSourceID <- self$auxDataSourceID
+      
       while (attempts < maxAttempts && !verified) {
         attempts <- attempts + 1
         url <- readline("Dataset/AuxData Figshare URL: ")
@@ -685,8 +760,8 @@ Trio <- R6::R6Class(
           fileMd5 <- fileDF$computed_md5[idx]
           if (!is.null(md5) && md5 == fileMd5) {
             datasetUploaded <- TRUE
-            self$dataSource <- "figshare"
-            self$dataSourceID <- paste0(id, "/", fileID)
+            dataSource <- "figshare"
+            dataSourceID <- paste0(id, "/", fileID)
           } else {
             cli::cli_inform(c(
               "The uploaded dataset file md5 does not match.",
@@ -715,8 +790,8 @@ Trio <- R6::R6Class(
             fileMd5aux <- fileDF$computed_md5[idxAux]
             if (!is.null(auxDataMd5) && auxDataMd5 == fileMd5aux) {
               auxDataUploaded <- TRUE
-              self$auxDataSource <- "figshare"
-              self$auxDataSourceID <- paste0(id, "/", fileIDaux)
+              auxDataSource <- "figshare"
+              auxDataSourceID <- paste0(id, "/", fileIDaux)
             } else {
               cli::cli_inform(c(
                 "The uploaded auxData file md5 does not match.",
@@ -740,22 +815,34 @@ Trio <- R6::R6Class(
           "i" = "Please ensure the files are uploaded and try again."
         ))
       }
-
+      return(list(
+        dataSource = dataSource,
+        dataSourceID = dataSourceID,
+        auxDataSource = auxDataSource,
+        auxDataSourceID = auxDataSourceID
+      ))
+    },
+    
+    handleDatasetDescription = function() {
       # if the dataset doesn't have a description, prompt the user to input one
       if (is.null(self$description)) {
         self$description <- readline(
           prompt = "Please provide a description for the dataset: "
         )
       }
+    },
+    
+    processGoogleSheetsData = function(name) {
       # read the existing datasets
       datasets <- googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Datasets"
       )
-
+      
       # calculate the next datasetID
-      if (is.null(private$datasetID)) {
-        private$datasetID <- formatC(
+      datasetID <- private$datasetID
+      if (is.null(datasetID)) {
+        datasetID <- formatC(
           max(as.integer(datasets$datasetID)) + 1,
           width = 4,
           flag = "0"
@@ -766,7 +853,7 @@ Trio <- R6::R6Class(
           "i" = "Is this dataset already in the Curated Trio Datasets?"
         ))
       }
-
+      
       # check if the name is already in the datasets
       if (name %in% datasets$name) {
         cli::cli_abort(c(
@@ -774,7 +861,7 @@ Trio <- R6::R6Class(
           "i" = "Please choose a different name."
         ))
       }
-
+      
       dataTypes <- c(
         "omics",
         "clinical",
@@ -793,7 +880,11 @@ Trio <- R6::R6Class(
         ))
       }
       dataType <- dataTypes[dataType]
-
+      
+      return(list(datasetID = datasetID, dataType = dataType))
+    },
+    
+    addDatasetToSheets = function(name, dataType, md5) {
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = data.frame(
@@ -808,58 +899,53 @@ Trio <- R6::R6Class(
         ),
         sheet = "Datasets"
       )
-
+    },
+    
+    addAuxDataToSheets = function(name, saveAuxData) {
       # add the auxData to the sheet
       if (saveAuxData) {
-        writeAuxData <- all(auxDataUploaded)
-
-        if (writeAuxData) {
-          auxDataMetaData <- data.frame(
-            datasetID = rep(private$datasetID, times = length(self$auxData)),
-            Auxiliary_Data = names(self$auxData),
-            is_in_data = rep(FALSE, times = length(self$auxData)),
-            type = unlist(self$auxDataSource),
-            sourceID = unlist(self$auxDataSourceID),
-            name = rep("", times = length(self$auxData)),
-            on_load = rep("", times = length(self$auxData)),
-            validated = rep(FALSE, times = length(self$auxData)),
-            stringsAsFactors = FALSE
-          )
-          googlesheets4::sheet_append(
-            ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-            data = auxDataMetaData,
-            sheet = "Dataset-AuxData"
-          )
-        } else {
-          cli::cli_inform(c(
-            "Could not confirm whether the auxData was uploaded to Figshare",
-            "i" = "Please fill in details about the auxData manually."
-          ))
-        }
+        auxDataMetaData <- data.frame(
+          datasetID = rep(private$datasetID, times = length(self$auxData)),
+          Auxiliary_Data = names(self$auxData),
+          is_in_data = rep(FALSE, times = length(self$auxData)),
+          type = unlist(self$auxDataSource),
+          sourceID = unlist(self$auxDataSourceID),
+          name = rep("", times = length(self$auxData)),
+          on_load = rep("", times = length(self$auxData)),
+          validated = rep(FALSE, times = length(self$auxData)),
+          stringsAsFactors = FALSE
+        )
+        googlesheets4::sheet_append(
+          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+          data = auxDataMetaData,
+          sheet = "Dataset-AuxData"
+        )
       }
-
+    },
+    
+    processMetricsAndTasks = function(name) {
       # create a character vector of the metric functions
       metricText <- lapply(names(self$metrics), function(metric_name) {
         metric_func <- self$metrics[[metric_name]]
         # access the environment of the metric function
         metric_env <- environment(metric_func)
-
+        
         # Extract the `metric` function and `args` from the environment
         metric <- metric_env$metric
         args <- metric_env$args
-
+        
         # Deparse the `metric` function
         metric_deparsed <- deparse(metric)
         metric_deparsed[1] <- paste0(metric_name, " <- ", metric_deparsed[1])
-
+        
         # Create the `metricArgs` list as a deparsed character vector
         args_deparsed <- paste0(metric_name, "Args <- ", deparse(args))
-
+        
         # Combine the deparsed function and args into the desired format
         c(metric_deparsed, args_deparsed)
       }) |>
         unlist()
-
+      
       # create a gist of the metrics
       gist <- gistr::gist_create(
         code = metricText,
@@ -867,7 +953,7 @@ Trio <- R6::R6Class(
         public = TRUE,
         filename = paste0(name, "_metrics.R")
       )
-
+      
       # add the metrics to the sheet
       metricsMetaData <- data.frame(
         MetricID = names(self$metrics),
@@ -880,26 +966,26 @@ Trio <- R6::R6Class(
         validated = rep(FALSE, times = length(self$metrics)),
         stringsAsFactors = FALSE
       )
-
+      
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = metricsMetaData,
         sheet = "Metrics"
       )
-
+      
       # get the next task ID
       # read the existing datasets
       tasks <- googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Task-AuxData Type-Metric"
       )
-
+      
       taskID <- formatC(
         max(as.integer(substring(tasks$`Task ID`, 2))) + 1,
         width = 4,
         flag = "0"
       )
-
+      
       # create a table of auxData-metric relationships for each auxData
       taskAuxDataMetaData <- tibble::tibble(
         `Task ID` = paste0("T", taskID),
@@ -914,51 +1000,40 @@ Trio <- R6::R6Class(
           unlist(),
         validated = FALSE
       )
-
+      
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = taskAuxDataMetaData,
         sheet = "Task-AuxData Type-Metric"
       )
-
-      cli::cli_inform(c(
-        "Added the dataset to the Curated Trio Datasets sheet.",
-        "i" = paste0(
-          "Please check the details at ",
-          "{.href [this link]({private$CTDlink})}"
-        )
-      ))
-    }
-  ),
-  private = list(
-    datasetID = NULL,
-    CTDlink = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
+    },
+    
     parseIDString = function(userInput) {
       parsed <- unlist(stringr::str_split(userInput, ":"))
-
+      
       if (length(parsed) == 1) {
         datasets <- googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
           sheet = "Datasets"
         )
-
+        
         if (!userInput %in% datasets$name) {
           # TODO: Tell the user how to list the available datasets
           cli::cli_abort(c(
             "Specified dataset ({.val {userInput}}) is not avaiable."
           ))
         }
-
+        
         sourceName <- datasets |>
           dplyr::filter(name == userInput) |>
           dplyr::select(source) |>
           purrr::pluck(1)
-
+        
         id <- datasets |>
           dplyr::filter(name == userInput) |>
           dplyr::select(sourceID) |>
           purrr::pluck(1)
-
+        
         private$datasetID <- datasets |>
           dplyr::filter(name == userInput) |>
           dplyr::select(datasetID) |>
@@ -975,7 +1050,7 @@ Trio <- R6::R6Class(
           )
         ))
       }
-
+      
       if (!exists(paste0(sourceName, "Dl"))) {
         supported <- stringr::str_remove(
           grep("Dl", ls("package:BenchHub"), value = TRUE),
@@ -986,7 +1061,7 @@ Trio <- R6::R6Class(
           "i" = "Choose one of the following: {supported}"
         ))
       }
-
+      
       self$dataSource <- sourceName
       self$dataSourceID <- id
     },
@@ -997,31 +1072,31 @@ Trio <- R6::R6Class(
         paste0(sourceName, "Dl"),
         list("ID" = id, "cachePath" = cachePath)
       )
-
+      
       if (length(files) > 1) {
         if (self$verbose) {
           cli::cli_inform("Select a file to load as the dataset:")
         }
         files <- files[utils::menu(files)]
       }
-
+      
       if (is.null(dataLoader)) {
         return(loadFile(files))
       }
-
+      
       if (!is.function(dataLoader)) {
         cli::cli_abort(c(
           "The provided {.var dataLoader} is not a function!",
           "i" = "Ensure the dataloader is a function with one argument."
         ))
       }
-
+      
       if (length(formals(dataLoader)) != 1) {
         cli::cli_abort(c(
           "The provided dataLoader must have one argument!"
         ))
       }
-
+      
       dataLoader(files)
     },
     populateTrio = function() {
@@ -1040,7 +1115,7 @@ Trio <- R6::R6Class(
         ) |>
           dplyr::filter(datasetID == private$datasetID)
       )
-
+      
       if (nrow(auxDataMetaData) == 0) {
         cli::cli_warn(c(
           paste0(self$CTDlink, " has no auxData for this dataset."),
@@ -1048,9 +1123,9 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
-
+      
       auxData <- auxDataMetaData |> purrr::pluck("Auxiliary Data")
-
+      
       # get the relevant metrics and respective information from the sheet.
       metrics <- suppressMessages(
         googlesheets4::read_sheet(
@@ -1066,7 +1141,7 @@ Trio <- R6::R6Class(
             )
           )
       )
-
+      
       # create metrics inside the object
       apply(metrics, 1, \(metric) {
         if (metric["Metric Type"] == "internal") {
@@ -1081,7 +1156,7 @@ Trio <- R6::R6Class(
           ))
         }
       })
-
+      
       # add each gold standard with it's respective metrics
       apply(auxDataMetaData, 1, \(auxData) {
         if (auxData["is_in_data"]) {
