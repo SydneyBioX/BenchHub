@@ -181,10 +181,12 @@ figshareListFiles <- function(articleID, fileID = NULL) {
   API_URL <- "https://api.figshare.com/v2/"
 
   # Create request URL
+  # Assumption: No article will have more that 100 files...
   requestUrl <- glue::glue(
     API_URL,
     "articles/{articleID}/files",
-    ifelse(!is.null(fileID), paste0("/", fileID), "")
+    ifelse(!is.null(fileID), paste0("/", fileID), ""),
+    "?page_size=100"
   )
 
   # Execute request
