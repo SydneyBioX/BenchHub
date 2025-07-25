@@ -4,10 +4,10 @@
 \alias{balErrMetric}
 \title{Balanced Error Metric}
 \usage{
-balErrMetric(auxData, predicted)
+balErrMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The balanced error.
 Computes the balanced error of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-balErrMetric(auxData, predicted)
+balErrMetric(evidence, predicted)
 }

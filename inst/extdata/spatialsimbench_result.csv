@@ -1,4 +1,4 @@
-datasetID,method,auxData,metric,result
+datasetID,method,evidence,metric,result
 BREAST,scDesign2,scaledVar,KDEstat,-0.184478374
 HOSTEOSARCOMA,scDesign2,scaledVar,KDEstat,3.336803014
 HPROSTATE,scDesign2,scaledVar,KDEstat,6.954189783

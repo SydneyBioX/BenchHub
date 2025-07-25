@@ -4,10 +4,10 @@
 \alias{kdeMetric}
 \title{Kernel Density Estimation (KDE) Metric}
 \usage{
-kdeMetric(auxData, predicted)
+kdeMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true values.}
+\item{evidence}{The true values.}
 
 \item{predicted}{The predicted values.}
 }
@@ -18,7 +18,7 @@ The KDE test statistic.
 Computes the kernel density estimation test statistic.
 }
 \examples{
-auxData <- c(1, 2, 3, 4)
+evidence <- c(1, 2, 3, 4)
 predicted <- c(1.1, 2.1, 2.9, 4.2)
-kdeMetric(auxData, predicted)
+kdeMetric(evidence, predicted)
 }

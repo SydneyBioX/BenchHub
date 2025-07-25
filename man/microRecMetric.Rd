@@ -4,10 +4,10 @@
 \alias{microRecMetric}
 \title{Micro Recall Metric}
 \usage{
-microRecMetric(auxData, predicted)
+microRecMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The micro recall.
 Computes the micro recall of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-microRecMetric(auxData, predicted)
+microRecMetric(evidence, predicted)
 }

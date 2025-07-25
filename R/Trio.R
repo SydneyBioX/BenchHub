@@ -7,15 +7,15 @@ NULL
 #' @description An object containing a dataset and methods for evaluating
 #'   analytical tasks against ground truths for the dataset.
 #' @field data The data
-#' @field auxData The auxiliary data in the data
+#' @field evidence The supporting evidence for the data
 #' @field metrics The metric for evaluating tasks against the gold standards
 #' @field cachePath The path to the data cache
 #' @field dataSource The data repository that the data were retrieved from
 #' @field dataSourceID The dataset ID for `dataSource`
 #' @field
-#'   auxDataSource The data repository that the auxiliary data were
+#'   evidenceSource The data repository that the supporting evidence was
 #'   retrieved from
-#' @field auxDataSourceID The dataset ID for `auxDataSource`
+#' @field evidenceSourceID The dataset ID for `evidenceSource`
 #' @field splitIndices Indices for cross-validation
 #' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
@@ -31,12 +31,12 @@ Trio <- R6::R6Class(
   public = list(
     cachePath = NULL,
     data = NULL,
-    auxData = list(),
+    evidence = list(),
     metrics = list(),
     dataSource = NULL,
     dataSourceID = NULL,
-    auxDataSource = list(),
-    auxDataSourceID = list(),
+    evidenceSource = list(),
+    evidenceSourceID = list(),
     splitIndices = NULL,
     splitSeed = NULL,
     verbose = FALSE,
@@ -125,39 +125,39 @@ Trio <- R6::R6Class(
     },
 
     #' @description
-    #' Add a gold standard to the Trio.
-    #' @param name A string specifying the name of the gold standard.
-    #' @param auxData
-    #'   The auxiliary data. An object to be compared or a function to be run on
+    #' Add supporting evidence to the Trio.
+    #' @param name A string specifying the name of the supporting evidence.
+    #' @param evidence
+    #'   The supporting evidence. An object to be compared or a function to be run on
     #'   the data.
     #' @param metrics
     #'   A list of one or more metrics names used to compare gs with the input
     #'   to evaluate.
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
-    addAuxData = function(name, auxData, metrics, args = NULL) {
-      if (name %in% names(self$auxData)) {
+    addEvidence = function(name, evidence, metrics, args = NULL) {
+      if (name %in% names(self$evidence)) {
         cli::cli_warn(c(
           paste0(
-            "Auxiliary data `{name}` is already present in this Trio,",
+            "Supporting evidence `{name}` is already present in this Trio,",
             " overwriting."
           )
         ))
       }
 
-      if (methods::is(auxData, "function")) {
+      if (methods::is(evidence, "function")) {
         # Assign a wrapper function that adds args applies to
         # self$data, returning the result.
-        self$auxData[[name]] <- list(
-          "auxData" = function(data) {
-            do.call(auxData, append(list(data), args))
+        self$evidence[[name]] <- list(
+          "evidence" = function(data) {
+            do.call(evidence, append(list(data), args))
           },
           "metrics" = metrics
         )
       } else {
         # TODO: Validate the gold standard objects.
-        self$auxData[[name]] <- list(
-          "auxData" = auxData,
+        self$evidence[[name]] <- list(
+          "evidence" = evidence,
           "metrics" = metrics
         )
       }
@@ -188,53 +188,53 @@ Trio <- R6::R6Class(
         ))
       }
       # TODO: Validate metric!!
-      # metric functions should follow this format (auxData, to_eval)
-      self$metrics[[name]] <- function(auxData, to_eval) {
-        do.call(metric, append(list(auxData, to_eval), args))
+      # metric functions should follow this format (evidence, to_eval)
+      self$metrics[[name]] <- function(evidence, to_eval) {
+        do.call(metric, append(list(evidence, to_eval), args))
       }
     },
 
     #' @description
-    #' Get metrics by gold standard name.
-    #' @param auxDataName A string specifying the name of the gold standard.
-    getMetrics = function(auxDataName) {
-      if (!auxDataName %in% names(self$auxData)) {
+    #' Get metrics by supporting evidence name.
+    #' @param evidenceName A string specifying the name of the supporting evidence.
+    getMetrics = function(evidenceName) {
+      if (!evidenceName %in% names(self$evidence)) {
         cli::cli_abort(c(
-          "{.val {auxDataName} is not auxiliary data in this object.}",
-          "i" = "Choose one of {.val {names(self$auxData)}}"
+          "{.val {evidenceName} is not supporting evidence in this object.}",
+          "i" = "Choose one of {.val {names(self$evidence)}}"
         ))
       }
-      purrr::pluck(self$auxData, auxDataName, "metrics")
+      purrr::pluck(self$evidence, evidenceName, "metrics")
     },
 
     #' @description
-    #' Get auxiliary data by name.
-    #' @param name A string specifying the name of the auxiliary data.
-    getAuxData = function(name) {
-      if (length(self$auxData) == 0) {
+    #' Get supporting evidence by name.
+    #' @param name A string specifying the name of the supporting evidence.
+    getEvidence = function(name) {
+      if (length(self$evidence) == 0) {
         cli::cli_abort(c(
-          "There is no auxiliary data in this Trio!",
-          "i" = "Add some using {.code Trio$addAuxData(...)}."
+          "There is no supporting evidence in this Trio!",
+          "i" = "Add some using {.code Trio$addEvidence(...)}."
         ))
       }
-      if (!name %in% names(self$auxData)) {
-        auxDataNames <- names(self$auxData)
+      if (!name %in% names(self$evidence)) {
+        evidenceNames <- names(self$evidence)
         cli::cli_abort(c(
-          "Auxiliary data {.val {name}} could not be found.",
+          "Supporting evidence {.val {name}} could not be found.",
           "i" = paste0(
-            "Add it using {.code Trio$addAuxDataS(.)} or choose one of ",
-            "{.val {auxDataNames}}"
+            "Add it using {.code Trio$addEvidence(.)} or choose one of ",
+            "{.val {evidenceNames}}"
           )
         ))
       }
 
-      auxData <- self$auxData[[name]]$auxData
+      evidence <- self$evidence[[name]]$evidence
 
-      if (!methods::is(auxData, "function")) {
-        return(auxData)
+      if (!methods::is(evidence, "function")) {
+        return(evidence)
       }
 
-      auxData(self$data)
+      evidence(self$data)
     },
 
     #' @description
@@ -253,16 +253,16 @@ Trio <- R6::R6Class(
         ))
       }
 
-      # check if the requested auxData are available
-      auxDataAvail <- names(input) %in% names(self$auxData)
+      # check if the requested evidence is available
+      evidenceAvail <- names(input) %in% names(self$evidence)
 
-      # if input list contains no auxData names, check if first sub-list
-      # contains auxData names and set separateMethods based on this
-      if (all(!auxDataAvail)) {
-        if (any(names(input[[1]]) %in% names(self$auxData))) {
+      # if input list contains no evidence names, check if first sub-list
+      # contains evidence names and set separateMethods based on this
+      if (all(!evidenceAvail)) {
+        if (any(names(input[[1]]) %in% names(self$evidence))) {
           if (self$verbose) {
             cli::cli_inform(c(
-              "AuxData names found in sublist.",
+              "Evidence names found in sublist.",
               "i" = "Evaluating as separate methods."
             ))
           }
@@ -272,7 +272,7 @@ Trio <- R6::R6Class(
         separateMethods <- FALSE
       }
 
-      # check if auxiliary data is available for each element of the input.
+      # check if supporting evidence is available for each element of the input.
       if (separateMethods) {
         evalList <- lapply(input, self$evaluate, splitIndex = splitIndex)
         return(
@@ -280,46 +280,46 @@ Trio <- R6::R6Class(
             dplyr::select(datasetID, dplyr::everything())
         )
       } else {
-        # if none of the auxData are available
-        if (all(!auxDataAvail)) {
-          auxDataNames <- names(self$auxData)
+        # if none of the evidence is available
+        if (all(!evidenceAvail)) {
+          evidenceNames <- names(self$evidence)
           cli::cli_abort(c(
-            "None of the specified auxiliary data are available in the object.",
+            "None of the specified supporting evidence is available in the object.",
             "i" = paste0(
-              "Add it using {.code Trio$addAuxData(.)} or choose",
-              " from {.val {auxDataNames}}"
+              "Add it using {.code Trio$addEvidence(.)} or choose",
+              " from {.val {evidenceNames}}"
             )
           ))
         }
 
-        # if some of the auxData are missing
-        if (any(!auxDataAvail)) {
-          unavail <- names(input)[!auxDataAvail]
+        # if some of the evidence is missing
+        if (any(!evidenceAvail)) {
+          unavail <- names(input)[!evidenceAvail]
           if (self$verbose) {
             cli::cli_inform(c(
               paste0(
-                "Auxiliary data{?s} {.val {unavail}} from {.var input} ",
+                "Supporting evidence {.val {unavail}} from {.var input} ",
                 "{?is/are} not available in this object. Passing through as ",
                 "unevaluated benchmark data."
               ),
               "i" = paste0(
                 "Evaluating the following:",
-                " {.var {names(input)[auxDataAvail]}}"
+                " {.var {names(input)[evidenceAvail]}}"
               )
             ))
           }
         }
 
-        # compute/retrieve auxiliary data
-        auxData <- setNames(
-          lapply(names(input[auxDataAvail]), self$getAuxData),
-          names(input[auxDataAvail])
+        # compute/retrieve supporting evidence
+        evidence <- setNames(
+          lapply(names(input[evidenceAvail]), self$getEvidence),
+          names(input[evidenceAvail])
         )
 
         # get a list of metrics to compute for each gold standard in the data
         metrics <- setNames(
-          lapply(names(input[auxDataAvail]), self$getMetrics),
-          names(input[auxDataAvail])
+          lapply(names(input[evidenceAvail]), self$getMetrics),
+          names(input[evidenceAvail])
         )
 
         # get a flat list of available metrics
@@ -334,7 +334,7 @@ Trio <- R6::R6Class(
         if (length(unavailMetrics) == length(allMetrics)) {
           cli::cli_abort(c(
             paste0(
-              "None of the metrics related to the auxiliary data being ",
+              "None of the metrics related to the supporting evidence being ",
               "evaluated are available in the object."
             ),
             "i" = "Add some of the following: {.val {allMetrics}}."
@@ -353,16 +353,16 @@ Trio <- R6::R6Class(
           # remove unavailable metrics from the nested list
           metrics <- lapply(
             metrics,
-            \(auxDataMetrics) {
-              Filter(\(x) !x %in% unavailMetrics, auxDataMetrics)
+            \(evidenceMetrics) {
+              Filter(\(x) !x %in% unavailMetrics, evidenceMetrics)
             }
           )
         }
 
-        # subset auxiliary data based on splitIndex if provided
+        # subset evidence based on splitIndex if provided
         if (!is.null(splitIndex) && !is.null(self$splitIndices)) {
-          auxData <- lapply(
-            auxData,
+          evidence <- lapply(
+            evidence,
             function(data) {
               indices <- self$splitIndices[[splitIndex]]
               if (
@@ -376,10 +376,10 @@ Trio <- R6::R6Class(
                   "Unsupported data type.",
                   "x" = paste0(
                     "Only vectors and tabular data are supported for",
-                    " auxData subsetting."
+                    " evidence subsetting."
                   ),
                   "i" = paste0(
-                    "Try adding pre-subsetted auxData to the Trio for",
+                    "Try adding pre-subsetted evidence to the Trio for",
                     " evaluation."
                   )
                 ))
@@ -388,14 +388,14 @@ Trio <- R6::R6Class(
           )
         }
         # compute each metric for each input
-        res <- purrr::imap(input, function(to_eval, auxDataName) {
-          if (is.null(metrics[[auxDataName]])) {
+        res <- purrr::imap(input, function(to_eval, evidenceName) {
+          if (is.null(metrics[[evidenceName]])) {
             return(to_eval)
           }
           res <- lapply(
-            metrics[[auxDataName]],
+            metrics[[evidenceName]],
             function(x) {
-              metric_res <- self$metrics[[x]](to_eval, auxData[[auxDataName]])
+              metric_res <- self$metrics[[x]](to_eval, evidence[[evidenceName]])
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
                   "The result for the {.val {x}} metric is not a single value.",
@@ -408,7 +408,7 @@ Trio <- R6::R6Class(
               metric_res
             }
           )
-          setNames(res, metrics[[auxDataName]])
+          setNames(res, metrics[[evidenceName]])
         })
         purrr::map(names(res), function(metric_name) {
           metricValues <- res[[metric_name]]
@@ -416,7 +416,7 @@ Trio <- R6::R6Class(
           # Create a data frame for each metric
           tibble::tibble(
             datasetID = self$dataSourceID,
-            auxData = metric_name,
+            evidence = metric_name,
             metric = names(metricValues),
             result = unlist(metricValues)
           )
@@ -426,9 +426,9 @@ Trio <- R6::R6Class(
     },
 
     #' @description
-    #' Create a cross-validation indices.
+    #' Create cross-validation indices.
     #' @param y
-    #'   A variable to use for stratified sampling. If `stratify` is false, a
+    #'   A variable to use for stratified sampling (e.g. supporting evidence). If `stratify` is false, a
     #'   vector the length of the data.
     #' @param n_fold Number of folds. Defaults to `5L`.
     #' @param n_repeat Number of repeats. Defaults to `1L`.
@@ -500,12 +500,12 @@ Trio <- R6::R6Class(
         cli::cli_text("{.strong Cache Path}: {.val {self$cachePath}}")
         cli::cli_text("{.strong Split Indices}: {.val {split_ind}}")
 
-        cli::cli_h3("Auxiliary Data")
+        cli::cli_h3("Supporting Evidence")
         cli::cli_text(
-          "{.strong Number of Auxiliary Data}: {.val {length(self$auxData)}}"
+          "{.strong Number of Supporting Evidence}: {.val {length(self$evidence)}}"
         )
         cli::cli_text(
-          "{.strong Names of Auxiliary Data}: {.val {names(self$auxData)}}"
+          "{.strong Names of Supporting Evidence}: {.val {names(self$evidence)}}"
         )
 
         cli::cli_h3("Metrics")
@@ -543,13 +543,13 @@ Trio <- R6::R6Class(
         name = name,
         md5 = "",
         save = FALSE,
-        saveAuxData = FALSE,
-        auxDataFilename = paste0(name, "_auxData.rds"),
-        auxDataMd5 = "",
+        saveEvidence = FALSE,
+        evidenceFilename = paste0(name, "_evidence.rds"),
+        evidenceMd5 = "",
         dataSource = self$dataSource,
         dataSourceID = self$dataSourceID,
-        auxDataSource = self$auxDataSource,
-        auxDataSourceID = self$auxDataSourceID,
+        evidenceSource = self$evidenceSource,
+        evidenceSourceID = self$evidenceSourceID,
         datasetID = private$datasetID,
         dataType = NULL
       )
@@ -566,15 +566,15 @@ Trio <- R6::R6Class(
       # Validate dataset availability
       state <- private$validateDatasetAvailability(state)
 
-      # Save auxiliary data
-      state <- private$saveAuxiliaryData(state)
+      # Save supporting evidence
+      state <- private$saveSupportingEvidence(state)
 
       # Verify Figshare upload
       state <- private$verifyFigshareUpload(state)
       self$dataSource <- state$dataSource
       self$dataSourceID <- state$dataSourceID
-      self$auxDataSource <- state$auxDataSource
-      self$auxDataSourceID <- state$auxDataSourceID
+      self$evidenceSource <- state$evidenceSource
+      self$evidenceSourceID <- state$evidenceSourceID
 
       # Handle dataset description
       state <- private$handleDatasetDescription(state)
@@ -587,8 +587,8 @@ Trio <- R6::R6Class(
       # Add dataset to sheets
       state <- private$addDatasetToSheets(state)
 
-      # Add auxiliary data to sheets
-      state <- private$addAuxDataToSheets(state)
+      # Add evidence to sheets
+      state <- private$addEvidenceToSheets(state)
 
       # Process metrics and tasks
       state <- private$processMetricsAndTasks(state)
@@ -607,10 +607,10 @@ Trio <- R6::R6Class(
     CTDlink = "{.href [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}",
 
     validateWriteCTD = function(state) {
-      if (length(self$auxData) == 0) {
+      if (length(self$evidence) == 0) {
         cli::cli_abort(c(
-          "There is no auxiliary data in this Trio!",
-          "i" = "Add some using {.code Trio$addAuxData(...)}."
+          "There is no {.var evidence} in this Trio!",
+          "i" = "Add some using {.code Trio$addEvidence(...)}."
         ))
       }
       if (!curl::has_internet()) {
@@ -690,16 +690,16 @@ Trio <- R6::R6Class(
       return(state)
     },
 
-    saveAuxiliaryData = function(state) {
-      # Save all auxData as a single file (required for CTD)
+    saveSupportingEvidence = function(state) {
+      # Save all evidence as a single file (required for CTD)
       cli::cli_inform(c(
-        "Saving auxiliary data to RDS file..."
+        "Saving supporting evidence to RDS file..."
       ))
-      state$saveAuxData <- TRUE
-      saveRDS(self$auxData, file = state$auxDataFilename, compress = "xz")
-      state$auxDataMd5 <- tools::md5sum(state$auxDataFilename)
+      state$saveEvidence <- TRUE
+      saveRDS(self$evidence, file = state$evidenceFilename, compress = "xz")
+      state$evidenceMd5 <- tools::md5sum(state$evidenceFilename)
       cli::cli_inform(c(
-        "Saved all auxData to {.file {state$auxDataFilename}}."
+        "Saved all evidence to {.file {state$evidenceFilename}}."
       ))
       return(state)
     },
@@ -708,7 +708,7 @@ Trio <- R6::R6Class(
       # Upload verification using md5
       cli::cli_inform(c(
         paste0(
-          "Please upload the data and/or auxData to Figshare and provide",
+          "Please upload the data and/or supporting evidence to Figshare and provide",
           " the URL"
         )
       ))
@@ -718,7 +718,7 @@ Trio <- R6::R6Class(
 
       while (attempts < maxAttempts && !verified) {
         attempts <- attempts + 1
-        url <- readline("Dataset/AuxData Figshare URL: ")
+        url <- readline("Dataset/Evidence Figshare URL: ")
         if (!grepl("figshare", url)) {
           cli::cli_inform(c(
             "The provided URL is not a Figshare URL.",
@@ -804,54 +804,58 @@ Trio <- R6::R6Class(
             }
           }
         }
-        # Check auxData file
-        auxDataUploaded <- FALSE
-        auxDataFileName <- NULL
-        if (state$saveAuxData) {
-          # Let user choose the auxData file from available files
-          cli::cli_inform("Please select the auxData file from the list above.")
-          auxDataChoice <- utils::menu(fileNames, title = "AuxData file")
-          if (auxDataChoice == 0) {
-            cli::cli_inform("No auxData file selected. Please try again.")
+        # Check evidence file
+        evidenceUploaded <- FALSE
+        evidenceFileName <- NULL
+        if (state$saveEvidence) {
+          # Let user choose the evidence file from available files
+          cli::cli_inform(
+            "Please select the evidence file from the list above."
+          )
+          evidenceChoice <- utils::menu(fileNames, title = "Evidence file")
+          if (evidenceChoice == 0) {
+            cli::cli_inform("No evidence file selected. Please try again.")
             next()
           }
-          auxDataFileName <- fileNames[auxDataChoice]
+          evidenceFileName <- fileNames[evidenceChoice]
 
-          idxAux <- which(fileNames == auxDataFileName)[1]
-          if (!is.na(idxAux)) {
-            fileIDaux <- fileDF$id[idxAux]
-            fileMd5aux <- fileDF$computed_md5[idxAux]
-            if (!is.null(state$auxDataMd5) && state$auxDataMd5 == fileMd5aux) {
-              auxDataUploaded <- TRUE
-              state$auxDataSource <- "figshare"
-              state$auxDataSourceID <- paste0(id, "/", fileIDaux)
+          idxEv <- which(fileNames == evidenceFileName)[1]
+          if (!is.na(idxEv)) {
+            fileIDev <- fileDF$id[idxEv]
+            fileMd5ev <- fileDF$computed_md5[idxEv]
+            if (!is.null(state$evidenceMd5) && state$evidenceMd5 == fileMd5ev) {
+              evidenceUploaded <- TRUE
+              state$evidenceSource <- "figshare"
+              state$evidenceSourceID <- paste0(id, "/", fileIDev)
             } else {
               cli::cli_inform(c(
-                "The uploaded auxData file md5 does not match.",
-                "i" = "Please re-upload the correct auxData file."
+                "The uploaded evidence file md5 does not match.",
+                "i" = "Please re-upload the correct evidence file."
               ))
               # Ask user if they want to override MD5 verification
-              overrideMD5Aux <- utils::askYesNo(
-                "Do you want to override the MD5 verification for the auxData file?"
+              overrideMD5Ev <- utils::askYesNo(
+                "Do you want to override the MD5 verification for the evidence file?"
               )
-              if (overrideMD5Aux) {
-                cli::cli_inform("MD5 verification overridden for auxData file.")
-                auxDataUploaded <- TRUE
-                state$auxDataSource <- "figshare"
-                state$auxDataSourceID <- paste0(id, "/", fileIDaux)
+              if (overrideMD5Ev) {
+                cli::cli_inform(
+                  "MD5 verification overridden for evidence file."
+                )
+                evidenceUploaded <- TRUE
+                state$evidenceSource <- "figshare"
+                state$evidenceSourceID <- paste0(id, "/", fileIDev)
               } else {
                 next()
               }
             }
           } else {
             cli::cli_inform(c(
-              "The selected auxData file is not found in the Figshare article.",
+              "The selected evidence file is not found in the Figshare article.",
               "i" = "Please try again."
             ))
             next()
           }
         }
-        verified <- datasetUploaded && (auxDataUploaded || !state$saveAuxData)
+        verified <- datasetUploaded && (evidenceUploaded || !state$saveEvidence)
       }
       if (!verified) {
         cli::cli_abort(c(
@@ -951,24 +955,24 @@ Trio <- R6::R6Class(
       return(state)
     },
 
-    addAuxDataToSheets = function(state) {
-      # add the auxData to the sheet
-      if (state$saveAuxData) {
-        auxDataMetaData <- data.frame(
-          datasetID = rep(state$datasetID, times = length(self$auxData)),
-          Auxiliary_Data = names(self$auxData),
-          is_in_data = rep(FALSE, times = length(self$auxData)),
-          type = unlist(state$auxDataSource),
-          sourceID = unlist(state$auxDataSourceID),
-          name = rep("", times = length(self$auxData)),
-          on_load = rep("", times = length(self$auxData)),
-          validated = rep(FALSE, times = length(self$auxData)),
+    addEvidenceToSheets = function(state) {
+      # add the evidence to the sheet
+      if (state$saveEvidence) {
+        evidenceMetaData <- data.frame(
+          datasetID = rep(state$datasetID, times = length(self$evidence)),
+          Supporting_Evidence = names(self$evidence),
+          is_in_data = rep(FALSE, times = length(self$evidence)),
+          type = unlist(state$evidenceSource),
+          sourceID = unlist(state$evidenceSourceID),
+          name = rep("", times = length(self$evidence)),
+          on_load = rep("", times = length(self$evidence)),
+          validated = rep(FALSE, times = length(self$evidence)),
           stringsAsFactors = FALSE
         )
         googlesheets4::sheet_append(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          data = auxDataMetaData,
-          sheet = "Dataset-AuxData"
+          data = evidenceMetaData,
+          sheet = "Dataset-Evidence"
         )
       }
       return(state)
@@ -1028,7 +1032,7 @@ Trio <- R6::R6Class(
       # read the existing datasets
       tasks <- googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        sheet = "Task-AuxData Type-Metric"
+        sheet = "Task-Evidence Type-Metric"
       )
 
       taskID <- formatC(
@@ -1037,25 +1041,25 @@ Trio <- R6::R6Class(
         flag = "0"
       )
 
-      # create a table of auxData-metric relationships for each auxData
-      taskAuxDataMetaData <- tibble::tibble(
+      # create a table of evidence-metric relationships for each evidence
+      taskEvidenceMetaData <- tibble::tibble(
         `Task ID` = paste0("T", taskID),
         `Task Name` = state$name,
         Topic = paste0(state$name, "Tasks"),
-        `AuxData Type` = lapply(names(self$auxData), \(auxDataName) {
-          metrics <- self$getMetrics(auxDataName)
-          rep(auxDataName, times = length(metrics))
+        `Evidence Type` = lapply(names(self$evidence), \(evidenceName) {
+          metrics <- self$getMetrics(evidenceName)
+          rep(evidenceName, times = length(metrics))
         }) |>
           unlist(),
-        MetricID = lapply(names(self$auxData), self$getMetrics) |>
+        MetricID = lapply(names(self$evidence), self$getMetrics) |>
           unlist(),
         validated = FALSE
       )
 
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        data = taskAuxDataMetaData,
-        sheet = "Task-AuxData Type-Metric"
+        data = taskEvidenceMetaData,
+        sheet = "Task-Evidence Type-Metric"
       )
       return(state)
     },
@@ -1160,31 +1164,31 @@ Trio <- R6::R6Class(
         return(NULL)
       }
       # get the gold standard metadata from curated trio datasets
-      auxDataMetaData <- suppressMessages(
+      evidenceMetaData <- suppressMessages(
         googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          sheet = "Dataset-AuxData",
+          sheet = "Dataset-Evidence",
         ) |>
           dplyr::filter(datasetID == private$datasetID)
       )
 
-      if (nrow(auxDataMetaData) == 0) {
+      if (nrow(evidenceMetaData) == 0) {
         cli::cli_warn(c(
-          paste0(self$CTDlink, " has no auxData for this dataset."),
-          "i" = "Please add your own auxData for evaluation."
+          paste0(self$CTDlink, " has no supporting evidence for this dataset."),
+          "i" = "Please add your own supporting evidence for evaluation."
         ))
         return(NULL)
       }
 
-      auxData <- auxDataMetaData |> purrr::pluck("Auxiliary Data")
+      evidence <- evidenceMetaData |> purrr::pluck("Supporting Evidence")
 
       # get the relevant metrics and respective information from the sheet.
       metrics <- suppressMessages(
         googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          sheet = "Task-AuxData Type-Metric",
+          sheet = "Task-Evidence Type-Metric",
         ) |>
-          dplyr::filter(`AuxData Type` %in% auxData) %>%
+          dplyr::filter(`Evidence Type` %in% evidence) %>%
           dplyr::left_join(
             .,
             googlesheets4::read_sheet(
@@ -1210,17 +1214,17 @@ Trio <- R6::R6Class(
       })
 
       # add each gold standard with it's respective metrics
-      apply(auxDataMetaData, 1, \(auxData) {
-        if (auxData["is_in_data"]) {
-          if (auxData["type"] == "columns") {
-            auxDataCols <- unlist(strsplit(auxData["name"], ", ", TRUE))
-            self$addAuxData(
-              name = auxData["Auxiliary Data"],
+      apply(evidenceMetaData, 1, \(evidence) {
+        if (evidence["is_in_data"]) {
+          if (evidence["type"] == "columns") {
+            evidenceCols <- unlist(strsplit(evidence["name"], ", ", TRUE))
+            self$addEvidence(
+              name = evidence["Supporting Evidence"],
               # TODO: make it so the data is accessed by, rather stored in the
-              #       auxData
-              auxData = self$data[, auxDataCols],
+              #       evidence
+              evidence = self$data[, evidenceCols],
               metrics = metrics |>
-                dplyr::filter(`AuxData Type` == auxData["Auxiliary Data"]) |>
+                dplyr::filter(`Evidence Type` == evidence["Supporting Evidence"]) |>
                 purrr::pluck("MetricID")
             )
           } else {
@@ -1230,7 +1234,7 @@ Trio <- R6::R6Class(
           }
         } else {
           cli::cli_abort(c(
-            "AuxData that are not in the data are not supported yet."
+            "evidence that are not in the data are not supported yet."
           ))
         }
       })

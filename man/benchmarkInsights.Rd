@@ -51,7 +51,7 @@ Create a benchmarkInsights object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{A dataframe containing initial evaluation results with columns such as datasetID, auxData, metric, and result.}
+\item{\code{evalResult}}{A dataframe containing initial evaluation results with columns such as datasetID, evidence, metric, and result.}
 }
 \if{html}{\out{</div>}}
 }
@@ -138,7 +138,7 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getScatterplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getScatterplot}{}}}
 \subsection{Method \code{getScatterplot()}}{
-Creates a scatter plot for the same auxData, with an two methodd metrics.
+Creates a scatter plot for the same evidence, with an two methodd metrics.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getScatterplot(evalResult, variables)}\if{html}{\out{</div>}}
 }
@@ -146,7 +146,7 @@ Creates a scatter plot for the same auxData, with an two methodd metrics.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same}
+\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all evidence should be same}
 
 \item{\code{variables}}{A character vector of length two specifying the metric names to be used for the x and y axes.}
 }
@@ -160,19 +160,19 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getBoxplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getBoxplot}{}}}
 \subsection{Method \code{getBoxplot()}}{
-Creates boxplot plots for the mutiple auxData, different method, one metric.
+Creates boxplot plots for the mutiple evidence, different method, one metric.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getBoxplot(evalResult, metricVariable, auxDataVariable)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getBoxplot(evalResult, metricVariable, evidenceVariable)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all auxData should be same.}
+\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all evidence should be same.}
 
 \item{\code{metricVariable}}{Specify subset value in metric column.}
 
-\item{\code{auxDataVariable}}{Specify subset value in auxData column.}
+\item{\code{evidenceVariable}}{Specify subset value in evidence column.}
 }
 \if{html}{\out{</div>}}
 }
@@ -184,8 +184,8 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-benchmarkInsights-getCorplot"></a>}}
 \if{latex}{\out{\hypertarget{method-benchmarkInsights-getCorplot}{}}}
 \subsection{Method \code{getCorplot()}}{
-Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
-The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).
+Creates a correlation plot based on the provided evaluation summary and the specified input type (either "evidence", "metric", or "method").
+The correlation plot shows the pairwise correlation between results for different categories (evidence, metric, or method).
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{benchmarkInsights$getCorplot(evalResult, input_type)}\if{html}{\out{</div>}}
 }
@@ -193,9 +193,9 @@ The correlation plot shows the pairwise correlation between results for differen
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.}
+\item{\code{evalResult}}{A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values.}
 
-\item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".}
+\item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "evidence", "metric", or "method".}
 }
 \if{html}{\out{</div>}}
 }
@@ -219,9 +219,9 @@ using dotwhisker and broom packages, with custom grouping and labeling.
 \describe{
 \item{\code{evalResult}}{A data frame containing the evaluation summary.}
 
-\item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).}
+\item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "method", or "evidence" allowed).}
 
-\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or  "auxData" allowed).}
+\item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or  "evidence" allowed).}
 }
 \if{html}{\out{</div>}}
 }

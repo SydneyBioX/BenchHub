@@ -11,7 +11,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 ```{r}
@@ -25,7 +25,7 @@ library(stringr)
 # Motivation
 
 BenchHub—an R ecosystem to make benchmarking easier. It organizes
-evaluation metrics, gold standards(Auxiliary Data), and even provides
+evaluation metrics, gold standards (Supporting Evidence), and even provides
 built-in visualization tools to help interpret results. With BenchHub,
 researchers can quickly compare new methods, gain insights, and actually
 trust their benchmarking studies. In this vignette, we are going to
@@ -36,14 +36,14 @@ introduce benchmarkInsights class.
 `benchmarkInsight` objects can be created using the corresponding
 constructor. For example, if you have a benchmark result formatted in
 dataframe, you can create a `benchmarkInsight` object as follows. The
-dataframe includes fixed name columns: `datasetID`, method, auxData,
+dataframe includes fixed name columns: `datasetID`, method, evidence,
 metric, result. Here I will use the benchmark result from
 SpatialSimBench to create a new object.
 
 `benchmarkInsight` object can be instantiated using their respective
 constructors. For example, if you have a benchmark result stored as a
 dataframe, you can create a Trio object as follows. The dataframe must
-include the following fixed columns: `datasetID`, `method`, `auxData`,
+include the following fixed columns: `datasetID`, `method`, `evidence`,
 `metric`, and `result`. Here, I demonstrate this using benchmark results
 from SpatialSimBench to initialize a new object.
 
@@ -69,12 +69,16 @@ If you have additional evaluation result, you can use
 ```{r}
 add_result <- data.frame(
   datasetID = rep("BREAST", 9),
-  method = c("scDesign2", "scDesign3_gau", "scDesign3_nb", "scDesign3_poi", 
-             "SPARsim", "splatter", "SRTsim", "symsim", "zinbwave"),
-  auxData = rep("svg", 9),
+  method = c(
+    "scDesign2", "scDesign3_gau", "scDesign3_nb", "scDesign3_poi",
+    "SPARsim", "splatter", "SRTsim", "symsim", "zinbwave"
+  ),
+  evidence = rep("svg", 9),
   metric = rep("recall", 9),
-  result = c(0.921940928, 0.957805907, 0.964135021, 0.989451477, 0.774261603, 
-             0.890295359, 0.985232068, 0.067510549, 0.888185654),
+  result = c(
+    0.921940928, 0.957805907, 0.964135021, 0.989451477, 0.774261603,
+    0.890295359, 0.985232068, 0.067510549, 0.888185654
+  ),
   stringsAsFactors = FALSE
 )
 
@@ -93,7 +97,7 @@ metadata_srtsim <- data.frame(
   spatialInfoReq = "No",
   DOI = "10.1186/s13059-023-02879-z",
   stringsAsFactors = FALSE
-  )
+)
 
 bmi$addMetadata(metadata_srtsim)
 ```
@@ -112,13 +116,13 @@ by averaging results across datasets.
 on the provided evaluation summary.
 
 -   evalResult: A dataframe containing the evaluation summary.
--   input_type: either "auxData", "metric", or "method".
+-   input_type: either "evidence", "metric", or "method".
 
 `getBoxplot(evalReuslt)`: Creates a boxplot based on the provided
 evaluation summary.
 
 -   evalReuslt: A dataframe containing the evaluation summary.
--   input_type: either "auxData", "metric", or "method".
+-   input_type: either "evidence", "metric", or "method".
 
 `getForestplot(evalReuslt, input_group, input_model)`: Create a forest
 plot using linear models based on the comparison between groups in the
@@ -126,15 +130,15 @@ provided evaluation summary.
 
 -   evalReuslt: A dataframe containing the evaluation summary.
 -   input_group: A string specifying the grouping variable (only
-    "datasetID", "method", or "auxData" allowed).
+    "datasetID", "method", or "evidence" allowed).
 -   input_model: A string specifying the model variable (only
-    "datasetID", "method", or "auxData" allowed).
+    "datasetID", "method", or "evidence" allowed).
 
 `getScatterplot(evalReuslt, variables)`: a scatter plot for the same
-auxData, with an two methodd metrics.
+evidence, with two method metrics.
 
 -   evalReuslt: A dataframe containing the evaluation summary, only
-    include two different metrics, all auxData should be same
+    include two different metrics, all evidence should be same
 -   variables: A character vector of length two specifying the metric
     names to be used for the x and y axes.
 
@@ -157,10 +161,10 @@ differences.
 bmi$getHeatmap(bmi$evalSummary)
 ```
 
-### Case Study: What is the correlation between auxData/metric/method?
+### Case Study: What is the correlation between evidence/metric/method?
 
 To understand the relationships between different evaluation factors, we
-use a correlation plot to examine how auxData, metrics, and methods are
+use a correlation plot to examine how evidence, metrics, and methods are
 interrelated. This helps identify patterns, redundancies, or
 dependencies among evaluation components.
 
@@ -174,7 +178,7 @@ align or diverge across different methods, providing insights into
 trade-offs and performance consistency.
 
 ```{r}
-bmi$getScatterplot(bmi$evalSummary, c("recall","precision"))
+bmi$getScatterplot(bmi$evalSummary, c("recall", "precision"))
 ```
 
 ### Case Study: What is the time and memory trend?
@@ -208,7 +212,7 @@ variability of method performance, highlighting robustness or
 instability when applied to different datasets.
 
 ```{r}
-bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", auxDataVariable = "scaledVar")
+bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", evidenceVariable = "scaledVar")
 ```
 
 ## Cheatsheet

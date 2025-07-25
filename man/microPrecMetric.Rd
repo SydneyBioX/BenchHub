@@ -4,10 +4,10 @@
 \alias{microPrecMetric}
 \title{Micro Precision Metric}
 \usage{
-microPrecMetric(auxData, predicted)
+microPrecMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The micro precision.
 Computes the micro precision of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-microPrecMetric(auxData, predicted)
+microPrecMetric(evidence, predicted)
 }

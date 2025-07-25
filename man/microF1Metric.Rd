@@ -4,10 +4,10 @@
 \alias{microF1Metric}
 \title{Micro F1 Score Metric}
 \usage{
-microF1Metric(auxData, predicted)
+microF1Metric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The micro F1 score.
 Computes the micro F1 score of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-microF1Metric(auxData, predicted)
+microF1Metric(evidence, predicted)
 }

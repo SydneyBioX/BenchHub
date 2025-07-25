@@ -11,10 +11,10 @@ test_that("Evaluation works.", {
 
   expected <- fraction_zeros(sce)
 
-  trio$addAuxData("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
-  trio$addAuxData("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
+  trio$addEvidence("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
+  trio$addEvidence("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
 
-  actual <- trio$getAuxData("fracZero")
+  actual <- trio$getEvidence("fracZero")
 
   expect_equal(actual, expected)
 
@@ -26,7 +26,8 @@ test_that("Evaluation works.", {
   actual_eval <- kdeMetric(actual, actual)
 
   testthat::expect_equal(
-    evaluation[1, "result"][[1]][[1]], actual_eval
+    evaluation[1, "result"][[1]][[1]],
+    actual_eval
   )
 
   # Separate methods evaluation

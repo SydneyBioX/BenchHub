@@ -4,10 +4,10 @@
 \alias{MSEmetric}
 \title{Mean Squared Error (MSE) Metric}
 \usage{
-MSEmetric(auxData, predicted)
+MSEmetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true values.}
+\item{evidence}{The true values.}
 
 \item{predicted}{The predicted values.}
 }
@@ -18,7 +18,7 @@ The mean squared error.
 Computes the mean squared error of the predictions.
 }
 \examples{
-auxData <- c(1, 2, 3, 4)
+evidence <- c(1, 2, 3, 4)
 predicted <- c(1.1, 2.1, 2.9, 4.2)
-MSEmetric(auxData, predicted)
+MSEmetric(evidence, predicted)
 }

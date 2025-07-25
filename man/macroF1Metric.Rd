@@ -4,10 +4,10 @@
 \alias{macroF1Metric}
 \title{Macro F1 Score Metric}
 \usage{
-macroF1Metric(auxData, predicted)
+macroF1Metric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The macro F1 score.
 Computes the macro F1 score of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-macroF1Metric(auxData, predicted)
+macroF1Metric(evidence, predicted)
 }

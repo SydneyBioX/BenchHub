@@ -18,7 +18,7 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \describe{
 \item{\code{data}}{The data}
 
-\item{\code{auxData}}{The auxiliary data in the data}
+\item{\code{evidence}}{The supporting evidence for the data}
 
 \item{\code{metrics}}{The metric for evaluating tasks against the gold standards}
 
@@ -28,10 +28,10 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSource}}
 
-\item{\code{auxDataSource}}{The data repository that the auxiliary data were
+\item{\code{evidenceSource}}{The data repository that the supporting evidence was
 retrieved from}
 
-\item{\code{auxDataSourceID}}{The dataset ID for \code{auxDataSource}}
+\item{\code{evidenceSourceID}}{The dataset ID for \code{evidenceSource}}
 
 \item{\code{splitIndices}}{Indices for cross-validation}
 
@@ -47,10 +47,10 @@ retrieved from}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-Trio-new}{\code{Trio$new()}}
-\item \href{#method-Trio-addAuxData}{\code{Trio$addAuxData()}}
+\item \href{#method-Trio-addEvidence}{\code{Trio$addEvidence()}}
 \item \href{#method-Trio-addMetric}{\code{Trio$addMetric()}}
 \item \href{#method-Trio-getMetrics}{\code{Trio$getMetrics()}}
-\item \href{#method-Trio-getAuxData}{\code{Trio$getAuxData()}}
+\item \href{#method-Trio-getEvidence}{\code{Trio$getEvidence()}}
 \item \href{#method-Trio-evaluate}{\code{Trio$evaluate()}}
 \item \href{#method-Trio-split}{\code{Trio$split()}}
 \item \href{#method-Trio-print}{\code{Trio$print()}}
@@ -94,20 +94,20 @@ returns a single dataset, ready to be used in evaluation tasks.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Trio-addAuxData"></a>}}
-\if{latex}{\out{\hypertarget{method-Trio-addAuxData}{}}}
-\subsection{Method \code{addAuxData()}}{
-Add a gold standard to the Trio.
+\if{html}{\out{<a id="method-Trio-addEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-addEvidence}{}}}
+\subsection{Method \code{addEvidence()}}{
+Add supporting evidence to the Trio.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$addAuxData(name, auxData, metrics, args = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$addEvidence(name, evidence, metrics, args = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A string specifying the name of the gold standard.}
+\item{\code{name}}{A string specifying the name of the supporting evidence.}
 
-\item{\code{auxData}}{The auxiliary data. An object to be compared or a function to be run on
+\item{\code{evidence}}{The supporting evidence. An object to be compared or a function to be run on
 the data.}
 
 \item{\code{metrics}}{A list of one or more metrics names used to compare gs with the input
@@ -146,32 +146,32 @@ a wrapper function of the desired metric.}
 \if{html}{\out{<a id="method-Trio-getMetrics"></a>}}
 \if{latex}{\out{\hypertarget{method-Trio-getMetrics}{}}}
 \subsection{Method \code{getMetrics()}}{
-Get metrics by gold standard name.
+Get metrics by supporting evidence name.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$getMetrics(auxDataName)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getMetrics(evidenceName)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{auxDataName}}{A string specifying the name of the gold standard.}
+\item{\code{evidenceName}}{A string specifying the name of the supporting evidence.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Trio-getAuxData"></a>}}
-\if{latex}{\out{\hypertarget{method-Trio-getAuxData}{}}}
-\subsection{Method \code{getAuxData()}}{
-Get auxiliary data by name.
+\if{html}{\out{<a id="method-Trio-getEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-Trio-getEvidence}{}}}
+\subsection{Method \code{getEvidence()}}{
+Get supporting evidence by name.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$getAuxData(name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$getEvidence(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A string specifying the name of the auxiliary data.}
+\item{\code{name}}{A string specifying the name of the supporting evidence.}
 }
 \if{html}{\out{</div>}}
 }
@@ -201,7 +201,7 @@ indices created by the split method.}
 \if{html}{\out{<a id="method-Trio-split"></a>}}
 \if{latex}{\out{\hypertarget{method-Trio-split}{}}}
 \subsection{Method \code{split()}}{
-Create a cross-validation indices.
+Create cross-validation indices.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Trio$split(
   y,
@@ -217,7 +217,7 @@ Create a cross-validation indices.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{y}}{A variable to use for stratified sampling. If \code{stratify} is false, a
+\item{\code{y}}{A variable to use for stratified sampling (e.g. supporting evidence). If \code{stratify} is false, a
 vector the length of the data.}
 
 \item{\code{n_fold}}{Number of folds. Defaults to \code{5L}.}

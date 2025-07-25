@@ -83,11 +83,11 @@ harrelCIndexMetric <- function(to_eval, gs) {
 }
 ```
 
-Add the metric and AuxData into the trioB1
+Add the metric and evidence into the trioB1
 
 ```{r}
 trioB1$addMetric("Harrel C-Index", harrelCIndexMetric)
-trioB1$addAuxData("surv_obj", surv_obj, c("Harrel C-Index"))
+trioB1$addEvidence("surv_obj", surv_obj, c("Harrel C-Index"))
 ```
 
 # 5 repeated 5 fold cross validation
@@ -299,7 +299,7 @@ calculate_scores <- function(to_eval, gs) {
 
 ```{r}
 trioA$addMetric("disease score", calculate_scores)
-trioA$addAuxData("get_DO_pathway", get_DO_pathway, c("disease score"))
+trioA$addEvidence("get_DO_pathway", get_DO_pathway, c("disease score"))
 trioA$data <- data
 # result <- calculate_scores(data, DOpathway)
 

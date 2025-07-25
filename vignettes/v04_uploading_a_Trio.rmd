@@ -49,7 +49,7 @@ Replace `"your_personal_access_token"` with the token you copied.
 
 ## Step 2: Add the Trio to Curated Trio Datasets
 
-1. In R, create a `Trio` object and ensure it is properly populated with data, auxiliary data, and metrics.
+1. In R, create a `Trio` object and ensure it is properly populated with data, supporting evidence, and metrics.
 2. Use the `writeCTD()` method to upload the Trio metadata to the Curated Trio Datasets sheet:
 
 ```r
@@ -57,10 +57,10 @@ trio$writeCTD(name = "Your Dataset Name")
 ```
 
 3. Follow the prompts to:
-   - Save the dataset and auxiliary data locally (optional).
+   - Save the dataset and supporting evidence locally (optional).
    - Provide the Figshare URL. For more detailed instructions on uploading to Figshare, see below.
    - Select the data type (e.g., omics, clinical, spatial, other).
-   - Confirm the upload of auxiliary data to Figshare.
+   - Confirm the upload of supporting evidence to Figshare.
 
 ---
 
@@ -83,7 +83,7 @@ trio$writeCTD(name = "Your Dataset Name")
 1. Log in to your Figshare account.
 2. Click **Create a new item**.
 3. Fill in the required metadata fields (e.g., title, description, tags).
-4. Upload your dataset files (e.g., `.rds` files for the dataset and auxiliary data). 
+4. Upload your dataset files (e.g., `.rds` files for the dataset and supporting evidence). 
    - NOTE: `writeCTD` can create the
 5. Publish the item to make it publicly accessible.
 6. Copy the Figshare URL of the published item.

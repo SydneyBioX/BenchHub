@@ -4,10 +4,10 @@
 \alias{.positivesNegatives}
 \title{Compute Positives and Negatives}
 \usage{
-.positivesNegatives(auxData, predicted)
+.positivesNegatives(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,8 +18,8 @@ A list containing the true positives, false positives, false negatives, and true
 Computes the true positives, false positives, false negatives, and true negatives.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-.positivesNegatives(auxData, predicted)
+.positivesNegatives(evidence, predicted)
 }
 \keyword{internal}

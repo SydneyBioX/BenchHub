@@ -4,10 +4,10 @@
 \alias{macroRecMetric}
 \title{Macro Recall Metric}
 \usage{
-macroRecMetric(auxData, predicted)
+macroRecMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The macro recall.
 Computes the macro recall of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-macroRecMetric(auxData, predicted)
+macroRecMetric(evidence, predicted)
 }

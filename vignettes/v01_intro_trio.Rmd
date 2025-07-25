@@ -32,7 +32,7 @@ library(EnsDb.Hsapiens.v86)
 BenchHub is an R ecosystem built to make benchmarking easier.   
 
 BenchHub contains two key components: `Trio` and `BenchmarkInsight`:    
-- `Trio` object constucts benchmarking data by organising data, evaluation metrics, gold standards (auxiliary data).    
+- `Trio` object constructs benchmarking data by organising data, evaluation metrics, and supporting evidence (gold standards).    
 - `BenchmarkInsight` is a visualization tool that helps interpret the results of benchmarking studies.   
 
 With BenchHub, researchers can quickly compare new methods, gain insights, and produce trustworthy their benchmarking studies. 
@@ -41,7 +41,7 @@ With BenchHub, researchers can quickly compare new methods, gain insights, and p
 # Creating Trio object
 
 The Trio class is designed to facilitate the storing and sharing of benchmarking datasets. 
-Each Trio is structured around a single dataset but can include multiple metrics and multiple auxiliary data (such as references or gold standards). 
+Each Trio is structured around a single dataset but can include multiple metrics and multiple pieces of supporting evidence (such as references or gold standards). 
 
 Trio objects can be created using the `Trio$new` constructor. There are 3 ways to create a Trio object:
 
@@ -53,7 +53,7 @@ If the dataset can't be loaded using Trio's inbuilt loader, a custom loader can 
 
 ## Method 1: Curated Trio Datasets
 
-You can directly use the name from the Curated Trio Datasets sheet to initialise a Trio object populated with some metrics and auxiliary data. This method is useful when you want to quickly start with a predefined dataset.
+You can directly use the name from the Curated Trio Datasets sheet to initialise a Trio object populated with some metrics and supporting evidence. This method is useful when you want to quickly start with a predefined dataset.
 
 ```{r}
 tempCache <- tempdir()
@@ -62,7 +62,7 @@ trio <- Trio$new("Veteran_data", cachePath = tempCache)
 trio
 ```
 
-The above output shows that we have a Trio with a dataset, metrics, and auxiliary data. The dataset contains 137 rows and 9 columns, and the metrics and auxiliary data are already populated and printed.
+The above output shows that we have a Trio with a dataset, metrics, and supporting evidence. The dataset contains 137 rows and 9 columns, and the metrics and supporting evidence are already populated and printed.
 
 This Trio is ready for use in survival prediction evaluation.
 
@@ -152,41 +152,41 @@ Underneeth the hood, Trio creates a wrapper function that calls the metric funct
 trio$metrics$inequality
 ```
 
-## Adding and getting `auxData`
+## Adding and getting `evidence`
 
-`auxData` (Auxiliary Data) refers to gold standard in evaluation tasks and falls into two categories:
+`evidence` (supporting evidence) refers to gold standards in evaluation tasks and falls into two categories:
 
 - Internal: Extracted directly from the Trio dataset. This may include metadata such as cell types (e.g., B cells, CD4, CD8), patient conditions (e.g., healthy, disease), and spatial domain information. The specific content depends on the dataset itself.
 - External: Retrieved from external databases, such as disease pathway databases or gene marker databases.
 
 With the `equality` and `inequality` metrics added above, we can now run an evaluation.
 
-First we add some auxiliary data to the Trio object to evaluate against.
+First we add some supporting evidence to the Trio object to evaluate against.
 
-Auxiliary data is any data that allows you to make an evaluation. Auxiliary data is added linked to metrics that allow you to evaluate it.
+Supporting evidence is any data that allows you to make an evaluation. Supporting evidence is linked to metrics that allow you to evaluate it.
 
 ```{r}
 # It can be a fixed quantity
-trio$addAuxData(
-  name = "Number One", auxData = 1, metrics = c("equality", "inequality")
+trio$addEvidence(
+  name = "Number One", evidence = 1, metrics = c("equality", "inequality")
 )
 
 # Or it can be a function that acts on the data
-trio$addAuxData(
-  name = "length", auxData = length, metrics = c("equality", "inequality")
+trio$addEvidence(
+  name = "length", evidence = length, metrics = c("equality", "inequality")
 )
 ```
 
-To view the auxiliary data one can use `getAuxData`.
+To view the supporting evidence one can use `getEvidence`.
 
 ```{r}
-trio$getAuxData("length") # This is equivalent to `length(trio$data)`
+trio$getEvidence("length") # This is equivalent to `length(trio$data)`
 ```
 
 
 ## Evaluation Example
 
-Once Trio is set up with relevant metrics and auxData, we are ready to evaluate.
+Once Trio is set up with relevant metrics and supporting evidence, we are ready to evaluate.
 
 For simple evaluation:
 ```{r}
@@ -225,7 +225,7 @@ trio$splitIndices
 
 # Conclusion
 
-In this vignette, we introduced the Trio class and demonstrated how to create a Trio object using curated datasets, source and ID, or loading an object directly. We also showed how to add metrics and auxiliary data to a Trio object and evaluate the performance of different methods using these metrics and auxiliary data. We hope this vignette helps you get started with Trio and conduct benchmarking studies more effectively.
+In this vignette, we introduced the Trio class and demonstrated how to create a Trio object using curated datasets, source and ID, or loading an object directly. We also showed how to add metrics and supporting evidence to a Trio object and evaluate the performance of different methods using these metrics and supporting evidence. We hope this vignette helps you get started with Trio and conduct benchmarking studies more effectively.
 
 # Session Info
 

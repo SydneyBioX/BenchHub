@@ -4,10 +4,10 @@
 \alias{beggCIndexMetric}
 \title{Begg's C-Index Metric}
 \usage{
-beggCIndexMetric(auxData, predicted)
+beggCIndexMetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true survival times and event indicators.}
+\item{evidence}{The true survival times and event indicators.}
 
 \item{predicted}{The predicted survival times.}
 }
@@ -19,7 +19,7 @@ Computes Begg's C-Index for survival analysis.
 }
 \examples{
 # More realistic training dataset (8 patients)
-auxData <- list(
+evidence <- list(
   survival::Surv(time = c(5, 10, 15, 20, 25, 30, 35, 40), 
   event = c(1, 1, 0, 1, 0, 1, 1, 0)),  # Training
   survival::Surv(time = c(12, 18, 25, 32), 
@@ -31,5 +31,5 @@ predicted <- list(
   0.8360043, 0.7375956, 0.8110551, 0.3881083),  # Training predictions
   c(0.685169729, 0.003948339, 0.832916080, 0.007334147)  # Testing predictions
 )
-beggCIndexMetric(auxData, predicted)
+beggCIndexMetric(evidence, predicted)
 }

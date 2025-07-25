@@ -4,10 +4,10 @@
 \alias{MCCmetric}
 \title{Matthews Correlation Coefficient (MCC) Metric}
 \usage{
-MCCmetric(auxData, predicted)
+MCCmetric(evidence, predicted)
 }
 \arguments{
-\item{auxData}{The true labels.}
+\item{evidence}{The true labels.}
 
 \item{predicted}{The predicted labels.}
 }
@@ -18,7 +18,7 @@ The MCC.
 Computes the Matthews Correlation Coefficient (MCC) of the predictions.
 }
 \examples{
-auxData <- factor(c("A", "B", "A", "B"))
+evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
-MCCmetric(auxData, predicted)
+MCCmetric(evidence, predicted)
 }
