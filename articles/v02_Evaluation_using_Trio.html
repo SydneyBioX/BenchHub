@@ -131,27 +131,27 @@ BenchHub, and named it <code>Balanced Accuracy</code>.</p>
 <span><span class="va">trio</span><span class="op">$</span><span class="fu">addMetric</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Balanced Accuracy"</span>, metric <span class="op">=</span> <span class="va">balAccMetric</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="step-2-add-auxiliary-data-to-the-trio-object-using-trioaddauxdata">Step 2: Add auxiliary data to the <code>Trio</code> object using
-<code>Trio$addAuxData</code><a class="anchor" aria-label="anchor" href="#step-2-add-auxiliary-data-to-the-trio-object-using-trioaddauxdata"></a>
+<h3 id="step-2-add-supporting-evidence-to-the-trio-object-using-trioaddevidence">Step 2: Add supporting evidence to the <code>Trio</code> object
+using <code>Trio$addEvidence</code><a class="anchor" aria-label="anchor" href="#step-2-add-supporting-evidence-to-the-trio-object-using-trioaddevidence"></a>
 </h3>
-<p>The auxiliary data is the patient status, which is the
+<p>The supporting evidence is the patient status, which is the
 <code>lubomPD</code> vector that we extracted from the
 <code>Lubomski</code> data above. Similar to adding a metric, users can
-name their auxiliary data by specifying <code>name</code>. Note that
-users need to specify the evaluation metric to be used through the
+name their supporting evidence by specifying <code>name</code>. Note
+that users need to specify the evaluation metric to be used through the
 <code>metrics</code> argument, which has to match the evaluation metric
 added to the <code>Trio</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># add auxiliary data to the Trio object</span></span>
+<code class="sourceCode R"><span><span class="co"># add supporting evidence to the Trio object</span></span>
 <span><span class="co"># name is the user-defined name, can be anything</span></span>
-<span><span class="co"># auxData is the value of the auxiliary data</span></span>
+<span><span class="co"># evidence is the value of the supporting evidence</span></span>
 <span><span class="co"># metric needs to be same name of the metric that has been added to the Trio object</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addAuxData</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"patient_status"</span>, auxData <span class="op">=</span> <span class="va">lubomPD</span>, metrics <span class="op">=</span> <span class="st">"Balanced Accuracy"</span></span>
+<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="st">"patient_status"</span>, evidence <span class="op">=</span> <span class="va">lubomPD</span>, metrics <span class="op">=</span> <span class="st">"Balanced Accuracy"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>If users want to get evaluation metrics from the <code>Trio</code>
 object, they can use the <code>getMetrics</code> function by referring
-the name of <code>auxData</code>.</p>
+the name of <code>evidence</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get the metric from the Trio object</span></span>
 <span><span class="va">metrics</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">getMetrics</span><span class="op">(</span><span class="st">"patient_status"</span><span class="op">)</span></span></code></pre></div>
@@ -161,10 +161,10 @@ from <code>Trio</code> object.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get the gold standard from the Trio object</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">getAuxData</span><span class="op">(</span><span class="st">"patient_status"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">getEvidence</span><span class="op">(</span><span class="st">"patient_status"</span><span class="op">)</span></span></code></pre></div>
 <p>Step 4: For repeated cross-validation, the <code><a href="https://rdrr.io/r/base/split.html" class="external-link">split()</a></code>
 function will split the <code>y</code> vector (i.e.,
-<code>auxData</code>) into the number of folds and repeats users want.
+<code>evidence</code>) into the number of folds and repeats users want.
 In this case we used <code>n_fold = 2</code> and
 <code>n_repeat = 5</code> (i.e., 2-fold cross-validation with 10
 repeats). Then users can get cross-validation indices
@@ -182,12 +182,12 @@ data. As an example, we build a LASSO regression model as a
 classification model on the training data, then make predictions on the
 test data.</p>
 <p>Once we get the prediction, we pass the <code>pred</code> vector to
-<code>Trio</code> and ref to the name of <code>auxData</code>
+<code>Trio</code> and ref to the name of the evidence
 (<code>patient_status</code> = <code>pred</code>). This tells the
 <code>evaluate()</code> function to compare the <code>pred</code> vector
-with auxData <code>patient_status</code> stored in the <code>Trio</code>
-object. It will then computes the balanced accuracy, because this is the
-metric we have specified.</p>
+with the supporting evidence <code>patient_status</code> stored in the
+<code>Trio</code> object. It will then compute the balanced accuracy,
+because this is the metric we have specified.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span></span>
@@ -233,10 +233,10 @@ averaging results across folds within each repeats.</p>
 <span><span class="va">result</span><span class="op">$</span><span class="va">repeats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">track</span>, <span class="st">"."</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">`[`</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">datasetID</span>, <span class="va">method</span>, <span class="va">auxData</span>, <span class="va">metric</span>, <span class="va">repeats</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">datasetID</span>, <span class="va">method</span>, <span class="va">evidence</span>, <span class="va">metric</span>, <span class="va">repeats</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>result <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## `summarise()` has grouped output by 'datasetID', 'method', 'auxData', 'metric'.</span></span>
-<span><span class="co">## You can override using the `.groups` argument.</span></span></code></pre>
+<pre><code><span><span class="co">## `summarise()` has grouped output by 'datasetID', 'method', 'evidence',</span></span>
+<span><span class="co">## 'metric'. You can override using the `.groups` argument.</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visualise the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
@@ -245,14 +245,14 @@ averaging results across folds within each repeats.</p>
 <code class="sourceCode R"><span><span class="co"># look at the format of the result output</span></span>
 <span><span class="va">result</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData, metric [1]</span></span></span>
-<span><span class="co">##   datasetID           method auxData        metric            repeats result</span></span>
+<span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, evidence, metric [1]</span></span></span>
+<span><span class="co">##   datasetID           method evidence       metric            repeats result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.693</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.726</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.700</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.680</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.722</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep1     0.735</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep2     0.713</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep3     0.681</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep4     0.716</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> lubomski_microbiome lasso  patient_status Balanced Accuracy Rep5     0.724</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -294,20 +294,20 @@ the simulated data.</p>
 <code class="sourceCode R"><span><span class="co"># add metric that we just defined</span></span>
 <span><span class="va">trio</span><span class="op">$</span><span class="fu">addMetric</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Difference"</span>, metric <span class="op">=</span> <span class="va">calc_diff</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># calculate the sparsity of the data, and then input into the auxillary data</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addAuxData</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Sparsity"</span>, auxData <span class="op">=</span> <span class="fu">calc_sparsity</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, metrics <span class="op">=</span> <span class="st">"Difference"</span><span class="op">)</span></span>
+<span><span class="co"># calculate the sparsity of the data, and then input into the supporting evidence</span></span>
+<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Sparsity"</span>, evidence <span class="op">=</span> <span class="fu">calc_sparsity</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, metrics <span class="op">=</span> <span class="st">"Difference"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># because we used negative binomial to simulate a matrix</span></span>
 <span><span class="co"># we will name the method as "negative binomial"</span></span>
-<span><span class="co"># then calculate the sparsity of the simulated matrix and compare with the Sparsity auxiliary data</span></span>
+<span><span class="co"># then calculate the sparsity of the simulated matrix and compare with the Sparsity supporting evidence</span></span>
 <span><span class="va">eval_res</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>negative_binomial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sparsity <span class="op">=</span> <span class="fu">calc_sparsity</span><span class="op">(</span><span class="va">sim</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">eval_res</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 5</span></span></span>
-<span><span class="co">##   datasetID           method            auxData  metric     result</span></span>
+<span><span class="co">##   datasetID           method            evidence metric     result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome negative_binomial Sparsity Difference  0.323</span></span></code></pre>
 <p>From the evaluation result, we see there is a 0.32 difference in the
@@ -324,23 +324,23 @@ visualisation. <code>BenchmarkInsights</code> is another structure in
 visualise the benchmarking results from multiple perspectives.</p>
 <p>Note, to make the result dataframe compatible for BenchmarkInsights,
 please make sure the dataframe is in the format shown below, where the
-column names are “datasetID”, “method”, “auxData”, “metric” , “result”,
+column names are “datasetID”, “method”, “evidence”, “metric” , “result”,
 and that there is one row for each result.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># in the with cross validation result, we need to average the results from multiple repeats to give one value</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">datasetID</span>, <span class="va">method</span>, <span class="va">auxData</span>, <span class="va">metric</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">datasetID</span>, <span class="va">method</span>, <span class="va">evidence</span>, <span class="va">metric</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>result <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## `summarise()` has grouped output by 'datasetID', 'method', 'auxData'. You can</span></span>
+<pre><code><span><span class="co">## `summarise()` has grouped output by 'datasetID', 'method', 'evidence'. You can</span></span>
 <span><span class="co">## override using the `.groups` argument.</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">eval_res</span><span class="op">)</span></span>
 <span><span class="va">result</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 5</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, auxData [2]</span></span></span>
-<span><span class="co">##   datasetID           method            auxData        metric            result</span></span>
+<span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, evidence [2]</span></span></span>
+<span><span class="co">##   datasetID           method            evidence       metric            result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.704</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             patient_status Balanced Accuracy  0.714</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome negative_binomial Sparsity       Difference         0.323</span></span></code></pre>
 <p>Please see Vignette 3 for the details on the visualisations and
 functions in <code>BenchmarkInsights</code>.</p>

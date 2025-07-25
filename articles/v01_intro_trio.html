@@ -60,7 +60,7 @@
 
       <h1>1 Introduction to the Trio Class</h1>
             
-            <h4 data-toc-skip class="date">24 July 2025</h4>
+            <h4 data-toc-skip class="date">25 July 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/devel/vignettes/v01_intro_trio.Rmd" class="external-link"><code>vignettes/v01_intro_trio.Rmd</code></a></small>
       <div class="d-none name"><code>v01_intro_trio.Rmd</code></div>
@@ -81,8 +81,9 @@
 <p>BenchHub is an R ecosystem built to make benchmarking easier.</p>
 <p>BenchHub contains two key components: <code>Trio</code> and
 <code>BenchmarkInsight</code>:<br>
-- <code>Trio</code> object constucts benchmarking data by organising
-data, evaluation metrics, gold standards (auxiliary data).<br>
+- <code>Trio</code> object constructs benchmarking data by organising
+data, evaluation metrics, and supporting evidence (gold
+standards).<br>
 - <code>BenchmarkInsight</code> is a visualization tool that helps
 interpret the results of benchmarking studies.</p>
 <p>With BenchHub, researchers can quickly compare new methods, gain
@@ -93,8 +94,8 @@ insights, and produce trustworthy their benchmarking studies.</p>
 </h2>
 <p>The Trio class is designed to facilitate the storing and sharing of
 benchmarking datasets. Each Trio is structured around a single dataset
-but can include multiple metrics and multiple auxiliary data (such as
-references or gold standards).</p>
+but can include multiple metrics and multiple pieces of supporting
+evidence (such as references or gold standards).</p>
 <p>Trio objects can be created using the <code>Trio$new</code>
 constructor. There are 3 ways to create a Trio object:</p>
 <ul>
@@ -108,9 +109,9 @@ loader can be provided.</p>
 <h3 id="method-1-curated-trio-datasets">Method 1: Curated Trio Datasets<a class="anchor" aria-label="anchor" href="#method-1-curated-trio-datasets"></a>
 </h3>
 <p>You can directly use the name from the Curated Trio Datasets sheet to
-initialise a Trio object populated with some metrics and auxiliary data.
-This method is useful when you want to quickly start with a predefined
-dataset.</p>
+initialise a Trio object populated with some metrics and supporting
+evidence. This method is useful when you want to quickly start with a
+predefined dataset.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tempCache</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"Veteran_data"</span>, cachePath <span class="op">=</span> <span class="va">tempCache</span><span class="op">)</span></span>
@@ -134,20 +135,21 @@ dataset.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361073"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpZ1JpOa"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpK6XNy4"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ── Auxiliary Data </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Auxiliary Data</span>: <span style="color: #0000BB;">1</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Auxiliary Data</span>: <span style="color: #0000BB;">"survival_data"</span></span></span>
+<span><span class="co">## ── Supporting Evidence </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>: <span style="color: #0000BB;">"survival_data"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Metrics </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">6</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"harrell_cindex"</span>, <span style="color: #0000BB;">"begg_cindex"</span>, <span style="color: #0000BB;">"uno_cindex"</span>, <span style="color: #0000BB;">"gh_cindex"</span>,</span></span>
 <span><span class="co">## <span style="color: #0000BB;">"brier_score"</span>, and <span style="color: #0000BB;">"time_dep_auc"</span></span></span></code></pre>
 <p>The above output shows that we have a Trio with a dataset, metrics,
-and auxiliary data. The dataset contains 137 rows and 9 columns, and the
-metrics and auxiliary data are already populated and printed.</p>
+and supporting evidence. The dataset contains 137 rows and 9 columns,
+and the metrics and supporting evidence are already populated and
+printed.</p>
 <p>This Trio is ready for use in survival prediction evaluation.</p>
 </div>
 <div class="section level3">
@@ -202,12 +204,12 @@ dataset with a <code>fileID</code>.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361079"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpZ1JpOa"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpK6XNy4"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ── Auxiliary Data </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Auxiliary Data</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Auxiliary Data</span>:</span></span>
+<span><span class="co">## ── Supporting Evidence </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">0</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Metrics </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">0</span></span></span>
@@ -236,9 +238,9 @@ well. Below is an example using a microbiome dataset.</p>
 <span><span class="co">## <span style="font-weight: bold;">Cache Path</span>:</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ── Auxiliary Data </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Auxiliary Data</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Auxiliary Data</span>:</span></span>
+<span><span class="co">## ── Supporting Evidence </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">0</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Metrics </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">0</span></span></span>
@@ -302,17 +304,17 @@ metric checks if they are not equal.</p>
 metric function with the specified arguments.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="va">metrics</span><span class="op">$</span><span class="va">inequality</span></span></code></pre></div>
-<pre><code><span><span class="co">## function (auxData, to_eval) </span></span>
+<pre><code><span><span class="co">## function (evidence, to_eval) </span></span>
 <span><span class="co">## {</span></span>
-<span><span class="co">##     do.call(metric, append(list(auxData, to_eval), args))</span></span>
+<span><span class="co">##     do.call(metric, append(list(evidence, to_eval), args))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x555b36373a18&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x55a0a77e5f48&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
-<h3 id="adding-and-getting-auxdata">Adding and getting <code>auxData</code><a class="anchor" aria-label="anchor" href="#adding-and-getting-auxdata"></a>
+<h3 id="adding-and-getting-evidence">Adding and getting <code>evidence</code><a class="anchor" aria-label="anchor" href="#adding-and-getting-evidence"></a>
 </h3>
-<p><code>auxData</code> (Auxiliary Data) refers to gold standard in
-evaluation tasks and falls into two categories:</p>
+<p><code>evidence</code> (supporting evidence) refers to gold standards
+in evaluation tasks and falls into two categories:</p>
 <ul>
 <li>Internal: Extracted directly from the Trio dataset. This may include
 metadata such as cell types (e.g., B cells, CD4, CD8), patient
@@ -323,31 +325,32 @@ databases or gene marker databases.</li>
 </ul>
 <p>With the <code>equality</code> and <code>inequality</code> metrics
 added above, we can now run an evaluation.</p>
-<p>First we add some auxiliary data to the Trio object to evaluate
+<p>First we add some supporting evidence to the Trio object to evaluate
 against.</p>
-<p>Auxiliary data is any data that allows you to make an evaluation.
-Auxiliary data is added linked to metrics that allow you to evaluate
-it.</p>
+<p>Supporting evidence is any data that allows you to make an
+evaluation. Supporting evidence is linked to metrics that allow you to
+evaluate it.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># It can be a fixed quantity</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addAuxData</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"Number One"</span>, auxData <span class="op">=</span> <span class="fl">1</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
+<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="st">"Number One"</span>, evidence <span class="op">=</span> <span class="fl">1</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Or it can be a function that acts on the data</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addAuxData</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"length"</span>, auxData <span class="op">=</span> <span class="va">length</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
+<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="st">"length"</span>, evidence <span class="op">=</span> <span class="va">length</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>To view the auxiliary data one can use <code>getAuxData</code>.</p>
+<p>To view the supporting evidence one can use
+<code>getEvidence</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="fu">getAuxData</span><span class="op">(</span><span class="st">"length"</span><span class="op">)</span> <span class="co"># This is equivalent to `length(trio$data)`</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="fu">getEvidence</span><span class="op">(</span><span class="st">"length"</span><span class="op">)</span> <span class="co"># This is equivalent to `length(trio$data)`</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 9</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="evaluation-example">Evaluation Example<a class="anchor" aria-label="anchor" href="#evaluation-example"></a>
 </h3>
-<p>Once Trio is set up with relevant metrics and auxData, we are ready
-to evaluate.</p>
+<p>Once Trio is set up with relevant metrics and supporting evidence, we
+are ready to evaluate.</p>
 <p>For simple evaluation:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Number One"</span> <span class="op">=</span> <span class="fl">1</span>, length <span class="op">=</span> <span class="fl">182</span><span class="op">)</span><span class="op">)</span></span>
@@ -355,7 +358,7 @@ to evaluate.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">datasetID</th>
-<th align="left">auxData</th>
+<th align="left">evidence</th>
 <th align="left">metric</th>
 <th align="left">result</th>
 </tr></thead>
@@ -397,7 +400,7 @@ to evaluate.</p>
 <thead><tr class="header">
 <th align="left">datasetID</th>
 <th align="left">method</th>
-<th align="left">auxData</th>
+<th align="left">evidence</th>
 <th align="left">metric</th>
 <th align="left">result</th>
 </tr></thead>
@@ -556,9 +559,9 @@ stratify the outcome variable.</p>
 <p>In this vignette, we introduced the Trio class and demonstrated how
 to create a Trio object using curated datasets, source and ID, or
 loading an object directly. We also showed how to add metrics and
-auxiliary data to a Trio object and evaluate the performance of
-different methods using these metrics and auxiliary data. We hope this
-vignette helps you get started with Trio and conduct benchmarking
+supporting evidence to a Trio object and evaluate the performance of
+different methods using these metrics and supporting evidence. We hope
+this vignette helps you get started with Trio and conduct benchmarking
 studies more effectively.</p>
 </div>
 <div class="section level2">
@@ -590,7 +593,7 @@ studies more effectively.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] EnsDb.Hsapiens.v86_2.99.0 ensembldb_2.32.0         </span></span>
 <span><span class="co">##  [3] AnnotationFilter_1.32.0   GenomicFeatures_1.60.0   </span></span>
-<span><span class="co">##  [5] GenomicRanges_1.60.0      GenomeInfoDb_1.44.0      </span></span>
+<span><span class="co">##  [5] GenomicRanges_1.60.0      GenomeInfoDb_1.44.1      </span></span>
 <span><span class="co">##  [7] DO.db_2.9                 AnnotationDbi_1.70.0     </span></span>
 <span><span class="co">##  [9] IRanges_2.42.0            S4Vectors_0.46.0         </span></span>
 <span><span class="co">## [11] Biobase_2.68.0            BiocGenerics_0.54.0      </span></span>
@@ -630,7 +633,7 @@ studies more effectively.</p>
 <span><span class="co">##  [57] survival_3.8-3              systemfonts_1.2.3          </span></span>
 <span><span class="co">##  [59] tools_4.5.1                 treeio_1.32.0              </span></span>
 <span><span class="co">##  [61] ragg_1.4.0                  Rcpp_1.1.0                 </span></span>
-<span><span class="co">##  [63] glue_1.8.0                  SparseArray_1.8.0          </span></span>
+<span><span class="co">##  [63] glue_1.8.0                  SparseArray_1.8.1          </span></span>
 <span><span class="co">##  [65] gridExtra_2.3               xfun_0.52                  </span></span>
 <span><span class="co">##  [67] MatrixGenerics_1.20.0       qvalue_2.40.0              </span></span>
 <span><span class="co">##  [69] dplyr_1.1.4                 withr_3.0.2                </span></span>

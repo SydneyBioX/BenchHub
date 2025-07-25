@@ -57,8 +57,8 @@ analytical tasks against ground truths for the dataset.</p>
 <dd><p>The data</p></dd>
 
 
-<dt><code>auxData</code></dt>
-<dd><p>The auxiliary data in the data</p></dd>
+<dt><code>evidence</code></dt>
+<dd><p>The supporting evidence for the data</p></dd>
 
 
 <dt><code>metrics</code></dt>
@@ -77,13 +77,13 @@ analytical tasks against ground truths for the dataset.</p>
 <dd><p>The dataset ID for <code>dataSource</code></p></dd>
 
 
-<dt><code>auxDataSource</code></dt>
-<dd><p>The data repository that the auxiliary data were
+<dt><code>evidenceSource</code></dt>
+<dd><p>The data repository that the supporting evidence was
 retrieved from</p></dd>
 
 
-<dt><code>auxDataSourceID</code></dt>
-<dd><p>The dataset ID for <code>auxDataSource</code></p></dd>
+<dt><code>evidenceSourceID</code></dt>
+<dd><p>The dataset ID for <code>evidenceSource</code></p></dd>
 
 
 <dt><code>splitIndices</code></dt>
@@ -111,10 +111,10 @@ retrieved from</p></dd>
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
 <ul><li><p><a href="#method-Trio-new"><code>Trio$new()</code></a></p></li>
-<li><p><a href="#method-Trio-addAuxData"><code>Trio$addAuxData()</code></a></p></li>
+<li><p><a href="#method-Trio-addEvidence"><code>Trio$addEvidence()</code></a></p></li>
 <li><p><a href="#method-Trio-addMetric"><code>Trio$addMetric()</code></a></p></li>
 <li><p><a href="#method-Trio-getMetrics"><code>Trio$getMetrics()</code></a></p></li>
-<li><p><a href="#method-Trio-getAuxData"><code>Trio$getAuxData()</code></a></p></li>
+<li><p><a href="#method-Trio-getEvidence"><code>Trio$getEvidence()</code></a></p></li>
 <li><p><a href="#method-Trio-evaluate"><code>Trio$evaluate()</code></a></p></li>
 <li><p><a href="#method-Trio-split"><code>Trio$split()</code></a></p></li>
 <li><p><a href="#method-Trio-print"><code>Trio$print()</code></a></p></li>
@@ -164,21 +164,21 @@ returns a single dataset, ready to be used in evaluation tasks.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-Trio-addAuxData"></a><div class="section">
-<h3 id="method-addauxdata-">Method <code>addAuxData()</code><a class="anchor" aria-label="anchor" href="#method-addauxdata-"></a></h3>
-<p>Add a gold standard to the Trio.</p><div class="section">
+</div><p></p><hr><a id="method-Trio-addEvidence"></a><div class="section">
+<h3 id="method-addevidence-">Method <code>addEvidence()</code><a class="anchor" aria-label="anchor" href="#method-addevidence-"></a></h3>
+<p>Add supporting evidence to the Trio.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">addAuxData</span><span class="op">(</span><span class="va">name</span>, <span class="va">auxData</span>, <span class="va">metrics</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span><span class="va">name</span>, <span class="va">evidence</span>, <span class="va">metrics</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
-<dd><p>A string specifying the name of the gold standard.</p></dd>
+<dd><p>A string specifying the name of the supporting evidence.</p></dd>
 
 
-<dt><code>auxData</code></dt>
-<dd><p>The auxiliary data. An object to be compared or a function to be run on
+<dt><code>evidence</code></dt>
+<dd><p>The supporting evidence. An object to be compared or a function to be run on
 the data.</p></dd>
 
 
@@ -223,31 +223,31 @@ a wrapper function of the desired metric.</p></dd>
 
 </div><p></p><hr><a id="method-Trio-getMetrics"></a><div class="section">
 <h3 id="method-getmetrics-">Method <code>getMetrics()</code><a class="anchor" aria-label="anchor" href="#method-getmetrics-"></a></h3>
-<p>Get metrics by gold standard name.</p><div class="section">
+<p>Get metrics by supporting evidence name.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">getMetrics</span><span class="op">(</span><span class="va">auxDataName</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">getMetrics</span><span class="op">(</span><span class="va">evidenceName</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>auxDataName</code></dt>
-<dd><p>A string specifying the name of the gold standard.</p></dd>
+<p></p><div class="arguments"><dl><dt><code>evidenceName</code></dt>
+<dd><p>A string specifying the name of the supporting evidence.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-Trio-getAuxData"></a><div class="section">
-<h3 id="method-getauxdata-">Method <code>getAuxData()</code><a class="anchor" aria-label="anchor" href="#method-getauxdata-"></a></h3>
-<p>Get auxiliary data by name.</p><div class="section">
+</div><p></p><hr><a id="method-Trio-getEvidence"></a><div class="section">
+<h3 id="method-getevidence-">Method <code>getEvidence()</code><a class="anchor" aria-label="anchor" href="#method-getevidence-"></a></h3>
+<p>Get supporting evidence by name.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">getAuxData</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">getEvidence</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
-<dd><p>A string specifying the name of the auxiliary data.</p></dd>
+<dd><p>A string specifying the name of the supporting evidence.</p></dd>
 
 
 </dl><p></p></div>
@@ -277,7 +277,7 @@ indices created by the split method.</p></dd>
 
 </div><p></p><hr><a id="method-Trio-split"></a><div class="section">
 <h3 id="method-split-">Method <code><a href="https://rdrr.io/r/base/split.html" class="external-link">split()</a></code><a class="anchor" aria-label="anchor" href="#method-split-"></a></h3>
-<p>Create a cross-validation indices.</p><div class="section">
+<p>Create cross-validation indices.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">split</span><span class="op">(</span></span>
 <span>  <span class="va">y</span>,</span>
@@ -293,7 +293,7 @@ indices created by the split method.</p></dd>
 <div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>y</code></dt>
-<dd><p>A variable to use for stratified sampling. If <code>stratify</code> is false, a
+<dd><p>A variable to use for stratified sampling (e.g. supporting evidence). If <code>stratify</code> is false, a
 vector the length of the data.</p></dd>
 
 

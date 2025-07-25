@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Comprehensive Collection of Curated Benchmarking Datasets and their Evaluation">
-<meta name="description" content="The trio is the combination of a data set, a metric and auxiliary data which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and auxiliary data. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.">
-<meta property="og:description" content="The trio is the combination of a data set, a metric and auxiliary data which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and auxiliary data. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.">
+<meta name="description" content="The trio is the combination of a data set, a metric and supporting evidence which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and supporting evidence. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.">
+<meta property="og:description" content="The trio is the combination of a data set, a metric and supporting evidence which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and supporting evidence. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -71,13 +71,13 @@
 </h2>
 <p>BenchHub is a data storage framework to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.</p>
 <p>The two components currently in BenchHub are:<br>
-- <strong>Trio</strong>: A data structure consisting of Dataset, Auxiliary and Metric to faciliate the sharing of benchmarking datasets within the community.<br>
+- <strong>Trio</strong>: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community.<br>
 - <strong>BenchmarkInsight</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results.</p>
 <div class="section level3">
 <h3 id="trio">Trio<a class="anchor" aria-label="anchor" href="#trio"></a>
 </h3>
 <p>Trio is built around three key components:</p>
-<p><strong>Data</strong>: Data used by the methods to generate output.<br><strong>Auxiliary Data</strong>: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br><strong>Metric</strong>: Evaluation metrics used to compare output of methods with auxiliary data.</p>
+<p><strong>Data</strong>: Data used by the methods to generate output.<br><strong>Supporting Evidence</strong>: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br><strong>Metric</strong>: Evaluation metrics used to compare output of methods with supporting evidence.</p>
 <p>Trio is implemented as R6 object with fields to store each of the components.</p>
 <p align="center">
 <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/triooverview.png" width="35%"><img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/triodatastructure.png" width="55%"></p>
@@ -98,8 +98,8 @@
 Please refer to the <a href="https://sydneybiox.github.io/BenchHub/">website</a> to see all vignettes listed below:</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="37%">
+<col width="62%">
 </colgroup>
 <thead><tr class="header">
 <th>Vignette</th>

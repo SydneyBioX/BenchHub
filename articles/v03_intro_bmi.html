@@ -77,11 +77,11 @@
 <h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
 <p>BenchHub—an R ecosystem to make benchmarking easier. It organizes
-evaluation metrics, gold standards(Auxiliary Data), and even provides
-built-in visualization tools to help interpret results. With BenchHub,
-researchers can quickly compare new methods, gain insights, and actually
-trust their benchmarking studies. In this vignette, we are going to
-introduce benchmarkInsights class.</p>
+evaluation metrics, gold standards (Supporting Evidence), and even
+provides built-in visualization tools to help interpret results. With
+BenchHub, researchers can quickly compare new methods, gain insights,
+and actually trust their benchmarking studies. In this vignette, we are
+going to introduce benchmarkInsights class.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-benchmarkinsights-class">Creating benchmarkInsights class<a class="anchor" aria-label="anchor" href="#creating-benchmarkinsights-class"></a>
@@ -90,13 +90,14 @@ introduce benchmarkInsights class.</p>
 corresponding constructor. For example, if you have a benchmark result
 formatted in dataframe, you can create a <code>benchmarkInsight</code>
 object as follows. The dataframe includes fixed name columns:
-<code>datasetID</code>, method, auxData, metric, result. Here I will use
-the benchmark result from SpatialSimBench to create a new object.</p>
+<code>datasetID</code>, method, evidence, metric, result. Here I will
+use the benchmark result from SpatialSimBench to create a new
+object.</p>
 <p><code>benchmarkInsight</code> object can be instantiated using their
 respective constructors. For example, if you have a benchmark result
 stored as a dataframe, you can create a Trio object as follows. The
 dataframe must include the following fixed columns:
-<code>datasetID</code>, <code>method</code>, <code>auxData</code>,
+<code>datasetID</code>, <code>method</code>, <code>evidence</code>,
 <code>metric</code>, and <code>result</code>. Here, I demonstrate this
 using benchmark results from SpatialSimBench to initialize a new
 object.</p>
@@ -108,7 +109,7 @@ object.</p>
 <span><span class="co">## Columns: 5</span></span>
 <span><span class="co">## $ datasetID <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "BREAST"<span style="color: #949494;">, </span>"HOSTEOSARCOMA"<span style="color: #949494;">, </span>"HPROSTATE"<span style="color: #949494;">, </span>"MBRAIN"<span style="color: #949494;">, </span>"MCATUMOR"…</span></span>
 <span><span class="co">## $ method    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "scDesign2"<span style="color: #949494;">, </span>"scDesign2"<span style="color: #949494;">, </span>"scDesign2"<span style="color: #949494;">, </span>"scDesign2"<span style="color: #949494;">, </span>"scDesig…</span></span>
-<span><span class="co">## $ auxData   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledV…</span></span>
+<span><span class="co">## $ evidence  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledVar"<span style="color: #949494;">, </span>"scaledV…</span></span>
 <span><span class="co">## $ metric    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "KDEstat"<span style="color: #949494;">, </span>"KDEstat"<span style="color: #949494;">, </span>"KDEstat"<span style="color: #949494;">, </span>"KDEstat"<span style="color: #949494;">, </span>"KDEstat"<span style="color: #949494;">, </span>"KDEs…</span></span>
 <span><span class="co">## $ result    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -0.18447837<span style="color: #949494;">, </span>3.33680301<span style="color: #949494;">, </span>6.95418978<span style="color: #949494;">, </span>0.62077112<span style="color: #949494;">, </span>0.34212005<span style="color: #949494;">,</span>…</span></span></code></pre>
 <p>If you use <code>trio$evaluation()</code>, the output will be
@@ -124,7 +125,7 @@ expected format.</p>
 <span><span class="co">##     addMetadata: function (metadata) </span></span>
 <span><span class="co">##     clone: function (deep = FALSE) </span></span>
 <span><span class="co">##     evalSummary: spec_tbl_df, tbl_df, tbl, data.frame</span></span>
-<span><span class="co">##     getBoxplot: function (evalResult, metricVariable, auxDataVariable) </span></span>
+<span><span class="co">##     getBoxplot: function (evalResult, metricVariable, evidenceVariable) </span></span>
 <span><span class="co">##     getCorplot: function (evalResult, input_type) </span></span>
 <span><span class="co">##     getForestplot: function (evalResult, input_group, input_model) </span></span>
 <span><span class="co">##     getHeatmap: function (evalSummary) </span></span>
@@ -137,12 +138,16 @@ expected format.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">add_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  datasetID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"BREAST"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scDesign2"</span>, <span class="st">"scDesign3_gau"</span>, <span class="st">"scDesign3_nb"</span>, <span class="st">"scDesign3_poi"</span>, </span>
-<span>             <span class="st">"SPARsim"</span>, <span class="st">"splatter"</span>, <span class="st">"SRTsim"</span>, <span class="st">"symsim"</span>, <span class="st">"zinbwave"</span><span class="op">)</span>,</span>
-<span>  auxData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"svg"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"scDesign2"</span>, <span class="st">"scDesign3_gau"</span>, <span class="st">"scDesign3_nb"</span>, <span class="st">"scDesign3_poi"</span>,</span>
+<span>    <span class="st">"SPARsim"</span>, <span class="st">"splatter"</span>, <span class="st">"SRTsim"</span>, <span class="st">"symsim"</span>, <span class="st">"zinbwave"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"svg"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="fl">9</span><span class="op">)</span>,</span>
-<span>  result <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.921940928</span>, <span class="fl">0.957805907</span>, <span class="fl">0.964135021</span>, <span class="fl">0.989451477</span>, <span class="fl">0.774261603</span>, </span>
-<span>             <span class="fl">0.890295359</span>, <span class="fl">0.985232068</span>, <span class="fl">0.067510549</span>, <span class="fl">0.888185654</span><span class="op">)</span>,</span>
+<span>  result <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="fl">0.921940928</span>, <span class="fl">0.957805907</span>, <span class="fl">0.964135021</span>, <span class="fl">0.989451477</span>, <span class="fl">0.774261603</span>,</span>
+<span>    <span class="fl">0.890295359</span>, <span class="fl">0.985232068</span>, <span class="fl">0.067510549</span>, <span class="fl">0.888185654</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -158,7 +163,7 @@ expected format.</p>
 <span>  spatialInfoReq <span class="op">=</span> <span class="st">"No"</span>,</span>
 <span>  DOI <span class="op">=</span> <span class="st">"10.1186/s13059-023-02879-z"</span>,</span>
 <span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">bmi</span><span class="op">$</span><span class="fu">addMetadata</span><span class="op">(</span><span class="va">metadata_srtsim</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -178,13 +183,13 @@ evaluation summary by averaging results across datasets.</p>
 correlation plot based on the provided evaluation summary.</p>
 <ul>
 <li>evalResult: A dataframe containing the evaluation summary.</li>
-<li>input_type: either “auxData”, “metric”, or “method”.</li>
+<li>input_type: either “evidence”, “metric”, or “method”.</li>
 </ul>
 <p><code>getBoxplot(evalReuslt)</code>: Creates a boxplot based on the
 provided evaluation summary.</p>
 <ul>
 <li>evalReuslt: A dataframe containing the evaluation summary.</li>
-<li>input_type: either “auxData”, “metric”, or “method”.</li>
+<li>input_type: either “evidence”, “metric”, or “method”.</li>
 </ul>
 <p><code>getForestplot(evalReuslt, input_group, input_model)</code>:
 Create a forest plot using linear models based on the comparison between
@@ -192,15 +197,15 @@ groups in the provided evaluation summary.</p>
 <ul>
 <li>evalReuslt: A dataframe containing the evaluation summary.</li>
 <li>input_group: A string specifying the grouping variable (only
-“datasetID”, “method”, or “auxData” allowed).</li>
+“datasetID”, “method”, or “evidence” allowed).</li>
 <li>input_model: A string specifying the model variable (only
-“datasetID”, “method”, or “auxData” allowed).</li>
+“datasetID”, “method”, or “evidence” allowed).</li>
 </ul>
 <p><code>getScatterplot(evalReuslt, variables)</code>: a scatter plot
-for the same auxData, with an two methodd metrics.</p>
+for the same evidence, with two method metrics.</p>
 <ul>
 <li>evalReuslt: A dataframe containing the evaluation summary, only
-include two different metrics, all auxData should be same</li>
+include two different metrics, all evidence should be same</li>
 <li>variables: A character vector of length two specifying the metric
 names to be used for the x and y axes.</li>
 </ul>
@@ -228,11 +233,11 @@ differences.</p>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 <div class="section level4">
-<h4 id="case-study-what-is-the-correlation-between-auxdatametricmethod">Case Study: What is the correlation between
-auxData/metric/method?<a class="anchor" aria-label="anchor" href="#case-study-what-is-the-correlation-between-auxdatametricmethod"></a>
+<h4 id="case-study-what-is-the-correlation-between-evidencemetricmethod">Case Study: What is the correlation between
+evidence/metric/method?<a class="anchor" aria-label="anchor" href="#case-study-what-is-the-correlation-between-evidencemetricmethod"></a>
 </h4>
 <p>To understand the relationships between different evaluation factors,
-we use a correlation plot to examine how auxData, metrics, and methods
+we use a correlation plot to examine how evidence, metrics, and methods
 are interrelated. This helps identify patterns, redundancies, or
 dependencies among evaluation components.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -243,7 +248,7 @@ we use a scatter plot. This visualization helps assess how well two
 metrics align or diverge across different methods, providing insights
 into trade-offs and performance consistency.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>,<span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
 <div class="section level4">
@@ -278,7 +283,7 @@ for a given metric, we use a boxplot. This visualization helps assess
 the variability of method performance, highlighting robustness or
 instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, auxDataVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 </div>
 </div>

@@ -91,7 +91,7 @@ the evaluation task and related information.</p></dd>
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>A dataframe containing initial evaluation results with columns such as datasetID, auxData, metric, and result.</p></dd>
+<dd><p>A dataframe containing initial evaluation results with columns such as datasetID, evidence, metric, and result.</p></dd>
 
 
 </dl><p></p></div>
@@ -179,7 +179,7 @@ the evaluation task and related information.</p></dd>
 
 </div><p></p><hr><a id="method-benchmarkInsights-getScatterplot"></a><div class="section">
 <h3 id="method-getscatterplot-">Method <code>getScatterplot()</code><a class="anchor" aria-label="anchor" href="#method-getscatterplot-"></a></h3>
-<p>Creates a scatter plot for the same auxData, with an two methodd metrics.</p><div class="section">
+<p>Creates a scatter plot for the same evidence, with an two methodd metrics.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">benchmarkInsights</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">variables</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -187,7 +187,7 @@ the evaluation task and related information.</p></dd>
 <div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>subset of evaluation summary, only include two different metrics, all auxData should be same</p></dd>
+<dd><p>subset of evaluation summary, only include two different metrics, all evidence should be same</p></dd>
 
 
 <dt><code>variables</code></dt>
@@ -203,23 +203,23 @@ the evaluation task and related information.</p></dd>
 
 </div><p></p><hr><a id="method-benchmarkInsights-getBoxplot"></a><div class="section">
 <h3 id="method-getboxplot-">Method <code>getBoxplot()</code><a class="anchor" aria-label="anchor" href="#method-getboxplot-"></a></h3>
-<p>Creates boxplot plots for the mutiple auxData, different method, one metric.</p><div class="section">
+<p>Creates boxplot plots for the mutiple evidence, different method, one metric.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">benchmarkInsights</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">metricVariable</span>, <span class="va">auxDataVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">benchmarkInsights</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">metricVariable</span>, <span class="va">evidenceVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>subset of evaluation summary, only include two different metrics, all auxData should be same.</p></dd>
+<dd><p>subset of evaluation summary, only include two different metrics, all evidence should be same.</p></dd>
 
 
 <dt><code>metricVariable</code></dt>
 <dd><p>Specify subset value in metric column.</p></dd>
 
 
-<dt><code>auxDataVariable</code></dt>
-<dd><p>Specify subset value in auxData column.</p></dd>
+<dt><code>evidenceVariable</code></dt>
+<dd><p>Specify subset value in evidence column.</p></dd>
 
 
 </dl><p></p></div>
@@ -231,8 +231,8 @@ the evaluation task and related information.</p></dd>
 
 </div><p></p><hr><a id="method-benchmarkInsights-getCorplot"></a><div class="section">
 <h3 id="method-getcorplot-">Method <code>getCorplot()</code><a class="anchor" aria-label="anchor" href="#method-getcorplot-"></a></h3>
-<p>Creates a correlation plot based on the provided evaluation summary and the specified input type (either "auxData", "metric", or "method").
-The correlation plot shows the pairwise correlation between results for different categories (auxData, metric, or method).</p><div class="section">
+<p>Creates a correlation plot based on the provided evaluation summary and the specified input type (either "evidence", "metric", or "method").
+The correlation plot shows the pairwise correlation between results for different categories (evidence, metric, or method).</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">benchmarkInsights</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">input_type</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -240,11 +240,11 @@ The correlation plot shows the pairwise correlation between results for differen
 <div class="section">
 <h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>A subset of the evaluation summary. It must include columns relevant to the input type (auxData, metric, method) and the result values.</p></dd>
+<dd><p>A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values.</p></dd>
 
 
 <dt><code>input_type</code></dt>
-<dd><p>A string that specifies the input type for generating the correlation plot. It must be either "auxData", "metric", or "method".</p></dd>
+<dd><p>A string that specifies the input type for generating the correlation plot. It must be either "evidence", "metric", or "method".</p></dd>
 
 
 </dl><p></p></div>
@@ -270,11 +270,11 @@ using dotwhisker and broom packages, with custom grouping and labeling.</p><div 
 
 
 <dt><code>input_group</code></dt>
-<dd><p>A string specifying the grouping variable (only "datasetID", "method", or "auxData" allowed).</p></dd>
+<dd><p>A string specifying the grouping variable (only "datasetID", "method", or "evidence" allowed).</p></dd>
 
 
 <dt><code>input_model</code></dt>
-<dd><p>A string specifying the model variable (only "datasetID", "method", or  "auxData" allowed).</p></dd>
+<dd><p>A string specifying the model variable (only "datasetID", "method", or  "evidence" allowed).</p></dd>
 
 
 </dl><p></p></div>
@@ -313,7 +313,7 @@ using dotwhisker and broom packages, with custom grouping and labeling.</p><div 
 <span class="r-out co"><span class="r-pr">#&gt;</span>     addevalSummary: function (additional_evalResult) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     clone: function (deep = FALSE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     evalSummary: data.frame</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getBoxplot: function (evalResult, metricVariable, auxDataVariable) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getBoxplot: function (evalResult, metricVariable, evidenceVariable) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     getCorplot: function (evalResult, input_type) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     getForestplot: function (evalResult, input_group, input_model) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     getHeatmap: function (evalSummary) </span>
