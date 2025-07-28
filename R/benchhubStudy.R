@@ -5,6 +5,7 @@
 #' @field name A character string to name the study.
 #' @field trios A list to store benchmark trios.
 #' @field mapping_functions A list to store mapping functions with metadata.
+#' @field description A character string describing the study.
 #' @export
 BenchHubStudy <- R6Class(
   "BenchHubStudy",
@@ -12,27 +13,67 @@ BenchHubStudy <- R6Class(
     # Fields
     name = NULL,
     trios = list(),
+    description = NULL,
     mapping_functions = list(),
 
     #` @description Create a new BenchHubStudy object
-    #' @param name A character string to name the study.
+    #' @param name A character string to name the study. If fetch_from_ctd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
     #' @param trios A list of Trio objects to initialize the study.
-    initialize = function(name = NULL, trios = list()) {
-      self$name <- name
-      self$trios <- trios
-      if (!length(trios) == 0 && !all(sapply(trios, inherits, "Trio"))) {
-        stop("All trios must be Trio objects.")
+    #' @param fetch_from_ctd Logical indicating whether to fetch study details from Curated Trio Datasets.
+    #' @param version Optional integer specifying which version of the study to fetch (when fetch_from_ctd is TRUE).
+    initialize = function(name = NULL, trios = list(), fetch_from_ctd = FALSE, version = NULL) {
+      if (fetch_from_ctd && !is.null(name)) {
+        # Read existing studies from the sheet
+        studies <- googlesheets4::read_sheet(
+          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+          sheet = "Studies"
+        )
+        
+        # Find the study by name
+        study_rows <- studies$studyName == name
+        if (!any(study_rows)) {
+          stop(paste0("Study '", name, "' not found in Curated Trio Datasets."))
+        }
+        
+        # If version is specified, filter for that version
+        if (!is.null(version)) {
+          study_rows <- study_rows & studies$version == version
+          if (!any(study_rows)) {
+            stop(paste0("Version ", version, " of study '", name, "' not found."))
+          }
+        } else {
+          # If no version specified, use the latest
+          latest_version <- max(studies$version[study_rows])
+          study_rows <- study_rows & studies$version == latest_version
+        }
+        
+        study_data <- studies[study_rows, ][1,]
+        self$name <- study_data$studyName
+        self$description <- study_data$description
+        
+        # Parse and load related trios
+        if (!is.na(study_data$relatedTrios) && study_data$relatedTrios != "") {
+          trio_names <- strsplit(study_data$relatedTrios, ":")[[1]]
+          self$trios <- list()
+          for (trio_name in trio_names) {
+            # Create new Trio object and add it to the list
+            trio <- Trio$new(trio_name, cachePath = TRUE)
+            self$add_trio(trio)
+          }
+        }
+      } else {
+        self$name <- name
+        self$trios <- trios
+        if (!length(trios) == 0 && !all(sapply(trios, inherits, "Trio"))) {
+          stop("All trios must be Trio objects.")
+        }
       }
     },
     #' @description
     #' Add a new trio to the study
-    #' @param name A character string to name the trio.
     #' @param trio_object A Trio object to be added.
-    add_trio = function(name, trio_object) {
-      if (!is.character(name)) {
-        stop("Name must be a character string.")
-      }
-      self$trios[[name]] <- trio_object
+    add_trio = function(trio_object) {
+      self$trios[[length(self$trios) + 1]] <- trio_object
     },
 
     #' @description
@@ -139,8 +180,32 @@ Describe the benchmark task and dataset.
         return(NULL)
       }
 
+      # check that all trios with the study are available on Curated Trio Datasets
+      if (length(self$trios) < 2) {
+        cli::cli_abort(c(
+          "Insufficient in the study.",
+          "Please add at least three trios before writing the study."
+        ))
+      } else if (!all(sapply(self$trios, inherits, "Trio"))) {
+        cli::cli_abort(c(
+          "All trios must be Trio objects.",
+          "Please check the trios in the study."
+        ))
+      } else if (any(sapply(self$trios, function(trio) is.null(trio$name)))) {
+        unnamed <- paste0(
+          sapply(self$trios, function(trio) trio$name[is.null(trio$name)]),
+          collapse = ", "
+        )
+        cli::cli_abort(c(
+          "All trios must be available on Curated Trio Datasets.",
+          "Please upload for each trio before writing the study.",
+          "You can use `Trio$writeCTD(name)` to upload a trio.",
+          "Please upload the following trios: {unnamed}",
+        ))
+      }
+
       # check if GITHUB_PAT is set and ask the user to set it if not
-      if (is.null(Sys.getenv("GITHUB_PAT"))) {
+      if (Sys.getenv("GITHUB_PAT") == "") {
         cli::cli_inform(c(
           "The GITHUB_PAT environment variable is not set.",
           "Please set it to your GitHub personal access token with gist access."
@@ -155,7 +220,7 @@ Describe the benchmark task and dataset.
           } else {
             cli::cli_abort(c(
               "The GITHUB_PAT environment variable is not set.",
-              "i" = "Please set it to your GitHub personal access token with gist access."
+              "Please set it to your GitHub PAT with gist access."
             ))
           }
         } else {
@@ -172,7 +237,7 @@ Describe the benchmark task and dataset.
       )
 
       # Calculate the next studyID
-      if (!"studyID" %in% names(studies)) {
+      if (nrow(studies) == 0) {
         studyID <- "0001"
       } else {
         studyID <- formatC(
@@ -183,30 +248,73 @@ Describe the benchmark task and dataset.
       }
 
       # Check if the name is already in the studies
-      if (name %in% studies$name) {
-        cli::cli_abort(c(
-          "The study name {.val {name}} is already in the studies sheet.",
-          "i" = "Please choose a different name."
+      if (self$name %in% studies$studyName) {
+        # ask the user if they are contributing a new verision of the study
+        cli::cli_inform(c(
+          "The study name `{self$name}` already exists in the Curated Trio Datasets.",
+          "i" = "Are you contributing a new version of this study?"
         ))
+        type <- utils::askYesNo(
+          "Is this a new version of an existing study?"
+        )
+        if (type) {
+          type <- "version"
+        } else {
+          cli::cli_abort(c(
+            "The study name `{self$name}` already exists.",
+            "Please choose a different name or update the existing study."
+          ))
+        }
+
+        # get the previous study version and increment it
+        # NOTE: versions are whole integers
+        previous_version <- studies$version[studies$studyName == self$name]
+        if (length(previous_version) == 0) {
+          cli::cli_abort(c(
+            "No previous version found for the study `{self$name}`.",
+            "Please check the Curated Trio Datasets sheet."
+          ))
+        } else {
+          previous_version <- as.integer(max(previous_version, na.rm = TRUE))
+          version <- previous_version + 1
+        }
+        type <- "update"
+      } else {
+        version <- 1
+        type <- "new"
       }
 
       # Prompt for description if not set
       if (is.null(self$description)) {
-        self$description <- readline(
-          prompt = "Please provide a description for the study: "
-        )
+        if (type == "new") {
+          self$description <- readline(
+            prompt = "Please provide a description for the study: "
+          )
+        } else {
+          # If updating, use the existing description
+          existing_description <- studies$description[
+            studies$studyName == self$name
+          ]
+          if (length(existing_description) == 0) {
+            cli::cli_abort(c(
+              "No existing description found for the study `{self$name}`.",
+              "Please provide a new description."
+            ))
+          } else {
+            self$description <- existing_description[1]
+          }
+        }
       }
 
-      # Prompt for version
-      version <- readline(
-        prompt = "Enter the version for the study (e.g., 1.0.0): "
-      )
-
-      studyType <- studyTypes[studyType]
-
       # Prompt for related datasets (comma-separated)
-      relatedDatasets <- readline(
-        prompt = "Enter related dataset IDs (comma-separated, or leave blank): "
+      relatedTrios <- paste0(
+        lapply(
+          self$trios,
+          function(trio) {
+            trio$name
+          }
+        ),
+        collapse = ":"
       )
 
       # Optionally, upload study protocol or code as a gist
@@ -215,19 +323,20 @@ Describe the benchmark task and dataset.
         "Do you want to upload a study protocol or code as a GitHub Gist?"
       )
       gist_url <- ""
+      protocolText <- ""
       if (uploadProtocol) {
         protocolFile <- readline("Enter the path to the protocol/code file: ")
         if (file.exists(protocolFile)) {
           protocolText <- readLines(protocolFile)
           gist <- gistr::gist_create(
             code = protocolText,
-            description = paste0("Protocol for BenchHubStudy ", name),
+            description = paste0("Protocol for BenchHubStudy ", self$name),
             public = TRUE,
             filename = basename(protocolFile)
           )
           gist_url <- gist$html_url
         } else {
-          cli::cli_warn("File not found. Skipping protocol upload.")
+          cli::cli_abort("File not found. Please check the path and try again.")
         }
       }
 
@@ -236,12 +345,14 @@ Describe the benchmark task and dataset.
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         data = data.frame(
           studyID = studyID,
-          name = name,
-          description = self$description,
+          studyName = self$name,
           version = version,
-          studyType = studyType,
-          relatedDatasets = relatedDatasets,
-          protocol_gist = gist_url,
+          description = self$description,
+          type = type,
+          nTrios = length(self$trios),
+          relatedTrios = relatedTrios,
+          protocolGist = gist_url,
+          mappingFunctions = "", #TODO: Add mapping functions if needed
           validated = FALSE,
           stringsAsFactors = FALSE
         ),

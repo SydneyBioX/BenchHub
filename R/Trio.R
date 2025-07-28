@@ -20,6 +20,7 @@ NULL
 #' @field splitSeed The seed used to generate the split indices
 #' @field verbose Set the verbosity of Trio. Defaults to `FALSE`.
 #' @field description A description of the dataset.
+#' @field name The name of the Trio object, as defined in Curated Trio Datasets.
 #'
 #' @examples
 #' trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
@@ -41,6 +42,7 @@ Trio <- R6::R6Class(
     splitSeed = NULL,
     verbose = FALSE,
     description = NULL,
+    name = NULL,
 
     # TODO: Implement Trio$sources() (Issue #2)
 
@@ -581,7 +583,6 @@ Trio <- R6::R6Class(
 
       # Process Google Sheets data
       state <- private$processGoogleSheetsData(state)
-      private$datasetID <- state$datasetID
       state$dataType <- state$dataType
 
       # Add dataset to sheets
@@ -592,6 +593,9 @@ Trio <- R6::R6Class(
 
       # Process metrics and tasks
       state <- private$processMetricsAndTasks(state)
+
+      private$datasetID <- state$datasetID
+      self$name <- state$name
 
       cli::cli_inform(c(
         "Added the dataset to the Curated Trio Datasets sheet.",
@@ -1079,6 +1083,8 @@ Trio <- R6::R6Class(
             "Specified dataset ({.val {userInput}}) is not avaiable."
           ))
         }
+
+        self$name <- userInput
 
         sourceName <- datasets |>
           dplyr::filter(name == userInput) |>
