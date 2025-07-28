@@ -14,7 +14,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 
 \item{\code{trios}}{A list to store benchmark trios.}
 
-\item{\code{mapping_functions}}{A list to store mapping functions with metadata.}
+\item{\code{mappingFunctions}}{A list to store mapping functions with metadata.}
 
 \item{\code{description}}{A character string describing the study.}
 }
@@ -24,11 +24,11 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-BenchHubStudy-new}{\code{BenchHubStudy$new()}}
-\item \href{#method-BenchHubStudy-add_trio}{\code{BenchHubStudy$add_trio()}}
-\item \href{#method-BenchHubStudy-add_mapping_function}{\code{BenchHubStudy$add_mapping_function()}}
-\item \href{#method-BenchHubStudy-run_mapping}{\code{BenchHubStudy$run_mapping()}}
-\item \href{#method-BenchHubStudy-get_mapping_function_documentation}{\code{BenchHubStudy$get_mapping_function_documentation()}}
-\item \href{#method-BenchHubStudy-list_mapping_functions}{\code{BenchHubStudy$list_mapping_functions()}}
+\item \href{#method-BenchHubStudy-addTrio}{\code{BenchHubStudy$addTrio()}}
+\item \href{#method-BenchHubStudy-addMappingFunction}{\code{BenchHubStudy$addMappingFunction()}}
+\item \href{#method-BenchHubStudy-runMapping}{\code{BenchHubStudy$runMapping()}}
+\item \href{#method-BenchHubStudy-getMappingFunctionDocumentation}{\code{BenchHubStudy$getMappingFunctionDocumentation()}}
+\item \href{#method-BenchHubStudy-listMappingFunctions}{\code{BenchHubStudy$listMappingFunctions()}}
 \item \href{#method-BenchHubStudy-generate_vignette_template}{\code{BenchHubStudy$generate_vignette_template()}}
 \item \href{#method-BenchHubStudy-evaluate}{\code{BenchHubStudy$evaluate()}}
 \item \href{#method-BenchHubStudy-writeBenchHubStudy}{\code{BenchHubStudy$writeBenchHubStudy()}}
@@ -44,7 +44,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$new(
   name = NULL,
   trios = list(),
-  fetch_from_ctd = FALSE,
+  fetchFromCtd = FALSE,
   version = NULL
 )}\if{html}{\out{</div>}}
 }
@@ -52,46 +52,46 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A character string to name the study. If fetch_from_ctd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.}
+\item{\code{name}}{A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.}
 
 \item{\code{trios}}{A list of Trio objects to initialize the study.}
 
-\item{\code{fetch_from_ctd}}{Logical indicating whether to fetch study details from Curated Trio Datasets.}
+\item{\code{fetchFromCtd}}{Logical indicating whether to fetch study details from Curated Trio Datasets.}
 
-\item{\code{version}}{Optional integer specifying which version of the study to fetch (when fetch_from_ctd is TRUE).}
+\item{\code{version}}{Optional integer specifying which version of the study to fetch (when fetchFromCtd is TRUE).}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-BenchHubStudy-add_trio"></a>}}
-\if{latex}{\out{\hypertarget{method-BenchHubStudy-add_trio}{}}}
-\subsection{Method \code{add_trio()}}{
+\if{html}{\out{<a id="method-BenchHubStudy-addTrio"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-addTrio}{}}}
+\subsection{Method \code{addTrio()}}{
 Add a new trio to the study
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$add_trio(trio_object)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$addTrio(trioObject)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{trio_object}}{A Trio object to be added.}
+\item{\code{trioObject}}{A Trio object to be added.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-BenchHubStudy-add_mapping_function"></a>}}
-\if{latex}{\out{\hypertarget{method-BenchHubStudy-add_mapping_function}{}}}
-\subsection{Method \code{add_mapping_function()}}{
+\if{html}{\out{<a id="method-BenchHubStudy-addMappingFunction"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-addMappingFunction}{}}}
+\subsection{Method \code{addMappingFunction()}}{
 Add a mapping function with metadata
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$add_mapping_function(
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$addMappingFunction(
   name,
   func,
-  input_description,
-  output_description,
-  example_usage = NULL
+  inputDescription,
+  outputDescription,
+  exampleUsage = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -102,28 +102,28 @@ Add a mapping function with metadata
 
 \item{\code{func}}{A function that takes data as input and returns transformed data.}
 
-\item{\code{input_description}}{A character string describing the input data.}
+\item{\code{inputDescription}}{A character string describing the input data.}
 
-\item{\code{output_description}}{A character string describing the output data.}
+\item{\code{outputDescription}}{A character string describing the output data.}
 
-\item{\code{example_usage}}{An optional character string showing example usage of the function.}
+\item{\code{exampleUsage}}{An optional character string showing example usage of the function.}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-BenchHubStudy-run_mapping"></a>}}
-\if{latex}{\out{\hypertarget{method-BenchHubStudy-run_mapping}{}}}
-\subsection{Method \code{run_mapping()}}{
+\if{html}{\out{<a id="method-BenchHubStudy-runMapping"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-runMapping}{}}}
+\subsection{Method \code{runMapping()}}{
 Apply a mapping function to data
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$run_mapping(mapping_name, data)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$runMapping(mappingName, data)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{mapping_name}}{A character string naming the mapping function to apply.}
+\item{\code{mappingName}}{A character string naming the mapping function to apply.}
 
 \item{\code{data}}{The data to which the mapping function will be applied.}
 }
@@ -134,18 +134,18 @@ The transformed data after applying the mapping function.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-BenchHubStudy-get_mapping_function_documentation"></a>}}
-\if{latex}{\out{\hypertarget{method-BenchHubStudy-get_mapping_function_documentation}{}}}
-\subsection{Method \code{get_mapping_function_documentation()}}{
+\if{html}{\out{<a id="method-BenchHubStudy-getMappingFunctionDocumentation"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-getMappingFunctionDocumentation}{}}}
+\subsection{Method \code{getMappingFunctionDocumentation()}}{
 Documentation getter for mapping function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$get_mapping_function_documentation(mapping_name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$getMappingFunctionDocumentation(mappingName)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{mapping_name}}{A character string naming the mapping function.}
+\item{\code{mappingName}}{A character string naming the mapping function.}
 }
 \if{html}{\out{</div>}}
 }
@@ -154,12 +154,12 @@ A list containing the input description, output description, and example usage.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-BenchHubStudy-list_mapping_functions"></a>}}
-\if{latex}{\out{\hypertarget{method-BenchHubStudy-list_mapping_functions}{}}}
-\subsection{Method \code{list_mapping_functions()}}{
+\if{html}{\out{<a id="method-BenchHubStudy-listMappingFunctions"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-listMappingFunctions}{}}}
+\subsection{Method \code{listMappingFunctions()}}{
 available options
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$list_mapping_functions()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$listMappingFunctions()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -173,14 +173,14 @@ A character vector of mapping function names.
 Generate R Markdown vignette template
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$generate_vignette_template(
-  output_path = "benchmark_study_template.Rmd"
+  outputPath = "benchmark_study_template.Rmd"
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{output_path}}{A character string specifying the path to save the vignette template.}
+\item{\code{outputPath}}{A character string specifying the path to save the vignette template.}
 }
 \if{html}{\out{</div>}}
 }
