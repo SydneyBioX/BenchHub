@@ -1163,6 +1163,7 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
+
       # get the gold standard metadata from curated trio datasets
       evidenceMetaData <- suppressMessages(
         googlesheets4::read_sheet(
@@ -1195,7 +1196,8 @@ Trio <- R6::R6Class(
               ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
               sheet = "Metrics",
             )
-          )
+          ) |>
+          dplyr::distinct(MetricID, .keep_all = TRUE)
       )
 
       # create metrics inside the object
@@ -1205,39 +1207,179 @@ Trio <- R6::R6Class(
             name = metric["MetricID"][[1]],
             metric = match.fun(metric["wrapper.r"][[1]])
           )
+        } else if (metric["Metric Type"] == "gist") {
+          # Handle external metrics from gists
+          gist_url <- metric["gist_url"][[1]]
+          if (!is.na(gist_url) && gist_url != "") {
+            path <- tempdir()
+            # Download the gist
+            temp_file <- gistr::gist(
+              gist_url,
+              quiet = TRUE
+            ) |>
+              gistr::gist_save(
+                path = path
+              ) |>
+              purrr::pluck(1)
+
+            # Create a new environment for the metric functions
+            metric_env <- new.env()
+
+            # Source the file in the new environment
+            sys.source(temp_file, envir = metric_env)
+
+            # Add the metric function from the new environment
+            metric_name <- metric["MetricID"][[1]]
+            if (exists(metric_name, envir = metric_env)) {
+              self$addMetric(
+                name = metric_name,
+                metric = get(metric_name, envir = metric_env)
+              )
+            }
+          }
         } else {
-          # TODO: Support external metrics.
+          # TODO: Support other external metrics.
           cli::cli_abort(c(
-            "External metrics are not yet supported."
+            "External metrics of type {metric['Metric Type']} are not yet supported."
           ))
         }
       })
 
-      # add each gold standard with it's respective metrics
-      apply(evidenceMetaData, 1, \(evidence) {
-        if (evidence["is_in_data"]) {
-          if (evidence["type"] == "columns") {
-            evidenceCols <- unlist(strsplit(evidence["name"], ", ", TRUE))
-            self$addEvidence(
-              name = evidence["Supporting Evidence"],
-              # TODO: make it so the data is accessed by, rather stored in the
-              #       evidence
-              evidence = self$data[, evidenceCols],
-              metrics = metrics |>
-                dplyr::filter(`Evidence Type` == evidence["Supporting Evidence"]) |>
-                purrr::pluck("MetricID")
-            )
-          } else {
+      # Check if evidence was saved via writeCTD (all evidence in one file)
+      # This is indicated by multiple evidence items with the same sourceID
+      evidenceSourceIDs <- evidenceMetaData |> purrr::pluck("sourceID")
+      uniqueSourceIDs <- unique(evidenceSourceIDs)
+
+      # If there's only one unique sourceID and multiple evidence items,
+      # it's likely that all evidence was saved together via writeCTD
+      if (
+        !is.na(uniqueSourceIDs) &&
+          length(uniqueSourceIDs) == 1 &&
+          nrow(evidenceMetaData) > 1
+      ) {
+        # Download the combined evidence file once
+        sourceID <- uniqueSourceIDs[1]
+        tempCachePath <- tempdir()
+
+        tryCatch(
+          {
+            filePath <- figshareDl(sourceID, tempCachePath)
+
+            # Load all evidence from the combined file
+            combinedEvidence <- loadFile(filePath)
+            browser()
+
+            # Add each evidence item with its respective metrics
+            for (i in 1:nrow(evidenceMetaData)) {
+              evidenceRow <- evidenceMetaData[i, ]
+              evidenceName <- evidenceRow["Supporting Evidence"]
+
+              # Check if the evidence exists in the combined evidence
+              if (evidenceName %in% names(combinedEvidence)) {
+                self$addEvidence(
+                  name = evidenceName,
+                  evidence = combinedEvidence[[evidenceName]]$evidence,
+                  metrics = combinedEvidence[[evidenceName]]$metrics
+                )
+              } else {
+                cli::cli_warn(c(
+                  "Evidence `{evidenceName}` not found in the combined evidence file.",
+                  "i" = "Skipping this evidence item."
+                ))
+              }
+            }
+          },
+          error = function(e) {
             cli::cli_abort(c(
-              "Accessors for non-tabular data types aren't supported yet."
+              "Failed to download or load combined evidence from figshare.",
+              "Error: {e$message}"
             ))
           }
-        } else {
-          cli::cli_abort(c(
-            "evidence that are not in the data are not supported yet."
-          ))
-        }
-      })
+        )
+      } else {
+        # Handle evidence items individually (original behavior)
+        apply(evidenceMetaData, 1, \(evidenceRow) {
+          evidenceName <- evidenceRow["Supporting Evidence"]
+
+          # Handle evidence from different sources
+          if (evidenceRow["is_in_data"]) {
+            # Evidence is in the main data
+            if (evidenceRow["type"] == "columns") {
+              evidenceCols <- unlist(strsplit(evidenceRow["name"], ", ", TRUE))
+              self$addEvidence(
+                name = evidenceName,
+                evidence = self$data[, evidenceCols],
+                metrics = metrics |>
+                  dplyr::filter(`Evidence Type` == evidenceName) |>
+                  purrr::pluck("MetricID")
+              )
+            } else {
+              cli::cli_abort(c(
+                "Accessors for non-tabular data types aren't supported yet."
+              ))
+            }
+          } else if (evidenceRow["type"] == "figshare") {
+            # Evidence is stored separately
+            # Use the figshareDl function to download the evidence file
+            sourceID <- evidenceRow["sourceID"]
+
+            # Create a temporary cache path for downloading
+            tempCachePath <- tempdir()
+
+            # Download the evidence file using figshareDl
+            tryCatch(
+              {
+                filePath <- figshareDl(sourceID, tempCachePath)
+
+                # Load the evidence data
+                evidenceData <- loadFile(filePath)
+
+                self$addEvidence(
+                  name = evidenceName,
+                  evidence = evidenceData,
+                  metrics = metrics |>
+                    dplyr::filter(`Evidence Type` == evidenceName) |>
+                    purrr::pluck("MetricID")
+                )
+              },
+              error = function(e) {
+                cli::cli_abort(c(
+                  "Failed to download or load evidence {evidenceName} from figshare.",
+                  "Error: {e$message}"
+                ))
+              }
+            )
+          } else if (evidenceRow["type"] == "function") {
+            # Evidence is a function to be applied to the data
+            on_load_code <- evidenceRow["on_load"]
+            if (!is.na(on_load_code) && on_load_code != "") {
+              # Evaluate the function
+              evidenceFunc <- eval(parse(text = on_load_code))
+              if (is.function(evidenceFunc)) {
+                self$addEvidence(
+                  name = evidenceName,
+                  evidence = evidenceFunc,
+                  metrics = metrics |>
+                    dplyr::filter(`Evidence Type` == evidenceName) |>
+                    purrr::pluck("MetricID")
+                )
+              } else {
+                cli::cli_abort(c(
+                  "on_load code for evidence {evidenceName} does not evaluate to a function."
+                ))
+              }
+            } else {
+              cli::cli_abort(c(
+                "No on_load code provided for evidence {evidenceName} of type function."
+              ))
+            }
+          } else {
+            cli::cli_abort(c(
+              "Evidence type {evidenceRow['type']} is not supported."
+            ))
+          }
+        })
+      }
     }
   )
 )
