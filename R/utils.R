@@ -20,11 +20,41 @@ loadFile <- function(filePath) {
     return(data)
   } else if (tolower(ext) == "zip") {
     directory <- dirname(filePath)
-    decompressedPath <- utils::unzip(
+    decompressedDir <- fs::path_join(c(directory, "decompressed"))
+    decompressedPaths <- utils::unzip(
       filePath,
-      exdir = fs::path_join(c(directory, "decompressed"))
+      exdir = decompressedDir
     )
-    decompressedPath
+    
+    # Check what files were extracted
+    if (length(decompressedPaths) == 1) {
+      # If only one file was extracted, process it recursively
+      return(loadFile(decompressedPaths))
+    } else if (length(decompressedPaths) > 1) {
+      # Check if there's exactly one supported file
+      supportedExts <- c("rds", "h5ad", "csv")
+      supportedFiles <- decompressedPaths[tolower(tools::file_ext(decompressedPaths)) %in% supportedExts]
+      
+      if (length(supportedFiles) == 1) {
+        # If exactly one supported file, load it
+        return(loadFile(supportedFiles))
+      } else {
+        # If multiple files or no single supported file, prompt user to select
+        cli::cli_inform(c(
+          "The archive contains multiple files.",
+          "i" = "For more control over file loading, consider using the {.code dataLoader} parameter in {.code Trio$new()} (see {.code ?Trio} for details)."
+        ))
+        
+        # List files for user selection
+        cli::cli_inform("Select a file to load:")
+        selectedFile <- decompressedPaths[utils::menu(decompressedPaths)]
+        return(loadFile(selectedFile))
+      }
+    } else {
+      cli::cli_abort(c(
+        "No files were extracted from the archive."
+      ))
+    }
   } else if (tolower(ext) == "h5ad") {
     if (!requireNamespace("anndata", quietly = TRUE)) {
       cli::cli_abort(c(
