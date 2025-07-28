@@ -1283,7 +1283,7 @@ Trio <- R6::R6Class(
               } else {
                 cli::cli_warn(c(
                   "Evidence `{evidenceName}` not found in the combined evidence file.",
-                  "i" = "Skipping this evidence item."
+                  "Skipping this evidence item."
                 ))
               }
             }
