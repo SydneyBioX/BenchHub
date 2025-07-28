@@ -255,6 +255,47 @@ Describe the benchmark task and dataset.
           "{.href [this link](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)}"
         )
       ))
+    },
+
+    #' @description
+    #' Print method to display key information about the BenchHubStudy object.
+    print = function() {
+      msg <- cli::cli_fmt({
+        cli::cli_h1("BenchHub Study")
+
+        # Basic information
+        cli::cli_h3("Study Information")
+        if (!is.null(self$name)) {
+          cli::cli_text("{.strong Name}: {.val {self$name}}")
+        }
+        if (!is.null(self$description)) {
+          cli::cli_text("{.strong Description}: {.val {self$description}}")
+        }
+
+        # Trios information
+        cli::cli_h3("Trios")
+        cli::cli_text("{.strong Number of Trios}: {.val {length(self$trios)}}")
+        if (length(self$trios) > 0) {
+          trio_names <- sapply(self$trios, function(t) t$name)
+          trio_names <- trio_names[!sapply(trio_names, is.null)]
+          if (length(trio_names) > 0) {
+            cli::cli_text("{.strong Trio Names}: {.val {paste(trio_names, collapse = ', ')}}")
+          }
+        }
+
+        # Mapping functions
+        cli::cli_h3("Mapping Functions")
+        cli::cli_text(
+          "{.strong Number of Mapping Functions}: {.val {length(self$mapping_functions)}}"
+        )
+        if (length(self$mapping_functions) > 0) {
+          cli::cli_text(
+            "{.strong Function Names}: {.val {paste(names(self$mapping_functions), collapse = ', ')}}"
+          )
+        }
+      })
+
+      cat(msg, sep = "\n")
     }
   )
 )
