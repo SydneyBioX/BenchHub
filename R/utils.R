@@ -25,7 +25,7 @@ loadFile <- function(filePath) {
       filePath,
       exdir = decompressedDir
     )
-    
+
     # Check what files were extracted
     if (length(decompressedPaths) == 1) {
       # If only one file was extracted, process it recursively
@@ -33,8 +33,13 @@ loadFile <- function(filePath) {
     } else if (length(decompressedPaths) > 1) {
       # Check if there's exactly one supported file
       supportedExts <- c("rds", "h5ad", "csv")
-      supportedFiles <- decompressedPaths[tolower(tools::file_ext(decompressedPaths)) %in% supportedExts]
-      
+      supportedFiles <- decompressedPaths[
+        tolower(
+          tools::file_ext(decompressedPaths)
+        ) %in%
+          supportedExts
+      ]
+
       if (length(supportedFiles) == 1) {
         # If exactly one supported file, load it
         return(loadFile(supportedFiles))
@@ -44,7 +49,7 @@ loadFile <- function(filePath) {
           "The archive contains multiple files.",
           "i" = "For more control over file loading, consider using the {.code dataLoader} parameter in {.code Trio$new()} (see {.code ?Trio} for details)."
         ))
-        
+
         # List files for user selection
         cli::cli_inform("Select a file to load:")
         selectedFile <- decompressedPaths[utils::menu(decompressedPaths)]
@@ -59,16 +64,17 @@ loadFile <- function(filePath) {
     if (!requireNamespace("anndata", quietly = TRUE)) {
       cli::cli_abort(c(
         "Reading H5AD files requires the {.pkg anndata} package.",
-        "i" = "Check {.url https://anndata.dynverse.org/} for instuctions."
+        "i" = "Check {.url https://anndata.dynverse.org/} for instructions."
       ))
     }
 
     anndata::read_h5ad(filePath)
   } else if (tolower(ext) == "csv") {
     if (!requireNamespace("data.table", quietly = TRUE)) {
+      url <- "https://rdatatable.gitlab.io/data.table/"
       cli::cli_abort(c(
         "Reading CSV files requires the {.pkg data.table} package.",
-        "i" = "Check {.url https://rdatatable.gitlab.io/data.table/} for instructions."
+        "i" = "Check {.url {url}} for instructions."
       ))
     }
 
