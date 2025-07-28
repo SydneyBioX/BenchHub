@@ -4,7 +4,7 @@
 #' It allows adding new trios, mapping functions, and running mappings on data.
 #' @field name A character string to name the study.
 #' @field trios A list to store benchmark trios.
-#' @field mapping_functions A list to store mapping functions with metadata.
+#' @field mappingFunctions A list to store mapping functions with metadata.
 #' @field description A character string describing the study.
 #' @export
 BenchHubStudy <- R6Class(
@@ -14,15 +14,15 @@ BenchHubStudy <- R6Class(
     name = NULL,
     trios = list(),
     description = NULL,
-    mapping_functions = list(),
+    mappingFunctions = list(),
 
     #` @description Create a new BenchHubStudy object
-    #' @param name A character string to name the study. If fetch_from_ctd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
+    #' @param name A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
     #' @param trios A list of Trio objects to initialize the study.
-    #' @param fetch_from_ctd Logical indicating whether to fetch study details from Curated Trio Datasets.
-    #' @param version Optional integer specifying which version of the study to fetch (when fetch_from_ctd is TRUE).
-    initialize = function(name = NULL, trios = list(), fetch_from_ctd = FALSE, version = NULL) {
-      if (fetch_from_ctd && !is.null(name)) {
+    #' @param fetchFromCtd Logical indicating whether to fetch study details from Curated Trio Datasets.
+    #' @param version Optional integer specifying which version of the study to fetch (when fetchFromCtd is TRUE).
+    initialize = function(name = NULL, trios = list(), fetchFromCtd = FALSE, version = NULL) {
+      if (fetchFromCtd && !is.null(name)) {
         # Read existing studies from the sheet
         studies <- googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
@@ -30,35 +30,35 @@ BenchHubStudy <- R6Class(
         )
         
         # Find the study by name
-        study_rows <- studies$studyName == name
-        if (!any(study_rows)) {
+        studyRows <- studies$studyName == name
+        if (!any(studyRows)) {
           stop(paste0("Study '", name, "' not found in Curated Trio Datasets."))
         }
         
         # If version is specified, filter for that version
         if (!is.null(version)) {
-          study_rows <- study_rows & studies$version == version
-          if (!any(study_rows)) {
+          studyRows <- studyRows & studies$version == version
+          if (!any(studyRows)) {
             stop(paste0("Version ", version, " of study '", name, "' not found."))
           }
         } else {
           # If no version specified, use the latest
-          latest_version <- max(studies$version[study_rows])
-          study_rows <- study_rows & studies$version == latest_version
+          latestVersion <- max(studies$version[studyRows])
+          studyRows <- studyRows & studies$version == latestVersion
         }
         
-        study_data <- studies[study_rows, ][1,]
+        studyData <- studies[studyRows, ][1,]
         self$name <- study_data$studyName
         self$description <- study_data$description
         
         # Parse and load related trios
-        if (!is.na(study_data$relatedTrios) && study_data$relatedTrios != "") {
-          trio_names <- strsplit(study_data$relatedTrios, ":")[[1]]
+        if (!is.na(studyData$relatedTrios) && studyData$relatedTrios != "") {
+          trioNames <- strsplit(studyData$relatedTrios, ":")[[1]]
           self$trios <- list()
-          for (trio_name in trio_names) {
+          for (trioName in trioNames) {
             # Create new Trio object and add it to the list
-            trio <- Trio$new(trio_name, cachePath = TRUE)
-            self$add_trio(trio)
+            trio <- Trio$new(trioName, cachePath = TRUE)
+            self$addTrio(trio)
           }
         }
       } else {
@@ -71,75 +71,75 @@ BenchHubStudy <- R6Class(
     },
     #' @description
     #' Add a new trio to the study
-    #' @param trio_object A Trio object to be added.
-    add_trio = function(trio_object) {
-      self$trios[[length(self$trios) + 1]] <- trio_object
+    #' @param trioObject A Trio object to be added.
+    addTrio = function(trioObject) {
+      self$trios[[length(self$trios) + 1]] <- trioObject
     },
 
     #' @description
     #' Add a mapping function with metadata
     #' @param name A character string to name the mapping function.
     #' @param func A function that takes data as input and returns transformed data.
-    #' @param input_description A character string describing the input data.
-    #' @param output_description A character string describing the output data.
-    #' @param example_usage An optional character string showing example usage of the function.
-    add_mapping_function = function(
+    #' @param inputDescription A character string describing the input data.
+    #' @param outputDescription A character string describing the output data.
+    #' @param exampleUsage An optional character string showing example usage of the function.
+    addMappingFunction = function(
       name,
       func,
-      input_description,
-      output_description,
-      example_usage = NULL
+      inputDescription,
+      outputDescription,
+      exampleUsage = NULL
     ) {
       if (!is.function(func)) {
         stop("Mapping function must be a function.")
       }
-      self$mapping_functions[[name]] <- list(
+      self$mappingFunctions[[name]] <- list(
         func = func,
         doc = list(
-          input_description = input_description,
-          output_description = output_description,
-          example_usage = example_usage
+          inputDescription = inputDescription,
+          outputDescription = outputDescription,
+          exampleUsage = exampleUsage
         )
       )
     },
 
     #' @description
     #' Apply a mapping function to data
-    #' @param mapping_name A character string naming the mapping function to apply.
+    #' @param mappingName A character string naming the mapping function to apply.
     #' @param data The data to which the mapping function will be applied.
     #' @return The transformed data after applying the mapping function.
-    run_mapping = function(mapping_name, data) {
-      if (!(mapping_name %in% names(self$mapping_functions))) {
-        stop(paste0("Mapping function '", mapping_name, "' not found."))
+    runMapping = function(mappingName, data) {
+      if (!(mappingName %in% names(self$mappingFunctions))) {
+        stop(paste0("Mapping function '", mappingName, "' not found."))
       }
-      func <- self$mapping_functions[[mapping_name]]$func
+      func <- self$mappingFunctions[[mappingName]]$func
       return(func(data))
     },
 
     #' @description
     #' Documentation getter for mapping function
-    #' @param mapping_name A character string naming the mapping function.
+    #' @param mappingName A character string naming the mapping function.
     #' @return A list containing the input description, output description, and example usage.
-    get_mapping_function_documentation = function(mapping_name) {
-      if (!(mapping_name %in% names(self$mapping_functions))) {
-        stop(paste0("Mapping function '", mapping_name, "' not found."))
+    getMappingFunctionDocumentation = function(mappingName) {
+      if (!(mappingName %in% names(self$mappingFunctions))) {
+        stop(paste0("Mapping function '", mappingName, "' not found."))
       }
-      return(self$mapping_functions[[mapping_name]]$doc)
+      return(self$mappingFunctions[[mappingName]]$doc)
     },
 
     #' @description
     # Print out names of all mapping functions so user can see
     #' available options
     #' @return A character vector of mapping function names.
-    list_mapping_functions = function() {
-      return(names(self$mapping_functions))
+    listMappingFunctions = function() {
+      return(names(self$mappingFunctions))
     },
 
     #' @description
     #' Generate R Markdown vignette template
-    #' @param output_path A character string specifying the path to save the vignette template.
+    #' @param outputPath A character string specifying the path to save the vignette template.
     generate_vignette_template = function(
-      output_path = "benchmark_study_template.Rmd"
+      outputPath = "benchmark_study_template.Rmd"
     ) {
       vignette_text <- "
 ---
@@ -211,16 +211,16 @@ Describe the benchmark task and dataset.
           "Please set it to your GitHub personal access token with gist access."
         ))
         if (interactive()) {
-          set_github_pat <- utils::askYesNo(
+          setGithubPat <- utils::askYesNo(
             "Do you want to set the GITHUB_PAT environment variable?"
           )
-          if (set_github_pat) {
+          if (setGithubPat) {
             pat <- readline("Enter your GitHub personal access token: ")
             Sys.setenv(GITHUB_PAT = pat)
           } else {
             cli::cli_abort(c(
               "The GITHUB_PAT environment variable is not set.",
-              "Please set it to your GitHub PAT with gist access."
+              "Please set it to your GitHub personal access token with gist access."
             ))
           }
         } else {
@@ -322,7 +322,7 @@ Describe the benchmark task and dataset.
       uploadProtocol <- utils::askYesNo(
         "Do you want to upload a study protocol or code as a GitHub Gist?"
       )
-      gist_url <- ""
+      gistUrl <- ""
       protocolText <- ""
       if (uploadProtocol) {
         protocolFile <- readline("Enter the path to the protocol/code file: ")
@@ -334,7 +334,7 @@ Describe the benchmark task and dataset.
             public = TRUE,
             filename = basename(protocolFile)
           )
-          gist_url <- gist$html_url
+          gistUrl <- gist$html_url
         } else {
           cli::cli_abort("File not found. Please check the path and try again.")
         }
@@ -351,7 +351,7 @@ Describe the benchmark task and dataset.
           type = type,
           nTrios = length(self$trios),
           relatedTrios = relatedTrios,
-          protocolGist = gist_url,
+          protocolGist = gistUrl,
           mappingFunctions = "", #TODO: Add mapping functions if needed
           validated = FALSE,
           stringsAsFactors = FALSE
@@ -397,11 +397,11 @@ Describe the benchmark task and dataset.
         # Mapping functions
         cli::cli_h3("Mapping Functions")
         cli::cli_text(
-          "{.strong Number of Mapping Functions}: {.val {length(self$mapping_functions)}}"
+          "{.strong Number of Mapping Functions}: {.val {length(self$mappingFunctions)}}"
         )
-        if (length(self$mapping_functions) > 0) {
+        if (length(self$mappingFunctions) > 0) {
           cli::cli_text(
-            "{.strong Function Names}: {.val {paste(names(self$mapping_functions), collapse = ', ')}}"
+            "{.strong Function Names}: {.val {paste(names(self$mappingFunctions), collapse = ', ')}}"
           )
         }
       })
