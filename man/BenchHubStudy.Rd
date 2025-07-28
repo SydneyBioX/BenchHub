@@ -15,6 +15,8 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \item{\code{trios}}{A list to store benchmark trios.}
 
 \item{\code{mapping_functions}}{A list to store mapping functions with metadata.}
+
+\item{\code{description}}{A character string describing the study.}
 }
 \if{html}{\out{</div>}}
 }
@@ -30,6 +32,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \item \href{#method-BenchHubStudy-generate_vignette_template}{\code{BenchHubStudy$generate_vignette_template()}}
 \item \href{#method-BenchHubStudy-evaluate}{\code{BenchHubStudy$evaluate()}}
 \item \href{#method-BenchHubStudy-writeBenchHubStudy}{\code{BenchHubStudy$writeBenchHubStudy()}}
+\item \href{#method-BenchHubStudy-print}{\code{BenchHubStudy$print()}}
 \item \href{#method-BenchHubStudy-clone}{\code{BenchHubStudy$clone()}}
 }
 }
@@ -38,15 +41,24 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \if{latex}{\out{\hypertarget{method-BenchHubStudy-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$new(name = NULL, trios = list())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$new(
+  name = NULL,
+  trios = list(),
+  fetch_from_ctd = FALSE,
+  version = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A character string to name the study.}
+\item{\code{name}}{A character string to name the study. If fetch_from_ctd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.}
 
 \item{\code{trios}}{A list of Trio objects to initialize the study.}
+
+\item{\code{fetch_from_ctd}}{Logical indicating whether to fetch study details from Curated Trio Datasets.}
+
+\item{\code{version}}{Optional integer specifying which version of the study to fetch (when fetch_from_ctd is TRUE).}
 }
 \if{html}{\out{</div>}}
 }
@@ -57,14 +69,12 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \subsection{Method \code{add_trio()}}{
 Add a new trio to the study
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$add_trio(name, trio_object)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$add_trio(trio_object)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A character string to name the trio.}
-
 \item{\code{trio_object}}{A Trio object to be added.}
 }
 \if{html}{\out{</div>}}
@@ -204,6 +214,16 @@ The evaluation result from the trio.
 Write the BenchHubStudy metadata to Curated Trio Datasets sheet.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$writeBenchHubStudy()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-BenchHubStudy-print"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchHubStudy-print}{}}}
+\subsection{Method \code{print()}}{
+Print method to display key information about the BenchHubStudy object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{BenchHubStudy$print()}\if{html}{\out{</div>}}
 }
 
 }
