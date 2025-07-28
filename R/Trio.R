@@ -1267,7 +1267,6 @@ Trio <- R6::R6Class(
 
             # Load all evidence from the combined file
             combinedEvidence <- loadFile(filePath)
-            browser()
 
             # Add each evidence item with its respective metrics
             for (i in 1:nrow(evidenceMetaData)) {
