@@ -6,6 +6,7 @@
 #' @field trios A list to store benchmark trios.
 #' @field mappingFunctions A list to store mapping functions with metadata.
 #' @field description A character string describing the study.
+#' @field version Integer specifying the version of the study.
 #' @export
 BenchHubStudy <- R6Class(
   "BenchHubStudy",
@@ -15,6 +16,7 @@ BenchHubStudy <- R6Class(
     trios = list(),
     description = NULL,
     mappingFunctions = list(),
+    version = NULL,
 
     #` @description Create a new BenchHubStudy object
     #' @param name A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
@@ -52,15 +54,18 @@ BenchHubStudy <- R6Class(
               "' not found."
             ))
           }
+          self$version <- version
         } else {
           # If no version specified, use the latest
           latestVersion <- max(studies$version[studyRows])
           studyRows <- studyRows & studies$version == latestVersion
+          self$version <- latestVersion
         }
 
         studyData <- studies[studyRows, ][1, ]
         self$name <- studyData$studyName
         self$description <- studyData$description
+        self$version <- studyData$version
 
         # Parse and load related trios
         if (!is.na(studyData$relatedTrios) && studyData$relatedTrios != "") {
@@ -288,10 +293,12 @@ Describe the benchmark task and dataset.
         } else {
           previousVersion <- as.integer(max(previousVersion, na.rm = TRUE))
           version <- previousVersion + 1
+          self$version <- version
         }
         type <- "update"
       } else {
         version <- 1
+        self$version <- version
         type <- "new"
       }
 
@@ -389,6 +396,9 @@ Describe the benchmark task and dataset.
         cli::cli_h3("Study Information")
         if (!is.null(self$name)) {
           cli::cli_text("{.strong Name}: {.val {self$name}}")
+          if (!is.null(self$version)) {
+            cli::cli_text("{.strong Version}: {.val {self$version}}")
+          }
         }
         if (!is.null(self$description)) {
           cli::cli_text("{.strong Description}: {.val {self$description}}")
