@@ -542,9 +542,16 @@ Trio <- R6::R6Class(
     #' @param evidenceFileName Optional name of the evidence file in Figshare. If not provided, will prompt user for selection.
     #' @param dataType Optional type of data. Must be one of: "omics", "clinical", "spatial", "other". If not provided, will prompt user.
     #' @param skipMd5Check Optional boolean to skip MD5 verification. Defaults to FALSE.
-    writeCTD = function(name, githubPat = NULL, description = NULL, figshareUrl = NULL, 
-                      datasetFileName = NULL, evidenceFileName = NULL, 
-                      dataType = NULL, skipMd5Check = FALSE) {
+    writeCTD = function(
+      name,
+      githubPat = NULL,
+      description = NULL,
+      figshareUrl = NULL,
+      datasetFileName = NULL,
+      evidenceFileName = NULL,
+      dataType = NULL,
+      skipMd5Check = FALSE
+    ) {
       # Initialize state list
       state <- list(
         name = name,
@@ -649,7 +656,7 @@ Trio <- R6::R6Class(
         Sys.setenv(GITHUB_PAT = state$githubPat)
         return(state)
       }
-      
+
       # check if GITHUB_PAT is set and ask the user to set it if not
       if (Sys.getenv("GITHUB_PAT") == "") {
         cli::cli_inform(c(
@@ -730,10 +737,10 @@ Trio <- R6::R6Class(
       attempts <- 0
       maxAttempts <- 4
       verified <- FALSE
-      
+
       while (attempts < maxAttempts && !verified) {
         attempts <- attempts + 1
-        
+
         # Use provided URL if available, otherwise prompt
         url <- if (!is.null(state$figshareUrl)) {
           state$figshareUrl
@@ -746,7 +753,7 @@ Trio <- R6::R6Class(
           ))
           readline("Dataset/Evidence Figshare URL: ")
         }
-        
+
         if (!grepl("figshare", url)) {
           cli::cli_inform(c(
             "The provided URL is not a Figshare URL.",
@@ -765,13 +772,7 @@ Trio <- R6::R6Class(
         fileDF <- figshareListFiles(id)
         fileNames <- fileDF$name
 
-        # Display available files for user selection
-        if (nrow(fileDF) > 0) {
-          cli::cli_inform(c(
-            "Available files in Figshare article:",
-            setNames(fileNames, rep("*", length(fileNames)))
-          ))
-        } else {
+        if (nrow(fileDF) == 0) {
           cli::cli_inform("No files found in the Figshare article.")
           next()
         }
@@ -802,17 +803,19 @@ Trio <- R6::R6Class(
                 "Provided dataset file name not found in Figshare article.",
                 "i" = "Available files: {.val {fileNames}}"
               ))
-              state$figshareUrl <- NULL  # Reset URL to try again
+              state$figshareUrl <- NULL # Reset URL to try again
               next()
             }
             datasetFileName <- state$datasetFileName
           } else {
             # Let user choose the dataset file from available files
-            cli::cli_inform("Please select the dataset file from the list above.")
+            cli::cli_inform(
+              "Please select the dataset file from the list above."
+            )
             datasetChoice <- utils::menu(fileNames)
             if (datasetChoice == 0) {
               cli::cli_inform("No dataset file selected. Please try again.")
-              state$figshareUrl <- NULL  # Reset URL to try again
+              state$figshareUrl <- NULL # Reset URL to try again
               next()
             }
             datasetFileName <- fileNames[datasetChoice]
@@ -833,16 +836,20 @@ Trio <- R6::R6Class(
               "i" = "Otherwise, set self$dataSource and self$dataSourceID."
             ))
             # Ask user if they want to override MD5 verification
-            overrideMD5 <- utils::askYesNo(
-              "Do you want to override the MD5 verification for the dataset file?"
-            )
+            if (!state$skipMd5Check) {
+              overrideMD5 <- utils::askYesNo(
+                "Do you want to override the MD5 verification for the dataset file?"
+              )
+            } else {
+              overrideMD5 <- TRUE
+            }
             if (overrideMD5) {
               cli::cli_inform("MD5 verification overridden for dataset file.")
               datasetUploaded <- TRUE
               state$dataSource <- "figshare"
               state$dataSourceID <- paste0(id, "/", fileID)
             } else {
-              state$figshareUrl <- NULL  # Reset URL to try again
+              state$figshareUrl <- NULL # Reset URL to try again
               next()
             }
           }
@@ -858,7 +865,7 @@ Trio <- R6::R6Class(
                 "Provided evidence file name not found in Figshare article.",
                 "i" = "Available files: {.val {fileNames}}"
               ))
-              state$figshareUrl <- NULL  # Reset URL to try again
+              state$figshareUrl <- NULL # Reset URL to try again
               next()
             }
             evidenceFileName <- state$evidenceFileName
@@ -870,7 +877,7 @@ Trio <- R6::R6Class(
             evidenceChoice <- utils::menu(fileNames, title = "Evidence file")
             if (evidenceChoice == 0) {
               cli::cli_inform("No evidence file selected. Please try again.")
-              state$figshareUrl <- NULL  # Reset URL to try again
+              state$figshareUrl <- NULL # Reset URL to try again
               next()
             }
             evidenceFileName <- fileNames[evidenceChoice]
@@ -890,9 +897,13 @@ Trio <- R6::R6Class(
                 "i" = "Please re-upload the correct evidence file."
               ))
               # Ask user if they want to override MD5 verification
-              overrideMD5Ev <- utils::askYesNo(
-                "Do you want to override the MD5 verification for the evidence file?"
-              )
+              if (!state$skipMd5Check) {
+                overrideMD5Ev <- utils::askYesNo(
+                  "Do you want to override the MD5 verification for the evidence file?"
+                )
+              } else {
+                overrideMD5Ev <- TRUE
+              }
               if (overrideMD5Ev) {
                 cli::cli_inform(
                   "MD5 verification overridden for evidence file."
@@ -901,7 +912,7 @@ Trio <- R6::R6Class(
                 state$evidenceSource <- "figshare"
                 state$evidenceSourceID <- paste0(id, "/", fileIDev)
               } else {
-                state$figshareUrl <- NULL  # Reset URL to try again
+                state$figshareUrl <- NULL # Reset URL to try again
                 next()
               }
             }
@@ -930,7 +941,7 @@ Trio <- R6::R6Class(
         self$description <- state$description
         return(state)
       }
-      
+
       # if the dataset doesn't have a description, prompt the user to input one
       if (is.null(self$description)) {
         self$description <- readline(
