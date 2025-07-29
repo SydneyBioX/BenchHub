@@ -44,8 +44,6 @@ Trio <- R6::R6Class(
     description = NULL,
     name = NULL,
 
-    # TODO: Implement Trio$sources() (Issue #2)
-
     #' @description
     #' Create a Trio object
     #' @param datasetID
@@ -157,7 +155,6 @@ Trio <- R6::R6Class(
           "metrics" = metrics
         )
       } else {
-        # TODO: Validate the gold standard objects.
         self$evidence[[name]] <- list(
           "evidence" = evidence,
           "metrics" = metrics
@@ -325,7 +322,6 @@ Trio <- R6::R6Class(
         )
 
         # get a flat list of available metrics
-        # TODO: only get metrics for current evaluation task
         allMetrics <- metrics |>
           unlist() |>
           unique()
@@ -538,8 +534,17 @@ Trio <- R6::R6Class(
 
     #' @description
     #' Write the Trio Metadata to Curated Trio Datasets sheet.
-    #' @param name the name of the dataset to be added.
-    writeCTD = function(name) {
+    #' @param name The name of the dataset to be added.
+    #' @param githubPat Optional GitHub Personal Access Token. If not provided and not set in environment, will prompt user.
+    #' @param description Optional description of the dataset. If not provided and not set, will prompt user.
+    #' @param figshareUrl Optional URL to the Figshare dataset. If not provided, will prompt user.
+    #' @param datasetFileName Optional name of the dataset file in Figshare. If not provided, will prompt user for selection.
+    #' @param evidenceFileName Optional name of the evidence file in Figshare. If not provided, will prompt user for selection.
+    #' @param dataType Optional type of data. Must be one of: "omics", "clinical", "spatial", "other". If not provided, will prompt user.
+    #' @param skipMd5Check Optional boolean to skip MD5 verification. Defaults to FALSE.
+    writeCTD = function(name, githubPat = NULL, description = NULL, figshareUrl = NULL, 
+                      datasetFileName = NULL, evidenceFileName = NULL, 
+                      dataType = NULL, skipMd5Check = FALSE) {
       # Initialize state list
       state <- list(
         name = name,
@@ -553,7 +558,13 @@ Trio <- R6::R6Class(
         evidenceSource = self$evidenceSource,
         evidenceSourceID = self$evidenceSourceID,
         datasetID = private$datasetID,
-        dataType = NULL
+        dataType = dataType,
+        githubPat = githubPat,
+        description = description,
+        figshareUrl = figshareUrl,
+        datasetFileName = datasetFileName,
+        evidenceFileName = evidenceFileName,
+        skipMd5Check = skipMd5Check
       )
 
       # Perform initial validation checks
@@ -633,16 +644,22 @@ Trio <- R6::R6Class(
     },
 
     handleGitHubPAT = function(state) {
+      # Use provided PAT if available
+      if (!is.null(state$githubPat)) {
+        Sys.setenv(GITHUB_PAT = state$githubPat)
+        return(state)
+      }
+      
       # check if GITHUB_PAT is set and ask the user to set it if not
       if (Sys.getenv("GITHUB_PAT") == "") {
         cli::cli_inform(c(
           "The GITHUB_PAT environment variable is not set.",
           "Please set it to your GitHub personal access token with gist access."
         ))
-        set_github_pat <- utils::askYesNo(
+        setGithubPat <- utils::askYesNo(
           "Do you want to set the GITHUB_PAT environment variable?"
         )
-        if (set_github_pat) {
+        if (setGithubPat) {
           pat <- readline("Enter your GitHub personal access token: ")
           Sys.setenv(GITHUB_PAT = pat)
         } else {
@@ -710,19 +727,26 @@ Trio <- R6::R6Class(
 
     verifyFigshareUpload = function(state) {
       # Upload verification using md5
-      cli::cli_inform(c(
-        paste0(
-          "Please upload the data and/or supporting evidence to Figshare and provide",
-          " the URL"
-        )
-      ))
       attempts <- 0
       maxAttempts <- 4
       verified <- FALSE
-
+      
       while (attempts < maxAttempts && !verified) {
         attempts <- attempts + 1
-        url <- readline("Dataset/Evidence Figshare URL: ")
+        
+        # Use provided URL if available, otherwise prompt
+        url <- if (!is.null(state$figshareUrl)) {
+          state$figshareUrl
+        } else {
+          cli::cli_inform(c(
+            paste0(
+              "Please upload the data and/or supporting evidence to Figshare and provide",
+              " the URL"
+            )
+          ))
+          readline("Dataset/Evidence Figshare URL: ")
+        }
+        
         if (!grepl("figshare", url)) {
           cli::cli_inform(c(
             "The provided URL is not a Figshare URL.",
@@ -771,14 +795,28 @@ Trio <- R6::R6Class(
         if (!is.null(self$dataSource) && !is.null(self$dataSourceID)) {
           datasetUploaded <- TRUE
         } else {
-          # Let user choose the dataset file from available files
-          cli::cli_inform("Please select the dataset file from the list above.")
-          datasetChoice <- utils::menu(fileNames)
-          if (datasetChoice == 0) {
-            cli::cli_inform("No dataset file selected. Please try again.")
-            next()
+          # Use provided dataset filename or let user choose
+          if (!is.null(state$datasetFileName)) {
+            if (!(state$datasetFileName %in% fileNames)) {
+              cli::cli_inform(c(
+                "Provided dataset file name not found in Figshare article.",
+                "i" = "Available files: {.val {fileNames}}"
+              ))
+              state$figshareUrl <- NULL  # Reset URL to try again
+              next()
+            }
+            datasetFileName <- state$datasetFileName
+          } else {
+            # Let user choose the dataset file from available files
+            cli::cli_inform("Please select the dataset file from the list above.")
+            datasetChoice <- utils::menu(fileNames)
+            if (datasetChoice == 0) {
+              cli::cli_inform("No dataset file selected. Please try again.")
+              state$figshareUrl <- NULL  # Reset URL to try again
+              next()
+            }
+            datasetFileName <- fileNames[datasetChoice]
           }
-          datasetFileName <- fileNames[datasetChoice]
 
           idx <- which(fileNames == datasetFileName)[1]
           fileID <- fileDF$id[idx]
@@ -804,6 +842,7 @@ Trio <- R6::R6Class(
               state$dataSource <- "figshare"
               state$dataSourceID <- paste0(id, "/", fileID)
             } else {
+              state$figshareUrl <- NULL  # Reset URL to try again
               next()
             }
           }
@@ -812,16 +851,30 @@ Trio <- R6::R6Class(
         evidenceUploaded <- FALSE
         evidenceFileName <- NULL
         if (state$saveEvidence) {
-          # Let user choose the evidence file from available files
-          cli::cli_inform(
-            "Please select the evidence file from the list above."
-          )
-          evidenceChoice <- utils::menu(fileNames, title = "Evidence file")
-          if (evidenceChoice == 0) {
-            cli::cli_inform("No evidence file selected. Please try again.")
-            next()
+          # Use provided evidence filename or let user choose
+          if (!is.null(state$evidenceFileName)) {
+            if (!(state$evidenceFileName %in% fileNames)) {
+              cli::cli_inform(c(
+                "Provided evidence file name not found in Figshare article.",
+                "i" = "Available files: {.val {fileNames}}"
+              ))
+              state$figshareUrl <- NULL  # Reset URL to try again
+              next()
+            }
+            evidenceFileName <- state$evidenceFileName
+          } else {
+            # Let user choose the evidence file from available files
+            cli::cli_inform(
+              "Please select the evidence file from the list above."
+            )
+            evidenceChoice <- utils::menu(fileNames, title = "Evidence file")
+            if (evidenceChoice == 0) {
+              cli::cli_inform("No evidence file selected. Please try again.")
+              state$figshareUrl <- NULL  # Reset URL to try again
+              next()
+            }
+            evidenceFileName <- fileNames[evidenceChoice]
           }
-          evidenceFileName <- fileNames[evidenceChoice]
 
           idxEv <- which(fileNames == evidenceFileName)[1]
           if (!is.na(idxEv)) {
@@ -848,6 +901,7 @@ Trio <- R6::R6Class(
                 state$evidenceSource <- "figshare"
                 state$evidenceSourceID <- paste0(id, "/", fileIDev)
               } else {
+                state$figshareUrl <- NULL  # Reset URL to try again
                 next()
               }
             }
@@ -871,6 +925,12 @@ Trio <- R6::R6Class(
     },
 
     handleDatasetDescription = function(state) {
+      # Use provided description if available
+      if (!is.null(state$description)) {
+        self$description <- state$description
+        return(state)
+      }
+      
       # if the dataset doesn't have a description, prompt the user to input one
       if (is.null(self$description)) {
         self$description <- readline(
@@ -925,18 +985,28 @@ Trio <- R6::R6Class(
         "spatial",
         "other"
       )
-      # prompt the user to input the data type
-      dataType <- utils::menu(
-        dataTypes,
-        title = "Select the data type of the dataset:"
-      )
-      if (dataType == 0) {
-        cli::cli_abort(c(
-          "No data type was selected.",
-          "i" = "Please select a data type."
-        ))
+      # Use provided data type or prompt user
+      if (!is.null(state$dataType)) {
+        if (!state$dataType %in% dataTypes) {
+          cli::cli_abort(c(
+            "Invalid data type provided.",
+            "i" = "Must be one of: {.val {dataTypes}}"
+          ))
+        }
+      } else {
+        # prompt the user to input the data type
+        dataTypeChoice <- utils::menu(
+          dataTypes,
+          title = "Select the data type of the dataset:"
+        )
+        if (dataTypeChoice == 0) {
+          cli::cli_abort(c(
+            "No data type was selected.",
+            "i" = "Please select a data type."
+          ))
+        }
+        state$dataType <- dataTypes[dataTypeChoice]
       }
-      state$dataType <- dataTypes[dataType]
 
       return(state)
     },
