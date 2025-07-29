@@ -21,36 +21,47 @@ BenchHubStudy <- R6Class(
     #' @param trios A list of Trio objects to initialize the study.
     #' @param fetchFromCtd Logical indicating whether to fetch study details from Curated Trio Datasets.
     #' @param version Optional integer specifying which version of the study to fetch (when fetchFromCtd is TRUE).
-    initialize = function(name = NULL, trios = list(), fetchFromCtd = FALSE, version = NULL) {
+    initialize = function(
+      name = NULL,
+      trios = list(),
+      fetchFromCtd = FALSE,
+      version = NULL
+    ) {
       if (fetchFromCtd && !is.null(name)) {
         # Read existing studies from the sheet
         studies <- googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
           sheet = "Studies"
         )
-        
+
         # Find the study by name
         studyRows <- studies$studyName == name
         if (!any(studyRows)) {
           stop(paste0("Study '", name, "' not found in Curated Trio Datasets."))
         }
-        
+
         # If version is specified, filter for that version
         if (!is.null(version)) {
           studyRows <- studyRows & studies$version == version
           if (!any(studyRows)) {
-            stop(paste0("Version ", version, " of study '", name, "' not found."))
+            stop(paste0(
+              "Version ",
+              version,
+              " of study '",
+              name,
+              "' not found."
+            ))
           }
         } else {
           # If no version specified, use the latest
           latestVersion <- max(studies$version[studyRows])
           studyRows <- studyRows & studies$version == latestVersion
         }
-        
-        studyData <- studies[studyRows, ][1,]
-        self$name <- study_data$studyName
-        self$description <- study_data$description
-        
+
+        studyData <- studies[studyRows, ][1, ]
+        self$name <- studyData$studyName
+        self$description <- studyData$description
+
         # Parse and load related trios
         if (!is.na(studyData$relatedTrios) && studyData$relatedTrios != "") {
           trioNames <- strsplit(studyData$relatedTrios, ":")[[1]]
@@ -138,10 +149,10 @@ BenchHubStudy <- R6Class(
     #' @description
     #' Generate R Markdown vignette template
     #' @param outputPath A character string specifying the path to save the vignette template.
-    generate_vignette_template = function(
+    generateVignetteTemplate = function(
       outputPath = "benchmark_study_template.Rmd"
     ) {
-      vignette_text <- "
+      vignetteText <- "
 ---
 title: \"Benchmark Study Report\"
 output: html_document
@@ -153,8 +164,8 @@ Describe the benchmark task and dataset.
 
 
 "
-      writeLines(vignette_text, con = output_path)
-      message(paste("Vignette template written to:", output_path))
+      writeLines(vignetteText, con = outputPath)
+      message(paste("Vignette template written to:", outputPath))
     },
 
     #' @description
@@ -268,15 +279,15 @@ Describe the benchmark task and dataset.
 
         # get the previous study version and increment it
         # NOTE: versions are whole integers
-        previous_version <- studies$version[studies$studyName == self$name]
-        if (length(previous_version) == 0) {
+        previousVersion <- studies$version[studies$studyName == self$name]
+        if (length(previousVersion) == 0) {
           cli::cli_abort(c(
             "No previous version found for the study `{self$name}`.",
             "Please check the Curated Trio Datasets sheet."
           ))
         } else {
-          previous_version <- as.integer(max(previous_version, na.rm = TRUE))
-          version <- previous_version + 1
+          previousVersion <- as.integer(max(previousVersion, na.rm = TRUE))
+          version <- previousVersion + 1
         }
         type <- "update"
       } else {
@@ -292,16 +303,16 @@ Describe the benchmark task and dataset.
           )
         } else {
           # If updating, use the existing description
-          existing_description <- studies$description[
+          existingDescription <- studies$description[
             studies$studyName == self$name
           ]
-          if (length(existing_description) == 0) {
+          if (length(existingDescription) == 0) {
             cli::cli_abort(c(
               "No existing description found for the study `{self$name}`.",
               "Please provide a new description."
             ))
           } else {
-            self$description <- existing_description[1]
+            self$description <- existingDescription[1]
           }
         }
       }
@@ -387,10 +398,12 @@ Describe the benchmark task and dataset.
         cli::cli_h3("Trios")
         cli::cli_text("{.strong Number of Trios}: {.val {length(self$trios)}}")
         if (length(self$trios) > 0) {
-          trio_names <- sapply(self$trios, function(t) t$name)
-          trio_names <- trio_names[!sapply(trio_names, is.null)]
-          if (length(trio_names) > 0) {
-            cli::cli_text("{.strong Trio Names}: {.val {paste(trio_names, collapse = ', ')}}")
+          trioNames <- sapply(self$trios, function(t) t$name)
+          trioNames <- trioNames[!sapply(trioNames, is.null)]
+          if (length(trioNames) > 0) {
+            cli::cli_text(
+              "{.strong Trio Names}: {.val {paste(trioNames, collapse = ', ')}}"
+            )
           }
         }
 
