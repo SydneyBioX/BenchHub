@@ -1203,9 +1203,10 @@ Trio <- R6::R6Class(
         )
 
         if (!userInput %in% datasets$name) {
-          # TODO: Tell the user how to list the available datasets
+          # Tell the user how to list the available datasets
           cli::cli_abort(c(
-            "Specified dataset ({.val {userInput}}) is not avaiable."
+            "Specified dataset ({.val {userInput}}) is not available.",
+            "i" = "To see a list of available datasets, run {.code listCuratedTrioDatasets()}."
           ))
         }
 
