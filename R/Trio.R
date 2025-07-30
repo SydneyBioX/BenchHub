@@ -712,43 +712,51 @@ Trio <- R6::R6Class(
       if (!state$save && is.null(self$dataSourceID)) {
         # Ask the user if the dataset is available in one of the databases
         # with an implemented downloader in downloaders.R
-        # TODO: Extract availableSources from downloaders.R
-        # to avoid hardcoding 
-        availableSources <- c("figshare", "geo", "experimenthub", "zenodo")
+        # Extract availableSources from downloaders.R dynamically
+        availableSources <- stringr::str_remove(
+          grep("Dl$", ls("package:BenchHub"), value = TRUE),
+          "Dl$"
+        )
+        # Convert to lowercase to match user input expectations
+        availableSources <- tolower(availableSources)
         cli::cli_inform(c(
           "In order to write to the Curated Trio Datasets, the dataset must be available for download.",
           "i" = "Supported data sources: {.val {availableSources}}"
         ))
-        
+
         hasDownloader <- utils::askYesNo(
           "Is your dataset available in one of these databases with a known ID?"
         )
-        
+
         if (hasDownloader) {
           sourceChoice <- utils::menu(
             availableSources,
             title = "Select the data source for your dataset:"
           )
-          
+
           if (sourceChoice == 0) {
-        cli::cli_abort(c(
+            cli::cli_abort(c(
               "No data source was selected.",
               "i" = "Please save the dataset to an RDS file and upload it to Figshare."
             ))
           }
-          
+
           selectedSource <- availableSources[sourceChoice]
           sourceID <- readline(
-            prompt = paste0("Please provide the ", selectedSource, " ID for your dataset: ")
+            prompt = paste0(
+              "Please provide the ",
+              selectedSource,
+              " ID for your dataset: "
+            )
           )
-          
+
           if (nchar(sourceID) == 0) {
             cli::cli_abort(c(
               "A valid ID is required for the selected data source.",
               "i" = "Please save the dataset to an RDS file and upload it to Figshare."
             ))
           }
-          
+
           # Set the data source and ID
           self$dataSource <- selectedSource
           self$dataSourceID <- sourceID
@@ -756,8 +764,8 @@ Trio <- R6::R6Class(
           cli::cli_abort(c(
             "In order to write to the Curated Trio Datasets, the dataset must be available for download.",
             "i" = "Please save the dataset to an RDS file and upload it to Figshare."
-        ))
-      }
+          ))
+        }
       }
       return(state)
     },
@@ -1255,7 +1263,6 @@ Trio <- R6::R6Class(
     },
     # Send the ID to the appropriate downloader and load the file, if possible.
     getData = function(sourceName, id, cachePath, dataLoader) {
-      # TODO: allow the user to input a custom loading function.
       files <- do.call(
         paste0(sourceName, "Dl"),
         list("ID" = id, "cachePath" = cachePath)
@@ -1371,10 +1378,10 @@ Trio <- R6::R6Class(
           }
         } else {
           # TODO: Support other external metrics.
-          cli::cli_abort(c(
+            cli::cli_abort(c(
             "External metrics of type {metric['Metric Type']} are not yet supported."
-          ))
-        }
+            ))
+          }
       })
 
       # Check if evidence was saved via writeCTD (all evidence in one file)
@@ -1516,10 +1523,18 @@ Trio <- R6::R6Class(
 )
 
 #' List the curated Trio datasets
-#' #' @return A data frame with the dataset names and IDs.
+#' @param name_filter
+#'   A string to filter datasets by name (case-insensitive partial match)
+#' @param
+#'   source_filter A string or vector of strings to filter datasets by source
+#' @param dataType_filter
+#'   A string or vector of strings to filter datasets by data type
+#' @return A data frame with the dataset names and IDs.
 #' @export
-listCuratedTrioDatasets <- function() {
-  # TODO: Add filtering conditions.
+listCuratedTrioDatasets <- function(
+  name_filter = NULL,
+  dataType_filter = NULL
+) {
   if (!curl::has_internet()) {
     cli::cli_warn(c(
       "Couldn't list Curated Trio Datasets.",
@@ -1532,14 +1547,23 @@ listCuratedTrioDatasets <- function() {
     sheet = "Datasets"
   ) |>
     dplyr::select(name, datasetID, source, sourceID, dataType) |>
-    dplyr::mutate(
-      source = dplyr::case_when(
-        source == "figshare" ~ "Figshare",
-        source == "geo" ~ "GEO",
-        source == "experimenthub" ~ "ExperimentHub",
-        TRUE ~ source
-      )
-    ) |>
     dplyr::arrange(name)
+
+  # Apply filters if provided
+  if (!is.null(name_filter)) {
+    datasets <- datasets |>
+      dplyr::filter(grepl(name_filter, name, ignore.case = TRUE))
+  }
+
+  if (!is.null(source_filter)) {
+    datasets <- datasets |>
+      dplyr::filter(source %in% source_filter)
+  }
+
+  if (!is.null(dataType_filter)) {
+    datasets <- datasets |>
+      dplyr::filter(dataType %in% dataType_filter)
+  }
+
   datasets
 }
