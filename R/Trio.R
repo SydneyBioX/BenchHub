@@ -186,8 +186,16 @@ Trio <- R6::R6Class(
           "A metric `{name}` is already present in this Trio, overwriting."
         ))
       }
-      # TODO: Validate metric!!
+      # Validate metric function signature
       # metric functions should follow this format (evidence, to_eval)
+      metric_args <- names(formals(metric))
+      if (length(metric_args) < 2) {
+        cli::cli_abort(c(
+          "Metric functions must have at least two arguments.",
+          "i" = "The first two arguments should be {.var evidence} and {.var to_eval}."
+        ))
+      }
+
       self$metrics[[name]] <- function(evidence, to_eval) {
         do.call(metric, append(list(evidence, to_eval), args))
       }
