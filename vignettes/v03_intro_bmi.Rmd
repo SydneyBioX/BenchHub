@@ -1,8 +1,8 @@
 ---
-title: "3 Introduction of benchmarkInsights class"
+title: "3 Introduction of BenchmarkInsights class"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Introduction of benchmarkInsights class}
+  %\VignetteIndexEntry{Introduction of BenchmarkInsights class}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -29,18 +29,18 @@ evaluation metrics, gold standards (Supporting Evidence), and even provides
 built-in visualization tools to help interpret results. With BenchHub,
 researchers can quickly compare new methods, gain insights, and actually
 trust their benchmarking studies. In this vignette, we are going to
-introduce benchmarkInsights class.
+introduce BenchmarkInsights class.
 
-# Creating benchmarkInsights class
+# Creating BenchmarkInsights class
 
-`benchmarkInsight` objects can be created using the corresponding
+`BenchmarkInsights` objects can be created using the corresponding
 constructor. For example, if you have a benchmark result formatted in
-dataframe, you can create a `benchmarkInsight` object as follows. The
+dataframe, you can create a `BenchmarkInsights` object as follows. The
 dataframe includes fixed name columns: `datasetID`, method, evidence,
 metric, result. Here I will use the benchmark result from
 SpatialSimBench to create a new object.
 
-`benchmarkInsight` object can be instantiated using their respective
+`BenchmarkInsights` object can be instantiated using their respective
 constructors. For example, if you have a benchmark result stored as a
 dataframe, you can create a Trio object as follows. The dataframe must
 include the following fixed columns: `datasetID`, `method`, `evidence`,
@@ -59,7 +59,7 @@ benchmark evaluation results, you ensure they adhere to the expected
 format.
 
 ```{r}
-bmi <- benchmarkInsights$new(spatialsimbench_result)
+bmi <- BenchmarkInsights$new(spatialsimbench_result)
 bmi
 ```
 
