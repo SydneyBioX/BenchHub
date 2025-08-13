@@ -1555,11 +1555,6 @@ listCuratedTrioDatasets <- function(
       dplyr::filter(grepl(name_filter, name, ignore.case = TRUE))
   }
 
-  if (!is.null(source_filter)) {
-    datasets <- datasets |>
-      dplyr::filter(source %in% source_filter)
-  }
-
   if (!is.null(dataType_filter)) {
     datasets <- datasets |>
       dplyr::filter(dataType %in% dataType_filter)
