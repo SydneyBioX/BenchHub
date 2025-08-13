@@ -2,7 +2,7 @@
 #' @import ggplot2
 NULL
 
-#' A benchmarkInsights object
+#' A BenchmarkInsights object
 #' @description An object containing a benchmark result for evaluating
 #'   analytical tasks.
 #' @field evalSummary The evaluation summary is stored by dataframe, where
@@ -10,19 +10,19 @@ NULL
 #'   the evaluation task and related information.
 #' @field metadata A dataframe to store metadata for the benchmark.
 #'
-#' @return A benchmarkInsights object.
+#' @return A BenchmarkInsights object.
 #' @examples
-#' benchmarkInsights$new()
+#' BenchmarkInsights$new()
 #' @export
-benchmarkInsights <- R6::R6Class(
-  classname = "benchmarkInsights",
+BenchmarkInsights <- R6::R6Class(
+  classname = "BenchmarkInsights",
 
   public = list(
     evalSummary = NULL,
     metadata = NULL,
 
     #' @description
-    #' Create a benchmarkInsights object
+    #' Create a BenchmarkInsights object
     #' @param evalResult
     #'   A dataframe containing initial evaluation results with columns such as datasetID, evidence, metric, and result.
     initialize = function(evalResult = NULL) {
@@ -53,7 +53,7 @@ benchmarkInsights <- R6::R6Class(
     },
 
     #' @description
-    #' Add metadata to the benchmarkInsights object
+    #' Add metadata to the BenchmarkInsights object
     #' @param metadata
     #'   A dataframe containing metadata information.
     addMetadata = function(metadata) {

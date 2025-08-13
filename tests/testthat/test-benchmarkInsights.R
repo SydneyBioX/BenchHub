@@ -56,7 +56,7 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
     )
   )
 
-  benchmark <- benchmarkInsights$new(evalResult1)
+  benchmark <- BenchmarkInsights$new(evalResult1)
   library(dplyr)
   evalResult2 <- data.frame(
     datasetID = c(rep("dataset2", 15)),
@@ -200,7 +200,7 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
 
 
 test_that("addMetadata handles multiple entries correctly", {
-  benchmark <- benchmarkInsights$new()
+  benchmark <- BenchmarkInsights$new()
 
   # Create metadata dataframe
   metadata_df1 <- data.frame(
@@ -253,7 +253,7 @@ test_that("getScatterplot creates a scatterplot with optional grouping", {
     metric = rep("time", 6),
     result = c(233, 543, 666, 567, 777, 890)
   )
-  benchmark <- benchmarkInsights$new(evalResult1)
+  benchmark <- BenchmarkInsights$new(evalResult1)
 
   evalResult2 <- data.frame(
     datasetID = rep("dataset2", 6),
@@ -307,7 +307,7 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
     )
   )
 
-  benchmark <- benchmarkInsights$new(evalResult1)
+  benchmark <- BenchmarkInsights$new(evalResult1)
 
   evalResult2 <- data.frame(
     datasetID = rep("dataset2", 12),
