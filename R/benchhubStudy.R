@@ -433,3 +433,33 @@ Describe the benchmark task and dataset.
     }
   )
 )
+#' List the curated Trio studies
+#' @param name_filter
+#'   A string to filter studies by name (case-insensitive partial match)
+#' @return A data frame with the study names and IDs.
+#' @export
+listCuratedTrioStudies <- function(
+  name_filter = NULL
+) {
+  if (!curl::has_internet()) {
+    cli::cli_warn(c(
+      "Couldn't list Curated Trio Studies.",
+      "Check your internet connection and try again."
+    ))
+    return(NULL)
+  }
+  studies <- googlesheets4::read_sheet(
+    ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+    sheet = "Studies"
+  ) |>
+    dplyr::select(studyName, studyID, version, description) |>
+    dplyr::arrange(studyName)
+  
+  # Apply filters if provided
+  if (!is.null(name_filter)) {
+    studies <- studies |>
+      dplyr::filter(grepl(name_filter, studyName, ignore.case = TRUE))
+  }
+  
+  studies
+}
