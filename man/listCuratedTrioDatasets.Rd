@@ -2,12 +2,20 @@
 % Please edit documentation in R/Trio.R
 \name{listCuratedTrioDatasets}
 \alias{listCuratedTrioDatasets}
-\title{List the curated Trio datasets
-#' @return A data frame with the dataset names and IDs.}
+\title{List the curated Trio datasets}
 \usage{
-listCuratedTrioDatasets()
+listCuratedTrioDatasets(name_filter = NULL, dataType_filter = NULL)
+}
+\arguments{
+\item{name_filter}{A string to filter datasets by name (case-insensitive partial match)}
+
+\item{dataType_filter}{A string or vector of strings to filter datasets by data type}
+
+\item{source_filter}{A string or vector of strings to filter datasets by source}
+}
+\value{
+A data frame with the dataset names and IDs.
 }
 \description{
 List the curated Trio datasets
-#' @return A data frame with the dataset names and IDs.
 }

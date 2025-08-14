@@ -254,13 +254,36 @@ Print method to display key information about the Trio object.
 \subsection{Method \code{writeCTD()}}{
 Write the Trio Metadata to Curated Trio Datasets sheet.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$writeCTD(name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$writeCTD(
+  name,
+  githubPat = NULL,
+  description = NULL,
+  figshareUrl = NULL,
+  datasetFileName = NULL,
+  evidenceFileName = NULL,
+  dataType = NULL,
+  skipMd5Check = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{the name of the dataset to be added.}
+\item{\code{name}}{The name of the dataset to be added.}
+
+\item{\code{githubPat}}{Optional GitHub Personal Access Token. If not provided and not set in environment, will prompt user.}
+
+\item{\code{description}}{Optional description of the dataset. If not provided and not set, will prompt user.}
+
+\item{\code{figshareUrl}}{Optional URL to the Figshare dataset. If not provided, will prompt user.}
+
+\item{\code{datasetFileName}}{Optional name of the dataset file in Figshare. If not provided, will prompt user for selection.}
+
+\item{\code{evidenceFileName}}{Optional name of the evidence file in Figshare. If not provided, will prompt user for selection.}
+
+\item{\code{dataType}}{Optional type of data. Must be one of: "omics", "clinical", "spatial", "other". If not provided, will prompt user.}
+
+\item{\code{skipMd5Check}}{Optional boolean to skip MD5 verification. Defaults to FALSE.}
 }
 \if{html}{\out{</div>}}
 }
