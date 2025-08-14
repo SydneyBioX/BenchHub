@@ -10,6 +10,7 @@
 <url><loc>https://sydneybiox.github.io/BenchHub/authors.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/index.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/BenchHubStudy.html</loc></url>
+<url><loc>https://sydneybiox.github.io/BenchHub/reference/BenchmarkInsights.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/MCCmetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/MSEmetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/RecSys.html</loc></url>
@@ -17,7 +18,6 @@
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/balAccMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/balErrMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/beggCIndexMetric.html</loc></url>
-<url><loc>https://sydneybiox.github.io/BenchHub/reference/benchmarkInsights.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/brierScoreMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/dot-positivesNegatives.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/experimenthubDl.html</loc></url>
@@ -28,6 +28,7 @@
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/index.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/kdeMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/listCuratedTrioDatasets.html</loc></url>
+<url><loc>https://sydneybiox.github.io/BenchHub/reference/listCuratedTrioStudies.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/lubomski_microbiome_data.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/macroF1Metric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/macroPrecMetric.html</loc></url>
