@@ -92,7 +92,7 @@ Trio <- R6::R6Class(
         return(NULL)
       }
 
-      if (is.null(datasetID)) {
+      if (is.null(datasetID) || datasetID == "") {
         if (!interactive()) {
           cli::cli_abort(
             paste0(
@@ -119,7 +119,7 @@ Trio <- R6::R6Class(
         self$cachePath,
         dataLoader
       )
-      if (!is.null(private$datasetID)) {
+      if (!is.null(private$datasetID) && private$datasetID != "") {
         private$populateTrio()
       }
     },
@@ -660,7 +660,7 @@ Trio <- R6::R6Class(
 
     handleGitHubPAT = function(state) {
       # Use provided PAT if available
-      if (!is.null(state$githubPat)) {
+      if (!is.null(state$githubPat) && state$githubPat != "") {
         Sys.setenv(GITHUB_PAT = state$githubPat)
         return(state)
       }
@@ -709,7 +709,7 @@ Trio <- R6::R6Class(
     },
 
     validateDatasetAvailability = function(state) {
-      if (!state$save && is.null(self$dataSourceID)) {
+      if (!state$save && is.null(self$dataSourceID) && is.null(self$dataSource)) {
         # Ask the user if the dataset is available in one of the databases
         # with an implemented downloader in downloaders.R
         # Extract availableSources from downloaders.R dynamically
@@ -794,7 +794,7 @@ Trio <- R6::R6Class(
         attempts <- attempts + 1
 
         # Use provided URL if available, otherwise prompt
-        url <- if (!is.null(state$figshareUrl)) {
+        url <- if (!is.null(state$figshareUrl) && state$figshareUrl != "") {
           state$figshareUrl
         } else {
           cli::cli_inform(c(
@@ -1408,9 +1408,10 @@ Trio <- R6::R6Class(
             combinedEvidence <- loadFile(filePath)
 
             # Add each evidence item with its respective metrics
-            for (i in 1:nrow(evidenceMetaData)) {
-              evidenceRow <- evidenceMetaData[i, ]
-              evidenceName <- evidenceRow["Supporting Evidence"]
+            for (i in seq_len(nrow(unique(evidenceMetaData)))) {
+              # browser()
+              evidenceRow <- unique(evidenceMetaData)[i, ]
+              evidenceName <- unlist(evidenceRow["Supporting Evidence"])
 
               # Check if the evidence exists in the combined evidence
               if (evidenceName %in% names(combinedEvidence)) {
