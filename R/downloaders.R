@@ -115,7 +115,8 @@ geoDl <- function(ID, cachePath) {
     # download GEO data
     tryCatch(
       {
-        dlLocation <- GEOquery::getGEOfile(GEO = ID, destdir = dlPath)
+        GEOquery::getGEO(GEO = ID, destdir = dlPath)
+        dlLocation <- file.path(dlPath, paste(ID, "series_matrix.txt.gz", sep = '_'))
       },
       error = function(e) {
         cli::cli_abort(c(

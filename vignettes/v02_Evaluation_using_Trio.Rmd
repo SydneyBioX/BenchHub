@@ -37,10 +37,10 @@ The task we'll be evaluating uses a binary classification task where each sample
 To initialise a Trio object, we use a `new()` method.
 
 ```{r}
-trio <- Trio$new(data = x, datasetID = "lubomski_microbiome")
+trio <- Trio$new(data = x, evidence = lubomPD, datasetID = "lubomski_microbiome")
 ```
 
-Next we will use this microbiome data to illustrate two examples, 1) evaluation with cross validation, 2) evaluation without cross validation.     
+The supporting evidence is the patient status, which is the `lubomPD` vector that we extracted from the `Lubomski` data above. Next we will use this microbiome data to illustrate two examples, 1) evaluation with cross validation, 2) evaluation without cross validation.     
 
 
 # Cross validation - using the trio split function
@@ -58,17 +58,7 @@ trio$addMetric(name = "Balanced Accuracy", metric = balAccMetric)
 
 ## Step 2: Add supporting evidence to the `Trio` object using `Trio$addEvidence`
 
-The supporting evidence is the patient status, which is the `lubomPD` vector that we extracted from the `Lubomski` data above. Similar to adding a metric, users can name their supporting evidence by specifying `name`. Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `Trio` object.  
-
-```{r}
-# add supporting evidence to the Trio object
-# name is the user-defined name, can be anything
-# evidence is the value of the supporting evidence
-# metric needs to be same name of the metric that has been added to the Trio object
-trio$addEvidence(
-  name = "patient_status", evidence = lubomPD, metrics = "Balanced Accuracy"
-)
-```
+Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `Trio` object.
 
 If users want to get evaluation metrics from the `Trio` object, they can use the `getMetrics` function by referring the name of `evidence`.
 

@@ -19,12 +19,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-# devtools::load_all()
 library(BenchHub)
-library(clusterProfiler)
-library(DOSE)
-library(DO.db)
-library(EnsDb.Hsapiens.v86)
 ```
 
 # Motivation
@@ -58,7 +53,6 @@ You can directly use the name from the Curated Trio Datasets sheet to initialise
 ```{r}
 tempCache <- tempdir()
 trio <- Trio$new("Veteran_data", cachePath = tempCache)
-
 trio
 ```
 
@@ -76,13 +70,16 @@ For example, if you have a dataset ID from Figshare, GEO, or ExperimentHub, you 
   - `fileID` can optionally be provided to specify a specific file in the collection.
 - GEO: `Trio$new("geo:GSEID[/Supplementary_filename]")`
   - `Supplementary_filename` can optionally be provided to specify a specific supplementary file in the series.
-- experiementhub: `Trio$new("experiementhub:experimenthubID")`
+- experimenthub: `Trio$new("experimenthub:experimenthubID")`
 
-The example below shows how to create a Trio object using a Figshare dataset with a `fileID`.
+The example below shows how to create a Trio object using a Figshare dataset with a `datasetID`.
 
 ```{r, message=FALSE, warning=FALSE}
-trioA <- Trio$new("figshare:26142922/47361079", cachePath = tempCache)
-
+trioA <- Trio$new("figshare:26142922/47361079",
+                  evidenceColumns = c("time", "status"),
+                  task = "Risk Estimation",
+                  metrics = list("Harrell C-index" = harrelCIndexMetric, "Begg C-index" = beggCIndexMetric),
+                  cachePath = tempCache)
 trioA
 ```
 
@@ -94,7 +91,9 @@ If you have your own dataset, you can easily create a trio object as well. Below
 
 ```{r}
 data("lubomski_microbiome_data", package = "BenchHub")
-trioB <- Trio$new(data = lubomPD, datasetID = "lubomski_microbiome")
+trioB <- Trio$new(data = x, evidence = list(`Diagnosis` = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
+                  metrics = list(`Balanced Accuracy` = balAccMetric),
+                  datasetID = "lubomski_microbiome")
 trioB
 ```
 
@@ -102,21 +101,21 @@ trioB
 
 Trio supports custom loaders for data formats not directly supported by Trio. A loader is any function that takes in a path, provided by a downloader, and returns an object to be loaded into Trio.
 
-Below, we use an anonymous function to wrap `GEOquery::getGEO` and provide it with the path of the downloaded file.
+Below, we use an anonymous function to wrap `GEOquery::getGEO` and `Biobase::phenoData`, and provide them with the path of the downloaded file to extract both the gene expression values and the patient classes from different tables.
 
-```{r, eval=FALSE}
-# This code will not run as it requires a GEO dataset to be downloaded
-# GEO is unreliable
+```{r}
 trioGEO <- Trio$new(
   "GEO:GSE46474",
-  dataLoader = \(path) suppressMessages(GEOquery::getGEO(filename = path)),
+  dataLoader = \(path) Biobase::exprs(GEOquery::getGEO(filename = path)),
+  task = "Rejection Prediction",
+  evidenceLoader = \(path) Biobase::phenoData(GEOquery::getGEO(filename = path))[["procedure status:ch1"]],
+  metrics = list(`Balanced Accuracy` = balAccMetric),
   cachePath = tempdir()
 )
-
 trioGEO
 ```
 
-# Adding components to Trio
+# Adding Components to Trio Sequentially
 
 ## Adding metrics
 
@@ -183,7 +182,6 @@ To view the supporting evidence one can use `getEvidence`.
 trio$getEvidence("length") # This is equivalent to `length(trio$data)`
 ```
 
-
 ## Evaluation Example
 
 Once Trio is set up with relevant metrics and supporting evidence, we are ready to evaluate.
@@ -204,7 +202,6 @@ knitr::kable(result)
 ```
 
 For a more detailed look at evaluation using Trio, please refer to vignette 2.
-
 
 # Other Features 
 

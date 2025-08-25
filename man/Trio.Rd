@@ -29,9 +29,9 @@ trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
 \item{\code{dataSourceID}}{The dataset ID for \code{dataSource}}
 
 \item{\code{evidenceSource}}{The data repository that the supporting evidence was
-retrieved from}
+retrieved from.}
 
-\item{\code{evidenceSourceID}}{The dataset ID for \code{evidenceSource}}
+\item{\code{evidenceSourceID}}{The dataset ID for \code{evidenceSource}.}
 
 \item{\code{splitIndices}}{Indices for cross-validation}
 
@@ -70,6 +70,12 @@ Create a Trio object
   datasetID = NULL,
   data = NULL,
   dataLoader = NULL,
+  evidenceID = NULL,
+  evidence = NULL,
+  evidenceColumns = NULL,
+  evidenceLoader = NULL,
+  task = NULL,
+  metrics = NULL,
   cachePath = FALSE,
   verbose = FALSE
 )}\if{html}{\out{</div>}}
@@ -85,6 +91,24 @@ a format string of the form \code{source}:\code{source_id}.}
 
 \item{\code{dataLoader}}{A custom loading function that takes the path of a downloaded file and
 returns a single dataset, ready to be used in evaluation tasks.}
+
+\item{\code{evidenceID}}{If \code{datasetID} is not an ID from the curated trio datasets spreadsheet,
+then a format string of the form \code{source}:\code{source_id} indicating the file to
+obtain the supporting evidence from.}
+
+\item{\code{evidence}}{A named list of lists. The top-level list is named by task type. The lower-level list
+is of length-two and named \code{"evidence"} and \code{"metrics"}. The \code{"evidence"}
+component has supporting evidence and the \code{"metrics"} component has a character vector
+of metric names (corresponding to the names of the list provided to the \code{metrics} parameter).}
+
+\item{\code{evidenceColumns}}{If \code{evidenceID} is not \code{NULL}, then the columns of the table containing
+the supporting evidence.}
+
+\item{\code{evidenceLoader}}{Alternative to \code{evidence} and \code{evidenceColumns}. Extract the evidence in a flexible way.}
+
+\item{\code{task}}{If \code{evidenceColumns} or \code{evidenceLoader} specified, a character vector of length 1 naming the task the evidence is for.}
+
+\item{\code{metrics}}{A named list of metric functions.}
 
 \item{\code{cachePath}}{The path to the data cache}
 
