@@ -60,7 +60,7 @@
 
       <h1>1 Introduction to the Trio Class</h1>
             
-            <h4 data-toc-skip class="date">14 August 2025</h4>
+            <h4 data-toc-skip class="date">26 August 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/devel/vignettes/v01_intro_trio.Rmd" class="external-link"><code>vignettes/v01_intro_trio.Rmd</code></a></small>
       <div class="d-none name"><code>v01_intro_trio.Rmd</code></div>
@@ -69,12 +69,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># devtools::load_all()</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sydneybiox.github.io/BenchHub/">BenchHub</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/contribution-knowledge-mining/" class="external-link">clusterProfiler</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/contribution-knowledge-mining/" class="external-link">DOSE</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DO.db</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">EnsDb.Hsapiens.v86</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sydneybiox.github.io/BenchHub/">BenchHub</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
@@ -115,7 +110,6 @@ predefined dataset.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tempCache</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"Veteran_data"</span>, cachePath <span class="op">=</span> <span class="va">tempCache</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">trio</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Trio Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
@@ -135,7 +129,7 @@ predefined dataset.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361073"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpCtjiUN"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/Rtmp1n0pf2"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -176,22 +170,25 @@ file in the collection.</li>
 specify a specific supplementary file in the series.</li>
 </ul>
 </li>
-<li>experiementhub:
-<code>Trio$new("experiementhub:experimenthubID")</code>
+<li>experimenthub:
+<code>Trio$new("experimenthub:experimenthubID")</code>
 </li>
 </ul>
 <p>The example below shows how to create a Trio object using a Figshare
-dataset with a <code>fileID</code>.</p>
+dataset with a <code>datasetID</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trioA</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"figshare:26142922/47361079"</span>, cachePath <span class="op">=</span> <span class="va">tempCache</span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="va">trioA</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"figshare:26142922/47361079"</span>,</span>
+<span>                  evidenceColumns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"status"</span><span class="op">)</span>,</span>
+<span>                  task <span class="op">=</span> <span class="st">"Risk Estimation"</span>,</span>
+<span>                  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Harrell C-index"</span> <span class="op">=</span> <span class="va">harrelCIndexMetric</span>, <span class="st">"Begg C-index"</span> <span class="op">=</span> <span class="va">beggCIndexMetric</span><span class="op">)</span>,</span>
+<span>                  cachePath <span class="op">=</span> <span class="va">tempCache</span><span class="op">)</span></span>
 <span><span class="va">trioA</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Trio Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Dataset </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset Details</span>:</span></span>
-<span><span class="co">##   Classes 'data.table' and 'data.frame': 58 obs. of 19820 variables:</span></span>
+<span><span class="co">##   Classes 'data.table' and 'data.frame': 58 obs. of 19818 variables:</span></span>
 <span><span class="co">##   $ V1 : chr "GSM746861" "GSM746862" "GSM746863" "GSM746864" ...</span></span>
 <span><span class="co">##   $ A1BG : num 6.16 5.75 5.9 6 6.98 ...</span></span>
 <span><span class="co">##   $ A1BG-AS1 : num 6.53 7.21 6.71 6.79 7.21 ...</span></span>
@@ -204,16 +201,16 @@ dataset with a <code>fileID</code>.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361079"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpCtjiUN"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/Rtmp1n0pf2"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>:</span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>: <span style="color: #0000BB;">"Risk Estimation"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Metrics </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>:</span></span></code></pre>
+<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"Harrell C-index"</span> and <span style="color: #0000BB;">"Begg C-index"</span></span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="method-3-load-an-object-directly">Method 3: Load an object directly<a class="anchor" aria-label="anchor" href="#method-3-load-an-object-directly"></a>
@@ -225,26 +222,32 @@ loaded in your R environment and want to use it with Trio.</p>
 well. Below is an example using a microbiome dataset.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lubomski_microbiome_data"</span>, package <span class="op">=</span> <span class="st">"BenchHub"</span><span class="op">)</span></span>
-<span><span class="va">trioB</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>data <span class="op">=</span> <span class="va">lubomPD</span>, datasetID <span class="op">=</span> <span class="st">"lubomski_microbiome"</span><span class="op">)</span></span>
-<span><span class="va">trioB</span></span></code></pre></div>
+<span><span class="va">trioB</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>data <span class="op">=</span> <span class="va">x</span>, evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`Diagnosis` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>evidence <span class="op">=</span> <span class="va">lubomPD</span>, metrics <span class="op">=</span> <span class="st">"Balanced Accuracy"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`Balanced Accuracy` <span class="op">=</span> <span class="va">balAccMetric</span><span class="op">)</span>,</span>
+<span>                  datasetID <span class="op">=</span> <span class="st">"lubomski_microbiome"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: No sample IDs found on evidence. Assuming same order as data</span></span>
+<span><span class="co">## and adding them.</span></span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">trioB</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Trio Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Dataset </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset Details</span>:</span></span>
-<span><span class="co">##   Factor w/ 2 levels "0","1": 2 1 2 1 2 2 1 2 2 1 ...</span></span>
+<span><span class="co">##   num [1:575, 1:1192] 0 0.00448 0 0.02983 0 ...</span></span>
+<span><span class="co">##   - attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>:</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"lubomski_microbiome"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Cache Path</span>:</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>:</span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>: <span style="color: #0000BB;">"Diagnosis"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Metrics </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">0</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>:</span></span></code></pre>
+<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"Balanced Accuracy"</span></span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="bonus-using-a-custom-loader">Bonus: Using a custom loader<a class="anchor" aria-label="anchor" href="#bonus-using-a-custom-loader"></a>
@@ -253,22 +256,43 @@ well. Below is an example using a microbiome dataset.</p>
 by Trio. A loader is any function that takes in a path, provided by a
 downloader, and returns an object to be loaded into Trio.</p>
 <p>Below, we use an anonymous function to wrap
-<code><a href="http://seandavi.github.io/GEOquery/reference/getGEO.html" class="external-link">GEOquery::getGEO</a></code> and provide it with the path of the
-downloaded file.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># This code will not run as it requires a GEO dataset to be downloaded</span></span>
-<span><span class="co"># GEO is unreliable</span></span>
-<span><span class="va">trioGEO</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<code><a href="http://seandavi.github.io/GEOquery/reference/getGEO.html" class="external-link">GEOquery::getGEO</a></code> and <code><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html" class="external-link">Biobase::phenoData</a></code>, and
+provide them with the path of the downloaded file to extract both the
+gene expression values and the patient classes from different
+tables.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">trioGEO</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"GEO:GSE46474"</span>,</span>
-<span>  dataLoader <span class="op">=</span> \<span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="fu">GEOquery</span><span class="fu">::</span><span class="fu"><a href="http://seandavi.github.io/GEOquery/reference/getGEO.html" class="external-link">getGEO</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="va">path</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  dataLoader <span class="op">=</span> \<span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="fu">GEOquery</span><span class="fu">::</span><span class="fu"><a href="http://seandavi.github.io/GEOquery/reference/getGEO.html" class="external-link">getGEO</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="va">path</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  task <span class="op">=</span> <span class="st">"Rejection Prediction"</span>,</span>
+<span>  evidenceLoader <span class="op">=</span> \<span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html" class="external-link">phenoData</a></span><span class="op">(</span><span class="fu">GEOquery</span><span class="fu">::</span><span class="fu"><a href="http://seandavi.github.io/GEOquery/reference/getGEO.html" class="external-link">getGEO</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="va">path</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"procedure status:ch1"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`Balanced Accuracy` <span class="op">=</span> <span class="va">balAccMetric</span><span class="op">)</span>,</span>
 <span>  cachePath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">trioGEO</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Trio Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ── Dataset </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Dataset Details</span>:</span></span>
+<span><span class="co">##   num [1:54613, 1:40] 5.7 4.82 7.95 7.64 2.83 ...</span></span>
+<span><span class="co">##   - attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"geo"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"GSE46474"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/Rtmp1n0pf2"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ── Supporting Evidence </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>: <span style="color: #0000BB;">"Rejection Prediction"</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ── Metrics </span></span>
+<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"Balanced Accuracy"</span></span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
-<h2 id="adding-components-to-trio">Adding components to Trio<a class="anchor" aria-label="anchor" href="#adding-components-to-trio"></a>
+<h2 id="adding-components-to-trio-sequentially">Adding Components to Trio Sequentially<a class="anchor" aria-label="anchor" href="#adding-components-to-trio-sequentially"></a>
 </h2>
 <div class="section level3">
 <h3 id="adding-metrics">Adding metrics<a class="anchor" aria-label="anchor" href="#adding-metrics"></a>
@@ -280,7 +304,7 @@ survival model prediction.</p>
 <code>f(expected, predicted)</code> which returns a single value.</p>
 <p>We can also add metrics that have additional arguments by passing a
 list of arguments to the args parameter.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eq</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">expected</span>, <span class="va">predicted</span>, <span class="va">inequality</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">inequality</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">!</span><span class="va">expected</span> <span class="op">==</span> <span class="va">predicted</span><span class="op">)</span></span>
@@ -302,169 +326,13 @@ the expected and predicted values are equal, while the “inequality”
 metric checks if they are not equal.</p>
 <p>Underneeth the hood, Trio creates a wrapper function that calls the
 metric function with the specified arguments.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="va">metrics</span><span class="op">$</span><span class="va">inequality</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (evidence, to_eval) </span></span>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     do.call(metric, append(list(evidence, to_eval), args))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x56209afa8068&gt;</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="adding-and-getting-evidence">Adding and getting <code>evidence</code><a class="anchor" aria-label="anchor" href="#adding-and-getting-evidence"></a>
-</h3>
-<p><code>evidence</code> (supporting evidence) refers to gold standards
-in evaluation tasks and falls into two categories:</p>
-<ul>
-<li>Internal: Extracted directly from the Trio dataset. This may include
-metadata such as cell types (e.g., B cells, CD4, CD8), patient
-conditions (e.g., healthy, disease), and spatial domain information. The
-specific content depends on the dataset itself.</li>
-<li>External: Retrieved from external databases, such as disease pathway
-databases or gene marker databases.</li>
-</ul>
-<p>With the <code>equality</code> and <code>inequality</code> metrics
-added above, we can now run an evaluation.</p>
-<p>First we add some supporting evidence to the Trio object to evaluate
-against.</p>
-<p>Supporting evidence is any data that allows you to make an
-evaluation. Supporting evidence is linked to metrics that allow you to
-evaluate it.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># It can be a fixed quantity</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"Number One"</span>, evidence <span class="op">=</span> <span class="fl">1</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Or it can be a function that acts on the data</span></span>
-<span><span class="va">trio</span><span class="op">$</span><span class="fu">addEvidence</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"length"</span>, evidence <span class="op">=</span> <span class="va">length</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"equality"</span>, <span class="st">"inequality"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>To view the supporting evidence one can use
-<code>getEvidence</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="fu">getEvidence</span><span class="op">(</span><span class="st">"length"</span><span class="op">)</span> <span class="co"># This is equivalent to `length(trio$data)`</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 9</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="evaluation-example">Evaluation Example<a class="anchor" aria-label="anchor" href="#evaluation-example"></a>
-</h3>
-<p>Once Trio is set up with relevant metrics and supporting evidence, we
-are ready to evaluate.</p>
-<p>For simple evaluation:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Number One"</span> <span class="op">=</span> <span class="fl">1</span>, length <span class="op">=</span> <span class="fl">182</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">datasetID</th>
-<th align="left">evidence</th>
-<th align="left">metric</th>
-<th align="left">result</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">Number One</td>
-<td align="left">equality</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">Number One</td>
-<td align="left">inequality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">length</td>
-<td align="left">equality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">length</td>
-<td align="left">inequality</td>
-<td align="left">TRUE</td>
-</tr>
-</tbody>
-</table>
-<p>For multi-method evaluation:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  great_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Number One"</span> <span class="op">=</span> <span class="fl">1</span>, length <span class="op">=</span> <span class="fl">575</span><span class="op">)</span>,</span>
-<span>  poor_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Number One"</span> <span class="op">=</span> <span class="fl">2</span>, length <span class="op">=</span> <span class="fl">182</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">datasetID</th>
-<th align="left">method</th>
-<th align="left">evidence</th>
-<th align="left">metric</th>
-<th align="left">result</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">great_method</td>
-<td align="left">Number One</td>
-<td align="left">equality</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">great_method</td>
-<td align="left">Number One</td>
-<td align="left">inequality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">great_method</td>
-<td align="left">length</td>
-<td align="left">equality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">great_method</td>
-<td align="left">length</td>
-<td align="left">inequality</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">poor_method</td>
-<td align="left">Number One</td>
-<td align="left">equality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">poor_method</td>
-<td align="left">Number One</td>
-<td align="left">inequality</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">26142922/47361073</td>
-<td align="left">poor_method</td>
-<td align="left">length</td>
-<td align="left">equality</td>
-<td align="left">FALSE</td>
-</tr>
-<tr class="even">
-<td align="left">26142922/47361073</td>
-<td align="left">poor_method</td>
-<td align="left">length</td>
-<td align="left">inequality</td>
-<td align="left">TRUE</td>
-</tr>
-</tbody>
-</table>
-<p>For a more detailed look at evaluation using Trio, please refer to
-vignette 2.</p>
+<span><span class="co">## &lt;environment: 0x55fa2315d098&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -489,7 +357,7 @@ indices for each sample.</p>
 <code>split</code> method takes in the outcome variable and the number
 of folds and repeats. The <code>stratify</code> parameter can be used to
 stratify the outcome variable.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trio</span><span class="op">$</span><span class="fu">split</span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">137</span>, n_fold <span class="op">=</span> <span class="fl">2</span>, n_repeat <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1234</span>, stratify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">trio</span><span class="op">$</span><span class="va">splitIndices</span></span></code></pre></div>
 <pre><code><span><span class="co">## $Fold1.Rep1</span></span>
@@ -567,7 +435,7 @@ studies more effectively.</p>
 <div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
@@ -587,101 +455,80 @@ studies more effectively.</p>
 <span><span class="co">## tzcode source: system (glibc)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## attached base packages:</span></span>
-<span><span class="co">## [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
-<span><span class="co">## [8] base     </span></span>
+<span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] EnsDb.Hsapiens.v86_2.99.0 ensembldb_2.32.0         </span></span>
-<span><span class="co">##  [3] AnnotationFilter_1.32.0   GenomicFeatures_1.60.0   </span></span>
-<span><span class="co">##  [5] GenomicRanges_1.60.0      GenomeInfoDb_1.44.1      </span></span>
-<span><span class="co">##  [7] DO.db_2.9                 AnnotationDbi_1.70.0     </span></span>
-<span><span class="co">##  [9] IRanges_2.42.0            S4Vectors_0.46.0         </span></span>
-<span><span class="co">## [11] Biobase_2.68.0            BiocGenerics_0.54.0      </span></span>
-<span><span class="co">## [13] generics_0.1.4            DOSE_4.2.0               </span></span>
-<span><span class="co">## [15] clusterProfiler_4.16.0    BenchHub_0.99.5          </span></span>
-<span><span class="co">## [17] BiocStyle_2.36.0         </span></span>
+<span><span class="co">## [1] BenchHub_0.99.5  BiocStyle_2.36.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] splines_4.5.1               BiocIO_1.18.0              </span></span>
-<span><span class="co">##   [3] polspline_1.1.25            bitops_1.0-9               </span></span>
-<span><span class="co">##   [5] ggplotify_0.1.2             tibble_3.3.0               </span></span>
-<span><span class="co">##   [7] R.oo_1.27.1                 cellranger_1.1.0           </span></span>
-<span><span class="co">##   [9] datawizard_1.2.0            XML_3.99-0.18              </span></span>
-<span><span class="co">##  [11] rpart_4.1.24                httr2_1.2.1                </span></span>
-<span><span class="co">##  [13] lifecycle_1.0.4             lattice_0.22-7             </span></span>
-<span><span class="co">##  [15] MASS_7.3-65                 insight_1.3.1              </span></span>
-<span><span class="co">##  [17] backports_1.5.0             magrittr_2.0.3             </span></span>
-<span><span class="co">##  [19] Hmisc_5.2-3                 sass_0.4.10                </span></span>
-<span><span class="co">##  [21] rmarkdown_2.29              jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [23] yaml_2.3.10                 ggtangle_0.0.7             </span></span>
-<span><span class="co">##  [25] cowplot_1.2.0               DBI_1.2.3                  </span></span>
-<span><span class="co">##  [27] RColorBrewer_1.1-3          abind_1.4-8                </span></span>
-<span><span class="co">##  [29] multcomp_1.4-28             purrr_1.1.0                </span></span>
-<span><span class="co">##  [31] R.utils_2.13.0              RCurl_1.98-1.17            </span></span>
-<span><span class="co">##  [33] yulab.utils_0.2.0           nnet_7.3-20                </span></span>
-<span><span class="co">##  [35] TH.data_1.1-3               rappdirs_0.3.3             </span></span>
-<span><span class="co">##  [37] sandwich_3.1-1              GenomeInfoDbData_1.2.14    </span></span>
-<span><span class="co">##  [39] enrichplot_1.28.4           ggrepel_0.9.6              </span></span>
-<span><span class="co">##  [41] tidytree_0.4.6              MatrixModels_0.5-4         </span></span>
-<span><span class="co">##  [43] performance_0.15.0          pkgdown_2.1.3              </span></span>
-<span><span class="co">##  [45] DelayedArray_0.34.1         codetools_0.2-20           </span></span>
-<span><span class="co">##  [47] tidyselect_1.2.1            aplot_0.2.8                </span></span>
-<span><span class="co">##  [49] UCSC.utils_1.4.0            farver_2.1.2               </span></span>
-<span><span class="co">##  [51] matrixStats_1.5.0           base64enc_0.1-3            </span></span>
-<span><span class="co">##  [53] googledrive_2.1.1           GenomicAlignments_1.44.0   </span></span>
-<span><span class="co">##  [55] jsonlite_2.0.0              Formula_1.2-5              </span></span>
-<span><span class="co">##  [57] survival_3.8-3              systemfonts_1.2.3          </span></span>
-<span><span class="co">##  [59] tools_4.5.1                 treeio_1.32.0              </span></span>
-<span><span class="co">##  [61] ragg_1.4.0                  Rcpp_1.1.0                 </span></span>
-<span><span class="co">##  [63] glue_1.8.0                  SparseArray_1.8.1          </span></span>
-<span><span class="co">##  [65] gridExtra_2.3               xfun_0.52                  </span></span>
-<span><span class="co">##  [67] MatrixGenerics_1.20.0       qvalue_2.40.0              </span></span>
-<span><span class="co">##  [69] dplyr_1.1.4                 withr_3.0.2                </span></span>
-<span><span class="co">##  [71] BiocManager_1.30.26         fastmap_1.2.0              </span></span>
-<span><span class="co">##  [73] SparseM_1.84-2              digest_0.6.37              </span></span>
-<span><span class="co">##  [75] R6_2.6.1                    gridGraphics_0.5-1         </span></span>
-<span><span class="co">##  [77] textshaping_1.0.1           colorspace_2.1-1           </span></span>
-<span><span class="co">##  [79] GO.db_3.21.0                RSQLite_2.4.2              </span></span>
-<span><span class="co">##  [81] R.methodsS3_1.8.2           googlesheets4_1.1.1        </span></span>
-<span><span class="co">##  [83] tidyr_1.3.1                 ggsci_3.2.0                </span></span>
-<span><span class="co">##  [85] data.table_1.17.8           rtracklayer_1.68.0         </span></span>
-<span><span class="co">##  [87] S4Arrays_1.8.1              httr_1.4.7                 </span></span>
-<span><span class="co">##  [89] htmlwidgets_1.6.4           parameters_0.27.0          </span></span>
-<span><span class="co">##  [91] pkgconfig_2.0.3             gtable_0.3.6               </span></span>
-<span><span class="co">##  [93] blob_1.2.4                  XVector_0.48.0             </span></span>
-<span><span class="co">##  [95] htmltools_0.5.8.1           bookdown_0.43              </span></span>
-<span><span class="co">##  [97] fgsea_1.34.2                ProtGenerics_1.40.0        </span></span>
-<span><span class="co">##  [99] scales_1.4.0                png_0.1-8                  </span></span>
-<span><span class="co">## [101] ggfun_0.2.0                 splitTools_1.0.1           </span></span>
-<span><span class="co">## [103] knitr_1.50                  rstudioapi_0.17.1          </span></span>
-<span><span class="co">## [105] rjson_0.2.23                reshape2_1.4.4             </span></span>
-<span><span class="co">## [107] checkmate_2.3.2             nlme_3.1-168               </span></span>
-<span><span class="co">## [109] curl_6.4.0                  survAUC_1.3-0              </span></span>
-<span><span class="co">## [111] ggcorrplot_0.1.4.1          cachem_1.1.0               </span></span>
-<span><span class="co">## [113] zoo_1.8-14                  stringr_1.5.1              </span></span>
-<span><span class="co">## [115] parallel_4.5.1              foreign_0.8-90             </span></span>
-<span><span class="co">## [117] restfulr_0.0.16             desc_1.4.3                 </span></span>
-<span><span class="co">## [119] pillar_1.11.0               grid_4.5.1                 </span></span>
-<span><span class="co">## [121] vctrs_0.6.5                 cluster_2.1.8.1            </span></span>
-<span><span class="co">## [123] htmlTable_2.4.3             evaluate_1.0.4             </span></span>
-<span><span class="co">## [125] Rsamtools_2.24.0            mvtnorm_1.3-3              </span></span>
-<span><span class="co">## [127] cli_3.6.5                   compiler_4.5.1             </span></span>
-<span><span class="co">## [129] rlang_1.1.6                 crayon_1.5.3               </span></span>
-<span><span class="co">## [131] rms_8.0-0                   plyr_1.8.9                 </span></span>
-<span><span class="co">## [133] fs_1.6.6                    stringi_1.8.7              </span></span>
-<span><span class="co">## [135] BiocParallel_1.42.1         Biostrings_2.76.0          </span></span>
-<span><span class="co">## [137] lazyeval_0.2.2              marginaleffects_0.28.0     </span></span>
-<span><span class="co">## [139] bayestestR_0.16.1           GOSemSim_2.34.0            </span></span>
-<span><span class="co">## [141] quantreg_6.1                Matrix_1.7-3               </span></span>
-<span><span class="co">## [143] patchwork_1.3.1             bit64_4.6.0-1              </span></span>
-<span><span class="co">## [145] ggplot2_3.5.2               KEGGREST_1.48.1            </span></span>
-<span><span class="co">## [147] SummarizedExperiment_1.38.1 dotwhisker_0.8.4           </span></span>
-<span><span class="co">## [149] gargle_1.5.2                igraph_2.1.4               </span></span>
-<span><span class="co">## [151] broom_1.0.9                 memoise_2.0.1              </span></span>
-<span><span class="co">## [153] bslib_0.9.0                 ggtree_3.16.3              </span></span>
-<span><span class="co">## [155] fastmatch_1.1-6             bit_4.6.0                  </span></span>
-<span><span class="co">## [157] ggstance_0.3.7              ape_5.8-1                  </span></span>
-<span><span class="co">## [159] gson_0.1.0</span></span></code></pre>
+<span><span class="co">##   [1] RColorBrewer_1.1-3          rstudioapi_0.17.1          </span></span>
+<span><span class="co">##   [3] jsonlite_2.0.0              datawizard_1.2.0           </span></span>
+<span><span class="co">##   [5] magrittr_2.0.3              TH.data_1.1-3              </span></span>
+<span><span class="co">##   [7] ggstance_0.3.7              farver_2.1.2               </span></span>
+<span><span class="co">##   [9] rmarkdown_2.29              fs_1.6.6                   </span></span>
+<span><span class="co">##  [11] ragg_1.4.0                  vctrs_0.6.5                </span></span>
+<span><span class="co">##  [13] base64enc_0.1-3             htmltools_0.5.8.1          </span></span>
+<span><span class="co">##  [15] S4Arrays_1.8.1              polspline_1.1.25           </span></span>
+<span><span class="co">##  [17] curl_7.0.0                  broom_1.0.9                </span></span>
+<span><span class="co">##  [19] cellranger_1.1.0            SparseArray_1.8.1          </span></span>
+<span><span class="co">##  [21] Formula_1.2-5               googlesheets4_1.1.1        </span></span>
+<span><span class="co">##  [23] sass_0.4.10                 bslib_0.9.0                </span></span>
+<span><span class="co">##  [25] htmlwidgets_1.6.4           desc_1.4.3                 </span></span>
+<span><span class="co">##  [27] plyr_1.8.9                  sandwich_3.1-1             </span></span>
+<span><span class="co">##  [29] httr2_1.2.1                 zoo_1.8-14                 </span></span>
+<span><span class="co">##  [31] cachem_1.1.0                lifecycle_1.0.4            </span></span>
+<span><span class="co">##  [33] pkgconfig_2.0.3             Matrix_1.7-3               </span></span>
+<span><span class="co">##  [35] R6_2.6.1                    fastmap_1.2.0              </span></span>
+<span><span class="co">##  [37] GenomeInfoDbData_1.2.14     MatrixGenerics_1.20.0      </span></span>
+<span><span class="co">##  [39] digest_0.6.37               colorspace_2.1-1           </span></span>
+<span><span class="co">##  [41] patchwork_1.3.1             S4Vectors_0.46.0           </span></span>
+<span><span class="co">##  [43] textshaping_1.0.1           Hmisc_5.2-3                </span></span>
+<span><span class="co">##  [45] GenomicRanges_1.60.0        httr_1.4.7                 </span></span>
+<span><span class="co">##  [47] abind_1.4-8                 compiler_4.5.1             </span></span>
+<span><span class="co">##  [49] gargle_1.5.2                withr_3.0.2                </span></span>
+<span><span class="co">##  [51] htmlTable_2.4.3             backports_1.5.0            </span></span>
+<span><span class="co">##  [53] ggcorrplot_0.1.4.1          performance_0.15.0         </span></span>
+<span><span class="co">##  [55] R.utils_2.13.0              MASS_7.3-65                </span></span>
+<span><span class="co">##  [57] quantreg_6.1                rappdirs_0.3.3             </span></span>
+<span><span class="co">##  [59] DelayedArray_0.34.1         ggsci_3.2.0                </span></span>
+<span><span class="co">##  [61] tools_4.5.1                 foreign_0.8-90             </span></span>
+<span><span class="co">##  [63] googledrive_2.1.1           rentrez_1.2.4              </span></span>
+<span><span class="co">##  [65] nnet_7.3-20                 R.oo_1.27.1                </span></span>
+<span><span class="co">##  [67] glue_1.8.0                  nlme_3.1-168               </span></span>
+<span><span class="co">##  [69] grid_4.5.1                  checkmate_2.3.3            </span></span>
+<span><span class="co">##  [71] cluster_2.1.8.1             reshape2_1.4.4             </span></span>
+<span><span class="co">##  [73] generics_0.1.4              gtable_0.3.6               </span></span>
+<span><span class="co">##  [75] tzdb_0.5.0                  R.methodsS3_1.8.2          </span></span>
+<span><span class="co">##  [77] tidyr_1.3.1                 data.table_1.17.8          </span></span>
+<span><span class="co">##  [79] hms_1.1.3                   xml2_1.4.0                 </span></span>
+<span><span class="co">##  [81] XVector_0.48.0              BiocGenerics_0.54.0        </span></span>
+<span><span class="co">##  [83] ggrepel_0.9.6               pillar_1.11.0              </span></span>
+<span><span class="co">##  [85] stringr_1.5.1               limma_3.64.3               </span></span>
+<span><span class="co">##  [87] splines_4.5.1               dplyr_1.1.4                </span></span>
+<span><span class="co">##  [89] splitTools_1.0.1            lattice_0.22-7             </span></span>
+<span><span class="co">##  [91] survival_3.8-3              GEOquery_2.76.0            </span></span>
+<span><span class="co">##  [93] SparseM_1.84-2              dotwhisker_0.8.4           </span></span>
+<span><span class="co">##  [95] tidyselect_1.2.1            rms_8.0-0                  </span></span>
+<span><span class="co">##  [97] knitr_1.50                  gridExtra_2.3              </span></span>
+<span><span class="co">##  [99] bookdown_0.44               IRanges_2.42.0             </span></span>
+<span><span class="co">## [101] SummarizedExperiment_1.38.1 stats4_4.5.1               </span></span>
+<span><span class="co">## [103] xfun_0.53                   Biobase_2.68.0             </span></span>
+<span><span class="co">## [105] statmod_1.5.0               matrixStats_1.5.0          </span></span>
+<span><span class="co">## [107] stringi_1.8.7               UCSC.utils_1.4.0           </span></span>
+<span><span class="co">## [109] yaml_2.3.10                 evaluate_1.0.4             </span></span>
+<span><span class="co">## [111] codetools_0.2-20            tibble_3.3.0               </span></span>
+<span><span class="co">## [113] BiocManager_1.30.26         cli_3.6.5                  </span></span>
+<span><span class="co">## [115] rpart_4.1.24                parameters_0.28.0          </span></span>
+<span><span class="co">## [117] systemfonts_1.2.3           jquerylib_0.1.4            </span></span>
+<span><span class="co">## [119] Rcpp_1.1.0                  GenomeInfoDb_1.44.2        </span></span>
+<span><span class="co">## [121] survAUC_1.3-0               XML_3.99-0.19              </span></span>
+<span><span class="co">## [123] MatrixModels_0.5-4          pkgdown_2.1.3              </span></span>
+<span><span class="co">## [125] ggplot2_3.5.2               readr_2.1.5                </span></span>
+<span><span class="co">## [127] bayestestR_0.16.1           marginaleffects_0.28.0     </span></span>
+<span><span class="co">## [129] mvtnorm_1.3-3               scales_1.4.0               </span></span>
+<span><span class="co">## [131] insight_1.4.0               purrr_1.1.0                </span></span>
+<span><span class="co">## [133] crayon_1.5.3                rlang_1.1.6                </span></span>
+<span><span class="co">## [135] multcomp_1.4-28</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

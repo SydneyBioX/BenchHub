@@ -79,11 +79,11 @@ analytical tasks against ground truths for the dataset.</p>
 
 <dt><code>evidenceSource</code></dt>
 <dd><p>The data repository that the supporting evidence was
-retrieved from</p></dd>
+retrieved from.</p></dd>
 
 
 <dt><code>evidenceSourceID</code></dt>
-<dd><p>The dataset ID for <code>evidenceSource</code></p></dd>
+<dd><p>The dataset ID for <code>evidenceSource</code>.</p></dd>
 
 
 <dt><code>splitIndices</code></dt>
@@ -132,6 +132,12 @@ retrieved from</p></dd>
 <span>  datasetID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dataLoader <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evidenceID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evidence <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evidenceColumns <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  evidenceLoader <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  task <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cachePath <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -151,6 +157,36 @@ a format string of the form <code>source</code>:<code>source_id</code>.</p></dd>
 <dt><code>dataLoader</code></dt>
 <dd><p>A custom loading function that takes the path of a downloaded file and
 returns a single dataset, ready to be used in evaluation tasks.</p></dd>
+
+
+<dt><code>evidenceID</code></dt>
+<dd><p>If <code>datasetID</code> is not an ID from the curated trio datasets spreadsheet,
+then a format string of the form <code>source</code>:<code>source_id</code> indicating the file to
+obtain the supporting evidence from.</p></dd>
+
+
+<dt><code>evidence</code></dt>
+<dd><p>A named list of lists. The top-level list is named by task type. The lower-level list
+is of length-two and named <code>"evidence"</code> and <code>"metrics"</code>. The <code>"evidence"</code>
+component has supporting evidence and the <code>"metrics"</code> component has a character vector
+of metric names (corresponding to the names of the list provided to the <code>metrics</code> parameter).</p></dd>
+
+
+<dt><code>evidenceColumns</code></dt>
+<dd><p>If <code>evidenceID</code> is not <code>NULL</code>, then the columns of the table containing
+the supporting evidence.</p></dd>
+
+
+<dt><code>evidenceLoader</code></dt>
+<dd><p>Alternative to <code>evidence</code> and <code>evidenceColumns</code>. Extract the evidence in a flexible way.</p></dd>
+
+
+<dt><code>task</code></dt>
+<dd><p>If <code>evidenceColumns</code> or <code>evidenceLoader</code> specified, a character vector of length 1 naming the task the evidence is for.</p></dd>
+
+
+<dt><code>metrics</code></dt>
+<dd><p>A named list of metric functions.</p></dd>
 
 
 <dt><code>cachePath</code></dt>
@@ -261,7 +297,7 @@ a wrapper function of the desired metric.</p></dd>
 <h3 id="method-evaluate-">Method <code>evaluate()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-"></a></h3>
 <p>Evaluate against gold standards</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">input</span>, splitIndex <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">input</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -269,11 +305,6 @@ a wrapper function of the desired metric.</p></dd>
 <p></p><div class="arguments"><dl><dt><code>input</code></dt>
 <dd><p>A named list of objects to be evaluated against gold
 standards.</p></dd>
-
-
-<dt><code>splitIndex</code></dt>
-<dd><p>An optional index for sub-setting data during evaluation using the
-indices created by the split method.</p></dd>
 
 
 </dl><p></p></div>
@@ -413,6 +444,8 @@ the seed is set to the current time.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va">Trio</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"figshare:26054188/47112109"</span>, cachePath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>has no supporting evidence for this dataset.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please add your own supporting evidence for evaluation.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
