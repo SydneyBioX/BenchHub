@@ -111,6 +111,22 @@ Trio <- R6::R6Class(
           )
         }
         self$data <- data
+        # If any evidence is missing sample IDs.
+        missingNames <- sapply(lapply(evidence, "[[", "evidence"), function(evidenceData)
+        {
+          if(isTabular(evidenceData)) is.null(rownames(evidenceData)) 
+          else is.null(names(evidenceData))
+        })
+        if(any(missingNames))
+        {
+          cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
+          evidence[missingNames] <- lapply(evidence, function(oneEvidence)
+          {
+            if(isTabular(oneEvidence$evidence)) rownames(oneEvidence$evidence) <- rownames(data) else names(oneEvidence$evidence) <- rownames(data)
+            oneEvidence
+          })
+        }
+        
         self$evidence <- evidence
         self$metrics <- metrics
         return(NULL)
@@ -177,6 +193,20 @@ Trio <- R6::R6Class(
           "metrics" = metrics
         )
       } else {
+        if(isTabular(evidence))
+        {
+          if(is.null(rownames(evidence)))
+          {
+            cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
+            rownames(evidence) <- rownames(self$data)
+          }
+        } else {
+          if(is.null(names(evidence)))
+          {
+            cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
+            names(evidence) <- rownames(self$data)
+          }
+        }
         self$evidence[[name]] <- list(
           "evidence" = evidence,
           "metrics" = metrics
@@ -270,18 +300,7 @@ Trio <- R6::R6Class(
     #' Evaluate against gold standards
     #' @param input A named list of objects to be evaluated against gold
     #'   standards.
-    #' @param splitIndex
-    #'   An optional index for sub-setting data during evaluation using the
-    #'   indices created by the split method.
-    evaluate = function(input, splitIndex = NULL) {
-      # check if splitIndex is provided but splitIndices is not present
-      if (!is.null(splitIndex) && is.null(self$splitIndices)) {
-        cli::cli_abort(c(
-          "splitIndex is provided but self$splitIndices is NULL.",
-          "i" = "Try running {.code trio$split(...)} to generate splits first."
-        ))
-      }
-
+    evaluate = function(input) {
       # check if the requested evidence is available
       evidenceAvail <- names(input) %in% names(self$evidence)
 
@@ -303,7 +322,7 @@ Trio <- R6::R6Class(
 
       # check if supporting evidence is available for each element of the input.
       if (separateMethods) {
-        evalList <- lapply(input, self$evaluate, splitIndex = splitIndex)
+        evalList <- lapply(input, self$evaluate)
         return(
           purrr::list_rbind(evalList, names_to = "method") %>%
             dplyr::select(datasetID, dplyr::everything())
@@ -344,6 +363,7 @@ Trio <- R6::R6Class(
           lapply(names(input[evidenceAvail]), self$getEvidence),
           names(input[evidenceAvail])
         )
+        isComputed <- sapply(names(input[evidenceAvail]), function(ID) is.function(self$evidence[[ID]]$evidence))
 
         # get a list of metrics to compute for each gold standard in the data
         metrics <- setNames(
@@ -386,35 +406,34 @@ Trio <- R6::R6Class(
             }
           )
         }
-
-        # subset evidence based on splitIndex if provided
-        if (!is.null(splitIndex) && !is.null(self$splitIndices)) {
-          evidence <- lapply(
-            evidence,
-            function(data) {
-              indices <- self$splitIndices[[splitIndex]]
-              if (
-                is.data.frame(data) || is.matrix(data) || is(data, "DataFrame")
-              ) {
-                return(data[-indices, , drop = FALSE])
-              } else if (is.vector(data) || is.factor(data) || is.list(data)) {
-                return(data[-indices])
-              } else {
-                cli::cli_abort(c(
-                  "Unsupported data type.",
-                  "x" = paste0(
-                    "Only vectors and tabular data are supported for",
-                    " evidence subsetting."
-                  ),
-                  "i" = paste0(
-                    "Try adding pre-subsetted evidence to the Trio for",
-                    " evaluation."
-                  )
-                ))
-              }
-            }
-          )
+ 
+        # subset evidence based on prediction's names
+        if (!is.null(self$splitIndices)) {
+            evidence <- mapply(function(oneEvidence, predictions, computed) {
+            if(!computed) # data needs to match the order of predictions.
+            {
+                testIDs <- names(predictions)
+                if (isTabular(oneEvidence)) {
+                  return(oneEvidence[testIDs, , drop = FALSE])
+                } else if (is.vector(oneEvidence) || is.factor(oneEvidence) || is.list(oneEvidence)) {
+                  return(oneEvidence[testIDs])
+                } else {
+                  cli::cli_abort(c(
+                    "Unsupported data type.",
+                    "x" = paste0(
+                      "Only vectors and tabular data are supported for",
+                      " evidence subsetting."
+                    ),
+                    "i" = paste0(
+                      "Try adding pre-subsetted evidence to the Trio for",
+                      " evaluation."
+                    )
+                  ))
+                }
+            } else oneEvidence
+          }, evidence, input[evidenceAvail], isComputed, SIMPLIFY = FALSE)
         }
+        
         # compute each metric for each input
         res <- purrr::imap(input, function(to_eval, evidenceName) {
           if (is.null(metrics[[evidenceName]])) {
@@ -423,6 +442,8 @@ Trio <- R6::R6Class(
           res <- lapply(
             metrics[[evidenceName]],
             function(x) {
+              if(is.function(self$evidence[[evidenceName]]$evidence))
+                to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
               metric_res <- self$metrics[[x]](to_eval, evidence[[evidenceName]])
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
@@ -1324,7 +1345,6 @@ Trio <- R6::R6Class(
       dataLoader(files)
     },
     populateTrio = function(evidenceID, evidence, evidenceColumns, evidenceLoader, task, metrics) {
-      # browser()
       if (!curl::has_internet()) {
         cli::cli_warn(c(
           "Couldn't populate Trio from Curated Trio Datasets.",
@@ -1475,7 +1495,6 @@ Trio <- R6::R6Class(
 
             # Add each evidence item with its respective metrics
             for (i in seq_len(nrow(unique(evidenceMetaData)))) {
-              # browser()
               evidenceRow <- unique(evidenceMetaData)[i, ]
               evidenceName <- unlist(evidenceRow["Supporting Evidence"])
 

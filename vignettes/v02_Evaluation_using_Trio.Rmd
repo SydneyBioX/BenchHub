@@ -37,50 +37,31 @@ The task we'll be evaluating uses a binary classification task where each sample
 To initialise a Trio object, we use a `new()` method.
 
 ```{r}
-trio <- Trio$new(data = x, evidence = lubomPD, datasetID = "lubomski_microbiome")
+trio <- Trio$new(data = x, evidence = list(Diagnosis = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
+                 metrics = list(`Balanced Accuracy` = balAccMetric),
+                 datasetID = "lubomski_microbiome")
 ```
 
-The supporting evidence is the patient status, which is the `lubomPD` vector that we extracted from the `Lubomski` data above. Next we will use this microbiome data to illustrate two examples, 1) evaluation with cross validation, 2) evaluation without cross validation.     
-
+The supporting evidence is the disease diagnosis, which is the `lubomPD` vector that we extracted from the `Lubomski` data above and the relevant metric to evaluate it is Balanced Accuracy. Next, we will use this microbiome data to illustrate two examples, 1) evaluation with cross validation, 2) evaluation without cross validation.
 
 # Cross validation - using the trio split function
 
 In this example, we show a typical classification scenario to classify the patient status, where we need to split the data into training and testing set.  
 
-## Step 1: Add a metric to it using `Trio$addMetric()`
-
-Users can use existing evaluation functions by specifying `metric`, and can name their evaluation metric by specifying `name`. Since the evaluation task is a classification task, we chose balanced accuracy, using the existing function bundled in BenchHub, and named it `Balanced Accuracy`.
-
-```{r}
-# add a metric to the Trio object
-trio$addMetric(name = "Balanced Accuracy", metric = balAccMetric)
-```
-
-## Step 2: Add supporting evidence to the `Trio` object using `Trio$addEvidence`
-
-Note that users need to specify the evaluation metric to be used through the `metrics` argument, which has to match the evaluation metric added to the `Trio` object.
-
-If users want to get evaluation metrics from the `Trio` object, they can use the `getMetrics` function by referring the name of `evidence`.
-
-```{r}
-# get the metric from the Trio object
-metrics <- trio$getMetrics("patient_status")
-```
-
-Step 3: Obtain relevant data for the model. To build a model, the following code will extract the data matrix and patient status outcome from `Trio` object.   
+Step 1: Obtain relevant data for the model. To build a model, the following code will extract the data matrix and patient status outcome from `Trio` object.   
 
 ```{r}
 # get the gold standard from the Trio object
 x <- trio$data
-y <- trio$getEvidence("patient_status")
+y <- trio$getEvidence("Diagnosis")
 ```
 
-Step 4: For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `evidence`) into the number of folds and repeats users want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`cv_ind`) for each sample, through `splitIndices`. This gives a simple list where each element represents a combination of folds and repeats for each sample.  
+Step 2: For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `evidence`) into the number of folds and repeats users want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`cv_ind`) for each sample, through `splitIndices`. This gives a simple list where each element represents a combination of folds and repeats for each sample.  
 
 ```{r}
 # get train and test indices
 trio$split(y = y, n_fold = 2, n_repeat = 5)
-cv_ind <- trio$splitIndices
+CVindices <- trio$splitIndices
 ```
 
 Step 5: Build the classification model and evaluate. We can now use a for loop to cross-validate evaluation results.    
@@ -92,21 +73,16 @@ Once we get the prediction, we pass the `pred` vector to `Trio` and ref to the n
 ```{r}
 set.seed(1234)
 
-result <- data.frame()
-
 # loop through the 2 folds x 5 repeats = 10 runs
-for (i in seq_along(cv_ind)) {
-  train_id <- cv_ind[[i]]
-
-  x_train <- x[train_id, ]
-  x_test <- x[-train_id, ]
-  y_train <- y[train_id]
-  y_test <- y[-train_id]
+result <- do.call(rbind, mapply(function(trainIDs, crossValID)
+{
+  x_train <- x[trainIDs, ]
+  x_test <- x[-trainIDs, ]
+  y_train <- y[trainIDs]
+  y_test <- y[-trainIDs]
 
   #  find the best lambda for LASSO regression
-  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train,
-    alpha = 1, family = "binomial"
-  )
+  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
   lam <- cv_lasso$lambda.1se
 
   # fit a model with the best lambda on training data
@@ -114,27 +90,20 @@ for (i in seq_along(cv_ind)) {
 
   # evaluate the model on test data
   pred <- predict(fit, x_test, s = "lambda.min", type = "class")
-  pred <- as.factor(as.vector(pred))
+  pred <- setNames(as.factor(as.vector(pred)), rownames(pred))
 
   # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(
-    list(lasso = list(patient_status = pred)),
-    splitIndex = i
-  )
+  eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
 
   # keep track of the repeat and fold information
-  eval_res$track <- names(cv_ind)[[i]]
-  result <- rbind(result, eval_res)
-}
+  eval_res$track <- crossValID
+  eval_res
+}, CVindices, names(CVindices), SIMPLIFY = FALSE))
 ```
 
-
 After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats. 
-
-
 ```{r}
 result$fold <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 1))
-
 result$repeats <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 2))
 
 result <- result %>%
@@ -143,22 +112,18 @@ result <- result %>%
 
 # visualise the result
 boxplot(result$result)
-
-# look at the format of the result output
-result
 ```
 
+# Without Cross-validation 
 
-# Without cross validation 
+In this example, we show a simpler case without cross validation, where we have a prediction that we want to compare with the ground truth directly. For example, we may have simulated a single-cell count matrix and want to compare with an experimental count matrix on various attributes.
 
-In this example, we show a simpler case without cross validation, where we have a prediction that we want to compare with the ground truth directly. For example, we may have simulated a single-cell count matrix and want to compare with an experimental count matrix on various attributes. 
+Here, we use the microbiome dataset to demonstrate the above case.
 
-Here, we use the microbiome dataset to demonstrate the above case. 
-
-Step 1: Simulate a matrix of the same size as the microbiome data using negative binomial.   
-Step 2: Define a function that calculate the sparsity of a given matrix.      
-Step 3: Define a metric that compare difference of two values.   
-Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.    
+Step 1: Simulate a matrix of the same size as the microbiome data using negative binomial.
+Step 2: Define a function that calculate the sparsity of a given matrix.
+Step 3: Define a metric that compare difference of two values.
+Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.
 
 ```{r}
 set.seed(1)
@@ -175,8 +140,8 @@ calc_sparsity <- function(data) {
 
 
 # metric that compare the difference of two values
-calc_diff <- function(pred, gt) {
-  return(gt - pred)
+calc_diff <- function(evidence, predicted) {
+  return(predicted - evidence)
 }
 ```
 
@@ -185,33 +150,25 @@ calc_diff <- function(pred, gt) {
 trio$addMetric(name = "Difference", metric = calc_diff)
 
 # calculate the sparsity of the data, and then input into the supporting evidence
-trio$addEvidence(name = "Sparsity", evidence = calc_sparsity(x), metrics = "Difference")
-
+trio$addEvidence(name = "Sparsity", evidence = calc_sparsity, metrics = "Difference")
 
 # because we used negative binomial to simulate a matrix
 # we will name the method as "negative binomial"
 # then calculate the sparsity of the simulated matrix and compare with the Sparsity supporting evidence
 eval_res <- trio$evaluate(
-  list(negative_binomial = list(Sparsity = calc_sparsity(sim)))
+  list(negative_binomial = list(Sparsity = sim))
 )
 
 eval_res
 ```
 
-
-
 From the evaluation result, we see there is a `r round(eval_res$result, 2)` difference in the sparsity between the microbiome data and the data simulated with negative binomial.   
-
-
-
-
 
 # Importing result to BenchmarkInsights
 
 The result dataframe obtained from `Trio` evaluation can be passed to `BenchmarkInsights` for subsequent visualisation. `BenchmarkInsights` is another structure in `BenchHub` that provide a list of functions to analyse and visualise the benchmarking results from multiple perspectives.
 
-Note, to make the result dataframe compatible for BenchmarkInsights, please make sure the dataframe is in the format shown below, where the column names are "datasetID", "method", "evidence", "metric" , "result", and that there is one row for each result. 
-
+Note, to make the result dataframe compatible for BenchmarkInsights, please make sure the dataframe is in the format shown below, where the column names are "datasetID", "method", "evidence", "metric" , "result", and that there is one row for each result.
 
 ```{r}
 # in the with cross validation result, we need to average the results from multiple repeats to give one value
@@ -224,7 +181,6 @@ result
 ```
 
 Please see Vignette 3 for the details on the visualisations and functions in `BenchmarkInsights`.     
-
 
 # Session Info
 

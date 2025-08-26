@@ -260,3 +260,5 @@ figshareListFiles <- function(articleID, fileID = NULL) {
 
   do.call(rbind, lapply(body, data.frame))
 }
+
+isTabular <- function(x) inherits(x, c("data.frame", "DataFrame", "matrix"))

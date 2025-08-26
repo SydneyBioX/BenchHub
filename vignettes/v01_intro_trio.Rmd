@@ -151,58 +151,6 @@ Underneeth the hood, Trio creates a wrapper function that calls the metric funct
 trio$metrics$inequality
 ```
 
-## Adding and getting `evidence`
-
-`evidence` (supporting evidence) refers to gold standards in evaluation tasks and falls into two categories:
-
-- Internal: Extracted directly from the Trio dataset. This may include metadata such as cell types (e.g., B cells, CD4, CD8), patient conditions (e.g., healthy, disease), and spatial domain information. The specific content depends on the dataset itself.
-- External: Retrieved from external databases, such as disease pathway databases or gene marker databases.
-
-With the `equality` and `inequality` metrics added above, we can now run an evaluation.
-
-First we add some supporting evidence to the Trio object to evaluate against.
-
-Supporting evidence is any data that allows you to make an evaluation. Supporting evidence is linked to metrics that allow you to evaluate it.
-
-```{r}
-# It can be a fixed quantity
-trio$addEvidence(
-  name = "Number One", evidence = 1, metrics = c("equality", "inequality")
-)
-
-# Or it can be a function that acts on the data
-trio$addEvidence(
-  name = "length", evidence = length, metrics = c("equality", "inequality")
-)
-```
-
-To view the supporting evidence one can use `getEvidence`.
-
-```{r}
-trio$getEvidence("length") # This is equivalent to `length(trio$data)`
-```
-
-## Evaluation Example
-
-Once Trio is set up with relevant metrics and supporting evidence, we are ready to evaluate.
-
-For simple evaluation:
-```{r}
-result <- trio$evaluate(list("Number One" = 1, length = 182))
-knitr::kable(result)
-```
-
-For multi-method evaluation:
-```{r}
-result <- trio$evaluate(list(
-  great_method = list("Number One" = 1, length = 575),
-  poor_method = list("Number One" = 2, length = 182)
-))
-knitr::kable(result)
-```
-
-For a more detailed look at evaluation using Trio, please refer to vignette 2.
-
 # Other Features 
 
 ## Caching

@@ -208,7 +208,7 @@ Get supporting evidence by name.
 \subsection{Method \code{evaluate()}}{
 Evaluate against gold standards
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input, splitIndex = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Trio$evaluate(input)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -216,9 +216,6 @@ Evaluate against gold standards
 \describe{
 \item{\code{input}}{A named list of objects to be evaluated against gold
 standards.}
-
-\item{\code{splitIndex}}{An optional index for sub-setting data during evaluation using the
-indices created by the split method.}
 }
 \if{html}{\out{</div>}}
 }
