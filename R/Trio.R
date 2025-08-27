@@ -1129,6 +1129,10 @@ Trio <- R6::R6Class(
           md5 = state$md5,
           dataType = state$dataType,
           description = self$description,
+          splitSeed = ifelse(is.null(self$splitSeed), NA, as.character(self$splitSeed)),
+          splitNFold = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices)),
+          splitNRepeat = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices[[1]])),
+          splitIsStratified = ifelse(is.null(self$splitIndices), NA, attr(self$splitIndices, "type") == "stratified"),
           validated = FALSE
         ),
         sheet = "Datasets"
@@ -1357,7 +1361,35 @@ Trio <- R6::R6Class(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Datasets",
       ))
-      evidID <- datasetsMetaData[["datasetID"]][match(self$dataSourceID, datasetsMetaData[["sourceID"]])]
+      
+      # Get the dataset row that matches our source ID
+      datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
+      evidID <- datasetsMetaData[["datasetID"]][datasetIdx]
+      
+      # Load split configuration if available
+      splitSeed <- datasetsMetaData[["splitSeed"]][datasetIdx]
+      splitNFold <- datasetsMetaData[["splitNFold"]][datasetIdx] 
+      splitNRepeat <- datasetsMetaData[["splitNRepeat"]][datasetIdx]
+      splitIsStratified <- datasetsMetaData[["splitIsStratified"]][datasetIdx]
+      
+      if (!is.na(splitSeed)) {
+        self$splitSeed <- as.integer(splitSeed)
+        # If we have split configuration, we can recreate the split indices
+        # But we need the stratification variable y which was used originally
+        # We'll warn the user about this
+        cli::cli_inform(c(
+          "Split configuration found for this dataset:",
+          "i" = "Seed: {.val {splitSeed}}",
+          "i" = "Folds: {.val {splitNFold}}",
+          "i" = "Repeats: {.val {splitNRepeat}}",
+          "i" = "Stratified: {.val {splitIsStratified}}",
+          "*" = paste0(
+            "To recreate the exact split indices, call trio$split(y, n_fold=",
+            splitNFold, ", n_repeat=", splitNRepeat, 
+            ", stratify=", splitIsStratified, ", seed=", splitSeed, ")"
+          )
+        ))
+      }
       evidenceMetaData <- suppressMessages(
         googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
