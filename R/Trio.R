@@ -587,6 +587,7 @@ Trio <- R6::R6Class(
     #' @description
     #' Write the Trio Metadata to Curated Trio Datasets sheet.
     #' @param name The name of the dataset to be added.
+    #' @param email Required. Email address of the contributor for dataset update notifications.
     #' @param githubPat Optional GitHub Personal Access Token. If not provided and not set in environment, will prompt user.
     #' @param description Optional description of the dataset. If not provided and not set, will prompt user.
     #' @param figshareUrl Optional URL to the Figshare dataset. If not provided, will prompt user.
@@ -596,6 +597,7 @@ Trio <- R6::R6Class(
     #' @param skipMd5Check Optional boolean to skip MD5 verification. Defaults to FALSE.
     writeCTD = function(
       name,
+      email = NULL,
       githubPat = NULL,
       description = NULL,
       figshareUrl = NULL,
@@ -604,7 +606,22 @@ Trio <- R6::R6Class(
       dataType = NULL,
       skipMd5Check = FALSE
     ) {
+      
       # Initialize state list
+      # Prompt for email if not provided
+      if (is.null(email) && interactive()) {
+        email <- readline("Please enter your email address (for dataset updates notifications): ")
+      } else {
+        cli::cli_abort("Email address is required")
+      }
+
+      if (!grepl("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", email)) {
+        cli::cli_abort("Invalid email format provided")
+      }
+      
+      # Email obfuscation for storage
+      obfuscated_email <- gsub("@", "(at)", email)
+      
       state <- list(
         name = name,
         md5 = "",
@@ -623,7 +640,8 @@ Trio <- R6::R6Class(
         figshareUrl = figshareUrl,
         datasetFileName = datasetFileName,
         evidenceFileName = evidenceFileName,
-        skipMd5Check = skipMd5Check
+        skipMd5Check = skipMd5Check,
+        contributorEmail = obfuscated_email
       )
 
       # Perform initial validation checks
@@ -1129,6 +1147,7 @@ Trio <- R6::R6Class(
           md5 = state$md5,
           dataType = state$dataType,
           description = self$description,
+          contributorEmail = state$contributorEmail,
           splitSeed = ifelse(is.null(self$splitSeed), NA, as.character(self$splitSeed)),
           splitNFold = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices)),
           splitNRepeat = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices[[1]])),
