@@ -1353,8 +1353,6 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
-browser()
-      # get the gold standard metadata from curated trio datasets
       datasetsMetaData <- suppressMessages(googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Datasets",
