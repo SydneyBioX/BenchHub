@@ -735,7 +735,7 @@ Trio <- R6::R6Class(
 
     handleDataSaving = function(state) {
       # Save dataset if needed
-      if (is.null(self$dataSourceID) && !state$save) {
+      if (!state$save) {
         state$save <- utils::askYesNo(
           "Do you want to save the data to an RDS file in the current dir?"
         )
