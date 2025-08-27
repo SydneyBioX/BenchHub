@@ -159,6 +159,7 @@ Trio <- R6::R6Class(
         self$cachePath,
         dataLoader
       )
+      
       private$populateTrio(evidenceID, evidence, evidenceColumns, evidenceLoader, task, metrics)
     },
 
@@ -1352,15 +1353,22 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
-
+browser()
       # get the gold standard metadata from curated trio datasets
+      datasetsMetaData <- suppressMessages(googlesheets4::read_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Datasets",
+      ))
+      evidID <- datasetsMetaData[["datasetID"]][match(self$dataSourceID, datasetsMetaData[["sourceID"]])]
       evidenceMetaData <- suppressMessages(
         googlesheets4::read_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
           sheet = "Dataset-Evidence",
-        ) |>
-          dplyr::filter(sourceID == self$dataSourceID)
+        )
       )
+      evidID <- evidenceMetaData[["sourceID"]][match(evidID, evidenceMetaData[["datasetID"]])]
+      
+      evidenceMetaData <- evidenceMetaData |> dplyr::filter(sourceID == evidID)
       
       if (nrow(evidenceMetaData) == 0 && is.null(evidenceLoader) && is.null(evidenceColumns) && is.null(evidence)) {
         cli::cli_warn(c(
