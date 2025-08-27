@@ -77,6 +77,81 @@ BenchHubStudy <- R6Class(
             self$addTrio(trio)
           }
         }
+
+        # Load mapping functions if available
+        if (!is.na(studyData$mappingFunctions) && studyData$mappingFunctions != "") {
+          cli::cli_inform("Loading mapping functions from gist...")
+          tryCatch({
+            # Get the gist ID from the URL
+            gistUrl <- studyData$mappingFunctions
+            gistId <- sub(".*github.com/[^/]+/", "", gistUrl)
+            gistId <- sub("/.*", "", gistId)
+            
+            # Get the gist content
+            gist <- gistr::gist(gistId)
+            mappingCode <- gist$files[[1]]$content
+            
+            # Create a new environment to evaluate the code
+            tempEnv <- new.env()
+            eval(parse(text = mappingCode), envir = tempEnv)
+            
+            # Extract functions and their documentation from the code
+            funcLines <- strsplit(mappingCode, "\n")[[1]]
+            currentFunc <- NULL
+            currentDoc <- list()
+            
+            for (line in funcLines) {
+              if (startsWith(line, "# Function: ")) {
+                # If we were processing a previous function, add it
+                if (!is.null(currentFunc)) {
+                  funcName <- ls(envir = tempEnv, pattern = paste0("^", currentFunc, "$"))
+                  if (length(funcName) > 0) {
+                    self$addMappingFunction(
+                      name = currentFunc,
+                      func = get(funcName, envir = tempEnv),
+                      inputDescription = currentDoc$input,
+                      outputDescription = currentDoc$output,
+                      exampleUsage = currentDoc$example
+                    )
+                  }
+                }
+                # Start new function
+                currentFunc <- sub("# Function: ", "", line)
+                currentDoc <- list()
+              } else if (startsWith(line, "# Input: ")) {
+                currentDoc$input <- sub("# Input: ", "", line)
+              } else if (startsWith(line, "# Output: ")) {
+                currentDoc$output <- sub("# Output: ", "", line)
+              } else if (startsWith(line, "# Example: ")) {
+                currentDoc$example <- sub("# Example: ", "", line)
+              }
+            }
+            
+            # Add the last function if there is one
+            if (!is.null(currentFunc)) {
+              funcName <- ls(envir = tempEnv, pattern = paste0("^", currentFunc, "$"))
+              if (length(funcName) > 0) {
+                self$addMappingFunction(
+                  name = currentFunc,
+                  func = get(funcName, envir = tempEnv),
+                  inputDescription = currentDoc$input,
+                  outputDescription = currentDoc$output,
+                  exampleUsage = currentDoc$example
+                )
+              }
+            }
+            
+            cli::cli_inform(c(
+              "v" = "Successfully loaded mapping functions",
+              "i" = "Loaded {length(self$mappingFunctions)} functions"
+            ))
+          }, error = function(e) {
+            cli::cli_warn(c(
+              "Failed to load mapping functions from gist",
+              "x" = "Error: {conditionMessage(e)}"
+            ))
+          })
+        }
       } else {
         self$name <- name
         self$trios <- trios
@@ -358,6 +433,38 @@ Describe the benchmark task and dataset.
         }
       }
 
+      # Upload mapping functions as a gist if they exist
+      mappingFunctionsGistUrl <- ""
+      if (length(self$mappingFunctions) > 0) {
+        cli::cli_inform("Uploading mapping functions to GitHub Gist...")
+        
+        # Create R code containing all mapping functions
+        mappingFunctionsCode <- character()
+        for (funcName in names(self$mappingFunctions)) {
+          func <- self$mappingFunctions[[funcName]]
+          # Add function documentation as comments
+          mappingFunctionsCode <- c(
+            mappingFunctionsCode,
+            paste0("# Function: ", funcName),
+            paste0("# Input: ", func$doc$inputDescription),
+            paste0("# Output: ", func$doc$outputDescription),
+            if (!is.null(func$doc$exampleUsage)) paste0("# Example: ", func$doc$exampleUsage),
+            "",
+            paste0(funcName, " <- ", paste(deparse(func$func), collapse = "\n")),
+            "\n"
+          )
+        }
+        
+        # Create the gist
+        mappingGist <- gistr::gist_create(
+          code = paste(mappingFunctionsCode, collapse = "\n"),
+          description = paste0("Mapping Functions for BenchHubStudy ", self$name, " v", self$version),
+          public = TRUE,
+          filename = paste0("mapping_functions_", self$name, "_v", self$version, ".R")
+        )
+        mappingFunctionsGistUrl <- mappingGist$html_url
+      }
+
       # Write to the Studies sheet
       googlesheets4::sheet_append(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
@@ -370,7 +477,7 @@ Describe the benchmark task and dataset.
           nTrios = length(self$trios),
           relatedTrios = relatedTrios,
           protocolGist = gistUrl,
-          mappingFunctions = "", #TODO: Add mapping functions if needed
+          mappingFunctions = mappingFunctionsGistUrl,
           validated = FALSE,
           stringsAsFactors = FALSE
         ),
