@@ -243,6 +243,16 @@ Trio <- R6::R6Class(
     #' @param args
     #'   A named list of parameters and values to be passed to the function.
     addMetric = function(name, metric, args = NULL) {
+      # Replace spaces with underscores and ensure valid R name
+      old_name <- name
+      name <- make.names(gsub(" ", "_", name))
+      if (name != old_name) {
+        cli::cli_inform(c(
+          "Metric name was modified to be a valid R variable name.",
+          "i" = "Changed {.val {old_name}} to {.val {name}}."
+        ))
+      }
+
       if (!methods::is(metric, "function")) {
         cli::cli_abort(c(
           paste0(
