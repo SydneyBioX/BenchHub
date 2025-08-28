@@ -730,7 +730,7 @@ Trio <- R6::R6Class(
         "Added the dataset to the Curated Trio Datasets sheet.",
         "i" = paste0(
           "Please check the details at ",
-          "{.href [this link]({private$CTDlink})}"
+          private$CTDlink
         )
       ))
     }
