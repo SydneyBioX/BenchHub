@@ -477,7 +477,7 @@ Trio <- R6::R6Class(
               if (is.function(self$evidence[[evidenceName]]$evidence)) {
                 to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
               }
-              metric_res <- self$metrics[[x]](to_eval, evidence[[evidenceName]])
+              metric_res <- self$metrics[[x]](evidence[[evidenceName]], to_eval)
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
                   "The result for the {.val {x}} metric is not a single value.",
