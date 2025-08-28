@@ -112,21 +112,30 @@ Trio <- R6::R6Class(
         }
         self$data <- data
         # If any evidence is missing sample IDs.
-        missingNames <- sapply(lapply(evidence, "[[", "evidence"), function(evidenceData)
-        {
-          if(isTabular(evidenceData)) is.null(rownames(evidenceData)) 
-          else is.null(names(evidenceData))
-        })
-        if(any(missingNames))
-        {
-          cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
-          evidence[missingNames] <- lapply(evidence, function(oneEvidence)
-          {
-            if(isTabular(oneEvidence$evidence)) rownames(oneEvidence$evidence) <- rownames(data) else names(oneEvidence$evidence) <- rownames(data)
+        missingNames <- sapply(
+          lapply(evidence, "[[", "evidence"),
+          function(evidenceData) {
+            if (isTabular(evidenceData)) {
+              is.null(rownames(evidenceData))
+            } else {
+              is.null(names(evidenceData))
+            }
+          }
+        )
+        if (any(missingNames)) {
+          cli::cli_warn(
+            "No sample IDs found on evidence. Assuming same order as data and adding them."
+          )
+          evidence[missingNames] <- lapply(evidence, function(oneEvidence) {
+            if (isTabular(oneEvidence$evidence)) {
+              rownames(oneEvidence$evidence) <- rownames(data)
+            } else {
+              names(oneEvidence$evidence) <- rownames(data)
+            }
             oneEvidence
           })
         }
-        
+
         self$evidence <- evidence
         self$metrics <- metrics
         return(NULL)
@@ -159,8 +168,15 @@ Trio <- R6::R6Class(
         self$cachePath,
         dataLoader
       )
-      
-      private$populateTrio(evidenceID, evidence, evidenceColumns, evidenceLoader, task, metrics)
+
+      private$populateTrio(
+        evidenceID,
+        evidence,
+        evidenceColumns,
+        evidenceLoader,
+        task,
+        metrics
+      )
     },
 
     #' @description
@@ -194,17 +210,18 @@ Trio <- R6::R6Class(
           "metrics" = metrics
         )
       } else {
-        if(isTabular(evidence))
-        {
-          if(is.null(rownames(evidence)))
-          {
-            cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
+        if (isTabular(evidence)) {
+          if (is.null(rownames(evidence))) {
+            cli::cli_warn(
+              "No sample IDs found on evidence. Assuming same order as data and adding them."
+            )
             rownames(evidence) <- rownames(self$data)
           }
         } else {
-          if(is.null(names(evidence)))
-          {
-            cli::cli_warn("No sample IDs found on evidence. Assuming same order as data and adding them.")
+          if (is.null(names(evidence))) {
+            cli::cli_warn(
+              "No sample IDs found on evidence. Assuming same order as data and adding them."
+            )
             names(evidence) <- rownames(self$data)
           }
         }
@@ -364,7 +381,9 @@ Trio <- R6::R6Class(
           lapply(names(input[evidenceAvail]), self$getEvidence),
           names(input[evidenceAvail])
         )
-        isComputed <- sapply(names(input[evidenceAvail]), function(ID) is.function(self$evidence[[ID]]$evidence))
+        isComputed <- sapply(names(input[evidenceAvail]), function(ID) {
+          is.function(self$evidence[[ID]]$evidence)
+        })
 
         # get a list of metrics to compute for each gold standard in the data
         metrics <- setNames(
@@ -407,16 +426,21 @@ Trio <- R6::R6Class(
             }
           )
         }
- 
+
         # subset evidence based on prediction's names
         if (!is.null(self$splitIndices)) {
-            evidence <- mapply(function(oneEvidence, predictions, computed) {
-            if(!computed) # data needs to match the order of predictions.
-            {
+          evidence <- mapply(
+            function(oneEvidence, predictions, computed) {
+              if (!computed) {
+                # data needs to match the order of predictions.
                 testIDs <- names(predictions)
                 if (isTabular(oneEvidence)) {
                   return(oneEvidence[testIDs, , drop = FALSE])
-                } else if (is.vector(oneEvidence) || is.factor(oneEvidence) || is.list(oneEvidence)) {
+                } else if (
+                  is.vector(oneEvidence) ||
+                    is.factor(oneEvidence) ||
+                    is.list(oneEvidence)
+                ) {
                   return(oneEvidence[testIDs])
                 } else {
                   cli::cli_abort(c(
@@ -431,10 +455,17 @@ Trio <- R6::R6Class(
                     )
                   ))
                 }
-            } else oneEvidence
-          }, evidence, input[evidenceAvail], isComputed, SIMPLIFY = FALSE)
+              } else {
+                oneEvidence
+              }
+            },
+            evidence,
+            input[evidenceAvail],
+            isComputed,
+            SIMPLIFY = FALSE
+          )
         }
-        
+
         # compute each metric for each input
         res <- purrr::imap(input, function(to_eval, evidenceName) {
           if (is.null(metrics[[evidenceName]])) {
@@ -443,8 +474,9 @@ Trio <- R6::R6Class(
           res <- lapply(
             metrics[[evidenceName]],
             function(x) {
-              if(is.function(self$evidence[[evidenceName]]$evidence))
+              if (is.function(self$evidence[[evidenceName]]$evidence)) {
                 to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
+              }
               metric_res <- self$metrics[[x]](to_eval, evidence[[evidenceName]])
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
@@ -507,13 +539,11 @@ Trio <- R6::R6Class(
       }
 
       if (!overwrite && !is.null(self$splitIndices)) {
-        if (self$verbose) {
-          cli::cli_inform(c(
-            "Not overwriting, keeping the existing split indices.",
-            "i" = "Use {.code trio$split(..., overwrite = TRUE)} to overwrite.",
-            "i" = "To get current indices, access {.code trio$splitIndices}"
-          ))
-        }
+        cli::cli_inform(c(
+          "Not overwriting, keeping the existing split indices.",
+          "i" = "Use {.code trio$split(..., overwrite = TRUE)} to overwrite.",
+          "i" = "To get current indices, access {.code trio$splitIndices}"
+        ))
         return(NULL)
       }
 
@@ -569,14 +599,14 @@ Trio <- R6::R6Class(
         if (!is.null(self$splitIndices)) {
           cli::cli_h3("CV Split Indices")
           cli::cli_text("{.strong Seed}: {.val {self$splitSeed}}")
+          # Get unique fold and rep numbers from split indices names
+          folds <- unique(as.numeric(gsub("Fold(\\d+)\\.Rep\\d+", "\\1", names(self$splitIndices))))
+          reps <- unique(as.numeric(gsub("Fold\\d+\\.Rep(\\d+)", "\\1", names(self$splitIndices))))
           cli::cli_text(
-            "{.strong Number of Folds}: {.val {length(self$splitIndices)}}"
+            "{.strong Number of Folds}: {.val {length(folds)}}"
           )
           cli::cli_text(
-            paste0(
-              "{.strong Number of Repeats}:",
-              " {.val {length(self$splitIndices[[1]])}}"
-            )
+            "{.strong Number of Repeats}: {.val {length(reps)}}"
           )
         }
       })
@@ -606,11 +636,12 @@ Trio <- R6::R6Class(
       dataType = NULL,
       skipMd5Check = FALSE
     ) {
-      
       # Initialize state list
       # Prompt for email if not provided
       if (is.null(email) && interactive()) {
-        email <- readline("Please enter your email address (for dataset updates notifications): ")
+        email <- readline(
+          "Please enter your email address (for dataset updates notifications): "
+        )
       } else if (is.null(email) && !interactive()) {
         cli::cli_abort("Email address is required")
       }
@@ -618,10 +649,10 @@ Trio <- R6::R6Class(
       if (!grepl("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", email, perl = TRUE)) {
         cli::cli_abort("Invalid email format provided")
       }
-      
+
       # Email obfuscation for storage
       obfuscated_email <- gsub("@", "(at)", email)
-      
+
       state <- list(
         name = name,
         md5 = "",
@@ -771,7 +802,9 @@ Trio <- R6::R6Class(
     },
 
     validateDatasetAvailability = function(state) {
-      if (!state$save && is.null(self$dataSourceID) && is.null(self$dataSource)) {
+      if (
+        !state$save && is.null(self$dataSourceID) && is.null(self$dataSource)
+      ) {
         # Ask the user if the dataset is available in one of the databases
         # with an implemented downloader in downloaders.R
         # Extract availableSources from downloaders.R dynamically
@@ -1148,10 +1181,26 @@ Trio <- R6::R6Class(
           dataType = state$dataType,
           description = self$description,
           contributorEmail = state$contributorEmail,
-          splitSeed = ifelse(is.null(self$splitSeed), NA, as.character(self$splitSeed)),
-          splitNFold = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices)),
-          splitNRepeat = ifelse(is.null(self$splitIndices), NA, length(self$splitIndices[[1]])),
-          splitIsStratified = ifelse(is.null(self$splitIndices), NA, attr(self$splitIndices, "type") == "stratified"),
+          splitSeed = ifelse(
+            is.null(self$splitSeed),
+            NA,
+            as.character(self$splitSeed)
+          ),
+          splitNFold = ifelse(
+            is.null(self$splitIndices),
+            NA,
+            length(unique(as.numeric(gsub("Fold(\\d+)\\.Rep\\d+", "\\1", names(self$splitIndices)))))
+          ),
+          splitNRepeat = ifelse(
+            is.null(self$splitIndices),
+            NA,
+            length(unique(as.numeric(gsub("Fold\\d+\\.Rep(\\d+)", "\\1", names(self$splitIndices)))))
+          ),
+          splitIsStratified = ifelse(
+            is.null(self$splitIndices),
+            NA,
+            attr(self$splitIndices, "type") == "stratified"
+          ),
           validated = FALSE
         ),
         sheet = "Datasets"
@@ -1325,15 +1374,13 @@ Trio <- R6::R6Class(
         ))
       }
 
-      if(IDtype == "data")
-      {
+      if (IDtype == "data") {
         self$dataSource <- sourceName
         self$dataSourceID <- id
       } else {
         self$evidenceSource <- sourceName
         self$evidenceSourceID <- id
       }
-        
     },
     # Send the ID to the appropriate downloader and load the file, if possible.
     getData = function(sourceName, id, cachePath, dataLoader) {
@@ -1368,7 +1415,14 @@ Trio <- R6::R6Class(
 
       dataLoader(files)
     },
-    populateTrio = function(evidenceID, evidence, evidenceColumns, evidenceLoader, task, metrics) {
+    populateTrio = function(
+      evidenceID,
+      evidence,
+      evidenceColumns,
+      evidenceLoader,
+      task,
+      metrics
+    ) {
       if (!curl::has_internet()) {
         cli::cli_warn(c(
           "Couldn't populate Trio from Curated Trio Datasets.",
@@ -1380,17 +1434,17 @@ Trio <- R6::R6Class(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Datasets",
       ))
-      
+
       # Get the dataset row that matches our source ID
       datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
       evidID <- datasetsMetaData[["datasetID"]][datasetIdx]
-      
+
       # Load split configuration if available
       splitSeed <- datasetsMetaData[["splitSeed"]][datasetIdx]
-      splitNFold <- datasetsMetaData[["splitNFold"]][datasetIdx] 
+      splitNFold <- datasetsMetaData[["splitNFold"]][datasetIdx]
       splitNRepeat <- datasetsMetaData[["splitNRepeat"]][datasetIdx]
       splitIsStratified <- datasetsMetaData[["splitIsStratified"]][datasetIdx]
-      
+
       if (!is.na(splitSeed)) {
         self$splitSeed <- as.integer(splitSeed)
         # If we have split configuration, we can recreate the split indices
@@ -1404,8 +1458,14 @@ Trio <- R6::R6Class(
           "i" = "Stratified: {.val {splitIsStratified}}",
           "*" = paste0(
             "To recreate the exact split indices, call trio$split(y, n_fold=",
-            splitNFold, ", n_repeat=", splitNRepeat, 
-            ", stratify=", splitIsStratified, ", seed=", splitSeed, ")"
+            splitNFold,
+            ", n_repeat=",
+            splitNRepeat,
+            ", stratify=",
+            splitIsStratified,
+            ", seed=",
+            splitSeed,
+            ")"
           )
         ))
       }
@@ -1415,11 +1475,19 @@ Trio <- R6::R6Class(
           sheet = "Dataset-Evidence",
         )
       )
-      evidID <- evidenceMetaData[["sourceID"]][match(evidID, evidenceMetaData[["datasetID"]])]
-      
+      evidID <- evidenceMetaData[["sourceID"]][match(
+        evidID,
+        evidenceMetaData[["datasetID"]]
+      )]
+
       evidenceMetaData <- evidenceMetaData |> dplyr::filter(sourceID == evidID)
-      
-      if (nrow(evidenceMetaData) == 0 && is.null(evidenceLoader) && is.null(evidenceColumns) && is.null(evidence)) {
+
+      if (
+        nrow(evidenceMetaData) == 0 &&
+          is.null(evidenceLoader) &&
+          is.null(evidenceColumns) &&
+          is.null(evidence)
+      ) {
         cli::cli_warn(c(
           paste0(self$CTDlink, " has no supporting evidence for this dataset."),
           "i" = "Please add your own supporting evidence for evaluation."
@@ -1427,34 +1495,46 @@ Trio <- R6::R6Class(
         return(NULL)
       }
 
-      if(nrow(evidenceMetaData) == 0) # Not curated. Getting it directly from a source.
-      {
-        if(!is.null(evidence))
-        {
+      if (nrow(evidenceMetaData) == 0) {
+        # Not curated. Getting it directly from a source.
+        if (!is.null(evidence)) {
           self$evidence <- evidence
           self$metrics <- metrics
-        } else if(!is.null(evidenceID))
-        {
-          self$evidence <- list(task = list(evidence = private$getData(
-            self$evidenceSource,
-            self$evidenceSourceID,
-            self$cachePath,
-            evidenceLoader$evidence
-          ), metrics = names(metrics)), metrics = metrics)
-        } else if(!is.null(evidenceColumns)) { # evidenceID is NULL, so evidence is in columns of data table.
-          self$evidence <- list(list(evidence = self$data[, evidenceColumns], metrics = names(metrics)))
+        } else if (!is.null(evidenceID)) {
+          self$evidence <- list(
+            task = list(
+              evidence = private$getData(
+                self$evidenceSource,
+                self$evidenceSourceID,
+                self$cachePath,
+                evidenceLoader$evidence
+              ),
+              metrics = names(metrics)
+            ),
+            metrics = metrics
+          )
+        } else if (!is.null(evidenceColumns)) {
+          # evidenceID is NULL, so evidence is in columns of data table.
+          self$evidence <- list(list(
+            evidence = self$data[, evidenceColumns],
+            metrics = names(metrics)
+          ))
           names(self$evidence) <- task
           self$metrics <- metrics
           self$evidenceSourceID <- self$dataSourceID
           self$data <- self$data[, -match(evidenceColumns, colnames(self$data))]
           # Evidence extracted and removed from data to avoid use as covariate.
-        } else if (!is.null(evidenceLoader))  { # Evidence is extracted from data object using dataLoader.
-          self$evidence <- list(list(evidence = private$getData(
-            self$dataSource,
-            self$dataSourceID,
-            self$cachePath,
-            evidenceLoader
-          ), metrics = names(metrics)))
+        } else if (!is.null(evidenceLoader)) {
+          # Evidence is extracted from data object using dataLoader.
+          self$evidence <- list(list(
+            evidence = private$getData(
+              self$dataSource,
+              self$dataSourceID,
+              self$cachePath,
+              evidenceLoader
+            ),
+            metrics = names(metrics)
+          ))
           names(self$evidence) <- task
           self$metrics <- metrics
         }
@@ -1480,8 +1560,7 @@ Trio <- R6::R6Class(
       )
 
       # create metrics inside the object
-      if(nrow(metrics) > 0)
-      {
+      if (nrow(metrics) > 0) {
         apply(metrics, 1, \(metric) {
           if (metric["Metric Type"] == "internal") {
             self$addMetric(
@@ -1502,13 +1581,13 @@ Trio <- R6::R6Class(
                   path = path
                 ) |>
                 purrr::pluck(1)
-  
+
               # Create a new environment for the metric functions
               metric_env <- new.env()
-  
+
               # Source the file in the new environment
               sys.source(temp_file, envir = metric_env)
-  
+
               # Add the metric function from the new environment
               metric_name <- metric["MetricID"][[1]]
               if (exists(metric_name, envir = metric_env)) {
@@ -1520,10 +1599,10 @@ Trio <- R6::R6Class(
             }
           } else {
             # TODO: Support other external metrics.
-              cli::cli_abort(c(
+            cli::cli_abort(c(
               "External metrics of type {metric['Metric Type']} are not yet supported."
-              ))
-            }
+            ))
+          }
         })
       }
 
@@ -1579,16 +1658,19 @@ Trio <- R6::R6Class(
         )
       } else {
         # Handle evidence items individually (original behavior)
-        if(nrow(evidenceMetaData) > 0)
-        {
+        if (nrow(evidenceMetaData) > 0) {
           apply(evidenceMetaData, 1, \(evidenceRow) {
             evidenceName <- evidenceRow["Supporting Evidence"]
-  
+
             # Handle evidence from different sources
             if (evidenceRow["is_in_data"]) {
               # Evidence is in the main data
               if (evidenceRow["type"] == "columns") {
-                evidenceCols <- unlist(strsplit(evidenceRow["name"], ", ", TRUE))
+                evidenceCols <- unlist(strsplit(
+                  evidenceRow["name"],
+                  ", ",
+                  TRUE
+                ))
                 self$addEvidence(
                   name = evidenceName,
                   evidence = self$data[, evidenceCols],
@@ -1605,18 +1687,18 @@ Trio <- R6::R6Class(
               # Evidence is stored separately
               # Use the figshareDl function to download the evidence file
               sourceID <- evidenceRow["sourceID"]
-  
+
               # Create a temporary cache path for downloading
               tempCachePath <- tempdir()
-  
+
               # Download the evidence file using figshareDl
               tryCatch(
                 {
                   filePath <- figshareDl(sourceID, tempCachePath)
-  
+
                   # Load the evidence data
                   evidenceData <- loadFile(filePath)
-  
+
                   self$addEvidence(
                     name = evidenceName,
                     evidence = evidenceData,
@@ -1661,8 +1743,8 @@ Trio <- R6::R6Class(
                 "Evidence type {evidenceRow['type']} is not supported."
               ))
             }
-          }
-        )}
+          })
+        }
       }
     }
   )
