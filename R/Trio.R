@@ -611,11 +611,11 @@ Trio <- R6::R6Class(
       # Prompt for email if not provided
       if (is.null(email) && interactive()) {
         email <- readline("Please enter your email address (for dataset updates notifications): ")
-      } else {
+      } else if (is.null(email) && !interactive()) {
         cli::cli_abort("Email address is required")
       }
 
-      if (!grepl("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", email)) {
+      if (!grepl("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", email, perl = TRUE)) {
         cli::cli_abort("Invalid email format provided")
       }
       
