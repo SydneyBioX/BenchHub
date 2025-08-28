@@ -184,7 +184,16 @@ BenchHubStudy <- R6Class(
       if (!is.function(func)) {
         stop("Mapping function must be a function.")
       }
-      self$mappingFunctions[[name]] <- list(
+      # Convert name to valid R variable name
+      validName <- make.names(name)
+      if (validName != name) {
+        cli::cli_warn(c(
+          "Mapping function name has been modified to be a valid R variable name.",
+          "i" = "Original name: {name}",
+          "i" = "Modified name: {validName}"
+        ))
+      }
+      self$mappingFunctions[[validName]] <- list(
         func = func,
         doc = list(
           inputDescription = inputDescription,
