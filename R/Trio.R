@@ -610,8 +610,16 @@ Trio <- R6::R6Class(
           cli::cli_h3("CV Split Indices")
           cli::cli_text("{.strong Seed}: {.val {self$splitSeed}}")
           # Get unique fold and rep numbers from split indices names
-          folds <- unique(as.numeric(gsub("Fold(\\d+)\\.Rep\\d+", "\\1", names(self$splitIndices))))
-          reps <- unique(as.numeric(gsub("Fold\\d+\\.Rep(\\d+)", "\\1", names(self$splitIndices))))
+          folds <- unique(as.numeric(gsub(
+            "Fold(\\d+)\\.Rep\\d+",
+            "\\1",
+            names(self$splitIndices)
+          )))
+          reps <- unique(as.numeric(gsub(
+            "Fold\\d+\\.Rep(\\d+)",
+            "\\1",
+            names(self$splitIndices)
+          )))
           cli::cli_text(
             "{.strong Number of Folds}: {.val {length(folds)}}"
           )
@@ -1199,12 +1207,20 @@ Trio <- R6::R6Class(
           splitNFold = ifelse(
             is.null(self$splitIndices),
             NA,
-            length(unique(as.numeric(gsub("Fold(\\d+)\\.Rep\\d+", "\\1", names(self$splitIndices)))))
+            length(unique(as.numeric(gsub(
+              "Fold(\\d+)\\.Rep\\d+",
+              "\\1",
+              names(self$splitIndices)
+            ))))
           ),
           splitNRepeat = ifelse(
             is.null(self$splitIndices),
             NA,
-            length(unique(as.numeric(gsub("Fold\\d+\\.Rep(\\d+)", "\\1", names(self$splitIndices)))))
+            length(unique(as.numeric(gsub(
+              "Fold\\d+\\.Rep(\\d+)",
+              "\\1",
+              names(self$splitIndices)
+            ))))
           ),
           splitIsStratified = ifelse(
             is.null(self$splitIndices),
@@ -1242,46 +1258,69 @@ Trio <- R6::R6Class(
     },
 
     processMetricsAndTasks = function(state) {
-      # create a character vector of the metric functions
-      metricText <- lapply(names(self$metrics), function(metric_name) {
-        metric_func <- self$metrics[[metric_name]]
-        # access the environment of the metric function
-        metric_env <- environment(metric_func)
+      # create a character vector of the metric functions that aren't in BenchHub namespace
+      metric_names <- names(self$metrics)
+      metrics_to_gist <- character(0)
+      internal_metrics <- character(0)
 
-        # Extract the `metric` function and `args` from the environment
-        metric <- metric_env$metric
-        args <- metric_env$args
+      for (metric_name in metric_names) {
+        if (exists(paste0(metric_name, "Metric"), asNamespace("BenchHub"))) {
+          internal_metrics <- c(internal_metrics, metric_name)
+        } else {
+          metric_func <- self$metrics[[metric_name]]
+          metric_env <- environment(metric_func)
 
-        # Deparse the `metric` function
-        metric_deparsed <- deparse(metric)
-        metric_deparsed[1] <- paste0(metric_name, " <- ", metric_deparsed[1])
+          # Extract the `metric` function and `args` from the environment
+          metric <- metric_env$metric
+          args <- metric_env$args
 
-        # Create the `metricArgs` list as a deparsed character vector
-        args_deparsed <- paste0(metric_name, "Args <- ", deparse(args))
+          # Deparse the `metric` function
+          metric_deparsed <- deparse(metric)
+          metric_deparsed[1] <- paste0(metric_name, " <- ", metric_deparsed[1])
 
-        # Combine the deparsed function and args into the desired format
-        c(metric_deparsed, args_deparsed)
-      }) |>
-        unlist()
+          # Create the `metricArgs` list as a deparsed character vector
+          args_deparsed <- paste0(metric_name, "Args <- ", deparse(args))
 
-      # create a gist of the metrics
-      gist <- gistr::gist_create(
-        code = metricText,
-        description = paste0("Metrics for Trio ", state$name),
-        public = TRUE,
-        filename = paste0(state$name, "_metrics.R")
-      )
+          # Combine the deparsed function and args into the desired format
+          metrics_to_gist <- c(
+            metrics_to_gist,
+            c(metric_deparsed, args_deparsed)
+          )
+        }
+      }
+
+      # create a gist only if there are non-internal metrics
+      gist <- if (length(metrics_to_gist) > 0) {
+        createGist(
+          content = metrics_to_gist,
+          filename = paste0(state$name, "_metrics.R"),
+          description = paste0("Metrics for Trio ", state$name)
+        )
+      }
 
       # add the metrics to the sheet
+      n_metrics <- length(self$metrics)
+      metric_types <- ifelse(
+        metric_names %in% internal_metrics,
+        "internal",
+        "gist"
+      )
+      wrapper_r <- ifelse(
+        metric_names %in% internal_metrics,
+        paste0(metric_names, "Metric"),
+        ""
+      )
+      gist_urls <- ifelse(metric_names %in% internal_metrics, "", gist$html_url)
+
       metricsMetaData <- data.frame(
-        MetricID = names(self$metrics),
-        wrapper.r = rep("", times = length(self$metrics)),
-        `Metric Type` = rep("gist", times = length(self$metrics)),
-        r_deps = rep("", times = length(self$metrics)),
-        wrapper.py = rep("", times = length(self$metrics)),
-        py_deps = rep("", times = length(self$metrics)),
-        gist_url = rep(gist$html_url, times = length(self$metrics)),
-        validated = rep(FALSE, times = length(self$metrics)),
+        MetricID = metric_names,
+        wrapper.r = wrapper_r,
+        `Metric Type` = metric_types,
+        r_deps = rep("", times = n_metrics),
+        wrapper.py = rep("", times = n_metrics),
+        py_deps = rep("", times = n_metrics),
+        gist_url = gist_urls,
+        validated = rep(FALSE, times = n_metrics),
         stringsAsFactors = FALSE
       )
 
@@ -1581,18 +1620,7 @@ Trio <- R6::R6Class(
             # Handle external metrics from gists
             gist_url <- metric["gist_url"][[1]]
             if (!is.na(gist_url) && gist_url != "") {
-              path <- tempdir()
-              # Download the gist
-              temp_file <- gistr::gist(
-                gist_url,
-                quiet = TRUE
-              ) |>
-                gistr::gist_save(
-                  path = path
-                ) |>
-                purrr::pluck(1)
-
-              # Create a new environment for the metric functions
+              temp_file <- downloadGist(gist_url) # Create a new environment for the metric functions
               metric_env <- new.env()
 
               # Source the file in the new environment

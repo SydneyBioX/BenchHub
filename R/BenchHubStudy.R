@@ -88,8 +88,9 @@ BenchHubStudy <- R6Class(
             gistId <- sub("/.*", "", gistId)
             
             # Get the gist content
-            gist <- gistr::gist(gistId)
-            mappingCode <- gist$files[[1]]$content
+            temp_file <- downloadGist(gistUrl)
+            mappingCode <- readLines(temp_file)
+            unlink(temp_file)
             
             # Create a new environment to evaluate the code
             tempEnv <- new.env()
@@ -430,11 +431,10 @@ Describe the benchmark task and dataset.
         protocolFile <- readline("Enter the path to the protocol/code file: ")
         if (file.exists(protocolFile)) {
           protocolText <- readLines(protocolFile)
-          gist <- gistr::gist_create(
-            code = protocolText,
-            description = paste0("Protocol for BenchHubStudy ", self$name),
-            public = TRUE,
-            filename = basename(protocolFile)
+          gist <- createGist(
+            content = protocolText,
+            filename = basename(protocolFile),
+            description = paste0("Protocol for BenchHubStudy ", self$name)
           )
           gistUrl <- gist$html_url
         } else {
@@ -465,11 +465,10 @@ Describe the benchmark task and dataset.
         }
         
         # Create the gist
-        mappingGist <- gistr::gist_create(
-          code = paste(mappingFunctionsCode, collapse = "\n"),
-          description = paste0("Mapping Functions for BenchHubStudy ", self$name, " v", self$version),
-          public = TRUE,
-          filename = paste0("mapping_functions_", self$name, "_v", self$version, ".R")
+        mappingGist <- createGist(
+          content = mappingFunctionsCode,
+          filename = paste0("mapping_functions_", self$name, "_v", self$version, ".R"),
+          description = paste0("Mapping Functions for BenchHubStudy ", self$name, " v", self$version)
         )
         mappingFunctionsGistUrl <- mappingGist$html_url
       }

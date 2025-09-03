@@ -1,3 +1,70 @@
+#' Create a GitHub gist with provided content
+#' @param content Character vector of content to include in the gist
+#' @param filename Name of the file in the gist
+#' @param description Description of the gist
+#' @param public Boolean indicating if the gist should be public
+#' @return List containing gist data including html_url
+#' @importFrom httr2 request req_headers req_body_json req_perform resp_body_json
+#' @noRd
+createGist <- function(content, filename, description, public = TRUE) {
+  pat <- Sys.getenv("GITHUB_PAT")
+  if (pat == "") {
+    cli::cli_abort("GITHUB_PAT environment variable must be set to create gists")
+  }
+
+  # Build the gist creation payload
+  gist_content <- paste(content, collapse = "\n")
+  gist_payload <- list(
+    description = description,
+    public = public,
+    files = list()
+  )
+  gist_payload$files[[filename]] <- list(content = gist_content)
+
+  # Create gist using GitHub API
+  resp <- httr2::request("https://api.github.com/gists") |>
+    httr2::req_headers(
+      Accept = "application/vnd.github+json",
+      Authorization = paste("Bearer", pat),
+      "X-GitHub-Api-Version" = "2022-11-28"
+    ) |>
+    httr2::req_body_json(gist_payload) |>
+    httr2::req_perform()
+
+  httr2::resp_body_json(resp)
+}
+
+#' Download content from a GitHub gist
+#' @param gist_url URL of the gist to download
+#' @return Path to temporary file containing the gist content
+#' @importFrom httr2 request req_headers req_perform resp_body_json
+#' @noRd
+downloadGist <- function(gist_url) {
+  # Extract gist ID from URL
+  gist_id <- sub(".*/(\\w+)$", "\\1", gist_url)
+
+  # Fetch gist content using GitHub API
+  resp <- httr2::request(paste0("https://api.github.com/gists/", gist_id)) |>
+    httr2::req_headers(
+      Accept = "application/vnd.github+json",
+      "X-GitHub-Api-Version" = "2022-11-28"
+    ) |>
+    httr2::req_perform()
+
+  gist_data <- httr2::resp_body_json(resp)
+
+  # Get the R file content
+  r_files <- Filter(function(f) grepl("\\.R$", f), names(gist_data$files))
+  if (length(r_files) == 0) {
+    cli::cli_abort("No R files found in gist")
+  }
+
+  # Write content to temp file
+  temp_file <- file.path(tempdir(), r_files[1])
+  writeLines(gist_data$files[[r_files[1]]]$content, temp_file)
+  temp_file
+}
+
 #' Load downloaded files.
 #' @param filePath A path to the file to load.
 #' @importFrom withr with_output_sink
@@ -7,7 +74,7 @@ loadFile <- function(filePath) {
   ext <- tools::file_ext(filePath)
 
   if (tolower(ext) == "rds") {
-    # silece all the annoying messages
+    # silence all the annoying messages
     con <- file(tempfile(), open = "wt")
 
     withr::with_output_sink(

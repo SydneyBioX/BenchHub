@@ -277,6 +277,7 @@ Write the Trio Metadata to Curated Trio Datasets sheet.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Trio$writeCTD(
   name,
+  email = NULL,
   githubPat = NULL,
   description = NULL,
   figshareUrl = NULL,
@@ -291,6 +292,8 @@ Write the Trio Metadata to Curated Trio Datasets sheet.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{The name of the dataset to be added.}
+
+\item{\code{email}}{Required. Email address of the contributor for dataset update notifications.}
 
 \item{\code{githubPat}}{Optional GitHub Personal Access Token. If not provided and not set in environment, will prompt user.}
 
