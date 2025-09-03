@@ -374,6 +374,7 @@ the seed is set to the current time.</p></dd>
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Trio</span><span class="op">$</span><span class="fu">writeCTD</span><span class="op">(</span></span>
 <span>  <span class="va">name</span>,</span>
+<span>  email <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  githubPat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  figshareUrl <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -388,6 +389,10 @@ the seed is set to the current time.</p></dd>
 <h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of the dataset to be added.</p></dd>
+
+
+<dt><code>email</code></dt>
+<dd><p>Required. Email address of the contributor for dataset update notifications.</p></dd>
 
 
 <dt><code>githubPat</code></dt>
