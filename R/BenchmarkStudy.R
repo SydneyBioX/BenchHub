@@ -1,4 +1,4 @@
-#' BenchHubStudy Class
+#' BenchmarkStudy Class
 #' @description
 #' This class manages a collection of benchmark trios and mapping functions.
 #' It allows adding new trios, mapping functions, and running mappings on data.
@@ -8,8 +8,8 @@
 #' @field description A character string describing the study.
 #' @field version Integer specifying the version of the study.
 #' @export
-BenchHubStudy <- R6Class(
-  "BenchHubStudy",
+BenchmarkStudy <- R6Class(
+  "BenchmarkStudy",
   public = list(
     # Fields
     name = NULL,
@@ -18,7 +18,7 @@ BenchHubStudy <- R6Class(
     mappingFunctions = list(),
     version = NULL,
 
-    #` @description Create a new BenchHubStudy object
+    #` @description Create a new BenchmarkStudy object
     #' @param name A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
     #' @param trios A list of Trio objects to initialize the study.
     #' @param fetchFromCtd Logical indicating whether to fetch study details from Curated Trio Datasets.
@@ -271,8 +271,8 @@ Describe the benchmark task and dataset.
       trio$evaluate(input)
     },
     #' @description
-    #' Write the BenchHubStudy metadata to Curated Trio Datasets sheet.
-    writeBenchHubStudy = function() {
+    #' Write the BenchmarkStudy metadata to Curated Trio Datasets sheet.
+    writeBenchmarkStudy = function() {
       if (!curl::has_internet()) {
         cli::cli_warn(c(
           "Couldn't write to Curated Trio Datasets.",
@@ -434,7 +434,7 @@ Describe the benchmark task and dataset.
           gist <- createGist(
             content = protocolText,
             filename = basename(protocolFile),
-            description = paste0("Protocol for BenchHubStudy ", self$name)
+            description = paste0("Protocol for BenchmarkStudy ", self$name)
           )
           gistUrl <- gist$html_url
         } else {
@@ -468,7 +468,7 @@ Describe the benchmark task and dataset.
         mappingGist <- createGist(
           content = mappingFunctionsCode,
           filename = paste0("mapping_functions_", self$name, "_v", self$version, ".R"),
-          description = paste0("Mapping Functions for BenchHubStudy ", self$name, " v", self$version)
+          description = paste0("Mapping Functions for BenchmarkStudy ", self$name, " v", self$version)
         )
         mappingFunctionsGistUrl <- mappingGist$html_url
       }
@@ -502,7 +502,7 @@ Describe the benchmark task and dataset.
     },
 
     #' @description
-    #' Print method to display key information about the BenchHubStudy object.
+    #' Print method to display key information about the BenchmarkStudy object.
     print = function() {
       msg <- cli::cli_fmt({
         cli::cli_h1("BenchHub Study")

@@ -2,7 +2,7 @@
 # starting from a benchmarker perspective
 
 # Initialize study
-study <- BenchHubStudy$new()
+study <- BenchmarkStudy$new()
 
 # Add a trio
 # here assume the benchmark already created a trio
@@ -16,7 +16,7 @@ proportion_zero_gene <- function(data) {
   return(colMeans(counts(data) == 0))
 }
 
-# Add this mapping function to benchhubstudy
+# Add this mapping function to BenchmarkStudy
 study$add_mapping_function(
   name = "Fraction Zero Genes",
   func = proportion_zero_gene,
@@ -40,7 +40,7 @@ norm_lib_size <- function(real) {
 
 
 
-# Add this mapping function to benchhubstudy
+# Add this mapping function to BenchmarkStudy
 study$add_mapping_function(
   name = "normalized library size",
   func = norm_lib_size,
