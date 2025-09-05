@@ -7,6 +7,10 @@
 #' @importFrom httr2 request req_headers req_body_json req_perform resp_body_json
 #' @noRd
 createGist <- function(content, filename, description, public = TRUE) {
+  # check network connectivity
+  if (!curl::has_internet()) {
+    cli::cli_abort("No internet connection available")
+  } 
   pat <- Sys.getenv("GITHUB_PAT")
   if (pat == "") {
     cli::cli_abort("GITHUB_PAT environment variable must be set to create gists")
@@ -40,6 +44,10 @@ createGist <- function(content, filename, description, public = TRUE) {
 #' @importFrom httr2 request req_headers req_perform resp_body_json
 #' @noRd
 downloadGist <- function(gist_url) {
+  # check network connectivity
+  if (!curl::has_internet()) {
+    cli::cli_abort("No internet connection available")
+  }
   # Extract gist ID from URL
   gist_id <- sub(".*/(\\w+)$", "\\1", gist_url)
 
