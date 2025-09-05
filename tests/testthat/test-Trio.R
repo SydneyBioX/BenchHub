@@ -11,15 +11,15 @@ test_that("Evaluation works.", {
 
   expected <- fraction_zeros(sce)
 
-  trio$addEvidence("fracZero", fraction_zeros, c("KDE Score", "KDE Score 2"))
-  trio$addEvidence("fracZero2", fraction_zeros, c("KDE Score", "KDE Score 2"))
+  trio$addEvidence("fracZero", fraction_zeros, c("KDE_Score", "KDE_Score_2"))
+  trio$addEvidence("fracZero2", fraction_zeros, c("KDE_Score", "KDE_Score_2"))
 
   actual <- trio$getEvidence("fracZero")
 
   expect_equal(actual, expected)
 
-  trio$addMetric("KDE Score", kdeMetric)
-  trio$addMetric("KDE Score 2", kdeMetric)
+  trio$addMetric("KDE_Score", kdeMetric)
+  trio$addMetric("KDE_Score_2", kdeMetric)
 
   evaluation <- trio$evaluate(list(fracZero = actual, fracZero2 = actual))
 
