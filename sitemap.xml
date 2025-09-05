@@ -9,8 +9,8 @@
 <url><loc>https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/authors.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/index.html</loc></url>
-<url><loc>https://sydneybiox.github.io/BenchHub/reference/BenchHubStudy.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/BenchmarkInsights.html</loc></url>
+<url><loc>https://sydneybiox.github.io/BenchHub/reference/BenchmarkStudy.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/MCCmetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/MSEmetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/RecSys.html</loc></url>
@@ -36,6 +36,7 @@
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/microF1Metric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/microPrecMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/microRecMetric.html</loc></url>
+<url><loc>https://sydneybiox.github.io/BenchHub/reference/recreateFromTrio.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/timeDependentAUCMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/unoCIndexMetric.html</loc></url>
 <url><loc>https://sydneybiox.github.io/BenchHub/reference/zenodoDl.html</loc></url>
