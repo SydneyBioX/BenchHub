@@ -343,6 +343,14 @@ Trio <- R6::R6Class(
             ))
           }
           separateMethods <- TRUE
+        } else {
+          cli::cli_abort(c(
+            "None of the specified supporting evidence is available in the object.",
+            "i" = paste0(
+              "Add it using {.code Trio$addEvidence(.)} or choose",
+              " from {.val {names(self$evidence)}}"
+            )
+          ))
         }
       } else {
         separateMethods <- FALSE

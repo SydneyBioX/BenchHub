@@ -264,10 +264,12 @@ Describe the benchmark task and dataset.
     #' @param input The input data to evaluate the trio against.
     #' @return The evaluation result from the trio.
     evaluate = function(trioName, input) {
-      if (!(trioName %in% names(self$trios))) {
+      # Find trio by name field
+      trioIndex <- which(sapply(self$trios, function(t) t$name == trioName))
+      if (length(trioIndex) == 0) {
         stop(paste0("Trio '", trioName, "' not found."))
       }
-      trio <- self$trios[[trioName]]
+      trio <- self$trios[[trioIndex[1]]]  # Use first match if multiple exist
       trio$evaluate(input)
     },
     #' @description
