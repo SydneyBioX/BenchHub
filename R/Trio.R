@@ -492,9 +492,6 @@ Trio <- R6::R6Class(
           res <- lapply(
             metrics[[evidenceName]],
             function(x) {
-              if (is.function(self$evidence[[evidenceName]]$evidence)) {
-                to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
-              }
               metric_res <- self$metrics[[x]](evidence[[evidenceName]], to_eval)
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
@@ -1545,7 +1542,7 @@ Trio <- R6::R6Class(
           is.null(evidenceColumns) &&
           is.null(evidence)
       ) {
-        cli::cli_warn(c(
+        cli::cli_inform(c(
           paste0(self$CTDlink, " has no supporting evidence for this dataset."),
           "i" = "Please add your own supporting evidence for evaluation."
         ))
