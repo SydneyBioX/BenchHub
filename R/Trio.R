@@ -140,7 +140,7 @@ Trio <- R6::R6Class(
         self$metrics <- metrics
         return(NULL)
       }
-
+      
       if (is.null(datasetID) || datasetID == "") {
         if (!interactive()) {
           cli::cli_abort(
@@ -168,7 +168,7 @@ Trio <- R6::R6Class(
         self$cachePath,
         dataLoader
       )
-
+      
       private$populateTrio(
         evidenceID,
         evidence,
@@ -1484,10 +1484,10 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
-      datasetsMetaData <- suppressMessages(googlesheets4::read_sheet(
+      datasetsMetaData <- googlesheets4::read_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-        sheet = "Datasets",
-      ))
+        sheet = "Datasets"
+      )
 
       # Get the dataset row that matches our source ID
       datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
