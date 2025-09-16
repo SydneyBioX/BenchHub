@@ -492,6 +492,9 @@ Trio <- R6::R6Class(
           res <- lapply(
             metrics[[evidenceName]],
             function(x) {
+              if(isComputed[[evidenceName]])
+                 to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
+              
               metric_res <- self$metrics[[x]](evidence[[evidenceName]], to_eval)
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
