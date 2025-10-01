@@ -1493,7 +1493,7 @@ Trio <- R6::R6Class(
       )
 
       # Get the dataset row that matches our source ID
-      datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
+      datasetIdx <- match(self$name, datasetsMetaData[["name"]])
       evidID <- datasetsMetaData[["datasetID"]][datasetIdx]
 
       # Load split configuration if available
