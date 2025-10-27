@@ -90,22 +90,30 @@ BenchmarkStudy <- R6Class(
               gistId <- sub(".*github.com/[^/]+/", "", gistUrl)
               gistId <- sub("/.*", "", gistId)
 
-              # Get the gist content
+              # Get the gist content (lines)
               temp_file <- downloadGist(gistUrl)
               mappingCode <- readLines(temp_file)
               unlink(temp_file)
 
               # Create a new environment to evaluate the code
               tempEnv <- new.env()
-              eval(parse(text = mappingCode), envir = tempEnv)
+              # eval expects a single string, so collapse lines with newlines
+              eval(parse(text = paste(mappingCode, collapse = "\n")), envir = tempEnv)
 
-              # Extract functions and their documentation from the code
-              funcLines <- strsplit(mappingCode, "\n")[[1]]
+              # mappingCode is a character vector of lines; use it directly
+              funcLines <- mappingCode
               currentFunc <- NULL
-              currentDoc <- list()
+              # initialize expected doc fields to ensure they get passed through (may be NULL)
+              currentDoc <- list(input = NULL, output = NULL, example = NULL)
 
+              # We'll support multi-line documentation blocks. Keep track of which
+              # doc field we're currently accumulating (input/output/example).
+              currentField <- NULL
               for (line in funcLines) {
-                if (startsWith(line, "# Function: ")) {
+                # normalize leading whitespace
+                l <- trimws(line)
+
+                if (startsWith(l, "# Function:")) {
                   # If we were processing a previous function, add it
                   if (!is.null(currentFunc)) {
                     funcName <- ls(
@@ -122,15 +130,39 @@ BenchmarkStudy <- R6Class(
                       )
                     }
                   }
-                  # Start new function
-                  currentFunc <- sub("# Function: ", "", line)
-                  currentDoc <- list()
-                } else if (startsWith(line, "# Input: ")) {
-                  currentDoc$input <- sub("# Input: ", "", line)
-                } else if (startsWith(line, "# Output: ")) {
-                  currentDoc$output <- sub("# Output: ", "", line)
-                } else if (startsWith(line, "# Example: ")) {
-                  currentDoc$example <- sub("# Example: ", "", line)
+                  # Start new function (strip the prefix and any surrounding whitespace)
+                  currentFunc <- sub("^# Function:\\s*", "", l)
+                  currentDoc <- list(input = NULL, output = NULL, example = NULL)
+                  currentField <- NULL
+
+                } else if (startsWith(l, "# Input:")) {
+                  currentDoc$input <- sub("^# Input:\\s*", "", l)
+                  currentField <- "input"
+
+                } else if (startsWith(l, "# Output:")) {
+                  currentDoc$output <- sub("^# Output:\\s*", "", l)
+                  currentField <- "output"
+
+                } else if (startsWith(l, "# Example:")) {
+                  currentDoc$example <- sub("^# Example:\\s*", "", l)
+                  currentField <- "example"
+
+                } else if (startsWith(l, "#")) {
+                  # Continuation line for the current doc field (if any).
+                  # Remove the leading '#' and any single leading space.
+                  cont <- sub("^#\\s?", "", l)
+                  if (!is.null(currentField) && nzchar(cont)) {
+                    # Append with newline if existing content present
+                    prev <- currentDoc[[currentField]]
+                    if (is.null(prev) || !nzchar(prev)) {
+                      currentDoc[[currentField]] <- cont
+                    } else {
+                      currentDoc[[currentField]] <- paste(prev, cont, sep = "\n")
+                    }
+                  }
+                } else {
+                  # Non-comment line: reset currentField (end of doc block)
+                  currentField <- NULL
                 }
               }
 
