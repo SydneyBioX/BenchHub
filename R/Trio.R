@@ -1495,19 +1495,63 @@ Trio <- R6::R6Class(
       )
 
       # Get the dataset row.
-      # Prefer matching by dataset name when available (safer and more stable),
-      # otherwise fall back to matching by sourceID as before.
-      if (!is.null(self$name) && self$name %in% datasetsMetaData[["name"]]) {
-        datasetIdx <- which(datasetsMetaData[["name"]] == self$name)[1]
-      } else {
-        datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
+      # Try multiple matching strategies in order of preference:
+      # 1) dataset name (self$name)
+      # 2) exact sourceID match (self$dataSourceID)
+      # 3) article id (part before '/')
+      # 4) numeric id extracted from self$dataSourceID
+      # 5) substring matches (best-effort)
+      ds_names <- as.character(datasetsMetaData[["name"]])
+      ds_sourceIDs <- as.character(datasetsMetaData[["sourceID"]])
+
+      datasetIdx <- NA_integer_
+
+      if (!is.null(self$name) && nzchar(as.character(self$name)) && self$name %in% ds_names) {
+        datasetIdx <- which(ds_names == self$name)[1]
+      }
+
+      # If not found by name, try matching by sourceID with several fallbacks
+      if (is.na(datasetIdx)) {
+        providedID <- as.character(self$dataSourceID)
+
+        # exact match
+        if (!is.null(providedID) && providedID %in% ds_sourceIDs) {
+          datasetIdx <- which(ds_sourceIDs == providedID)[1]
+        }
+
+        # if providedID contains '/', try the article id (before '/'), then numeric
+        if (is.na(datasetIdx) && !is.null(providedID) && grepl("/", providedID)) {
+          article_id <- strsplit(providedID, "/", fixed = TRUE)[[1]][1]
+          if (article_id %in% ds_sourceIDs) {
+            datasetIdx <- which(ds_sourceIDs == article_id)[1]
+          }
+        }
+
+        # try numeric extraction
+        if (is.na(datasetIdx) && !is.null(providedID)) {
+          num <- stringr::str_extract(providedID, "[0-9]+")
+          if (!is.na(num) && any(stringr::str_detect(ds_sourceIDs, stringr::fixed(num)))) {
+            datasetIdx <- which(stringr::str_detect(ds_sourceIDs, stringr::fixed(num)))[1]
+          }
+        }
+
+        # try substring matches as a last resort
+        if (is.na(datasetIdx) && !is.null(providedID)) {
+          found <- which(stringr::str_detect(ds_sourceIDs, stringr::fixed(providedID)))
+          if (length(found) > 0) datasetIdx <- found[1]
+          else {
+            found2 <- which(stringr::str_detect(providedID, ds_sourceIDs))
+            if (length(found2) > 0) datasetIdx <- found2[1]
+          }
+        }
       }
 
       if (is.na(datasetIdx) || length(datasetIdx) == 0) {
-        cli::cli_abort(c(
+        cli::cli_inform(c(
           "Could not locate dataset metadata for this Trio.",
           "i" = "Checked dataset name: {.val {self$name}} and sourceID: {.val {self$dataSourceID}}"
         ))
+        return(NULL)
       }
 
       evidID <- datasetsMetaData[["datasetID"]][datasetIdx]
