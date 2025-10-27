@@ -10,8 +10,6 @@ listCuratedTrioDatasets(name_filter = NULL, dataType_filter = NULL)
 \item{name_filter}{A string to filter datasets by name (case-insensitive partial match)}
 
 \item{dataType_filter}{A string or vector of strings to filter datasets by data type}
-
-\item{source_filter}{A string or vector of strings to filter datasets by source}
 }
 \value{
 A data frame with the dataset names and IDs.
