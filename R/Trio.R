@@ -492,9 +492,11 @@ Trio <- R6::R6Class(
           res <- lapply(
             metrics[[evidenceName]],
             function(x) {
-              if(isComputed[[evidenceName]])
-                 to_eval <- self$evidence[[evidenceName]]$evidence(to_eval)
-              
+              # `evidence` here is already computed above (via self$getEvidence()),
+              # so we should not apply the evidence function to the predictions
+              # (to_eval). Previously this mistakenly passed a numeric prediction
+              # into functions expecting the full dataset (e.g. SummarizedExperiment).
+
               metric_res <- self$metrics[[x]](evidence[[evidenceName]], to_eval)
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
