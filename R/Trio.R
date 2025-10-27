@@ -497,7 +497,25 @@ Trio <- R6::R6Class(
               # (to_eval). Previously this mistakenly passed a numeric prediction
               # into functions expecting the full dataset (e.g. SummarizedExperiment).
 
-              metric_res <- self$metrics[[x]](evidence[[evidenceName]], to_eval)
+              # If the supporting evidence is computed from a dataset (i.e. was
+              # provided as a function), and the user passed a raw object as the
+              # prediction (for example a simulated dataset), attempt to compute
+              # the corresponding predicted evidence by applying the same
+              # evidence-extraction function to the prediction. If that fails
+              # (because the prediction is already a processed vector or the
+              # evidence function doesn't accept that input), fall back to the
+              # original prediction value.
+              predicted_val <- to_eval
+              if (isComputed[[evidenceName]]) {
+                predicted_try <- tryCatch(
+                  self$evidence[[evidenceName]]$evidence(to_eval),
+                  error = function(e) NULL,
+                  warning = function(w) NULL
+                )
+                if (!is.null(predicted_try)) predicted_val <- predicted_try
+              }
+
+              metric_res <- self$metrics[[x]](evidence[[evidenceName]], predicted_val)
               if (length(metric_res) > 1) {
                 cli::cli_abort(c(
                   "The result for the {.val {x}} metric is not a single value.",
@@ -1859,8 +1877,6 @@ Trio <- R6::R6Class(
 #' List the curated Trio datasets
 #' @param name_filter
 #'   A string to filter datasets by name (case-insensitive partial match)
-#' @param
-#'   source_filter A string or vector of strings to filter datasets by source
 #' @param dataType_filter
 #'   A string or vector of strings to filter datasets by data type
 #' @return A data frame with the dataset names and IDs.
