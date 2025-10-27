@@ -1492,8 +1492,22 @@ Trio <- R6::R6Class(
         sheet = "Datasets"
       )
 
-      # Get the dataset row that matches our source ID
-      datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
+      # Get the dataset row.
+      # Prefer matching by dataset name when available (safer and more stable),
+      # otherwise fall back to matching by sourceID as before.
+      if (!is.null(self$name) && self$name %in% datasetsMetaData[["name"]]) {
+        datasetIdx <- which(datasetsMetaData[["name"]] == self$name)[1]
+      } else {
+        datasetIdx <- match(self$dataSourceID, datasetsMetaData[["sourceID"]])
+      }
+
+      if (is.na(datasetIdx) || length(datasetIdx) == 0) {
+        cli::cli_abort(c(
+          "Could not locate dataset metadata for this Trio.",
+          "i" = "Checked dataset name: {.val {self$name}} and sourceID: {.val {self$dataSourceID}}"
+        ))
+      }
+
       evidID <- datasetsMetaData[["datasetID"]][datasetIdx]
 
       # Load split configuration if available
