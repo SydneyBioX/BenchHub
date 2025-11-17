@@ -1,12 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   v01_intro_trio: v01_intro_trio.html
   v02_Evaluation_using_Trio: v02_Evaluation_using_Trio.html
   v03_intro_bmi: v03_intro_bmi.html
   v04_uploading_a_Trio: v04_uploading_a_Trio.html
-last_built: 2025-10-27T17:43Z
+last_built: 2025-11-17T16:30Z
 urls:
   reference: https://sydneybiox.github.io/BenchHub/reference
   article: https://sydneybiox.github.io/BenchHub/articles

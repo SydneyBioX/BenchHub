@@ -201,7 +201,7 @@ averaging results across folds within each repeats.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visualise the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="without-cross-validation">Without Cross-validation<a class="anchor" aria-label="anchor" href="#without-cross-validation"></a>
@@ -285,7 +285,7 @@ and that there is one row for each result.</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   datasetID, method, evidence [2]</span></span></span>
 <span><span class="co">##   datasetID           method            evidence  metric            result</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.674</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.640</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> lubomski_microbiome negative_binomial Sparsity  Difference        -<span style="color: #BB0000;">0.323</span></span></span></code></pre>
 <p>Please see Vignette 3 for the details on the visualisations and
 functions in <code>BenchmarkInsights</code>.</p>
@@ -295,7 +295,7 @@ functions in <code>BenchmarkInsights</code>.</p>
 </h2>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 (2025-10-31)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -316,25 +316,25 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] glmnet_4.1-10    Matrix_1.7-3     lubridate_1.9.4  forcats_1.0.1   </span></span>
-<span><span class="co">##  [5] stringr_1.5.2    dplyr_1.1.4      purrr_1.1.0      readr_2.1.5     </span></span>
+<span><span class="co">##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   </span></span>
+<span><span class="co">##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.0      readr_2.1.5     </span></span>
 <span><span class="co">##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_4.0.0    tidyverse_2.0.0 </span></span>
-<span><span class="co">## [13] BenchHub_0.99.5  BiocStyle_2.36.0</span></span>
+<span><span class="co">## [13] BenchHub_0.99.5  BiocStyle_2.38.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] gridExtra_2.3          httr2_1.2.1            rlang_1.1.6           </span></span>
-<span><span class="co">##  [4] magrittr_2.0.4         compiler_4.5.1         survAUC_1.4-0         </span></span>
-<span><span class="co">##  [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.4        </span></span>
+<span><span class="co">##  [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         </span></span>
+<span><span class="co">##  [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.5        </span></span>
 <span><span class="co">## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         </span></span>
 <span><span class="co">## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        </span></span>
 <span><span class="co">## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            </span></span>
-<span><span class="co">## [19] xfun_0.53              cachem_1.1.0           jsonlite_2.0.0        </span></span>
+<span><span class="co">## [19] xfun_0.54              cachem_1.1.0           jsonlite_2.0.0        </span></span>
 <span><span class="co">## [22] broom_1.0.10           cluster_2.1.8.1        R6_2.6.1              </span></span>
 <span><span class="co">## [25] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    </span></span>
 <span><span class="co">## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      </span></span>
 <span><span class="co">## [31] Rcpp_1.1.0             bookdown_0.45          iterators_1.0.14      </span></span>
 <span><span class="co">## [34] knitr_1.50             base64enc_0.1-3        parameters_0.28.2     </span></span>
-<span><span class="co">## [37] splines_4.5.1          nnet_7.3-20            timechange_0.3.0      </span></span>
+<span><span class="co">## [37] splines_4.5.2          nnet_7.3-20            timechange_0.3.0      </span></span>
 <span><span class="co">## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.10           </span></span>
 <span><span class="co">## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        </span></span>
 <span><span class="co">## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     </span></span>
@@ -343,16 +343,16 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">## [55] pillar_1.11.1          BiocManager_1.30.26    checkmate_2.3.3       </span></span>
 <span><span class="co">## [58] foreach_1.5.2          insight_1.4.2          generics_0.1.4        </span></span>
 <span><span class="co">## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            </span></span>
-<span><span class="co">## [64] Hmisc_5.2-4            tools_4.5.1            data.table_1.17.8     </span></span>
-<span><span class="co">## [67] fs_1.6.6               grid_4.5.1             datawizard_1.3.0      </span></span>
+<span><span class="co">## [64] Hmisc_5.2-4            tools_4.5.2            data.table_1.17.8     </span></span>
+<span><span class="co">## [67] fs_1.6.6               grid_4.5.2             datawizard_1.3.0      </span></span>
 <span><span class="co">## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       </span></span>
 <span><span class="co">## [73] performance_0.15.2     htmlTable_2.4.3        googledrive_2.1.2     </span></span>
 <span><span class="co">## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             </span></span>
 <span><span class="co">## [79] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          </span></span>
-<span><span class="co">## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.0.0           </span></span>
-<span><span class="co">## [85] sass_0.4.10            digest_0.6.37          ggrepel_0.9.6         </span></span>
+<span><span class="co">## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           </span></span>
+<span><span class="co">## [85] sass_0.4.10            digest_0.6.38          ggrepel_0.9.6         </span></span>
 <span><span class="co">## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     </span></span>
-<span><span class="co">## [91] pkgdown_2.1.3          lifecycle_1.0.4        dotwhisker_0.8.4</span></span></code></pre>
+<span><span class="co">## [91] pkgdown_2.2.0          lifecycle_1.0.4        dotwhisker_0.8.4</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -365,7 +365,7 @@ functions in <code>BenchmarkInsights</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
