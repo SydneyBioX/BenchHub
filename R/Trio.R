@@ -992,14 +992,27 @@ Trio <- R6::R6Class(
           # Use provided dataset filename or let user choose
           if (!is.null(state$datasetFileName)) {
             if (!(state$datasetFileName %in% fileNames)) {
-              cli::cli_inform(c(
-                "Provided dataset file name not found in Figshare article.",
-                "i" = "Available files: {.val {fileNames}}"
-              ))
-              state$figshareUrl <- NULL # Reset URL to try again
-              next()
+              # Attempt fallback to any file suffixed with _dataset.rds
+              alt_idx_ds <- which(stringr::str_detect(tolower(fileNames), "_dataset\\.rds$"))
+              if (length(alt_idx_ds) >= 1) {
+                chosen_name_ds <- fileNames[alt_idx_ds[1]]
+                cli::cli_inform(c(
+                  "Provided dataset file name {.val {state$datasetFileName}} not found in Figshare article.",
+                  "i" = paste0("Using fallback file {.val ", chosen_name_ds, "} (ends with `_dataset.rds`)."),
+                  "i" = "Please verify the Figshare article ID is correct if this was unexpected."
+                ))
+                datasetFileName <- chosen_name_ds
+              } else {
+                cli::cli_inform(c(
+                  "Provided dataset file name not found in Figshare article.",
+                  "i" = "Available files: {.val {fileNames}}"
+                ))
+                state$figshareUrl <- NULL # Reset URL to try again
+                next()
+              }
+            } else {
+              datasetFileName <- state$datasetFileName
             }
-            datasetFileName <- state$datasetFileName
           } else {
             # Let user choose the dataset file from available files
             cli::cli_inform(
@@ -1054,14 +1067,27 @@ Trio <- R6::R6Class(
           # Use provided evidence filename or let user choose
           if (!is.null(state$evidenceFileName)) {
             if (!(state$evidenceFileName %in% fileNames)) {
-              cli::cli_inform(c(
-                "Provided evidence file name not found in Figshare article.",
-                "i" = "Available files: {.val {fileNames}}"
-              ))
-              state$figshareUrl <- NULL # Reset URL to try again
-              next()
+              # Attempt fallback to any file suffixed with _evidence.rds
+              alt_idx_ev <- which(stringr::str_detect(tolower(fileNames), "_evidence\\.rds$"))
+              if (length(alt_idx_ev) >= 1) {
+                chosen_name_ev <- fileNames[alt_idx_ev[1]]
+                cli::cli_inform(c(
+                  "Provided evidence file name {.val {state$evidenceFileName}} not found in Figshare article.",
+                  "i" = paste0("Using fallback file {.val ", chosen_name_ev, "} (ends with `_evidence.rds`)."),
+                  "i" = "Please verify the Figshare article ID is correct if this was unexpected."
+                ))
+                evidenceFileName <- chosen_name_ev
+              } else {
+                cli::cli_inform(c(
+                  "Provided evidence file name not found in Figshare article.",
+                  "i" = "Available files: {.val {fileNames}}"
+                ))
+                state$figshareUrl <- NULL # Reset URL to try again
+                next()
+              }
+            } else {
+              evidenceFileName <- state$evidenceFileName
             }
-            evidenceFileName <- state$evidenceFileName
           } else {
             # Let user choose the evidence file from available files
             cli::cli_inform(
@@ -1467,10 +1493,41 @@ Trio <- R6::R6Class(
       )
 
       if (length(files) > 1) {
-        if (self$verbose) {
-          cli::cli_inform("Select a file to load as the dataset:")
+        # Try to auto-select the appropriate file when multiple files are returned.
+        # Preference order:
+        # 1) exact match: <self$name>_dataset.rds
+        # 2) any file ending with _dataset.rds
+        # 3) any file ending with _evidence.rds
+        # If a choice is made, inform the user. Otherwise fall back to interactive menu.
+        basenames <- basename(files)
+        lb <- tolower(basenames)
+        chosen_idx <- integer(0)
+        if (!is.null(self$name) && nzchar(as.character(self$name))) {
+          desired_ds <- tolower(paste0(self$name, "_dataset.rds"))
+          chosen_idx <- which(lb == desired_ds)
         }
-        files <- files[utils::menu(files)]
+        if (length(chosen_idx) == 0) {
+          chosen_idx <- which(stringr::str_detect(lb, "_dataset\\.rds$"))
+        }
+        if (length(chosen_idx) == 0) {
+          chosen_idx <- which(stringr::str_detect(lb, "_evidence\\.rds$"))
+        }
+
+        if (length(chosen_idx) >= 1) {
+          # pick the first matching candidate
+          idx <- chosen_idx[1]
+          chosen_file <- files[idx]
+          cli::cli_inform(c(
+            "Multiple files found for download.",
+            "i" = paste0("Auto-selected {.file ", basenames[idx], "} based on naming heuristics.")
+          ))
+          files <- chosen_file
+        } else {
+          if (self$verbose) {
+            cli::cli_inform("Select a file to load as the dataset:")
+          }
+          files <- files[utils::menu(basenames)]
+        }
       }
 
       if (is.null(dataLoader)) {
@@ -1748,7 +1805,41 @@ Trio <- R6::R6Class(
 
         tryCatch(
           {
-            filePath <- figshareDl(sourceID, tempCachePath)
+            # If sourceID is just an article id (no '/'), try to auto-detect
+            # the combined evidence filename that writeCTD uses to avoid
+            # interactive selection inside figshareDl.
+            article_id <- sourceID
+            if (grepl("/", sourceID)) {
+              # already article/file format
+              filePath <- figshareDl(sourceID, tempCachePath)
+            } else {
+              # list files in article and prefer the file named like writeCTD
+              fileDF_local <- figshareListFiles(article_id)
+              desired_name <- paste0(self$name, "_evidence.rds")
+              match_idx <- which(fileDF_local$name == desired_name)
+              if (length(match_idx) >= 1) {
+                fileID_found <- fileDF_local$id[match_idx[1]]
+                filePath <- figshareDl(paste0(article_id, "/", fileID_found), tempCachePath)
+              } else {
+                # Try any file that ends with _evidence.rds (case-insensitive)
+                alt_idx <- which(stringr::str_detect(tolower(fileDF_local$name), "_evidence\\.rds$"))
+                if (length(alt_idx) >= 1) {
+                  fileID_found <- fileDF_local$id[alt_idx[1]]
+                  chosen_name <- fileDF_local$name[alt_idx[1]]
+                  cli::cli_inform(c(
+                    "Exact evidence filename {.val {desired_name}} not found in Figshare article.",
+                    "i" = paste0(
+                      "Using fallback file {.val ", chosen_name, "} (ends with `_evidence.rds`)."
+                    ),
+                    "i" = "Please verify the Figshare article ID is correct if this was unexpected."
+                  ))
+                  filePath <- figshareDl(paste0(article_id, "/", fileID_found), tempCachePath)
+                } else {
+                  # Fallback to generic download which may prompt
+                  filePath <- figshareDl(sourceID, tempCachePath)
+                }
+              }
+            }
 
             # Load all evidence from the combined file
             combinedEvidence <- loadFile(filePath)

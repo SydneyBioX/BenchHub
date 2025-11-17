@@ -40,12 +40,46 @@ figshareDl <- function(ID, cachePath) {
     dplyr::select(c("name", "size", "download_url", "computed_md5", "mimetype"))
 
   if (nrow(datasets) > 1) {
-    # interactively select one of multiple datasets
+    # Try to auto-select an appropriate file when multiple files present.
+    # Preference order:
+    # 1) any file ending with _dataset.rds (case-insensitive)
+    # 2) any file ending with _evidence.rds (case-insensitive)
+    # If multiple candidates exist, pick the largest by size. If none found,
+    # fall back to interactive selection.
     df <- datasets |>
       dplyr::select(name, size) |>
       dplyr::mutate(size = paste0(round(size / 1e6, 2), " MB"))
-    cli::cli_inform("Select a dataset to download:")
-    datasets <- datasets[utils::menu(apply(df, 1, paste, collapse = "  ")), ]
+
+    lb <- tolower(datasets$name)
+    ds_idx <- which(stringr::str_detect(lb, "_dataset\\.rds$"))
+    ev_idx <- which(stringr::str_detect(lb, "_evidence\\.rds$"))
+
+    chosen_row <- NULL
+    if (length(ds_idx) > 0) {
+      # prefer the largest dataset file among matches
+      sizes <- datasets$size[ds_idx]
+      chosen_row <- ds_idx[which.max(sizes)][1]
+      cli::cli_inform(c(
+        "Multiple files found in Figshare article.",
+        "i" = paste0("Auto-selected {.val ", datasets$name[chosen_row], "} (ends with `_dataset.rds`).")
+      ))
+    } else if (length(ev_idx) > 0) {
+      sizes <- datasets$size[ev_idx]
+      chosen_row <- ev_idx[which.max(sizes)][1]
+      cli::cli_inform(c(
+        "Multiple files found in Figshare article.",
+        "i" = paste0("Auto-selected {.val ", datasets$name[chosen_row], "} (ends with `_evidence.rds`)."),
+        "i" = "If this was unexpected, verify the Figshare article ID."
+      ))
+    }
+
+    if (!is.null(chosen_row)) {
+      datasets <- datasets[chosen_row, , drop = FALSE]
+    } else {
+      # interactively select one of multiple datasets
+      cli::cli_inform("Select a dataset to download:")
+      datasets <- datasets[utils::menu(apply(df, 1, paste, collapse = "  ")), ]
+    }
   }
 
   dlPath <- fs::path_join(c(cachePath, paste0("figshare_", articleID)))
