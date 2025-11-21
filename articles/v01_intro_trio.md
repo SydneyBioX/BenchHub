@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpDgyV07"
+    ## Cache Path: "/tmp/RtmpZnKh1J"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpDgyV07"
+    ## Cache Path: "/tmp/RtmpZnKh1J"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -211,26 +211,6 @@ trioGEO <- Trio$new(
 trioGEO
 ```
 
-    ## 
-    ## ── Trio Object ─────────────────────────────────────────────────────────────────
-    ## 
-    ## ── Dataset 
-    ## Dataset Details:
-    ##   num [1:54613, 1:40] 5.7 4.82 7.95 7.64 2.83 ...
-    ##   - attr(*, "dimnames")=List of 2
-    ## Data Source: "geo"
-    ## Dataset ID: "GSE46474"
-    ## Cache Path: "/tmp/RtmpDgyV07"
-    ## Split Indices: "None"
-    ## 
-    ## ── Supporting Evidence 
-    ## Number of Supporting Evidence: 0
-    ## Names of Supporting Evidence:
-    ## 
-    ## ── Metrics 
-    ## Number of Metrics: 0
-    ## Names of Metrics:
-
 ## Adding Components to Trio Sequentially
 
 ### Adding metrics
@@ -279,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x564af91dbfd0>
-    ## <environment: 0x564af2b5f428>
+    ## <bytecode: 0x55ddae92f988>
+    ## <environment: 0x55ddac941fc8>
 
 ## Other Features
 
@@ -406,63 +386,34 @@ sessionInfo()
     ## [1] BenchHub_0.99.5  BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] gridExtra_2.3               httr2_1.2.1                
-    ##   [3] rlang_1.1.6                 magrittr_2.0.4             
-    ##   [5] matrixStats_1.5.0           compiler_4.5.2             
-    ##   [7] survAUC_1.4-0               systemfonts_1.3.1          
-    ##   [9] vctrs_0.6.5                 reshape2_1.4.5             
-    ##  [11] stringr_1.6.0               pkgconfig_2.0.3            
-    ##  [13] fastmap_1.2.0               XVector_0.50.0             
-    ##  [15] backports_1.5.0             ggstance_0.3.7             
-    ##  [17] rmarkdown_2.30              tzdb_0.5.0                 
-    ##  [19] ragg_1.5.0                  purrr_1.2.0                
-    ##  [21] xfun_0.54                   cachem_1.1.0               
-    ##  [23] jsonlite_2.0.0              DelayedArray_0.36.0        
-    ##  [25] broom_1.0.10                cluster_2.1.8.1            
-    ##  [27] R6_2.6.1                    bslib_0.9.0                
-    ##  [29] stringi_1.8.7               RColorBrewer_1.1-3         
-    ##  [31] limma_3.66.0                rpart_4.1.24               
-    ##  [33] GenomicRanges_1.62.0        jquerylib_0.1.4            
-    ##  [35] cellranger_1.1.0            Rcpp_1.1.0                 
-    ##  [37] Seqinfo_1.0.0               bookdown_0.45              
-    ##  [39] SummarizedExperiment_1.40.0 knitr_1.50                 
-    ##  [41] R.utils_2.13.0              base64enc_0.1-3            
-    ##  [43] parameters_0.28.2           readr_2.1.6                
-    ##  [45] IRanges_2.44.0              rentrez_1.2.4              
-    ##  [47] Matrix_1.7-4                splines_4.5.2              
-    ##  [49] nnet_7.3-20                 tidyselect_1.2.1           
-    ##  [51] abind_1.4-8                 rstudioapi_0.17.1          
-    ##  [53] yaml_2.3.10                 curl_7.0.0                 
-    ##  [55] lattice_0.22-7              tibble_3.3.0               
-    ##  [57] plyr_1.8.9                  Biobase_2.70.0             
-    ##  [59] withr_3.0.2                 bayestestR_0.17.0          
-    ##  [61] S7_0.2.1                    evaluate_1.0.5             
-    ##  [63] marginaleffects_0.31.0      foreign_0.8-90             
-    ##  [65] desc_1.4.3                  survival_3.8-3             
-    ##  [67] xml2_1.5.0                  pillar_1.11.1              
-    ##  [69] BiocManager_1.30.27         MatrixGenerics_1.22.0      
-    ##  [71] checkmate_2.3.3             stats4_4.5.2               
-    ##  [73] insight_1.4.2               generics_0.1.4             
-    ##  [75] hms_1.1.4                   S4Vectors_0.48.0           
-    ##  [77] ggplot2_4.0.1               scales_1.4.0               
-    ##  [79] glue_1.8.0                  Hmisc_5.2-4                
-    ##  [81] tools_4.5.2                 data.table_1.17.8          
-    ##  [83] GEOquery_2.78.0             XML_3.99-0.20              
-    ##  [85] fs_1.6.6                    grid_4.5.2                 
-    ##  [87] tidyr_1.3.1                 datawizard_1.3.0           
-    ##  [89] colorspace_2.1-2            googlesheets4_1.1.2        
-    ##  [91] patchwork_1.3.2             performance_0.15.2         
-    ##  [93] htmlTable_2.4.3             googledrive_2.1.2          
-    ##  [95] splitTools_1.0.1            Formula_1.2-5              
-    ##  [97] cli_3.6.5                   rappdirs_0.3.3             
-    ##  [99] textshaping_1.0.4           S4Arrays_1.10.0            
-    ## [101] gargle_1.6.0                dplyr_1.1.4                
-    ## [103] gtable_0.3.6                ggcorrplot_0.1.4.1         
-    ## [105] R.methodsS3_1.8.2           ggsci_4.1.0                
-    ## [107] sass_0.4.10                 digest_0.6.39              
-    ## [109] BiocGenerics_0.56.0         SparseArray_1.10.2         
-    ## [111] ggrepel_0.9.6               htmlwidgets_1.6.4          
-    ## [113] farver_2.1.2                R.oo_1.27.1                
-    ## [115] htmltools_0.5.8.1           pkgdown_2.2.0              
-    ## [117] lifecycle_1.0.4             httr_1.4.7                 
-    ## [119] statmod_1.5.1               dotwhisker_0.8.4
+    ##  [1] tidyselect_1.2.1       dplyr_1.1.4            farver_2.1.2          
+    ##  [4] S7_0.2.1               fastmap_1.2.0          bayestestR_0.17.0     
+    ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.4       
+    ## [10] cluster_2.1.8.1        survival_3.8-3         magrittr_2.0.4        
+    ## [13] compiler_4.5.2         rlang_1.1.6            Hmisc_5.2-4           
+    ## [16] sass_0.4.10            tools_4.5.2            yaml_2.3.10           
+    ## [19] data.table_1.17.8      knitr_1.50             htmlwidgets_1.6.4     
+    ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
+    ## [25] RColorBrewer_1.1-3     foreign_0.8-90         withr_3.0.2           
+    ## [28] purrr_1.2.0            desc_1.4.3             nnet_7.3-20           
+    ## [31] grid_4.5.2             datawizard_1.3.0       googledrive_2.1.2     
+    ## [34] colorspace_2.1-2       ggplot2_4.0.1          scales_1.4.0          
+    ## [37] insight_1.4.2          cli_3.6.5              rmarkdown_2.30        
+    ## [40] dotwhisker_0.8.4       ragg_1.5.0             generics_0.1.4        
+    ## [43] rstudioapi_0.17.1      performance_0.15.2     httr_1.4.7            
+    ## [46] reshape2_1.4.5         parameters_0.28.2      ggcorrplot_0.1.4.1    
+    ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.5.2         
+    ## [52] BiocManager_1.30.27    cellranger_1.1.0       base64enc_0.1-3       
+    ## [55] marginaleffects_0.31.0 vctrs_0.6.5            Matrix_1.7-4          
+    ## [58] jsonlite_2.0.0         bookdown_0.45          patchwork_1.3.2       
+    ## [61] ggrepel_0.9.6          Formula_1.2-5          htmlTable_2.4.3       
+    ## [64] systemfonts_1.3.1      tidyr_1.3.1            jquerylib_0.1.4       
+    ## [67] splitTools_1.0.1       glue_1.8.0             pkgdown_2.2.0         
+    ## [70] survAUC_1.4-0          stringi_1.8.7          gtable_0.3.6          
+    ## [73] tibble_3.3.0           pillar_1.11.1          rappdirs_0.3.3        
+    ## [76] htmltools_0.5.8.1      R6_2.6.1               httr2_1.2.1           
+    ## [79] textshaping_1.0.4      evaluate_1.0.5         lattice_0.22-7        
+    ## [82] backports_1.5.0        googlesheets4_1.1.2    broom_1.0.10          
+    ## [85] ggsci_4.1.0            gargle_1.6.0           bslib_0.9.0           
+    ## [88] Rcpp_1.1.0             gridExtra_2.3          checkmate_2.3.3       
+    ## [91] xfun_0.54              fs_1.6.6               pkgconfig_2.0.3
