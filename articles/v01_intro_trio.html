@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of BenchmarkInsights class</a></li>
     <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Uploading a Trio to Curated Trio Datasets</a></li>
+    <li><a class="dropdown-item" href="../articles/v06_benchmarkstudy.html">4 BenchmarkStudy</a></li>
   </ul>
 </li>
       </ul>
@@ -60,7 +61,7 @@
 
       <h1>1 Introduction to the Trio Class</h1>
             
-            <h4 data-toc-skip class="date">17 November 2025</h4>
+            <h4 data-toc-skip class="date">21 November 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/devel/vignettes/v01_intro_trio.Rmd" class="external-link"><code>vignettes/v01_intro_trio.Rmd</code></a></small>
       <div class="d-none name"><code>v01_intro_trio.Rmd</code></div>
@@ -129,7 +130,7 @@ predefined dataset.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361073"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmprTVZrX"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpDgyV07"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -201,7 +202,7 @@ dataset with a <code>datasetID</code>.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361079"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmprTVZrX"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpDgyV07"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -280,7 +281,7 @@ tables.</p>
 <span><span class="co">##   - attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"geo"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"GSE46474"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmprTVZrX"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpDgyV07"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -333,8 +334,8 @@ metric function with the specified arguments.</p>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     do.call(metric, append(list(evidence, to_eval), args))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;bytecode: 0x555a156acf48&gt;</span></span>
-<span><span class="co">## &lt;environment: 0x555a0fcde310&gt;</span></span></code></pre>
+<span><span class="co">## &lt;bytecode: 0x564af91dbfd0&gt;</span></span>
+<span><span class="co">## &lt;environment: 0x564af2b5f428&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -484,7 +485,7 @@ studies more effectively.</p>
 <span><span class="co">##  [37] Seqinfo_1.0.0               bookdown_0.45              </span></span>
 <span><span class="co">##  [39] SummarizedExperiment_1.40.0 knitr_1.50                 </span></span>
 <span><span class="co">##  [41] R.utils_2.13.0              base64enc_0.1-3            </span></span>
-<span><span class="co">##  [43] parameters_0.28.2           readr_2.1.5                </span></span>
+<span><span class="co">##  [43] parameters_0.28.2           readr_2.1.6                </span></span>
 <span><span class="co">##  [45] IRanges_2.44.0              rentrez_1.2.4              </span></span>
 <span><span class="co">##  [47] Matrix_1.7-4                splines_4.5.2              </span></span>
 <span><span class="co">##  [49] nnet_7.3-20                 tidyselect_1.2.1           </span></span>
@@ -493,15 +494,15 @@ studies more effectively.</p>
 <span><span class="co">##  [55] lattice_0.22-7              tibble_3.3.0               </span></span>
 <span><span class="co">##  [57] plyr_1.8.9                  Biobase_2.70.0             </span></span>
 <span><span class="co">##  [59] withr_3.0.2                 bayestestR_0.17.0          </span></span>
-<span><span class="co">##  [61] S7_0.2.0                    evaluate_1.0.5             </span></span>
-<span><span class="co">##  [63] marginaleffects_0.30.0      foreign_0.8-90             </span></span>
+<span><span class="co">##  [61] S7_0.2.1                    evaluate_1.0.5             </span></span>
+<span><span class="co">##  [63] marginaleffects_0.31.0      foreign_0.8-90             </span></span>
 <span><span class="co">##  [65] desc_1.4.3                  survival_3.8-3             </span></span>
-<span><span class="co">##  [67] xml2_1.4.1                  pillar_1.11.1              </span></span>
-<span><span class="co">##  [69] BiocManager_1.30.26         MatrixGenerics_1.22.0      </span></span>
+<span><span class="co">##  [67] xml2_1.5.0                  pillar_1.11.1              </span></span>
+<span><span class="co">##  [69] BiocManager_1.30.27         MatrixGenerics_1.22.0      </span></span>
 <span><span class="co">##  [71] checkmate_2.3.3             stats4_4.5.2               </span></span>
 <span><span class="co">##  [73] insight_1.4.2               generics_0.1.4             </span></span>
 <span><span class="co">##  [75] hms_1.1.4                   S4Vectors_0.48.0           </span></span>
-<span><span class="co">##  [77] ggplot2_4.0.0               scales_1.4.0               </span></span>
+<span><span class="co">##  [77] ggplot2_4.0.1               scales_1.4.0               </span></span>
 <span><span class="co">##  [79] glue_1.8.0                  Hmisc_5.2-4                </span></span>
 <span><span class="co">##  [81] tools_4.5.2                 data.table_1.17.8          </span></span>
 <span><span class="co">##  [83] GEOquery_2.78.0             XML_3.99-0.20              </span></span>
@@ -516,8 +517,8 @@ studies more effectively.</p>
 <span><span class="co">## [101] gargle_1.6.0                dplyr_1.1.4                </span></span>
 <span><span class="co">## [103] gtable_0.3.6                ggcorrplot_0.1.4.1         </span></span>
 <span><span class="co">## [105] R.methodsS3_1.8.2           ggsci_4.1.0                </span></span>
-<span><span class="co">## [107] sass_0.4.10                 digest_0.6.38              </span></span>
-<span><span class="co">## [109] BiocGenerics_0.56.0         SparseArray_1.10.1         </span></span>
+<span><span class="co">## [107] sass_0.4.10                 digest_0.6.39              </span></span>
+<span><span class="co">## [109] BiocGenerics_0.56.0         SparseArray_1.10.2         </span></span>
 <span><span class="co">## [111] ggrepel_0.9.6               htmlwidgets_1.6.4          </span></span>
 <span><span class="co">## [113] farver_2.1.2                R.oo_1.27.1                </span></span>
 <span><span class="co">## [115] htmltools_0.5.8.1           pkgdown_2.2.0              </span></span>

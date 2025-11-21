@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmprTVZrX"
+    ## Cache Path: "/tmp/RtmpDgyV07"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmprTVZrX"
+    ## Cache Path: "/tmp/RtmpDgyV07"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -220,7 +220,7 @@ trioGEO
     ##   - attr(*, "dimnames")=List of 2
     ## Data Source: "geo"
     ## Dataset ID: "GSE46474"
-    ## Cache Path: "/tmp/RtmprTVZrX"
+    ## Cache Path: "/tmp/RtmpDgyV07"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -279,8 +279,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x555a156acf48>
-    ## <environment: 0x555a0fcde310>
+    ## <bytecode: 0x564af91dbfd0>
+    ## <environment: 0x564af2b5f428>
 
 ## Other Features
 
@@ -427,7 +427,7 @@ sessionInfo()
     ##  [37] Seqinfo_1.0.0               bookdown_0.45              
     ##  [39] SummarizedExperiment_1.40.0 knitr_1.50                 
     ##  [41] R.utils_2.13.0              base64enc_0.1-3            
-    ##  [43] parameters_0.28.2           readr_2.1.5                
+    ##  [43] parameters_0.28.2           readr_2.1.6                
     ##  [45] IRanges_2.44.0              rentrez_1.2.4              
     ##  [47] Matrix_1.7-4                splines_4.5.2              
     ##  [49] nnet_7.3-20                 tidyselect_1.2.1           
@@ -436,15 +436,15 @@ sessionInfo()
     ##  [55] lattice_0.22-7              tibble_3.3.0               
     ##  [57] plyr_1.8.9                  Biobase_2.70.0             
     ##  [59] withr_3.0.2                 bayestestR_0.17.0          
-    ##  [61] S7_0.2.0                    evaluate_1.0.5             
-    ##  [63] marginaleffects_0.30.0      foreign_0.8-90             
+    ##  [61] S7_0.2.1                    evaluate_1.0.5             
+    ##  [63] marginaleffects_0.31.0      foreign_0.8-90             
     ##  [65] desc_1.4.3                  survival_3.8-3             
-    ##  [67] xml2_1.4.1                  pillar_1.11.1              
-    ##  [69] BiocManager_1.30.26         MatrixGenerics_1.22.0      
+    ##  [67] xml2_1.5.0                  pillar_1.11.1              
+    ##  [69] BiocManager_1.30.27         MatrixGenerics_1.22.0      
     ##  [71] checkmate_2.3.3             stats4_4.5.2               
     ##  [73] insight_1.4.2               generics_0.1.4             
     ##  [75] hms_1.1.4                   S4Vectors_0.48.0           
-    ##  [77] ggplot2_4.0.0               scales_1.4.0               
+    ##  [77] ggplot2_4.0.1               scales_1.4.0               
     ##  [79] glue_1.8.0                  Hmisc_5.2-4                
     ##  [81] tools_4.5.2                 data.table_1.17.8          
     ##  [83] GEOquery_2.78.0             XML_3.99-0.20              
@@ -459,8 +459,8 @@ sessionInfo()
     ## [101] gargle_1.6.0                dplyr_1.1.4                
     ## [103] gtable_0.3.6                ggcorrplot_0.1.4.1         
     ## [105] R.methodsS3_1.8.2           ggsci_4.1.0                
-    ## [107] sass_0.4.10                 digest_0.6.38              
-    ## [109] BiocGenerics_0.56.0         SparseArray_1.10.1         
+    ## [107] sass_0.4.10                 digest_0.6.39              
+    ## [109] BiocGenerics_0.56.0         SparseArray_1.10.2         
     ## [111] ggrepel_0.9.6               htmlwidgets_1.6.4          
     ## [113] farver_2.1.2                R.oo_1.27.1                
     ## [115] htmltools_0.5.8.1           pkgdown_2.2.0              

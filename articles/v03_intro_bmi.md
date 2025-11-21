@@ -274,7 +274,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] stringr_1.6.0    dplyr_1.1.4      readr_2.1.5      BenchHub_0.99.5 
+    ## [1] stringr_1.6.0    dplyr_1.1.4      readr_2.1.6      BenchHub_0.99.5 
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
@@ -295,12 +295,12 @@ sessionInfo()
     ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
     ##  [46] rstudioapi_0.17.1      yaml_2.3.10            curl_7.0.0            
     ##  [49] lattice_0.22-7         tibble_3.3.0           plyr_1.8.9            
-    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.0              
-    ##  [55] evaluate_1.0.5         marginaleffects_0.30.0 foreign_0.8-90        
+    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
+    ##  [55] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
     ##  [58] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       
-    ##  [61] pillar_1.11.1          BiocManager_1.30.26    checkmate_2.3.3       
+    ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
     ##  [64] insight_1.4.2          generics_0.1.4         vroom_1.6.6           
-    ##  [67] hms_1.1.4              ggplot2_4.0.0          scales_1.4.0          
+    ##  [67] hms_1.1.4              ggplot2_4.0.1          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-4            tools_4.5.2           
     ##  [73] data.table_1.17.8      fs_1.6.6               cowplot_1.2.0         
     ##  [76] grid_4.5.2             tidyr_1.3.1            rbibutils_2.4         
@@ -310,7 +310,7 @@ sessionInfo()
     ##  [88] Formula_1.2-5          cli_3.6.5              rappdirs_0.3.3        
     ##  [91] textshaping_1.0.4      gargle_1.6.0           funkyheatmap_0.5.2    
     ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           
-    ##  [97] sass_0.4.10            digest_0.6.38          ggrepel_0.9.6         
+    ##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
     ## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     
     ## [103] pkgdown_2.2.0          lifecycle_1.0.4        MASS_7.3-65           
     ## [106] bit64_4.6.0-1          dotwhisker_0.8.4

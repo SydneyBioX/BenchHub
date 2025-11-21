@@ -10,3 +10,5 @@
   class](https://sydneybiox.github.io/BenchHub/articles/v03_intro_bmi.md):
 - [4 Uploading a Trio to Curated Trio
   Datasets](https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.md):
+- [4
+  BenchmarkStudy](https://sydneybiox.github.io/BenchHub/articles/v06_benchmarkstudy.md):

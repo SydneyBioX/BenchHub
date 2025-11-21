@@ -253,7 +253,7 @@ result
     ## # Groups:   datasetID, method, evidence [2]
     ##   datasetID           method            evidence  metric            result
     ##   <chr>               <chr>             <chr>     <chr>              <dbl>
-    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.640
+    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.685
     ## 2 lubomski_microbiome negative_binomial Sparsity  Difference        -0.323
 
 Please see Vignette 3 for the details on the visualisations and
@@ -287,8 +287,8 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   
-    ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.0      readr_2.1.5     
-    ##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_4.0.0    tidyverse_2.0.0 
+    ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.0      readr_2.1.6     
+    ##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_4.0.1    tidyverse_2.0.0 
     ## [13] BenchHub_0.99.5  BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
@@ -308,9 +308,9 @@ sessionInfo()
     ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.10           
     ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
-    ## [49] S7_0.2.0               evaluate_1.0.5         marginaleffects_0.30.0
+    ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
     ## [52] foreign_0.8-90         desc_1.4.3             survival_3.8-3        
-    ## [55] pillar_1.11.1          BiocManager_1.30.26    checkmate_2.3.3       
+    ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
     ## [58] foreach_1.5.2          insight_1.4.2          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
     ## [64] Hmisc_5.2-4            tools_4.5.2            data.table_1.17.8     
@@ -320,6 +320,6 @@ sessionInfo()
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
     ## [79] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          
     ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           
-    ## [85] sass_0.4.10            digest_0.6.38          ggrepel_0.9.6         
+    ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
     ## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     
     ## [91] pkgdown_2.2.0          lifecycle_1.0.4        dotwhisker_0.8.4
