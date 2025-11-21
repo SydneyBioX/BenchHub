@@ -103,7 +103,7 @@ Trio supports custom loaders for data formats not directly supported by Trio. A 
 
 Below, we use an anonymous function to wrap `GEOquery::getGEO` and `Biobase::phenoData`, and provide them with the path of the downloaded file to extract both the gene expression values and the patient classes from different tables.
 
-```{r}
+```{r eval=FALSE}
 trioGEO <- Trio$new(
   "GEO:GSE46474",
   dataLoader = \(path) Biobase::exprs(GEOquery::getGEO(filename = path)),
