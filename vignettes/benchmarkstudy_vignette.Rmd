@@ -9,8 +9,6 @@ vignette: >
 
 ```{r setup, warning=FALSE, message=FALSE, include=FALSE}
 knitr::opts_chunk$set(warning = TRUE)
-# devtools::load_all()
-.libPaths("/dora/nobackup/yuec/R")
 library(BenchHub)
 library(R6)
 library(scran)
