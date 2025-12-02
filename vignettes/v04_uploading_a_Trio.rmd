@@ -13,7 +13,6 @@ vignette: >
 
 This guide provides step-by-step instructions for uploading a Trio object to the [Curated Trio Datasets sheet](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/edit). Curated Trio Dataset is a list of datasets with proven utility. It includes creating a GitHub Personal Access Token (PAT) with gist write access and uploading data to Figshare.
 
----
 
 ## Step 1: Create a GitHub Personal Access Token (PAT)
 
@@ -45,7 +44,7 @@ Replace `"your_personal_access_token"` with the token you copied.
    ```r
    googlesheets4::gs4_auth()
    ```
----
+
 
 ## Step 2: Add the Trio to Curated Trio Datasets
 
@@ -62,7 +61,7 @@ trio$writeCTD(name = "Your Dataset Name")
    - Select the data type (e.g., omics, clinical, spatial, other).
    - Confirm the upload of supporting evidence to Figshare.
 
----
+
 
 ## Step 3: Verify the Upload
 
@@ -71,7 +70,7 @@ trio$writeCTD(name = "Your Dataset Name")
 
 2. Verify that the metrics have been uploaded as a GitHub Gist.
 
----
+
 
 ## Notes
 
