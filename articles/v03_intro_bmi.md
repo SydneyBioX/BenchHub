@@ -291,21 +291,21 @@ sessionInfo()
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      
     ##  [37] Rcpp_1.1.0             bookdown_0.45          knitr_1.50            
-    ##  [40] base64enc_0.1-3        parameters_0.28.2      Matrix_1.7-4          
+    ##  [40] base64enc_0.1-3        parameters_0.28.3      Matrix_1.7-4          
     ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
-    ##  [46] rstudioapi_0.17.1      yaml_2.3.10            curl_7.0.0            
+    ##  [46] rstudioapi_0.17.1      yaml_2.3.11            curl_7.0.0            
     ##  [49] lattice_0.22-7         tibble_3.3.0           plyr_1.8.9            
     ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
     ##  [55] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
     ##  [58] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       
     ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ##  [64] insight_1.4.2          generics_0.1.4         vroom_1.6.6           
+    ##  [64] insight_1.4.3          generics_0.1.4         vroom_1.6.7           
     ##  [67] hms_1.1.4              ggplot2_4.0.1          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-4            tools_4.5.2           
     ##  [73] data.table_1.17.8      fs_1.6.6               cowplot_1.2.0         
     ##  [76] grid_4.5.2             tidyr_1.3.1            rbibutils_2.4         
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
-    ##  [82] patchwork_1.3.2        performance_0.15.2     ggforce_0.5.0         
+    ##  [82] patchwork_1.3.2        performance_0.15.3     ggforce_0.5.0         
     ##  [85] htmlTable_2.4.3        googledrive_2.1.2      splitTools_1.0.1      
     ##  [88] Formula_1.2-5          cli_3.6.5              rappdirs_0.3.3        
     ##  [91] textshaping_1.0.4      gargle_1.6.0           funkyheatmap_0.5.2    

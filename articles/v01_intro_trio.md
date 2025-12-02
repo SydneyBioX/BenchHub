@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpZnKh1J"
+    ## Cache Path: "/tmp/RtmpOpsN9o"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpZnKh1J"
+    ## Cache Path: "/tmp/RtmpOpsN9o"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -259,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55ddae92f988>
-    ## <environment: 0x55ddac941fc8>
+    ## <bytecode: 0x55f835b364d8>
+    ## <environment: 0x55f834a976b0>
 
 ## Other Features
 
@@ -391,17 +391,17 @@ sessionInfo()
     ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.4       
     ## [10] cluster_2.1.8.1        survival_3.8-3         magrittr_2.0.4        
     ## [13] compiler_4.5.2         rlang_1.1.6            Hmisc_5.2-4           
-    ## [16] sass_0.4.10            tools_4.5.2            yaml_2.3.10           
+    ## [16] sass_0.4.10            tools_4.5.2            yaml_2.3.11           
     ## [19] data.table_1.17.8      knitr_1.50             htmlwidgets_1.6.4     
     ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
     ## [25] RColorBrewer_1.1-3     foreign_0.8-90         withr_3.0.2           
     ## [28] purrr_1.2.0            desc_1.4.3             nnet_7.3-20           
     ## [31] grid_4.5.2             datawizard_1.3.0       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.1          scales_1.4.0          
-    ## [37] insight_1.4.2          cli_3.6.5              rmarkdown_2.30        
+    ## [37] insight_1.4.3          cli_3.6.5              rmarkdown_2.30        
     ## [40] dotwhisker_0.8.4       ragg_1.5.0             generics_0.1.4        
-    ## [43] rstudioapi_0.17.1      performance_0.15.2     httr_1.4.7            
-    ## [46] reshape2_1.4.5         parameters_0.28.2      ggcorrplot_0.1.4.1    
+    ## [43] rstudioapi_0.17.1      performance_0.15.3     httr_1.4.7            
+    ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    
     ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.5.2         
     ## [52] BiocManager_1.30.27    cellranger_1.1.0       base64enc_0.1-3       
     ## [55] marginaleffects_0.31.0 vctrs_0.6.5            Matrix_1.7-4          

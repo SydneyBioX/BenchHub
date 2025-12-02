@@ -253,7 +253,7 @@ result
     ## # Groups:   datasetID, method, evidence [2]
     ##   datasetID           method            evidence  metric            result
     ##   <chr>               <chr>             <chr>     <chr>              <dbl>
-    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.675
+    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.679
     ## 2 lubomski_microbiome negative_binomial Sparsity  Difference        -0.323
 
 Please see Vignette 3 for the details on the visualisations and
@@ -303,20 +303,20 @@ sessionInfo()
     ## [25] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
     ## [31] Rcpp_1.1.0             bookdown_0.45          iterators_1.0.14      
-    ## [34] knitr_1.50             base64enc_0.1-3        parameters_0.28.2     
+    ## [34] knitr_1.50             base64enc_0.1-3        parameters_0.28.3     
     ## [37] splines_4.5.2          nnet_7.3-20            timechange_0.3.0      
-    ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.10           
+    ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.11           
     ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
     ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
     ## [52] foreign_0.8-90         desc_1.4.3             survival_3.8-3        
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ## [58] foreach_1.5.2          insight_1.4.2          generics_0.1.4        
+    ## [58] foreach_1.5.2          insight_1.4.3          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
     ## [64] Hmisc_5.2-4            tools_4.5.2            data.table_1.17.8     
     ## [67] fs_1.6.6               grid_4.5.2             datawizard_1.3.0      
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [73] performance_0.15.2     htmlTable_2.4.3        googledrive_2.1.2     
+    ## [73] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
     ## [79] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          
     ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           

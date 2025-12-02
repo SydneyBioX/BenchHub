@@ -10,8 +10,6 @@
   : Matthews Correlation Coefficient (MCC) Metric
 - [`MSEmetric()`](https://sydneybiox.github.io/BenchHub/reference/MSEmetric.md)
   : Mean Squared Error (MSE) Metric
-- [`RecSys`](https://sydneybiox.github.io/BenchHub/reference/RecSys.md)
-  : A RecSys object
 - [`Trio`](https://sydneybiox.github.io/BenchHub/reference/Trio.md) : A
   Trio object
 - [`balAccMetric()`](https://sydneybiox.github.io/BenchHub/reference/balAccMetric.md)
