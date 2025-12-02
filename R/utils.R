@@ -6,12 +6,15 @@
 #' @return List containing gist data including html_url
 #' @importFrom httr2 request req_headers req_body_json req_perform resp_body_json
 #' @noRd
-createGist <- function(content, filename, description, public = TRUE) {
+creatGist <- function(content, filename, description, public = TRUE, pat = NULL) {
   # check network connectivity
   if (!curl::has_internet()) {
     cli::cli_abort("No internet connection available")
   } 
-  pat <- Sys.getenv("GITHUB_PAT")
+  # Use provided PAT or fall back to environment variable
+  if (is.null(pat) || pat == "") {
+    pat <- Sys.getenv("GITHUB_PAT")
+  }
   if (pat == "") {
     cli::cli_abort("GITHUB_PAT environment variable must be set to create gists")
   }

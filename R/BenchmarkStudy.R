@@ -350,23 +350,23 @@ Describe the benchmark task and dataset.
         ))
       }
 
-      # check if GITHUB_PAT is set and ask the user to set it if not
-      if (Sys.getenv("GITHUB_PAT") == "") {
+      # check if GITHUB_PAT is set in environment or needs to be obtained
+      githubPat <- Sys.getenv("GITHUB_PAT")
+      if (githubPat == "") {
         cli::cli_inform(c(
           "The GITHUB_PAT environment variable is not set.",
           "Please set it to your GitHub personal access token with gist access."
         ))
         if (interactive()) {
           setGithubPat <- utils::askYesNo(
-            "Do you want to set the GITHUB_PAT environment variable?"
+            "Do you want to provide your GitHub personal access token?"
           )
           if (setGithubPat) {
-            pat <- readline("Enter your GitHub personal access token: ")
-            Sys.setenv(GITHUB_PAT = pat)
+            githubPat <- readline("Enter your GitHub personal access token: ")
           } else {
             cli::cli_abort(c(
-              "The GITHUB_PAT environment variable is not set.",
-              "Please set it to your GitHub personal access token with gist access."
+              "The GITHUB_PAT is required to write the study.",
+              "Please set the GITHUB_PAT environment variable or provide it when prompted."
             ))
           }
         } else {
@@ -479,7 +479,8 @@ Describe the benchmark task and dataset.
           gist <- createGist(
             content = protocolText,
             filename = basename(protocolFile),
-            description = paste0("Protocol for BenchmarkStudy ", self$name)
+            description = paste0("Protocol for BenchmarkStudy ", self$name),
+            pat = githubPat
           )
           gistUrl <- gist$html_url
         } else {
@@ -530,7 +531,8 @@ Describe the benchmark task and dataset.
             self$name,
             " v",
             self$version
-          )
+          ),
+          pat = githubPat
         )
         mappingFunctionsGistUrl <- mappingGist$html_url
       }

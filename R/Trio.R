@@ -800,31 +800,35 @@ Trio <- R6::R6Class(
     handleGitHubPAT = function(state) {
       # Use provided PAT if available
       if (!is.null(state$githubPat) && state$githubPat != "") {
-        Sys.setenv(GITHUB_PAT = state$githubPat)
         return(state)
       }
 
-      # check if GITHUB_PAT is set and ask the user to set it if not
-      if (Sys.getenv("GITHUB_PAT") == "") {
-        cli::cli_inform(c(
-          "The GITHUB_PAT environment variable is not set.",
-          "Please set it to your GitHub personal access token with gist access."
+      # check if GITHUB_PAT is available in environment
+      envPat <- Sys.getenv("GITHUB_PAT")
+      if (envPat != "") {
+        state$githubPat <- envPat
+        return(state)
+      }
+
+      # ask the user to provide it if not available
+      cli::cli_inform(c(
+        "The GITHUB_PAT environment variable is not set.",
+        "Please provide your GitHub personal access token with gist access."
+      ))
+      setGithubPat <- utils::askYesNo(
+        "Do you want to provide your GitHub personal access token?"
+      )
+      if (setGithubPat) {
+        pat <- readline("Enter your GitHub personal access token: ")
+        state$githubPat <- pat
+      } else {
+        cli::cli_abort(c(
+          "The GITHUB_PAT is required to write the CTD.",
+          "i" = paste0(
+            "Please set the GITHUB_PAT environment variable",
+            " or provide it when prompted."
+          )
         ))
-        setGithubPat <- utils::askYesNo(
-          "Do you want to set the GITHUB_PAT environment variable?"
-        )
-        if (setGithubPat) {
-          pat <- readline("Enter your GitHub personal access token: ")
-          Sys.setenv(GITHUB_PAT = pat)
-        } else {
-          cli::cli_abort(c(
-            "The GITHUB_PAT environment variable is not set.",
-            "i" = paste0(
-              "Please set it to your GitHub personal access token",
-              " with gist access."
-            )
-          ))
-        }
       }
       return(state)
     },
@@ -1348,7 +1352,8 @@ Trio <- R6::R6Class(
         createGist(
           content = metrics_to_gist,
           filename = paste0(state$name, "_metrics.R"),
-          description = paste0("Metrics for Trio ", state$name)
+          description = paste0("Metrics for Trio ", state$name),
+          pat = state$githubPat
         )
       }
 
