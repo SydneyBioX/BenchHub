@@ -3,6 +3,9 @@
 \name{BenchmarkStudy}
 \alias{BenchmarkStudy}
 \title{BenchmarkStudy Class}
+\value{
+A \code{BenchmarkStudy} object.
+}
 \description{
 This class manages a collection of benchmark trios and mapping functions.
 It allows adding new trios, mapping functions, and running mappings on data.

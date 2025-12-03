@@ -4,7 +4,7 @@
 \alias{Trio}
 \title{A Trio object}
 \value{
-A Trio object
+A \code{Trio} object
 }
 \description{
 An object containing a dataset and methods for evaluating

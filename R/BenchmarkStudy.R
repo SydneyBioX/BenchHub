@@ -8,6 +8,7 @@
 #' @field description A character string describing the study.
 #' @field version Integer specifying the version of the study.
 #' @export
+#' @return A \code{BenchmarkStudy} object.
 BenchmarkStudy <- R6Class(
   "BenchmarkStudy",
   public = list(
