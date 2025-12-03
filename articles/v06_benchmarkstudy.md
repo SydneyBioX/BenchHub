@@ -157,7 +157,7 @@ A BenchmarkStudy object can be downloaded from the database through its
 name.
 
 ``` r
-study  <- suppressMessages( BenchmarkStudy$new("Benchhubstudy vignette", fetchFromCtd = T))
+study  <- suppressMessages( BenchmarkStudy$new("Benchhubstudy vignette", fetchFromCtd = TRUE))
 ```
 
 Inspect the list of available trios, and available mapping functions

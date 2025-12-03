@@ -4,6 +4,10 @@ This class manages a collection of benchmark trios and mapping
 functions. It allows adding new trios, mapping functions, and running
 mappings on data.
 
+## Value
+
+A `BenchmarkStudy` object.
+
 ## Public fields
 
 - `name`:

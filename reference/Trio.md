@@ -5,7 +5,7 @@ tasks against ground truths for the dataset.
 
 ## Value
 
-A Trio object
+A `Trio` object
 
 ## Public fields
 

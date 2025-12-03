@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpFLq7xP"
+    ## Cache Path: "/tmp/RtmpzgpWmT"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpFLq7xP"
+    ## Cache Path: "/tmp/RtmpzgpWmT"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -259,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x560d4ad3da28>
-    ## <environment: 0x560d4ad75b88>
+    ## <bytecode: 0x55df01a1a220>
+    ## <environment: 0x55df00971f68>
 
 ## Other Features
 
@@ -383,7 +383,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.6  BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.8  BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.1.4            farver_2.1.2          
