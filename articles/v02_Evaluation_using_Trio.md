@@ -253,7 +253,7 @@ result
     ## # Groups:   datasetID, method, evidence [2]
     ##   datasetID           method            evidence  metric            result
     ##   <chr>               <chr>             <chr>     <chr>              <dbl>
-    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.687
+    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.668
     ## 2 lubomski_microbiome negative_binomial Sparsity  Difference        -0.323
 
 Please see Vignette 3 for the details on the visualisations and
@@ -289,7 +289,7 @@ sessionInfo()
     ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.0      readr_2.1.6     
     ##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_4.0.1    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.8  BiocStyle_2.38.0
+    ## [13] BenchHub_0.99.9  BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.6           
