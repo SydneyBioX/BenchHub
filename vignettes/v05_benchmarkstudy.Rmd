@@ -1,5 +1,5 @@
 ---
-title: "4 BenchmarkStudy"
+title: "5 BenchmarkStudy"
 output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{4 BenchmarkStudy}
