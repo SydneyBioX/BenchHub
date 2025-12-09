@@ -278,7 +278,7 @@ sessionInfo()
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] Rdpack_2.6.4           gridExtra_2.3          httr2_1.2.1           
+    ##   [1] Rdpack_2.6.4           gridExtra_2.3          httr2_1.2.2           
     ##   [4] rlang_1.1.6            magrittr_2.0.4         compiler_4.5.2        
     ##   [7] survAUC_1.4-0          systemfonts_1.3.1      vctrs_0.6.5           
     ##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          
@@ -286,11 +286,11 @@ sessionInfo()
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         tzdb_0.5.0            
     ##  [19] ragg_1.5.0             purrr_1.2.0            bit_4.6.0             
     ##  [22] xfun_0.54              cachem_1.1.0           jsonlite_2.0.0        
-    ##  [25] tweenr_2.0.3           broom_1.0.10           parallel_4.5.2        
+    ##  [25] tweenr_2.0.3           broom_1.0.11           parallel_4.5.2        
     ##  [28] cluster_2.1.8.1        R6_2.6.1               bslib_0.9.0           
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      
-    ##  [37] Rcpp_1.1.0             bookdown_0.45          knitr_1.50            
+    ##  [37] Rcpp_1.1.0             bookdown_0.46          knitr_1.50            
     ##  [40] base64enc_0.1-3        parameters_0.28.3      Matrix_1.7-4          
     ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
     ##  [46] rstudioapi_0.17.1      yaml_2.3.11            curl_7.0.0            
@@ -299,7 +299,7 @@ sessionInfo()
     ##  [55] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
     ##  [58] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       
     ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ##  [64] insight_1.4.3          generics_0.1.4         vroom_1.6.7           
+    ##  [64] insight_1.4.4          generics_0.1.4         vroom_1.6.7           
     ##  [67] hms_1.1.4              ggplot2_4.0.1          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-4            tools_4.5.2           
     ##  [73] data.table_1.17.8      fs_1.6.6               cowplot_1.2.0         
@@ -311,6 +311,6 @@ sessionInfo()
     ##  [91] textshaping_1.0.4      gargle_1.6.0           funkyheatmap_0.5.2    
     ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           
     ##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
-    ## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.8.1     
+    ## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
     ## [103] pkgdown_2.2.0          lifecycle_1.0.4        MASS_7.3-65           
     ## [106] bit64_4.6.0-1          dotwhisker_0.8.4

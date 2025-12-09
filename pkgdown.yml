@@ -6,8 +6,8 @@ articles:
   v02_Evaluation_using_Trio: v02_Evaluation_using_Trio.html
   v03_intro_bmi: v03_intro_bmi.html
   v04_uploading_a_Trio: v04_uploading_a_Trio.html
-  v06_benchmarkstudy: v06_benchmarkstudy.html
-last_built: 2025-12-03T07:47Z
+  v05_benchmarkstudy: v05_benchmarkstudy.html
+last_built: 2025-12-09T08:17Z
 urls:
   reference: https://sydneybiox.github.io/BenchHub/reference
   article: https://sydneybiox.github.io/BenchHub/articles
