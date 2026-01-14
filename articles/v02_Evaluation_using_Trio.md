@@ -253,7 +253,7 @@ result
     ## # Groups:   datasetID, method, evidence [2]
     ##   datasetID           method            evidence  metric            result
     ##   <chr>               <chr>             <chr>     <chr>              <dbl>
-    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.668
+    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.691
     ## 2 lubomski_microbiome negative_binomial Sparsity  Difference        -0.323
 
 Please see Vignette 3 for the details on the visualisations and
@@ -287,25 +287,25 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   
-    ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.0      readr_2.1.6     
-    ##  [9] tidyr_1.3.1      tibble_3.3.0     ggplot2_4.0.1    tidyverse_2.0.0 
+    ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.1      readr_2.1.6     
+    ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.1    tidyverse_2.0.0 
     ## [13] BenchHub_0.99.9  BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.6           
+    ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
     ##  [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
     ##  [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
     ## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        
     ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            
-    ## [19] xfun_0.54              cachem_1.1.0           jsonlite_2.0.0        
+    ## [19] xfun_0.55              cachem_1.1.0           jsonlite_2.0.0        
     ## [22] broom_1.0.11           cluster_2.1.8.1        R6_2.6.1              
     ## [25] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
-    ## [31] Rcpp_1.1.0             bookdown_0.46          iterators_1.0.14      
-    ## [34] knitr_1.50             base64enc_0.1-3        parameters_0.28.3     
+    ## [31] Rcpp_1.1.1             bookdown_0.46          iterators_1.0.14      
+    ## [34] knitr_1.51             base64enc_0.1-3        parameters_0.28.3     
     ## [37] splines_4.5.2          nnet_7.3-20            timechange_0.3.0      
-    ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.11           
+    ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.12           
     ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
     ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
@@ -313,13 +313,13 @@ sessionInfo()
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
     ## [58] foreach_1.5.2          insight_1.4.4          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
-    ## [64] Hmisc_5.2-4            tools_4.5.2            data.table_1.17.8     
+    ## [64] Hmisc_5.2-5            tools_4.5.2            data.table_1.18.0     
     ## [67] fs_1.6.6               grid_4.5.2             datawizard_1.3.0      
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
     ## [73] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
     ## [79] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          
-    ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.1.0           
+    ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
     ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
     ## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
-    ## [91] pkgdown_2.2.0          lifecycle_1.0.4        dotwhisker_0.8.4
+    ## [91] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4

@@ -24,14 +24,14 @@ Source:
 [`DESCRIPTION`](https://github.com/SydneyBioX/BenchHub/blob/devel/DESCRIPTION)
 
 Liang C, Kim S, Robertson N, Torkel M, Cao Y, Strbenac D, Yang J,
-Maintainer S (2025). *BenchHub: Comprehensive Collection of Curated
+Maintainer S (2026). *BenchHub: Comprehensive Collection of Curated
 Benchmarking Datasets and their Evaluation*. R package version 0.99.9,
 <https://sydneybiox.github.io/BenchHub/>.
 
     @Manual{,
       title = {BenchHub: Comprehensive Collection of Curated Benchmarking Datasets and their Evaluation},
       author = {Cabiria Liang and Sanghyun Kim and Nick Robertson and Marni Torkel and Yue Cao and Dario Strbenac and Jean Yang and SOMS Maintainer},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.99.9},
       url = {https://sydneybiox.github.io/BenchHub/},
     }

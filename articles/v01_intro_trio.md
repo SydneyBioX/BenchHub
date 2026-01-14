@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpFXmqHJ"
+    ## Cache Path: "/tmp/Rtmpbh1phY"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpFXmqHJ"
+    ## Cache Path: "/tmp/Rtmpbh1phY"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -259,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55ef41b8f470>
-    ## <environment: 0x55ef40b0cb00>
+    ## <bytecode: 0x56044a95df40>
+    ## <environment: 0x560448d69d50>
 
 ## Other Features
 
@@ -388,14 +388,14 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.1.4            farver_2.1.2          
     ##  [4] S7_0.2.1               fastmap_1.2.0          bayestestR_0.17.0     
-    ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.4       
+    ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.5       
     ## [10] cluster_2.1.8.1        survival_3.8-3         magrittr_2.0.4        
-    ## [13] compiler_4.5.2         rlang_1.1.6            Hmisc_5.2-4           
-    ## [16] sass_0.4.10            tools_4.5.2            yaml_2.3.11           
-    ## [19] data.table_1.17.8      knitr_1.50             htmlwidgets_1.6.4     
+    ## [13] compiler_4.5.2         rlang_1.1.7            Hmisc_5.2-5           
+    ## [16] sass_0.4.10            tools_4.5.2            yaml_2.3.12           
+    ## [19] data.table_1.18.0      knitr_1.51             htmlwidgets_1.6.4     
     ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
     ## [25] RColorBrewer_1.1-3     foreign_0.8-90         withr_3.0.2           
-    ## [28] purrr_1.2.0            desc_1.4.3             nnet_7.3-20           
+    ## [28] purrr_1.2.1            desc_1.4.3             nnet_7.3-20           
     ## [31] grid_4.5.2             datawizard_1.3.0       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.1          scales_1.4.0          
     ## [37] insight_1.4.4          cli_3.6.5              rmarkdown_2.30        
@@ -407,13 +407,13 @@ sessionInfo()
     ## [55] marginaleffects_0.31.0 vctrs_0.6.5            Matrix_1.7-4          
     ## [58] jsonlite_2.0.0         bookdown_0.46          patchwork_1.3.2       
     ## [61] ggrepel_0.9.6          Formula_1.2-5          htmlTable_2.4.3       
-    ## [64] systemfonts_1.3.1      tidyr_1.3.1            jquerylib_0.1.4       
+    ## [64] systemfonts_1.3.1      tidyr_1.3.2            jquerylib_0.1.4       
     ## [67] splitTools_1.0.1       glue_1.8.0             pkgdown_2.2.0         
     ## [70] survAUC_1.4-0          stringi_1.8.7          gtable_0.3.6          
-    ## [73] tibble_3.3.0           pillar_1.11.1          rappdirs_0.3.3        
+    ## [73] tibble_3.3.1           pillar_1.11.1          rappdirs_0.3.3        
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.4      evaluate_1.0.5         lattice_0.22-7        
     ## [82] backports_1.5.0        googlesheets4_1.1.2    broom_1.0.11          
-    ## [85] ggsci_4.1.0            gargle_1.6.0           bslib_0.9.0           
-    ## [88] Rcpp_1.1.0             gridExtra_2.3          checkmate_2.3.3       
-    ## [91] xfun_0.54              fs_1.6.6               pkgconfig_2.0.3
+    ## [85] ggsci_4.2.0            gargle_1.6.0           bslib_0.9.0           
+    ## [88] Rcpp_1.1.1             gridExtra_2.3          checkmate_2.3.3       
+    ## [91] xfun_0.55              fs_1.6.6               pkgconfig_2.0.3

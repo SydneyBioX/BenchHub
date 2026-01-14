@@ -6,7 +6,7 @@ library(BenchHub)
 
 ## Overview
 
-The `BenchHubStudy` object is designed to encapsulate all necessary
+The `BenchmarkStudy` object is designed to encapsulate all necessary
 components in a benchmarking study, including the data and functions
 associated. It provides a unified structure for benchmark developers to
 share their work and for method developers to interact with an existing
@@ -52,11 +52,11 @@ study$addTrio(example_trio)
 A mapping function is a helper function that process the data into a
 format that can then be input into the evaluation metrics.
 
-For example, in simulation studies, the output from a simulator is a
-cell x gene count matrix. Suppose we want to compare the sparsity of
-genes between the simulated data and an experimental data, we need a
-mapping function that calculates the sparsity of genes from the count
-matrix.
+For example, in single-cell RNA-sequencing simulation studies, the
+output from a simulator is often a cell by gene count matrix. When
+benchmarking, we often map the matrix output to derived statistics
+(e.g., gene-level sparsity or cell-level library sizes) that can be
+compared against a reference (e.g., real single-cell RNA-seq matrix).
 
 We define two examples of mapping functions.
 
@@ -93,11 +93,10 @@ Example 2: calculate the normalized library size per cell.
 
 ``` r
 # Define the mapping function 
-norm_lib_size <- function(data) {
-  lib_size <- log1p(rowSums(counts(data)))
-  dge <- edgeR::DGEList(counts = Matrix::t(counts(data)))
-  norm_factors <- edgeR::calcNormFactors(dge, method = "TMM")$samples$norm.factors
-  return(unname(lib_size * norm_factors))
+norm_lib_size <-  function(data) {
+  dge <- edgeR::SE2DGEList(data)
+  dge <- edgeR::normLibSizes(dge)
+  return(edgeR::getNormLibSizes(dge))
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
@@ -115,8 +114,8 @@ study$addMappingFunction(
 
 ### Uploading to Curated Trio Datasets
 
-Once the BenchmarkStudy object includes: - A study name and
-description  
+Once the BenchmarkStudy object includes:  
+- A study name and description  
 - At least three Trio objects  
 - Mapping functions \[optional\]
 
@@ -202,31 +201,22 @@ format that can be used for evaluation.
 Each mapping function has documentation.
 
 ``` r
+# list the names of the mapping function
 study$listMappingFunctions()
 ```
 
     ## [1] "Fraction.Zero.Genes"     "normalized.library.size"
 
 ``` r
-doc <- study$getMappingFunctionDocumentation("Fraction.Zero.Genes" )
- 
-doc 
+# choose one to print the documentation 
+study$printMappingFunctionDocumentation("Fraction.Zero.Genes")
 ```
 
-    ## $inputDescription
-    ## [1] "SingleCellExperiment or matrix with gene expression counts."
-    ## 
-    ## $outputDescription
-    ## [1] "Numeric vector of fraction of zero counts per gene."
-    ## 
-    ## $exampleUsage
-    ## [1] "## Minimal example\nmat <- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)\nmat <- SingleCellExperiment(assays = list(counts = mat)\nres <- study$runMapping('Fraction.Zero.Genes', mat)\nhead(res)"
-
-``` r
-# Because the example Usage is a multiple line vector, need to use cat to print it nicely.
-cat(doc$exampleUsage, "\n")
-```
-
+    ## Input:
+    ##   SingleCellExperiment or matrix with gene expression counts.
+    ## Output:
+    ##   Numeric vector of fraction of zero counts per gene.
+    ## Example:
     ## ## Minimal example
     ## mat <- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)
     ## mat <- SingleCellExperiment(assays = list(counts = mat)
@@ -242,9 +232,9 @@ method, and they want to compare with the real data to see how realistic
 the simulated data is.
 
 ``` r
-# Suppose this is a simulated data 
+# Use scuttle to simulate a data 
 set.seed(0)
-sim <- mockSCE(ncells =  4744, ngenes = 1000)
+sim <- scuttle::mockSCE(ncells =  4744, ngenes = 1000)
 ```
 
 The method developer can apply the mapping functions to the simulated
@@ -283,3 +273,94 @@ result
     ##   <chr>             <chr>                   <chr>     <dbl>
     ## 1 29565947/57477553 Fraction zero genes     KS_stats  268. 
     ## 2 29565947/57477553 normalized library size KS_stats   98.1
+
+## Summary
+
+This vignette demonstrated two ways that users can interact with the
+BenchmarkStudy framework:
+
+- Benchmark developers: create or update a `BenchmarkStudy` by adding
+  `Trio` objects and optional mapping functions with clear
+  documentation, then upload the study to the Trio Database.
+
+- Method developers: load an existing `BenchmarkStudy` from the Trio
+  Database, use the `Trio` objects to execute benchmarking methods of
+  interest, use the mapping functions to convert method outputs where
+  needed, evaluate those outputs against the study’s supporting evidence
+  using the `evaluate()` function.
+
+## Session Info
+
+``` r
+sessionInfo()
+```
+
+    ## R version 4.5.2 (2025-10-31)
+    ## Platform: x86_64-pc-linux-gnu
+    ## Running under: Ubuntu 24.04.3 LTS
+    ## 
+    ## Matrix products: default
+    ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+    ## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+    ## 
+    ## locale:
+    ##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+    ##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+    ##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+    ## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+    ## 
+    ## time zone: UTC
+    ## tzcode source: system (glibc)
+    ## 
+    ## attached base packages:
+    ## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+    ## [8] base     
+    ## 
+    ## other attached packages:
+    ##  [1] scuttle_1.20.0              SingleCellExperiment_1.32.0
+    ##  [3] SummarizedExperiment_1.40.0 Biobase_2.70.0             
+    ##  [5] GenomicRanges_1.62.1        Seqinfo_1.0.0              
+    ##  [7] IRanges_2.44.0              S4Vectors_0.48.0           
+    ##  [9] BiocGenerics_0.56.0         generics_0.1.4             
+    ## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          
+    ## [13] R6_2.6.1                    BenchHub_0.99.9            
+    ## [15] BiocStyle_2.38.0           
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##   [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
+    ##   [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
+    ##   [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.5        
+    ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
+    ##  [13] XVector_0.50.0         backports_1.5.0        utf8_1.2.6            
+    ##  [16] ggstance_0.3.7         rmarkdown_2.30         pracma_2.4.6          
+    ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.55             
+    ##  [22] beachmat_2.26.0        cachem_1.1.0           jsonlite_2.0.0        
+    ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    parallel_4.5.2        
+    ##  [28] broom_1.0.11           cluster_2.1.8.1        bslib_0.9.0           
+    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     limma_3.66.0          
+    ##  [34] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
+    ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
+    ##  [40] base64enc_0.1-3        parameters_0.28.3      Matrix_1.7-4          
+    ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
+    ##  [46] abind_1.4-8            rstudioapi_0.17.1      yaml_2.3.12           
+    ##  [49] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
+    ##  [52] tibble_3.3.1           plyr_1.8.9             ks_1.15.1             
+    ##  [55] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
+    ##  [58] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
+    ##  [61] desc_1.4.3             survival_3.8-3         mclust_6.1.2          
+    ##  [64] pillar_1.11.1          BiocManager_1.30.27    KernSmooth_2.23-26    
+    ##  [67] checkmate_2.3.3        insight_1.4.4          ggplot2_4.0.1         
+    ##  [70] scales_1.4.0           glue_1.8.0             Hmisc_5.2-5           
+    ##  [73] tools_4.5.2            data.table_1.18.0      locfit_1.5-9.12       
+    ##  [76] mvtnorm_1.3-3          fs_1.6.6               grid_4.5.2            
+    ##  [79] tidyr_1.3.2            datawizard_1.3.0       edgeR_4.8.2           
+    ##  [82] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
+    ##  [85] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
+    ##  [88] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
+    ##  [91] rappdirs_0.3.3         textshaping_1.0.4      S4Arrays_1.10.1       
+    ##  [94] gargle_1.6.0           dplyr_1.1.4            gtable_0.3.6          
+    ##  [97] ggcorrplot_0.1.4.1     ggsci_4.2.0            sass_0.4.10           
+    ## [100] digest_0.6.39          SparseArray_1.10.8     ggrepel_0.9.6         
+    ## [103] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
+    ## [106] pkgdown_2.2.0          lifecycle_1.0.5        httr_1.4.7            
+    ## [109] statmod_1.5.1          dotwhisker_0.8.4
