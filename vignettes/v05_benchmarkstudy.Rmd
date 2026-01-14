@@ -8,8 +8,7 @@ vignette: >
 --- 
 
 ```{r setup, warning=FALSE, message=FALSE, include=FALSE}
-knitr::opts_chunk$set(warning = TRUE)
-library(BenchHub)
+knitr::opts_chunk$set( warning = FALSE, message = FALSE)
 library(R6)
 library(scuttle) 
 ```
@@ -230,12 +229,8 @@ result <- study$evaluate("benchhub_vignette_example",  # name of the trio to com
   list("Fraction zero genes" = mydata_prop_zero_gene  , # name of the supporting evidence 
    "normalized library size" = mydata_prop_zero_gene )) # name of the supporting evidence   
 
-# 
- 
 result
 
-
- 
 ```
 
 # Summary 
