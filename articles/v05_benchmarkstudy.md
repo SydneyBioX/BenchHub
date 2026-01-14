@@ -85,10 +85,6 @@ study$addMappingFunction(
 )
 ```
 
-    ## Warning: Mapping function name has been modified to be a valid R variable name.
-    ## ℹ Original name: Fraction Zero Genes
-    ## ℹ Modified name: Fraction.Zero.Genes
-
 Example 2: calculate the normalized library size per cell.
 
 ``` r
@@ -107,10 +103,6 @@ study$addMappingFunction(
   outputDescription = "Numeric vector of normalised library size per cell."
 )
 ```
-
-    ## Warning: Mapping function name has been modified to be a valid R variable name.
-    ## ℹ Original name: normalized library size
-    ## ℹ Modified name: normalized.library.size
 
 ### Uploading to Curated Trio Datasets
 
@@ -263,8 +255,6 @@ result <- study$evaluate("benchhub_vignette_example",  # name of the trio to com
   list("Fraction zero genes" = mydata_prop_zero_gene  , # name of the supporting evidence 
    "normalized library size" = mydata_prop_zero_gene )) # name of the supporting evidence   
 
-# 
- 
 result
 ```
 
@@ -317,37 +307,37 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] scuttle_1.20.0              SingleCellExperiment_1.32.0
-    ##  [3] SummarizedExperiment_1.40.0 Biobase_2.70.0             
-    ##  [5] GenomicRanges_1.62.1        Seqinfo_1.0.0              
-    ##  [7] IRanges_2.44.0              S4Vectors_0.48.0           
-    ##  [9] BiocGenerics_0.56.0         generics_0.1.4             
-    ## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          
-    ## [13] R6_2.6.1                    BenchHub_0.99.9            
+    ##  [1] BenchHub_0.99.9             scuttle_1.20.0             
+    ##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+    ##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       
+    ##  [7] Seqinfo_1.0.0               IRanges_2.44.0             
+    ##  [9] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+    ## [11] generics_0.1.4              MatrixGenerics_1.22.0      
+    ## [13] matrixStats_1.5.0           R6_2.6.1                   
     ## [15] BiocStyle_2.38.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
+    ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.1.7           
     ##   [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##   [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.5        
+    ##   [7] reshape2_1.4.5         systemfonts_1.3.1      vctrs_0.6.5           
     ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
-    ##  [13] XVector_0.50.0         backports_1.5.0        utf8_1.2.6            
+    ##  [13] backports_1.5.0        XVector_0.50.0         utf8_1.2.6            
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         pracma_2.4.6          
     ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.55             
-    ##  [22] beachmat_2.26.0        cachem_1.1.0           jsonlite_2.0.0        
-    ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    parallel_4.5.2        
-    ##  [28] broom_1.0.11           cluster_2.1.8.1        bslib_0.9.0           
+    ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
+    ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    broom_1.0.11          
+    ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.9.0           
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     limma_3.66.0          
     ##  [34] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
     ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
-    ##  [40] base64enc_0.1-3        parameters_0.28.3      Matrix_1.7-4          
-    ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
-    ##  [46] abind_1.4-8            rstudioapi_0.17.1      yaml_2.3.12           
-    ##  [49] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
-    ##  [52] tibble_3.3.1           plyr_1.8.9             ks_1.15.1             
+    ##  [40] base64enc_0.1-3        parameters_0.28.3      splines_4.5.2         
+    ##  [43] Matrix_1.7-4           nnet_7.3-20            tidyselect_1.2.1      
+    ##  [46] rstudioapi_0.17.1      abind_1.4-8            yaml_2.3.12           
+    ##  [49] codetools_0.2-20       curl_7.0.0             plyr_1.8.9            
+    ##  [52] lattice_0.22-7         tibble_3.3.1           ks_1.15.1             
     ##  [55] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
     ##  [58] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
-    ##  [61] desc_1.4.3             survival_3.8-3         mclust_6.1.2          
+    ##  [61] survival_3.8-3         desc_1.4.3             mclust_6.1.2          
     ##  [64] pillar_1.11.1          BiocManager_1.30.27    KernSmooth_2.23-26    
     ##  [67] checkmate_2.3.3        insight_1.4.4          ggplot2_4.0.1         
     ##  [70] scales_1.4.0           glue_1.8.0             Hmisc_5.2-5           
@@ -357,8 +347,8 @@ sessionInfo()
     ##  [82] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
     ##  [85] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
     ##  [88] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
-    ##  [91] rappdirs_0.3.3         textshaping_1.0.4      S4Arrays_1.10.1       
-    ##  [94] gargle_1.6.0           dplyr_1.1.4            gtable_0.3.6          
+    ##  [91] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          
+    ##  [94] S4Arrays_1.10.1        dplyr_1.1.4            gtable_0.3.6          
     ##  [97] ggcorrplot_0.1.4.1     ggsci_4.2.0            sass_0.4.10           
     ## [100] digest_0.6.39          SparseArray_1.10.8     ggrepel_0.9.6         
     ## [103] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
