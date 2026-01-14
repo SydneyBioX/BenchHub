@@ -271,6 +271,27 @@ BenchmarkStudy <- R6Class(
       }
       return(self$mappingFunctions[[mappingName]]$doc)
     },
+    
+    #' @description
+    #' Print the documentation for a mapping function in a human-readable format.
+    #' @param mappingName A character string naming the mapping function.
+    #' @return Prints inputDescription, outputDescription, exampleUsage
+    printMappingFunctionDocumentation = function(mappingName) {
+      
+      if (!(mappingName %in% names(self$mappingFunctions))) {
+        stop(paste0("Mapping function '", mappingName, "' not found."))
+      }
+      
+      doc <- self$getMappingFunctionDocumentation(mappingName)
+      cat("Input:\n  ", doc$inputDescription, "\n", sep = "")
+      cat("Output:\n  ", doc$outputDescription, "\n", sep = "")
+      if (!is.null(doc$exampleUsage)) {
+        cat("Example:\n")
+        cat(doc$exampleUsage, "\n", sep = "")
+      }
+      invisible(doc)
+    },
+    
 
     #' @description
     # Print out names of all mapping functions so user can see

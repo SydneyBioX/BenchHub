@@ -2,7 +2,7 @@
 title: "5 BenchmarkStudy"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{4 BenchmarkStudy}
+  %\VignetteIndexEntry{5 BenchmarkStudy}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 --- 
@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(warning = TRUE)
 library(BenchHub)
 library(R6)
-library(scran)
+library(scuttle) 
 ```
   
 ```{r}
@@ -21,7 +21,7 @@ library(BenchHub)
   
 # Overview
 
-The `BenchHubStudy` object is designed to encapsulate all necessary components in a benchmarking study, including the data and functions associated. It provides a unified structure for benchmark developers to share their work and for method developers to interact with an existing benchmark study.     
+The `BenchmarkStudy` object is designed to encapsulate all necessary components in a benchmarking study, including the data and functions associated. It provides a unified structure for benchmark developers to share their work and for method developers to interact with an existing benchmark study.     
  
 - **Benchmark developers** can store *Trio* objects (containing the input data, metrics, and supporting evidence), any mapping functions and distribute a ready-to-use study object.     
 - **Method developers**  can apply their methods to the provided data and evaluate their outputs using the built-in metrics.  
@@ -62,7 +62,7 @@ study$addTrio(example_trio)
 
 A mapping function is a helper function that process the data into a format that can then be input into the evaluation metrics.    
 
-For example, in simulation studies, the output from a simulator is a cell x gene count matrix. Suppose we want to compare the sparsity of genes between the simulated data and an experimental data, we need a mapping function that calculates the sparsity of genes from the count matrix.  
+For example, in single-cell RNA-sequencing simulation studies, the output from a simulator is often a cell by gene count matrix. When benchmarking, we often map the matrix output to derived statistics (e.g., gene-level sparsity or cell-level library sizes) that can be compared against a reference (e.g., real single-cell RNA-seq matrix). 
 
 We define two examples of mapping functions.  
 
@@ -98,11 +98,10 @@ Example 2: calculate the normalized library size per cell.
 ```{r}
 
 # Define the mapping function 
-norm_lib_size <- function(data) {
-  lib_size <- log1p(rowSums(counts(data)))
-  dge <- edgeR::DGEList(counts = Matrix::t(counts(data)))
-  norm_factors <- edgeR::calcNormFactors(dge, method = "TMM")$samples$norm.factors
-  return(unname(lib_size * norm_factors))
+norm_lib_size <-  function(data) {
+  dge <- edgeR::SE2DGEList(data)
+  dge <- edgeR::normLibSizes(dge)
+  return(edgeR::getNormLibSizes(dge))
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
@@ -120,7 +119,7 @@ study$addMappingFunction(
 ## Uploading to Curated Trio Datasets
 
 
-Once the BenchmarkStudy object includes:
+Once the BenchmarkStudy object includes:   
 - A study name and description    
 - At least three Trio objects   
 - Mapping functions [optional]      
@@ -187,13 +186,12 @@ This study provides two mapping function to process the data into a format that 
 Each mapping function has documentation.  
 
 ```{r}
-
+# list the names of the mapping function
 study$listMappingFunctions()
-doc <- study$getMappingFunctionDocumentation("Fraction.Zero.Genes" )
- 
-doc 
-# Because the example Usage is a multiple line vector, need to use cat to print it nicely.
-cat(doc$exampleUsage, "\n")
+
+# choose one to print the documentation 
+study$printMappingFunctionDocumentation("Fraction.Zero.Genes")
+
 ```
 
 ## Preparing for evaluation
@@ -203,9 +201,9 @@ This benchmark study wants to assess the quality of simulated data.
 Suppose the method developer has generated a simulated data with their method, and they want to compare with the real data to see how realistic the simulated data is.  
 
 ```{r}
-# Suppose this is a simulated data 
+# Use scuttle to simulate a data 
 set.seed(0)
-sim <- mockSCE(ncells =  4744, ngenes = 1000)
+sim <- scuttle::mockSCE(ncells =  4744, ngenes = 1000)
 ```
 
 The method developer can apply the mapping functions to the simulated data to generate the relevant features to evaluate such as the sparsity of the genes and the library size.  
@@ -240,3 +238,20 @@ result
  
 ```
 
+# Summary 
+
+This vignette demonstrated two ways that users can interact with the BenchmarkStudy framework:     
+
+- Benchmark developers: create or update a `BenchmarkStudy` by adding `Trio` objects and optional mapping functions with clear documentation, then upload the study to the Trio Database.
+
+- Method developers: load an existing `BenchmarkStudy` from the Trio Database, use the `Trio` objects to execute benchmarking methods of interest, use the mapping functions to convert method outputs where needed, evaluate those outputs against the study’s supporting evidence using the `evaluate()` function.
+ 
+
+# Session Info
+
+
+```{r}
+
+sessionInfo()
+
+```
