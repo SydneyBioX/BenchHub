@@ -87,6 +87,7 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 <li><p><a href="#method-BenchmarkStudy-addMappingFunction"><code>BenchmarkStudy$addMappingFunction()</code></a></p></li>
 <li><p><a href="#method-BenchmarkStudy-runMapping"><code>BenchmarkStudy$runMapping()</code></a></p></li>
 <li><p><a href="#method-BenchmarkStudy-getMappingFunctionDocumentation"><code>BenchmarkStudy$getMappingFunctionDocumentation()</code></a></p></li>
+<li><p><a href="#method-BenchmarkStudy-printMappingFunctionDocumentation"><code>BenchmarkStudy$printMappingFunctionDocumentation()</code></a></p></li>
 <li><p><a href="#method-BenchmarkStudy-listMappingFunctions"><code>BenchmarkStudy$listMappingFunctions()</code></a></p></li>
 <li><p><a href="#method-BenchmarkStudy-generateVignetteTemplate"><code>BenchmarkStudy$generateVignetteTemplate()</code></a></p></li>
 <li><p><a href="#method-BenchmarkStudy-evaluate"><code>BenchmarkStudy$evaluate()</code></a></p></li>
@@ -225,29 +226,49 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 <p>A list containing the input description, output description, and example usage.</p>
 </div>
 
+</div><p></p><hr><a id="method-BenchmarkStudy-printMappingFunctionDocumentation"></a><div class="section">
+<h3 id="method-printmappingfunctiondocumentation-">Method <code>printMappingFunctionDocumentation()</code><a class="anchor" aria-label="anchor" href="#method-printmappingfunctiondocumentation-"></a></h3>
+<p>Print the documentation for a mapping function in a human-readable format.</p><div class="section">
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">printMappingFunctionDocumentation</span><span class="op">(</span><span class="va">mappingName</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>mappingName</code></dt>
+<dd><p>A character string naming the mapping function.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
+<p>Prints inputDescription, outputDescription, exampleUsage</p>
+</div>
+
 </div><p></p><hr><a id="method-BenchmarkStudy-listMappingFunctions"></a><div class="section">
 <h3 id="method-listmappingfunctions-">Method <code>listMappingFunctions()</code><a class="anchor" aria-label="anchor" href="#method-listmappingfunctions-"></a></h3>
 <p>available options</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">listMappingFunctions</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
+<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>A character vector of mapping function names.</p>
 </div>
 
 </div><p></p><hr><a id="method-BenchmarkStudy-generateVignetteTemplate"></a><div class="section">
 <h3 id="method-generatevignettetemplate-">Method <code>generateVignetteTemplate()</code><a class="anchor" aria-label="anchor" href="#method-generatevignettetemplate-"></a></h3>
 <p>Generate R Markdown vignette template</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">generateVignetteTemplate</span><span class="op">(</span></span>
 <span>  outputPath <span class="op">=</span> <span class="st">"benchmark_study_template.Rmd"</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>outputPath</code></dt>
 <dd><p>A character string specifying the path to save the vignette template.</p></dd>
 
@@ -258,12 +279,12 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 </div><p></p><hr><a id="method-BenchmarkStudy-evaluate"></a><div class="section">
 <h3 id="method-evaluate-">Method <code>evaluate()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-"></a></h3>
 <p>Evaluate a trio with input data</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">trioName</span>, <span class="va">input</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>trioName</code></dt>
 <dd><p>A character string naming the trio to evaluate.</p></dd>
 
@@ -275,14 +296,14 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>The evaluation result from the trio.</p>
 </div>
 
 </div><p></p><hr><a id="method-BenchmarkStudy-writeBenchmarkStudy"></a><div class="section">
 <h3 id="method-writebenchmarkstudy-">Method <code>writeBenchmarkStudy()</code><a class="anchor" aria-label="anchor" href="#method-writebenchmarkstudy-"></a></h3>
 <p>Write the BenchmarkStudy metadata to Curated Trio Datasets sheet.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">writeBenchmarkStudy</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -290,7 +311,7 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 </div><p></p><hr><a id="method-BenchmarkStudy-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Print method to display key information about the BenchmarkStudy object.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -298,12 +319,12 @@ It allows adding new trios, mapping functions, and running mappings on data.</p>
 </div><p></p><hr><a id="method-BenchmarkStudy-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkStudy</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

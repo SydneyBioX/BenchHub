@@ -320,7 +320,7 @@ standards.</p></dd>
 <span>  n_fold <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  n_repeat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  stratify <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">23624482</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -346,8 +346,7 @@ vector the length of the data.</p></dd>
 
 
 <dt><code>seed</code></dt>
-<dd><p>An optional seed for split generation. Defaults to <code>NULL</code>. If <code>NULL</code>,
-the seed is set to the current time.</p></dd>
+<dd><p>An <code>integer</code> of lenth 1. Defaults to 23624482, which is the text "BenchHub" in vanity number form.</p></dd>
 
 
 <dt><code>overwrite</code></dt>

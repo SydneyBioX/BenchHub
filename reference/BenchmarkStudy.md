@@ -44,6 +44,8 @@ A `BenchmarkStudy` object.
 
 - [`BenchmarkStudy$getMappingFunctionDocumentation()`](#method-BenchmarkStudy-getMappingFunctionDocumentation)
 
+- [`BenchmarkStudy$printMappingFunctionDocumentation()`](#method-BenchmarkStudy-printMappingFunctionDocumentation)
+
 - [`BenchmarkStudy$listMappingFunctions()`](#method-BenchmarkStudy-listMappingFunctions)
 
 - [`BenchmarkStudy$generateVignetteTemplate()`](#method-BenchmarkStudy-generateVignetteTemplate)
@@ -188,6 +190,27 @@ Documentation getter for mapping function
 
 A list containing the input description, output description, and example
 usage.
+
+------------------------------------------------------------------------
+
+### Method `printMappingFunctionDocumentation()`
+
+Print the documentation for a mapping function in a human-readable
+format.
+
+#### Usage
+
+    BenchmarkStudy$printMappingFunctionDocumentation(mappingName)
+
+#### Arguments
+
+- `mappingName`:
+
+  A character string naming the mapping function.
+
+#### Returns
+
+Prints inputDescription, outputDescription, exampleUsage
 
 ------------------------------------------------------------------------
 

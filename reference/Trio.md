@@ -287,7 +287,7 @@ Create cross-validation indices.
       n_fold = 5L,
       n_repeat = 1L,
       stratify = TRUE,
-      seed = NULL,
+      seed = 23624482,
       overwrite = FALSE,
       ...
     )
@@ -313,8 +313,8 @@ Create cross-validation indices.
 
 - `seed`:
 
-  An optional seed for split generation. Defaults to `NULL`. If `NULL`,
-  the seed is set to the current time.
+  An `integer` of lenth 1. Defaults to 23624482, which is the text
+  "BenchHub" in vanity number form.
 
 - `overwrite`:
 

@@ -253,7 +253,7 @@ result
     ## # Groups:   datasetID, method, evidence [2]
     ##   datasetID           method            evidence  metric            result
     ##   <chr>               <chr>             <chr>     <chr>              <dbl>
-    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.671
+    ## 1 lubomski_microbiome lasso             Diagnosis Balanced Accuracy  0.699
     ## 2 lubomski_microbiome negative_binomial Sparsity  Difference        -0.323
 
 Please see Vignette 3 for the details on the visualisations and
