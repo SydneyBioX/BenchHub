@@ -33,6 +33,7 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \item \href{#method-BenchmarkStudy-addMappingFunction}{\code{BenchmarkStudy$addMappingFunction()}}
 \item \href{#method-BenchmarkStudy-runMapping}{\code{BenchmarkStudy$runMapping()}}
 \item \href{#method-BenchmarkStudy-getMappingFunctionDocumentation}{\code{BenchmarkStudy$getMappingFunctionDocumentation()}}
+\item \href{#method-BenchmarkStudy-printMappingFunctionDocumentation}{\code{BenchmarkStudy$printMappingFunctionDocumentation()}}
 \item \href{#method-BenchmarkStudy-listMappingFunctions}{\code{BenchmarkStudy$listMappingFunctions()}}
 \item \href{#method-BenchmarkStudy-generateVignetteTemplate}{\code{BenchmarkStudy$generateVignetteTemplate()}}
 \item \href{#method-BenchmarkStudy-evaluate}{\code{BenchmarkStudy$evaluate()}}
@@ -156,6 +157,26 @@ Documentation getter for mapping function
 }
 \subsection{Returns}{
 A list containing the input description, output description, and example usage.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-BenchmarkStudy-printMappingFunctionDocumentation"></a>}}
+\if{latex}{\out{\hypertarget{method-BenchmarkStudy-printMappingFunctionDocumentation}{}}}
+\subsection{Method \code{printMappingFunctionDocumentation()}}{
+Print the documentation for a mapping function in a human-readable format.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkStudy$printMappingFunctionDocumentation(mappingName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mappingName}}{A character string naming the mapping function.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Prints inputDescription, outputDescription, exampleUsage
 }
 }
 \if{html}{\out{<hr>}}

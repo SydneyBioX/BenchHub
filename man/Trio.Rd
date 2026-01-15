@@ -231,7 +231,7 @@ Create cross-validation indices.
   n_fold = 5L,
   n_repeat = 1L,
   stratify = TRUE,
-  seed = NULL,
+  seed = 23624482,
   overwrite = FALSE,
   ...
 )}\if{html}{\out{</div>}}
@@ -249,8 +249,7 @@ vector the length of the data.}
 
 \item{\code{stratify}}{If \code{TRUE}, uses stratified sampling. Defaults to \code{TRUE}.}
 
-\item{\code{seed}}{An optional seed for split generation. Defaults to \code{NULL}. If \code{NULL},
-the seed is set to the current time.}
+\item{\code{seed}}{An \code{integer} of lenth 1. Defaults to 23624482, which is the text "BenchHub" in vanity number form.}
 
 \item{\code{overwrite}}{If \code{TRUE}, overwrites the current split. Defaults to \code{FALSE}.}
 

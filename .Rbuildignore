@@ -8,3 +8,4 @@
 ^\.httr-oauth$
 ^ignore$
 ^\.vscode$
+^\.lintr$

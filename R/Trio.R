@@ -555,9 +555,7 @@ Trio <- R6::R6Class(
     #' @param stratify If `TRUE`, uses stratified sampling. Defaults to `TRUE`.
     #' @param overwrite
     #'   If `TRUE`, overwrites the current split. Defaults to `FALSE`.
-    #' @param seed
-    #'   An optional seed for split generation. Defaults to `NULL`. If `NULL`,
-    #'   the seed is set to the current time.
+    #' @param seed An `integer` of lenth 1. Defaults to 23624482, which is the text "BenchHub" in vanity number form.
     #' @param ... Additional arguments passed to `splitTools::create_folds`.
     #' @importFrom splitTools create_folds
     #' @importFrom cli cli_inform
@@ -567,15 +565,10 @@ Trio <- R6::R6Class(
       n_fold = 5L,
       n_repeat = 1L,
       stratify = TRUE,
-      seed = NULL,
+      seed = 23624482,
       overwrite = FALSE,
       ...
     ) {
-      # choose a seed if not provided
-      if (is.null(seed)) {
-        seed <- as.integer(Sys.time()) * sample(c(1, -1), 1)
-      }
-
       if (!overwrite && !is.null(self$splitIndices)) {
         cli::cli_inform(c(
           "Not overwriting, keeping the existing split indices.",
