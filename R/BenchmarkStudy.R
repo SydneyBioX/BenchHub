@@ -200,7 +200,7 @@ BenchmarkStudy <- R6Class(
       } else {
         self$name <- name
         self$trios <- trios
-        if (!length(trios) == 0 && !all(vapply(trios, inherits, FUN.VALUE = character(1), "Trio"))) {
+        if (!length(trios) == 0 && !all(vapply(trios, inherits, FUN.VALUE = logical(1), "Trio"))) {
           stop("All trios must be Trio objects.")
         }
       }
@@ -330,7 +330,7 @@ Describe the benchmark task and dataset.
     #' @return The evaluation result from the trio.
     evaluate = function(trioName, input) {
       # Find trio by name field
-      trioIndex <- which(vapply(self$trios, function(t) t$name == trioName, FUN.VALUE = character(1)))
+      trioIndex <- which(vapply(self$trios, function(t) t$name == trioName, FUN.VALUE = logical(1)))
       if (length(trioIndex) == 0) {
         stop("Trio '", trioName, "' not found.")
       }
