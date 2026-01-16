@@ -40,20 +40,20 @@ BenchmarkStudy <- R6Class(
         # Find the study by name
         studyRows <- studies$studyName == name
         if (!any(studyRows)) {
-          stop(paste0("Study '", name, "' not found in Curated Trio Datasets."))
+          stop("Study '", name, "' not found in Curated Trio Datasets.")
         }
 
         # If version is specified, filter for that version
         if (!is.null(version)) {
           studyRows <- studyRows & studies$version == version
           if (!any(studyRows)) {
-            stop(paste0(
+            stop(
               "Version ",
               version,
               " of study '",
               name,
               "' not found."
-            ))
+            )
           }
           self$version <- version
         } else {
@@ -200,7 +200,7 @@ BenchmarkStudy <- R6Class(
       } else {
         self$name <- name
         self$trios <- trios
-        if (!length(trios) == 0 && !all(sapply(trios, inherits, "Trio"))) {
+        if (!length(trios) == 0 && !all(vapply(trios, inherits, FUN.VALUE = character(1), "Trio"))) {
           stop("All trios must be Trio objects.")
         }
       }
@@ -255,7 +255,7 @@ BenchmarkStudy <- R6Class(
     #' @return The transformed data after applying the mapping function.
     runMapping = function(mappingName, data) {
       if (!(mappingName %in% names(self$mappingFunctions))) {
-        stop(paste0("Mapping function '", mappingName, "' not found."))
+        stop("Mapping function '", mappingName, "' not found.")
       }
       func <- self$mappingFunctions[[mappingName]]$func
       return(func(data))
@@ -267,7 +267,7 @@ BenchmarkStudy <- R6Class(
     #' @return A list containing the input description, output description, and example usage.
     getMappingFunctionDocumentation = function(mappingName) {
       if (!(mappingName %in% names(self$mappingFunctions))) {
-        stop(paste0("Mapping function '", mappingName, "' not found."))
+        stop("Mapping function '", mappingName, "' not found.")
       }
       return(self$mappingFunctions[[mappingName]]$doc)
     },
@@ -279,7 +279,7 @@ BenchmarkStudy <- R6Class(
     printMappingFunctionDocumentation = function(mappingName) {
       
       if (!(mappingName %in% names(self$mappingFunctions))) {
-        stop(paste0("Mapping function '", mappingName, "' not found."))
+        stop("Mapping function '", mappingName, "' not found.")
       }
       
       doc <- self$getMappingFunctionDocumentation(mappingName)
@@ -330,9 +330,9 @@ Describe the benchmark task and dataset.
     #' @return The evaluation result from the trio.
     evaluate = function(trioName, input) {
       # Find trio by name field
-      trioIndex <- which(sapply(self$trios, function(t) t$name == trioName))
+      trioIndex <- which(vapply(self$trios, function(t) t$name == trioName, FUN.VALUE = character(1)))
       if (length(trioIndex) == 0) {
-        stop(paste0("Trio '", trioName, "' not found."))
+        stop("Trio '", trioName, "' not found.")
       }
       trio <- self$trios[[trioIndex[1]]] # Use first match if multiple exist
       trio$evaluate(input)
@@ -354,14 +354,14 @@ Describe the benchmark task and dataset.
           "Insufficient in the study.",
           "Please add at least three trios before writing the study."
         ))
-      } else if (!all(sapply(self$trios, inherits, "Trio"))) {
+      } else if (!all(vapply(self$trios, inherits, "Trio", FUN.VALUE = logical(1)))) {
         cli::cli_abort(c(
           "All trios must be Trio objects.",
           "Please check the trios in the study."
         ))
-      } else if (any(sapply(self$trios, function(trio) is.null(trio$name)))) {
+      } else if (any(vapply(self$trios, function(trio) is.null(trio$name), FUN.VALUE = logical(1)))) {
         unnamed <- paste0(
-          sapply(self$trios, function(trio) trio$name[is.null(trio$name)]),
+          unlist(lapply(self$trios, function(trio) trio$name[is.null(trio$name)])),
           collapse = ", "
         )
         cli::cli_abort(c(
@@ -608,8 +608,8 @@ Describe the benchmark task and dataset.
         cli::cli_h3("Trios")
         cli::cli_text("{.strong Number of Trios}: {.val {length(self$trios)}}")
         if (length(self$trios) > 0) {
-          trioNames <- sapply(self$trios, function(t) t$name)
-          trioNames <- trioNames[!sapply(trioNames, is.null)]
+          trioNames <- vapply(self$trios, function(t) t$name, FUN.VALUE = character(1))
+          trioNames <- trioNames[!vapply(trioNames, is.null, FUN.VALUE = logical(1))]
           if (length(trioNames) > 0) {
             cli::cli_text(
               "{.strong Trio Names}: {.val {paste(trioNames, collapse = ', ')}}"

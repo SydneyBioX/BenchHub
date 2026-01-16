@@ -112,7 +112,7 @@ Trio <- R6::R6Class(
         }
         self$data <- data
         # If any evidence is missing sample IDs.
-        missingNames <- sapply(
+        missingNames <- vapply(
           lapply(evidence, "[[", "evidence"),
           function(evidenceData) {
             if (isTabular(evidenceData)) {
@@ -120,7 +120,7 @@ Trio <- R6::R6Class(
             } else {
               is.null(names(evidenceData))
             }
-          }
+          }, FUN.VALUE = logical(1)
         )
         if (any(missingNames)) {
           cli::cli_warn(
@@ -399,9 +399,9 @@ Trio <- R6::R6Class(
           lapply(names(input[evidenceAvail]), self$getEvidence),
           names(input[evidenceAvail])
         )
-        isComputed <- sapply(names(input[evidenceAvail]), function(ID) {
+        isComputed <- vapply(names(input[evidenceAvail]), function(ID) {
           is.function(self$evidence[[ID]]$evidence)
-        })
+        }, FUN.VALUE = logical(1))
 
         # get a list of metrics to compute for each gold standard in the data
         metrics <- setNames(

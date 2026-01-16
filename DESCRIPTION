@@ -6,7 +6,7 @@ Authors@R: c(
     person("Sanghyun", "Kim", , "sanghyun.kim@sydney.edu.au", role = "aut"),
     person("Nick", "Robertson", , "nicholas.robertson@sydney.edu.au", role = c("aut")),
     person("Marni", "Torkel", , "marni.torkel@sydney.edu.au", role = "aut"),
-    person("Yue", "Cao", , "marni.torkel@sydney.edu.au", role = "aut"),
+    person("Yue", "Cao", , "yue.cao@sydney.edu.au", role = "aut", comment = c(ORCID = "0000-0002-2356-4031")),
     person("Dario", "Strbenac", , "dario.strbenac@sydney.edu.au", role = "aut"),
     person("Jean", "Yang", , "jean.yang@sydney.edu.au", role = "aut"),
     person("SOMS", "Maintainer", , "maths.bioconductor@sydney.edu.au", role = c("aut", "cre"))
@@ -18,7 +18,7 @@ Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.5.0)
 Imports:
     cli,
     fs,
