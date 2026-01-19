@@ -69,8 +69,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># devtools::load_all()</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sydneybiox.github.io/BenchHub/">BenchHub</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sydneybiox.github.io/BenchHub/">BenchHub</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
@@ -83,6 +82,15 @@ provides built-in visualization tools to help interpret results. With
 BenchHub, researchers can quickly compare new methods, gain insights,
 and actually trust their benchmarking studies. In this vignette, we are
 going to introduce BenchmarkInsights class.</p>
+<p>In this vignette, we use a subset of results generated under the
+SpatialSimBench framework as a case study. SpatialSimBench benchmarks
+spatial transcriptomics simulation methods across ten spatially resolved
+transcriptomics datasets using multiple evaluation metrics. The subset
+considered here includes simulations from scDesign2, scDesign3 (across
+three distributions), SPARsim, splatter, SRTsim, symsim, and ZINB-WaVE,
+evaluated across tasks covering data properties, spatial downstream
+analyses, and scalability. These results are used to illustrate
+downstream analysis and interpretation.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-benchmarkinsights-class">Creating BenchmarkInsights class<a class="anchor" aria-label="anchor" href="#creating-benchmarkinsights-class"></a>
@@ -91,17 +99,9 @@ going to introduce BenchmarkInsights class.</p>
 corresponding constructor. For example, if you have a benchmark result
 formatted in dataframe, you can create a <code>BenchmarkInsights</code>
 object as follows. The dataframe includes fixed name columns:
-<code>datasetID</code>, method, evidence, metric, result. Here I will
-use the benchmark result from SpatialSimBench to create a new
-object.</p>
-<p><code>BenchmarkInsights</code> object can be instantiated using their
-respective constructors. For example, if you have a benchmark result
-stored as a dataframe, you can create a Trio object as follows. The
-dataframe must include the following fixed columns:
 <code>datasetID</code>, <code>method</code>, <code>evidence</code>,
-<code>metric</code>, and <code>result</code>. Here, I demonstrate this
-using benchmark results from SpatialSimBench to initialize a new
-object.</p>
+<code>metric</code>, and <code>result</code>. Here I will use the
+benchmark result from SpatialSimBench to create a new object.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"spatialsimbench_result.csv"</span>, package <span class="op">=</span> <span class="st">"BenchHub"</span><span class="op">)</span></span>
 <span><span class="va">spatialsimbench_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">result_path</span><span class="op">)</span></span>
@@ -174,49 +174,21 @@ expected format.</p>
 <div class="section level3">
 <h3 id="available-plot">Available plot<a class="anchor" aria-label="anchor" href="#available-plot"></a>
 </h3>
-<p><code>getHeatmap(evalReuslt)</code>: Creates a heatmap from the
-evaluation summary by averaging results across datasets.</p>
 <ul>
-<li>evalResult: A dataframe containing the evaluation summary.</li>
-<li>Note: In this heatmap, it averages results across datasets.</li>
-</ul>
-<p><code>getCorplot(evalReuslt, input_type)</code>: Creates a
-correlation plot based on the provided evaluation summary.</p>
-<ul>
-<li>evalResult: A dataframe containing the evaluation summary.</li>
-<li>input_type: either “evidence”, “metric”, or “method”.</li>
-</ul>
-<p><code>getBoxplot(evalReuslt)</code>: Creates a boxplot based on the
-provided evaluation summary.</p>
-<ul>
-<li>evalReuslt: A dataframe containing the evaluation summary.</li>
-<li>input_type: either “evidence”, “metric”, or “method”.</li>
-</ul>
-<p><code>getForestplot(evalReuslt, input_group, input_model)</code>:
+<li><p><code>getHeatmap(evalResult)</code>: Creates a heatmap from the
+evaluation summary by averaging results across datasets.</p></li>
+<li><p><code>getCorplot(evalResult, input_type)</code>: Creates a
+correlation plot based on the provided evaluation summary.</p></li>
+<li><p><code>getBoxplot(evalResult)</code>: Creates a boxplot based on
+the provided evaluation summary.</p></li>
+<li><p><code>getForestplot(evalResult, input_group, input_model)</code>:
 Create a forest plot using linear models based on the comparison between
-groups in the provided evaluation summary.</p>
-<ul>
-<li>evalReuslt: A dataframe containing the evaluation summary.</li>
-<li>input_group: A string specifying the grouping variable (only
-“datasetID”, “method”, or “evidence” allowed).</li>
-<li>input_model: A string specifying the model variable (only
-“datasetID”, “method”, or “evidence” allowed).</li>
-</ul>
-<p><code>getScatterplot(evalReuslt, variables)</code>: a scatter plot
-for the same evidence, with two method metrics.</p>
-<ul>
-<li>evalReuslt: A dataframe containing the evaluation summary, only
-include two different metrics, all evidence should be same</li>
-<li>variables: A character vector of length two specifying the metric
-names to be used for the x and y axes.</li>
-</ul>
-<p><code>getLineplot(evalReuslt, order)</code>: Creates a line plot for
-the given x and y variables, with an optional grouping and fixed x
-order.</p>
-<ul>
-<li>evalReuslt: A dataframe containing the evaluation summary.</li>
-<li>order: An optional vector specifying the order of x-axis
-values.</li>
+groups in the provided evaluation summary.</p></li>
+<li><p><code>getScatterplot(evalResult, variables)</code>: a scatter
+plot for the same evidence, with two method metrics.</p></li>
+<li><p><code>getLineplot(evalResult, order)</code>: Creates a line plot
+for the given x and y variables, with an optional grouping and fixed x
+order.</p></li>
 </ul>
 </div>
 <div class="section level3">
@@ -231,7 +203,18 @@ overall trends, making it easier to compare methods and performance
 differences.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="960"></p>
+<p>This funkyheatmap summarises the comparative performance of spatial
+transcriptomics simulation methods across a diverse set of evaluation
+tasks. Methods such as SRTsim and scDesign3 (NB/Poisson variants) show
+relatively stable performance across multiple criteria, whereas
+scDesign3_gau and Symsim exhibit consistently lower rankings across many
+tasks. ZINB-WaVE performs less well on several spatial and downstream
+evaluations, while most other methods demonstrate moderate performance
+in at least some categories. Importantly, this case study highlights
+that multiple viable choices exist, and method selection should be
+guided by the intended downstream application and evaluation
+priorities.</p>
 </div>
 <div class="section level4">
 <h4 id="case-study-what-is-the-correlation-between-evidencemetricmethod">Case Study: What is the correlation between
@@ -244,6 +227,16 @@ dependencies among evaluation components.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="700"></p>
+<p>Splatter and SRTsim show moderate similarity, which is consistent
+with their shared generative framework: both methods estimate global
+distributional properties from real data and simulate counts using
+related hierarchical models. The scDesign3 negative binomial and Poisson
+variants exhibit strong correlations with each other, indicating that
+these distributions are better able to capture key data features,
+whereas the Gaussian variant shows much weaker correspondence. In
+contrast, symsim displays relatively low correlations with many other
+methods, suggesting that it captures different characteristics of the
+underlying datasets and follows a distinct simulation strategy.</p>
 <p>To further investigate the relationship between two specific metrics,
 we use a scatter plot. This visualization helps assess how well two
 metrics align or diverge across different methods, providing insights
@@ -251,6 +244,11 @@ into trade-offs and performance consistency.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="700"></p>
+<p>scDesign3 variants and SRTsim are positioned toward the top right of
+the plot, indicating strong and well-balanced performance in terms of
+both precision and recall. In contrast, splatter and symsim exhibit
+relatively lower values for both metrics, suggesting weaker performance
+for this precision–recall combination.</p>
 </div>
 <div class="section level4">
 <h4 id="case-study-what-is-the-time-and-memory-trend">Case Study: What is the time and memory trend?<a class="anchor" aria-label="anchor" href="#case-study-what-is-the-time-and-memory-trend"></a>
@@ -262,6 +260,13 @@ complexity increases, revealing potential efficiency trade-offs.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"memory"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
+<p>Most methods exhibit only modest increases in memory usage as dataset
+size grows and remain relatively efficient overall. In contrast,
+zinbwave shows the highest and steepest increase in memory consumption,
+indicating substantially greater memory requirements for large datasets.
+Methods such as splatter, SRTsim, and SPARsim maintain consistently low
+memory usage across dataset sizes, suggesting strong scalability and
+suitability for large-scale applications.</p>
 </div>
 <div class="section level4">
 <h4 id="case-study-which-metric-is-most-effective-on-the-method">Case Study: Which metric is most effective on the method?<a class="anchor" aria-label="anchor" href="#case-study-which-metric-is-most-effective-on-the-method"></a>
@@ -274,6 +279,16 @@ factors.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"metric"</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
+<p>This forest plot summarises method-specific effects across different
+evaluation metrics using regression coefficients. Metrics such as
+KDEstat exhibit large coefficient magnitudes across methods, indicating
+strong discriminative power between simulation approaches. In contrast,
+metrics including cosine similarity, Mantel statistic, precision, and
+recall show smaller coefficient differences, suggesting more
+conservative behaviour across methods. Method families such as scDesign3
+variants tend to behave similarly across many metrics, although
+differences emerge for specific metrics, highlighting that
+distributional assumptions continue to influence performance.</p>
 </div>
 <div class="section level4">
 <h4 id="case-study-how-does-method-variability-differ-across-datasets-for-a-specific-metric">Case Study: How does method variability differ across datasets for a
@@ -286,6 +301,16 @@ instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
+<p>This boxplot compares the distribution of KDEstat values across
+simulation methods under the selected evidence setting. scDesign2 and
+SRTsim show relatively small interquartile ranges, indicating more
+stable behaviour across datasets. In contrast, splatter and symsim
+exhibit larger variability, suggesting greater sensitivity to
+dataset-specific characteristics. ZINB-WaVE tends to produce lower and
+more concentrated values, reflecting more consistent but comparatively
+conservative behaviour under this metric. Rather than identifying a
+single “good” value, the plot highlights differences in variability and
+robustness across methods.</p>
 </div>
 </div>
 <div class="section level3">
@@ -293,8 +318,8 @@ instability when applied to different datasets.</p>
 </h3>
 <table class="table">
 <colgroup>
-<col width="35%">
-<col width="64%">
+<col width="36%">
+<col width="63%">
 </colgroup>
 <thead><tr class="header">
 <th align="center">Question</th>
@@ -303,27 +328,27 @@ instability when applied to different datasets.</p>
 <tbody>
 <tr class="odd">
 <td align="center">Summary Overview</td>
-<td align="left"><code>getHeatmap(evalReuslt)</code></td>
+<td align="left"><code>getHeatmap(evalResult)</code></td>
 </tr>
 <tr class="even">
 <td align="center">Correlation Analysis</td>
-<td align="left"><code>getCorplot(evalReuslt, input_type)</code></td>
+<td align="left"><code>getCorplot(evalResult, input_type)</code></td>
 </tr>
 <tr class="odd">
 <td align="center">Scalability Trend (Time/ Memory)</td>
-<td align="left"><code>getLineplot(evalReuslt, order)</code></td>
+<td align="left"><code>getLineplot(evalResult, order)</code></td>
 </tr>
 <tr class="even">
 <td align="center">Metric-Model Impact (Modeling)</td>
-<td align="left"><code>getForestplot(evalReuslt, input_group, input_model)</code></td>
+<td align="left"><code>getForestplot(evalResult, input_group, input_model)</code></td>
 </tr>
 <tr class="odd">
 <td align="center">Method Variability Across Datasets</td>
-<td align="left"><code>getBoxplot(evalReuslt)</code></td>
+<td align="left"><code>getBoxplot(evalResult)</code></td>
 </tr>
 <tr class="even">
 <td align="center">Metric Relationship</td>
-<td align="left"><code>getScatterplot(evalReuslt, variables)</code></td>
+<td align="left"><code>getScatterplot(evalResult, variables)</code></td>
 </tr>
 </tbody>
 </table>

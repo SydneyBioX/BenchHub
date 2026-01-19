@@ -1,7 +1,6 @@
 # 3 Introduction of BenchmarkInsights class
 
 ``` r
-# devtools::load_all()
 library(BenchHub)
 library(readr)
 library(dplyr)
@@ -17,21 +16,24 @@ BenchHub, researchers can quickly compare new methods, gain insights,
 and actually trust their benchmarking studies. In this vignette, we are
 going to introduce BenchmarkInsights class.
 
+In this vignette, we use a subset of results generated under the
+SpatialSimBench framework as a case study. SpatialSimBench benchmarks
+spatial transcriptomics simulation methods across ten spatially resolved
+transcriptomics datasets using multiple evaluation metrics. The subset
+considered here includes simulations from scDesign2, scDesign3 (across
+three distributions), SPARsim, splatter, SRTsim, symsim, and ZINB-WaVE,
+evaluated across tasks covering data properties, spatial downstream
+analyses, and scalability. These results are used to illustrate
+downstream analysis and interpretation.
+
 ## Creating BenchmarkInsights class
 
 `BenchmarkInsights` objects can be created using the corresponding
 constructor. For example, if you have a benchmark result formatted in
 dataframe, you can create a `BenchmarkInsights` object as follows. The
-dataframe includes fixed name columns: `datasetID`, method, evidence,
-metric, result. Here I will use the benchmark result from
-SpatialSimBench to create a new object.
-
-`BenchmarkInsights` object can be instantiated using their respective
-constructors. For example, if you have a benchmark result stored as a
-dataframe, you can create a Trio object as follows. The dataframe must
-include the following fixed columns: `datasetID`, `method`, `evidence`,
-`metric`, and `result`. Here, I demonstrate this using benchmark results
-from SpatialSimBench to initialize a new object.
+dataframe includes fixed name columns: `datasetID`, `method`,
+`evidence`, `metric`, and `result`. Here I will use the benchmark result
+from SpatialSimBench to create a new object.
 
 ``` r
 result_path <- system.file("extdata", "spatialsimbench_result.csv", package = "BenchHub")
@@ -115,47 +117,24 @@ bmi$addMetadata(metadata_srtsim)
 
 ### Available plot
 
-`getHeatmap(evalReuslt)`: Creates a heatmap from the evaluation summary
-by averaging results across datasets.
+- `getHeatmap(evalResult)`: Creates a heatmap from the evaluation
+  summary by averaging results across datasets.
 
-- evalResult: A dataframe containing the evaluation summary.
-- Note: In this heatmap, it averages results across datasets.
+- `getCorplot(evalResult, input_type)`: Creates a correlation plot based
+  on the provided evaluation summary.
 
-`getCorplot(evalReuslt, input_type)`: Creates a correlation plot based
-on the provided evaluation summary.
+- `getBoxplot(evalResult)`: Creates a boxplot based on the provided
+  evaluation summary.
 
-- evalResult: A dataframe containing the evaluation summary.
-- input_type: either “evidence”, “metric”, or “method”.
+- `getForestplot(evalResult, input_group, input_model)`: Create a forest
+  plot using linear models based on the comparison between groups in the
+  provided evaluation summary.
 
-`getBoxplot(evalReuslt)`: Creates a boxplot based on the provided
-evaluation summary.
+- `getScatterplot(evalResult, variables)`: a scatter plot for the same
+  evidence, with two method metrics.
 
-- evalReuslt: A dataframe containing the evaluation summary.
-- input_type: either “evidence”, “metric”, or “method”.
-
-`getForestplot(evalReuslt, input_group, input_model)`: Create a forest
-plot using linear models based on the comparison between groups in the
-provided evaluation summary.
-
-- evalReuslt: A dataframe containing the evaluation summary.
-- input_group: A string specifying the grouping variable (only
-  “datasetID”, “method”, or “evidence” allowed).
-- input_model: A string specifying the model variable (only “datasetID”,
-  “method”, or “evidence” allowed).
-
-`getScatterplot(evalReuslt, variables)`: a scatter plot for the same
-evidence, with two method metrics.
-
-- evalReuslt: A dataframe containing the evaluation summary, only
-  include two different metrics, all evidence should be same
-- variables: A character vector of length two specifying the metric
-  names to be used for the x and y axes.
-
-`getLineplot(evalReuslt, order)`: Creates a line plot for the given x
-and y variables, with an optional grouping and fixed x order.
-
-- evalReuslt: A dataframe containing the evaluation summary.
-- order: An optional vector specifying the order of x-axis values.
+- `getLineplot(evalResult, order)`: Creates a line plot for the given x
+  and y variables, with an optional grouping and fixed x order.
 
 ### Interpretation benchmark result
 
@@ -172,6 +151,17 @@ bmi$getHeatmap(bmi$evalSummary)
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png)
 
+This funkyheatmap summarises the comparative performance of spatial
+transcriptomics simulation methods across a diverse set of evaluation
+tasks. Methods such as SRTsim and scDesign3 (NB/Poisson variants) show
+relatively stable performance across multiple criteria, whereas
+scDesign3_gau and Symsim exhibit consistently lower rankings across many
+tasks. ZINB-WaVE performs less well on several spatial and downstream
+evaluations, while most other methods demonstrate moderate performance
+in at least some categories. Importantly, this case study highlights
+that multiple viable choices exist, and method selection should be
+guided by the intended downstream application and evaluation priorities.
+
 #### Case Study: What is the correlation between evidence/metric/method?
 
 To understand the relationships between different evaluation factors, we
@@ -185,6 +175,17 @@ bmi$getCorplot(bmi$evalSummary, "method")
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png)
 
+Splatter and SRTsim show moderate similarity, which is consistent with
+their shared generative framework: both methods estimate global
+distributional properties from real data and simulate counts using
+related hierarchical models. The scDesign3 negative binomial and Poisson
+variants exhibit strong correlations with each other, indicating that
+these distributions are better able to capture key data features,
+whereas the Gaussian variant shows much weaker correspondence. In
+contrast, symsim displays relatively low correlations with many other
+methods, suggesting that it captures different characteristics of the
+underlying datasets and follows a distinct simulation strategy.
+
 To further investigate the relationship between two specific metrics, we
 use a scatter plot. This visualization helps assess how well two metrics
 align or diverge across different methods, providing insights into
@@ -195,6 +196,12 @@ bmi$getScatterplot(bmi$evalSummary, c("recall", "precision"))
 ```
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png)
+
+scDesign3 variants and SRTsim are positioned toward the top right of the
+plot, indicating strong and well-balanced performance in terms of both
+precision and recall. In contrast, splatter and symsim exhibit
+relatively lower values for both metrics, suggesting weaker performance
+for this precision–recall combination.
 
 #### Case Study: What is the time and memory trend?
 
@@ -208,6 +215,14 @@ bmi$getLineplot(bmi$evalSummary, metricVariable = "memory")
 ```
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png)
+
+Most methods exhibit only modest increases in memory usage as dataset
+size grows and remain relatively efficient overall. In contrast,
+zinbwave shows the highest and steepest increase in memory consumption,
+indicating substantially greater memory requirements for large datasets.
+Methods such as splatter, SRTsim, and SPARsim maintain consistently low
+memory usage across dataset sizes, suggesting strong scalability and
+suitability for large-scale applications.
 
 #### Case Study: Which metric is most effective on the method?
 
@@ -223,6 +238,17 @@ bmi$getForestplot(bmi$evalSummary, "metric", "method")
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png)
 
+This forest plot summarises method-specific effects across different
+evaluation metrics using regression coefficients. Metrics such as
+KDEstat exhibit large coefficient magnitudes across methods, indicating
+strong discriminative power between simulation approaches. In contrast,
+metrics including cosine similarity, Mantel statistic, precision, and
+recall show smaller coefficient differences, suggesting more
+conservative behaviour across methods. Method families such as scDesign3
+variants tend to behave similarly across many metrics, although
+differences emerge for specific metrics, highlighting that
+distributional assumptions continue to influence performance.
+
 #### Case Study: How does method variability differ across datasets for a specific metric?
 
 To examine the consistency of each method across different datasets for
@@ -236,16 +262,27 @@ bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", evidenceVariable = "
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png)
 
+This boxplot compares the distribution of KDEstat values across
+simulation methods under the selected evidence setting. scDesign2 and
+SRTsim show relatively small interquartile ranges, indicating more
+stable behaviour across datasets. In contrast, splatter and symsim
+exhibit larger variability, suggesting greater sensitivity to
+dataset-specific characteristics. ZINB-WaVE tends to produce lower and
+more concentrated values, reflecting more consistent but comparatively
+conservative behaviour under this metric. Rather than identifying a
+single “good” value, the plot highlights differences in variability and
+robustness across methods.
+
 ### Cheatsheet
 
 |              Question              | Code                                                  |
 |:----------------------------------:|:------------------------------------------------------|
-|          Summary Overview          | `getHeatmap(evalReuslt)`                              |
-|        Correlation Analysis        | `getCorplot(evalReuslt, input_type)`                  |
-|  Scalability Trend (Time/ Memory)  | `getLineplot(evalReuslt, order)`                      |
-|   Metric-Model Impact (Modeling)   | `getForestplot(evalReuslt, input_group, input_model)` |
-| Method Variability Across Datasets | `getBoxplot(evalReuslt)`                              |
-|        Metric Relationship         | `getScatterplot(evalReuslt, variables)`               |
+|          Summary Overview          | `getHeatmap(evalResult)`                              |
+|        Correlation Analysis        | `getCorplot(evalResult, input_type)`                  |
+|  Scalability Trend (Time/ Memory)  | `getLineplot(evalResult, order)`                      |
+|   Metric-Model Impact (Modeling)   | `getForestplot(evalResult, input_group, input_model)` |
+| Method Variability Across Datasets | `getBoxplot(evalResult)`                              |
+|        Metric Relationship         | `getScatterplot(evalResult, variables)`               |
 
 ## Session Info
 
