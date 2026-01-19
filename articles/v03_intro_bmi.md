@@ -280,7 +280,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##   [1] Rdpack_2.6.4           gridExtra_2.3          httr2_1.2.2           
     ##   [4] rlang_1.1.7            magrittr_2.0.4         compiler_4.5.2        
-    ##   [7] survAUC_1.4-0          systemfonts_1.3.1      vctrs_0.6.5           
+    ##   [7] survAUC_1.4-0          systemfonts_1.3.1      vctrs_0.7.0           
     ##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          
     ##  [13] fastmap_1.2.0          backports_1.5.0        labeling_0.4.3        
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         tzdb_0.5.0            
@@ -293,7 +293,7 @@ sessionInfo()
     ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
     ##  [40] base64enc_0.1-3        parameters_0.28.3      Matrix_1.7-4          
     ##  [43] splines_4.5.2          nnet_7.3-20            tidyselect_1.2.1      
-    ##  [46] rstudioapi_0.17.1      yaml_2.3.12            curl_7.0.0            
+    ##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.0.0            
     ##  [49] lattice_0.22-7         tibble_3.3.1           plyr_1.8.9            
     ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
     ##  [55] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
@@ -307,7 +307,7 @@ sessionInfo()
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
     ##  [82] patchwork_1.3.2        performance_0.15.3     ggforce_0.5.0         
     ##  [85] htmlTable_2.4.3        googledrive_2.1.2      splitTools_1.0.1      
-    ##  [88] Formula_1.2-5          cli_3.6.5              rappdirs_0.3.3        
+    ##  [88] Formula_1.2-5          cli_3.6.5              rappdirs_0.3.4        
     ##  [91] textshaping_1.0.4      gargle_1.6.0           funkyheatmap_0.5.2    
     ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
     ##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         

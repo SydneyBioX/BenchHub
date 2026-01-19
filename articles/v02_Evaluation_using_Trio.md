@@ -294,7 +294,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
     ##  [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##  [7] systemfonts_1.3.1      vctrs_0.6.5            reshape2_1.4.5        
+    ##  [7] systemfonts_1.3.1      vctrs_0.7.0            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
     ## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        
     ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            
@@ -305,7 +305,7 @@ sessionInfo()
     ## [31] Rcpp_1.1.1             bookdown_0.46          iterators_1.0.14      
     ## [34] knitr_1.51             base64enc_0.1-3        parameters_0.28.3     
     ## [37] splines_4.5.2          nnet_7.3-20            timechange_0.3.0      
-    ## [40] tidyselect_1.2.1       rstudioapi_0.17.1      yaml_2.3.12           
+    ## [40] tidyselect_1.2.1       rstudioapi_0.18.0      yaml_2.3.12           
     ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
     ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
@@ -318,7 +318,7 @@ sessionInfo()
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
     ## [73] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
-    ## [79] rappdirs_0.3.3         textshaping_1.0.4      gargle_1.6.0          
+    ## [79] rappdirs_0.3.4         textshaping_1.0.4      gargle_1.6.0          
     ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
     ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
     ## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
