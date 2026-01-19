@@ -145,9 +145,9 @@ BenchmarkInsights <- R6::R6Class(
       )
 
       evalResult_aggreate <- evalResult %>%
-        group_by(evidence, method) %>%
-        summarise(average_result = mean(result, na.rm = TRUE)) %>%
-        ungroup()
+        dplyr::group_by(evidence, method) %>%
+        dplyr::summarise(average_result = mean(result, na.rm = TRUE)) %>%
+        dplyr::ungroup()
 
       if (!is.null(order)) {
         evalResult_aggreate$evidence <- factor(
@@ -157,9 +157,9 @@ BenchmarkInsights <- R6::R6Class(
       }
 
       evalResult_aggreate <- evalResult_aggreate %>%
-        mutate(evidence_numeric = as.numeric(evidence)) %>%
-        arrange(evidence_numeric) %>%
-        mutate(
+        dplyr::mutate(evidence_numeric = as.numeric(evidence)) %>%
+        dplyr::arrange(evidence_numeric) %>%
+        dplyr::mutate(
           evidence = factor(
             evidence,
             levels = unique(evidence[order(evidence_numeric)])
@@ -170,7 +170,7 @@ BenchmarkInsights <- R6::R6Class(
         evalResult_aggreate,
         aes(x = evidence, y = average_result, group = method, color = method)
       ) +
-        labs(x = "gold standard", y = "average_value", fill = "method") +
+        labs(x = "dataset size", y = metricVariable, fill = "method") +
         geom_point() +
         geom_line() +
         th
@@ -201,9 +201,9 @@ BenchmarkInsights <- R6::R6Class(
       )
 
       evalResult_aggreate <- evalResult %>%
-        group_by(method, metric) %>%
-        summarise(average_result = mean(result, na.rm = TRUE)) %>%
-        ungroup()
+        dplyr::group_by(method, metric) %>%
+        dplyr::summarise(average_result = mean(result, na.rm = TRUE)) %>%
+        dplyr::ungroup()
 
       metric_types <- unique(evalResult_aggreate$metric)
 
@@ -252,6 +252,10 @@ BenchmarkInsights <- R6::R6Class(
 
       p1 <- ggplot(subsetData, aes(x = method, y = result, fill = method)) +
         geom_boxplot() +
+        labs(
+          x = "Method",
+          y = metricVariable
+        ) +
         facet_wrap(~evidence, scale = "free") +
         theme(
           text = element_text(size = 12),
@@ -383,6 +387,9 @@ BenchmarkInsights <- R6::R6Class(
         to_plot,
         vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)
       ) +
+        labs(
+          x = "Regression coefficient"
+        ) +
         theme_minimal() +
         theme(
           panel.grid.major = element_blank(),
