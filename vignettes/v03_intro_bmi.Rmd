@@ -3,7 +3,7 @@
 title: "3 Introduction of BenchmarkInsights class"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{3. Introduction of BenchmarkInsights class}
+  %\VignetteIndexEntry{3 Introduction of BenchmarkInsights class}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
