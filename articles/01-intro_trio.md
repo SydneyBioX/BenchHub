@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpnD6u3V"
+    ## Cache Path: "/tmp/RtmpXIWDT3"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpnD6u3V"
+    ## Cache Path: "/tmp/RtmpXIWDT3"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -259,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55690bcab608>
-    ## <environment: 0x55690a0333b0>
+    ## <bytecode: 0x5588bf27e520>
+    ## <environment: 0x5588bd5fdbb8>
 
 ## Other Features
 

@@ -70,10 +70,12 @@
 <div class="section level2">
 <h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
-<p>BenchHub is a data storage framework to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.</p>
-<p>The two components currently in BenchHub are:<br>
+<p>BenchHub is a data storage framework implemented in R language to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.</p>
+<p>The three components currently in BenchHub are:<br>
 - <strong>Trio</strong>: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community.<br>
-- <strong>BenchmarkInsight</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results.</p>
+- <strong>BenchmarkInsight</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results. - <strong>BenchmarkInsight</strong>: A data structure for storing collections of Trio objects and helper functions for specific benchmarking tasks.</p>
+<p>BenchHub aims to make benchmarking easier for multiple groups of users in the community: - <strong>Benchmark Developers</strong>: BenchHub offers a central storage for contributing benchmarking studies with the community - <strong>Method Contributors</strong>: BenchHub allows evaluation of new tools against established benchmarks in the database without starting from scratch<br>
+- <strong>Benchmark Consumers</strong>: BenchHub allows exploring and interpretation of results to make informed method selections</p>
 <div class="section level3">
 <h3 id="trio">Trio<a class="anchor" aria-label="anchor" href="#trio"></a>
 </h3>
@@ -90,6 +92,11 @@
 <p>Once results are evaluated using Trio, the output can be directly passed into the benchmarkInsight object. BenchmarkInsight currently supports the following plot types.</p>
 <p align="center">
 <img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkinsight1.png" width="55%"><img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkinsight2.png" width="35%"></p>
+</div>
+<div class="section level3">
+<h3 id="benchmarkstudy">BenchmarkStudy<a class="anchor" aria-label="anchor" href="#benchmarkstudy"></a>
+</h3>
+<p>Benchmarking often involve large amount of datasets and processing scripts. BenchmarkStudy serves as the organisation framework for such objects. It stores references to collections of Trio objects and helper functions that standardise method outputs into a common form to evaluation.</p>
 </div>
 </div>
 <div class="section level2">
@@ -119,6 +126,16 @@ Please refer to the <a href="https://sydneybiox.github.io/BenchHub/">website</a>
 </tr>
 <tr class="odd">
 <td>3 <a href="https://sydneybiox.github.io/BenchHub/articles/v03_intro_bmi.html">Introduction of benchmarkInsight Class</a>
+</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>4 <a href="https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.html">Uploading a Trio to Curated Trio Datasets</a>
+</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>5 <a href="https://sydneybiox.github.io/BenchHub/articles/v05_benchmarkstudy.html">Working with BenchmarkStudy</a>
 </td>
 <td></td>
 </tr>
