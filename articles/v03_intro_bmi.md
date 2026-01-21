@@ -322,7 +322,7 @@ sessionInfo()
     ##  [13] fastmap_1.2.0          backports_1.5.0        labeling_0.4.3        
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         tzdb_0.5.0            
     ##  [19] ragg_1.5.0             purrr_1.2.1            bit_4.6.0             
-    ##  [22] xfun_0.55              cachem_1.1.0           jsonlite_2.0.0        
+    ##  [22] xfun_0.56              cachem_1.1.0           jsonlite_2.0.0        
     ##  [25] tweenr_2.0.3           broom_1.0.11           parallel_4.5.2        
     ##  [28] cluster_2.1.8.1        R6_2.6.1               bslib_0.9.0           
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          

@@ -298,7 +298,7 @@ sessionInfo()
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
     ## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        
     ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            
-    ## [19] xfun_0.55              cachem_1.1.0           jsonlite_2.0.0        
+    ## [19] xfun_0.56              cachem_1.1.0           jsonlite_2.0.0        
     ## [22] broom_1.0.11           cluster_2.1.8.1        R6_2.6.1              
     ## [25] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      

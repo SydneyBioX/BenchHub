@@ -323,7 +323,7 @@ sessionInfo()
     ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
     ##  [13] backports_1.5.0        XVector_0.50.0         utf8_1.2.6            
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         pracma_2.4.6          
-    ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.55             
+    ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.56             
     ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
     ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    broom_1.0.11          
     ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.9.0           
