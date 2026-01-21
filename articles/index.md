@@ -3,7 +3,7 @@
 ### All vignettes
 
 - [1 Introduction to the Trio
-  Class](https://sydneybiox.github.io/BenchHub/articles/v01_intro_trio.md):
+  Class](https://sydneybiox.github.io/BenchHub/articles/01-intro_trio.md):
 - [2 Evaluation using
   Trio](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.md):
 - [3 Introduction of BenchmarkInsights
