@@ -5,10 +5,9 @@ vignette: >
   %\VignetteIndexEntry{2 Evaluation using Trio}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
---- 
+---
 
 ```{r setup, message=FALSE}
-# devtools::load_all()
 library(BenchHub)
 library(tidyverse)
 library(glmnet)
@@ -31,24 +30,32 @@ length(lubomPD)
 
 The task we'll be evaluating uses a binary classification task where each sample is either a Parkinson's Disease (PD) patient or Healthy Control (HC). Once the data are ready to be inputted to `Trio`, we can load `Trio`.
 
-
 # Initialise a Trio object
 
 To initialise a Trio object, we use a `new()` method.
 
 ```{r}
-trio <- Trio$new(data = x, evidence = list(Diagnosis = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
-                 metrics = list(`Balanced Accuracy` = balAccMetric),
-                 datasetID = "lubomski_microbiome")
+trio <- Trio$new(data = x, 
+                 evidence = list(
+                   Diagnosis = list(
+                     evidence = lubomPD, 
+                     metrics = "Balanced Accuracy"
+                     )
+                   ),
+                 metrics = list(
+                   `Balanced Accuracy` = balAccMetric
+                   ),
+                 datasetID = "lubomski_microbiome"
+                 )
 ```
 
 The supporting evidence is the disease diagnosis, which is the `lubomPD` vector that we extracted from the `Lubomski` data above and the relevant metric to evaluate it is Balanced Accuracy. Next, we will use this microbiome data to illustrate two examples, 1) evaluation with cross validation, 2) evaluation without cross validation.
 
 # Cross validation - using the trio split function
 
-In this example, we show a typical classification scenario to classify the patient status, where we need to split the data into training and testing set.  
+In this example, we show a typical classification scenario to classify the patient status, where we need to split the data into training and testing set.
 
-Step 1: Obtain relevant data for the model. To build a model, the following code will extract the data matrix and patient status outcome from `Trio` object.   
+Step 1: Obtain relevant data for the model. To build a model, the following code will extract the data matrix and patient status outcome from `Trio` object.
 
 ```{r}
 # get the gold standard from the Trio object
@@ -56,7 +63,7 @@ x <- trio$data
 y <- trio$getEvidence("Diagnosis")
 ```
 
-Step 2: For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `evidence`) into the number of folds and repeats users want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`cv_ind`) for each sample, through `splitIndices`. This gives a simple list where each element represents a combination of folds and repeats for each sample.  
+Step 2: For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `evidence`) into the number of folds and repeats users want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`CVindices`) for each sample, through `splitIndices`. This gives a simple list where each element represents a combination of folds and repeats for each sample.
 
 ```{r}
 # get train and test indices
@@ -64,44 +71,69 @@ trio$split(y = y, n_fold = 2, n_repeat = 5)
 CVindices <- trio$splitIndices
 ```
 
-Step 5: Build the classification model and evaluate. We can now use a for loop to cross-validate evaluation results.    
+Step 5: Build the classification model and evaluate. We can now use a for loop to cross-validate evaluation results.
 
-Using the `cv_ind`, user can subset to training and test data. As an example, we build a LASSO regression model as a classification model on the training data, then make predictions on the test data.   
+Using the `CVindices`, user can subset to training and test data. As an example, we build a LASSO regression model as a classification model on the training data, then make predictions on the test data.
 
-Once we get the prediction, we pass the `pred` vector to `Trio` and ref to the name of the evidence (`patient_status` = `pred`). This tells the `evaluate()` function to compare the `pred` vector with the supporting evidence `patient_status` stored in the `Trio` object. It will then compute the balanced accuracy, because this is the metric we have specified. 
+Once predictions are obtained for the test set, we pass them to Trio using the same evidence name as stored in the Trio object (i.e., `Diagnosis`). Specifically, we call `trio$evaluate(list(lasso = list(Diagnosis = pred)))`, which instructs `evaluate()` to compare `pred` against the reference labels `Diagnosis` stored in `trio`, and then compute the specified metric (Balanced Accuracy).
 
 ```{r}
 set.seed(1234)
 
-# loop through the 2 folds x 5 repeats = 10 runs
-result <- do.call(rbind, mapply(function(trainIDs, crossValID)
-{
-  x_train <- x[trainIDs, ]
-  x_test <- x[-trainIDs, ]
-  y_train <- y[trainIDs]
-  y_test <- y[-trainIDs]
+# Loop through 2 folds x 5 repeats = 10 runs
+result <- do.call(
+  rbind,
+  mapply(
+    function(trainIDs, crossValID) {
+      x_train <- x[trainIDs, ]
+      x_test  <- x[-trainIDs, ]
+      y_train <- y[trainIDs]
+      y_test  <- y[-trainIDs]
 
-  #  find the best lambda for LASSO regression
-  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
-  lam <- cv_lasso$lambda.1se
+      # Find the best lambda for LASSO regression
+      cv_lasso <- cv.glmnet(
+        x = as.matrix(x_train),
+        y = y_train,
+        alpha = 1,
+        family = "binomial"
+      )
+      lam <- cv_lasso$lambda.1se
 
-  # fit a model with the best lambda on training data
-  fit <- glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
+      # Fit a model with the best lambda on training data
+      fit <- glmnet(
+        x = as.matrix(x_train),
+        y = y_train,
+        alpha = 1,
+        lambda = lam,
+        family = "binomial"
+      )
 
-  # evaluate the model on test data
-  pred <- predict(fit, x_test, s = "lambda.min", type = "class")
-  pred <- setNames(as.factor(as.vector(pred)), rownames(pred))
+      # Evaluate the model on test data
+      pred <- predict(
+        fit,
+        newx = as.matrix(x_test),
+        s = lam,
+        type = "class"
+      )
+      pred <- setNames(as.factor(as.vector(pred)), rownames(x_test))
 
-  # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
+      # Get the chosen evaluation metric from the Trio
+      eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
 
-  # keep track of the repeat and fold information
-  eval_res$track <- crossValID
-  eval_res
-}, CVindices, names(CVindices), SIMPLIFY = FALSE))
+      # Keep track of the repeat and fold information
+      eval_res$track <- crossValID
+      eval_res
+    },
+    CVindices,
+    names(CVindices),
+    SIMPLIFY = FALSE
+  )
+)
+
 ```
 
-After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats. 
+After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats.
+
 ```{r}
 result$fold <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 1))
 result$repeats <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 2))
@@ -114,16 +146,13 @@ result <- result %>%
 boxplot(result$result)
 ```
 
-# Without Cross-validation 
+# Without Cross-validation
 
 In this example, we show a simpler case without cross validation, where we have a prediction that we want to compare with the ground truth directly. For example, we may have simulated a single-cell count matrix and want to compare with an experimental count matrix on various attributes.
 
 Here, we use the microbiome dataset to demonstrate the above case.
 
-Step 1: Simulate a matrix of the same size as the microbiome data using negative binomial.
-Step 2: Define a function that calculate the sparsity of a given matrix.
-Step 3: Define a metric that compare difference of two values.
-Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.
+Step 1: Simulate a matrix of the same size as the microbiome data using negative binomial. Step 2: Define a function that calculate the sparsity of a given matrix. Step 3: Define a metric that compare difference of two values. Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.
 
 ```{r}
 set.seed(1)
@@ -154,7 +183,8 @@ trio$addEvidence(name = "Sparsity", evidence = calc_sparsity, metrics = "Differe
 
 # because we used negative binomial to simulate a matrix
 # we will name the method as "negative binomial"
-# then calculate the sparsity of the simulated matrix and compare with the Sparsity supporting evidence
+# then calculate the sparsity of the simulated matrix 
+# and compare with the Sparsity supporting evidence
 eval_res <- trio$evaluate(
   list(negative_binomial = list(Sparsity = sim))
 )
@@ -162,7 +192,7 @@ eval_res <- trio$evaluate(
 eval_res
 ```
 
-From the evaluation result, we see there is a `r round(eval_res$result, 2)` difference in the sparsity between the microbiome data and the data simulated with negative binomial.   
+From the evaluation result, we see there is a `r round(eval_res$result, 2)` difference in the sparsity between the microbiome data and the data simulated with negative binomial.
 
 # Importing result to BenchmarkInsights
 
@@ -180,7 +210,7 @@ result <- rbind(result, eval_res)
 result
 ```
 
-Please see Vignette 3 for the details on the visualisations and functions in `BenchmarkInsights`.     
+Please see Vignette 3 for the details on the visualisations and functions in `BenchmarkInsights`.
 
 # Session Info
 
