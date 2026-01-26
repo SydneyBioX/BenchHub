@@ -88,5 +88,10 @@ trio$writeCTD(name = "Your Dataset Name")
 6. Copy the Figshare URL of the published item.
 
 
-
 Happy uploading!
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
