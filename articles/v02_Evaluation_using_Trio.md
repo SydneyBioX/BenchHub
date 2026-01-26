@@ -186,10 +186,17 @@ result <- result %>%
 
 ``` r
 # visualise the result
-boxplot(result$result)
+boxplot(
+  result$result,
+  ylab = "Accuracy",
+  main = "Cross-validation performance"
+)
 ```
 
-![](v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png)
+![Mean cross-validation accuracy across
+repeats.](v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png)
+
+Mean cross-validation accuracy across repeats.
 
 ## Without Cross-validation
 
