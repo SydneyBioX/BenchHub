@@ -280,6 +280,12 @@ factors.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"metric"</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
+<p>In the forest plot, the x-axis represents regression coefficients
+obtained from linear models fitted to each evaluation metric, with the
+vertical line at zero indicating no difference relative to the reference
+method. There is no universally “good” or “bad” coefficient value, as
+both the direction and magnitude of effects depend on the definition and
+interpretation of each evaluation metric.</p>
 <p>This forest plot summarises method-specific effects across different
 evaluation metrics using regression coefficients. Metrics such as
 KDEstat exhibit large coefficient magnitudes across methods, indicating
@@ -302,6 +308,11 @@ instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
+<p>Regarding the interpretation of values, there is no single
+universally “good” value for this boxplot, as the scale and direction
+depend on the definition of the metric. Instead, the plot is intended to
+compare the distribution, variability, and stability of methods under
+the same metric and evidence setting.</p>
 <p>This boxplot compares the distribution of KDEstat values across
 simulation methods under the selected evidence setting. scDesign2 and
 SRTsim show relatively small interquartile ranges, indicating more

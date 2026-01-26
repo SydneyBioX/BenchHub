@@ -238,6 +238,13 @@ bmi$getForestplot(bmi$evalSummary, "metric", "method")
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png)
 
+In the forest plot, the x-axis represents regression coefficients
+obtained from linear models fitted to each evaluation metric, with the
+vertical line at zero indicating no difference relative to the reference
+method. There is no universally “good” or “bad” coefficient value, as
+both the direction and magnitude of effects depend on the definition and
+interpretation of each evaluation metric.
+
 This forest plot summarises method-specific effects across different
 evaluation metrics using regression coefficients. Metrics such as
 KDEstat exhibit large coefficient magnitudes across methods, indicating
@@ -261,6 +268,12 @@ bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", evidenceVariable = "
 ```
 
 ![](v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png)
+
+Regarding the interpretation of values, there is no single universally
+“good” value for this boxplot, as the scale and direction depend on the
+definition of the metric. Instead, the plot is intended to compare the
+distribution, variability, and stability of methods under the same
+metric and evidence setting.
 
 This boxplot compares the distribution of KDEstat values across
 simulation methods under the selected evidence setting. scDesign2 and
