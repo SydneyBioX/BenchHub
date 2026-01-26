@@ -319,7 +319,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.1.7           
     ##   [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##   [7] reshape2_1.4.5         systemfonts_1.3.1      vctrs_0.7.0           
+    ##   [7] reshape2_1.4.5         systemfonts_1.3.1      vctrs_0.7.1           
     ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
     ##  [13] backports_1.5.0        XVector_0.50.0         utf8_1.2.6            
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         pracma_2.4.6          

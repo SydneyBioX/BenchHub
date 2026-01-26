@@ -315,9 +315,9 @@ sessionInfo()
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] Rdpack_2.6.4           gridExtra_2.3          httr2_1.2.2           
+    ##   [1] Rdpack_2.6.5           gridExtra_2.3          httr2_1.2.2           
     ##   [4] rlang_1.1.7            magrittr_2.0.4         compiler_4.5.2        
-    ##   [7] survAUC_1.4-0          systemfonts_1.3.1      vctrs_0.7.0           
+    ##   [7] survAUC_1.4-0          systemfonts_1.3.1      vctrs_0.7.1           
     ##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          
     ##  [13] fastmap_1.2.0          backports_1.5.0        labeling_0.4.3        
     ##  [16] ggstance_0.3.7         rmarkdown_2.30         tzdb_0.5.0            

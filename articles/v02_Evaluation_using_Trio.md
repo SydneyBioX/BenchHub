@@ -1,7 +1,6 @@
 # 2 Evaluation using Trio
 
 ``` r
-# devtools::load_all()
 library(BenchHub)
 library(tidyverse)
 library(glmnet)
@@ -47,9 +46,18 @@ To initialise a Trio object, we use a
 [`new()`](https://rdrr.io/r/methods/new.html) method.
 
 ``` r
-trio <- Trio$new(data = x, evidence = list(Diagnosis = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
-                 metrics = list(`Balanced Accuracy` = balAccMetric),
-                 datasetID = "lubomski_microbiome")
+trio <- Trio$new(data = x, 
+                 evidence = list(
+                   Diagnosis = list(
+                     evidence = lubomPD, 
+                     metrics = "Balanced Accuracy"
+                     )
+                   ),
+                 metrics = list(
+                   `Balanced Accuracy` = balAccMetric
+                   ),
+                 datasetID = "lubomski_microbiome"
+                 )
 ```
 
     ## Warning: No sample IDs found on evidence. Assuming same order as data
@@ -82,9 +90,9 @@ Step 2: For repeated cross-validation, the
 `y` vector (i.e., `evidence`) into the number of folds and repeats users
 want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold
 cross-validation with 10 repeats). Then users can get cross-validation
-indices (`cv_ind`) for each sample, through `splitIndices`. This gives a
-simple list where each element represents a combination of folds and
-repeats for each sample.
+indices (`CVindices`) for each sample, through `splitIndices`. This
+gives a simple list where each element represents a combination of folds
+and repeats for each sample.
 
 ``` r
 # get train and test indices
@@ -95,46 +103,70 @@ CVindices <- trio$splitIndices
 Step 5: Build the classification model and evaluate. We can now use a
 for loop to cross-validate evaluation results.
 
-Using the `cv_ind`, user can subset to training and test data. As an
+Using the `CVindices`, user can subset to training and test data. As an
 example, we build a LASSO regression model as a classification model on
 the training data, then make predictions on the test data.
 
-Once we get the prediction, we pass the `pred` vector to `Trio` and ref
-to the name of the evidence (`patient_status` = `pred`). This tells the
-`evaluate()` function to compare the `pred` vector with the supporting
-evidence `patient_status` stored in the `Trio` object. It will then
-compute the balanced accuracy, because this is the metric we have
-specified.
+Once predictions are obtained for the test set, we pass them to Trio
+using the same evidence name as stored in the Trio object (i.e.,
+`Diagnosis`). Specifically, we call
+`trio$evaluate(list(lasso = list(Diagnosis = pred)))`, which instructs
+`evaluate()` to compare `pred` against the reference labels `Diagnosis`
+stored in `trio`, and then compute the specified metric (Balanced
+Accuracy).
 
 ``` r
 set.seed(1234)
 
-# loop through the 2 folds x 5 repeats = 10 runs
-result <- do.call(rbind, mapply(function(trainIDs, crossValID)
-{
-  x_train <- x[trainIDs, ]
-  x_test <- x[-trainIDs, ]
-  y_train <- y[trainIDs]
-  y_test <- y[-trainIDs]
+# Loop through 2 folds x 5 repeats = 10 runs
+result <- do.call(
+  rbind,
+  mapply(
+    function(trainIDs, crossValID) {
+      x_train <- x[trainIDs, ]
+      x_test  <- x[-trainIDs, ]
+      y_train <- y[trainIDs]
+      y_test  <- y[-trainIDs]
 
-  #  find the best lambda for LASSO regression
-  cv_lasso <- cv.glmnet(as.matrix(x_train), y_train, alpha = 1, family = "binomial")
-  lam <- cv_lasso$lambda.1se
+      # Find the best lambda for LASSO regression
+      cv_lasso <- cv.glmnet(
+        x = as.matrix(x_train),
+        y = y_train,
+        alpha = 1,
+        family = "binomial"
+      )
+      lam <- cv_lasso$lambda.1se
 
-  # fit a model with the best lambda on training data
-  fit <- glmnet(x_train, y_train, alpha = 1, lambda = lam, family = "binomial")
+      # Fit a model with the best lambda on training data
+      fit <- glmnet(
+        x = as.matrix(x_train),
+        y = y_train,
+        alpha = 1,
+        lambda = lam,
+        family = "binomial"
+      )
 
-  # evaluate the model on test data
-  pred <- predict(fit, x_test, s = "lambda.min", type = "class")
-  pred <- setNames(as.factor(as.vector(pred)), rownames(pred))
+      # Evaluate the model on test data
+      pred <- predict(
+        fit,
+        newx = as.matrix(x_test),
+        s = lam,
+        type = "class"
+      )
+      pred <- setNames(as.factor(as.vector(pred)), rownames(x_test))
 
-  # get the chosen evaluation metric from the Trio
-  eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
+      # Get the chosen evaluation metric from the Trio
+      eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
 
-  # keep track of the repeat and fold information
-  eval_res$track <- crossValID
-  eval_res
-}, CVindices, names(CVindices), SIMPLIFY = FALSE))
+      # Keep track of the repeat and fold information
+      eval_res$track <- crossValID
+      eval_res
+    },
+    CVindices,
+    names(CVindices),
+    SIMPLIFY = FALSE
+  )
+)
 ```
 
 After cross-validation, we can visualise cross-validation results by
@@ -204,7 +236,8 @@ trio$addEvidence(name = "Sparsity", evidence = calc_sparsity, metrics = "Differe
 
 # because we used negative binomial to simulate a matrix
 # we will name the method as "negative binomial"
-# then calculate the sparsity of the simulated matrix and compare with the Sparsity supporting evidence
+# then calculate the sparsity of the simulated matrix 
+# and compare with the Sparsity supporting evidence
 eval_res <- trio$evaluate(
   list(negative_binomial = list(Sparsity = sim))
 )
@@ -294,7 +327,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
     ##  [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##  [7] systemfonts_1.3.1      vctrs_0.7.0            reshape2_1.4.5        
+    ##  [7] systemfonts_1.3.1      vctrs_0.7.1            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
     ## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        
     ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            

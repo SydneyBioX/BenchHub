@@ -65,7 +65,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/Rtmpp149r1"
+    ## Cache Path: "/tmp/RtmpD11rKD"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +130,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmpp149r1"
+    ## Cache Path: "/tmp/RtmpD11rKD"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -259,8 +259,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x5613f42049f8>
-    ## <environment: 0x5613f2580288>
+    ## <bytecode: 0x55a1f846b6c8>
+    ## <environment: 0x55a1f67f3b40>
 
 ## Other Features
 
@@ -404,7 +404,7 @@ sessionInfo()
     ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    
     ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.5.2         
     ## [52] BiocManager_1.30.27    cellranger_1.1.0       base64enc_0.1-3       
-    ## [55] marginaleffects_0.31.0 vctrs_0.7.0            Matrix_1.7-4          
+    ## [55] marginaleffects_0.31.0 vctrs_0.7.1            Matrix_1.7-4          
     ## [58] jsonlite_2.0.0         bookdown_0.46          patchwork_1.3.2       
     ## [61] ggrepel_0.9.6          Formula_1.2-5          htmlTable_2.4.3       
     ## [64] systemfonts_1.3.1      tidyr_1.3.2            jquerylib_0.1.4       
