@@ -134,7 +134,7 @@ result <- do.call(
 
 After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats.
 
-```{r}
+```{r fig.cap = "Mean cross-validation accuracy across repeats."}
 result$fold <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 1))
 result$repeats <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 2))
 
@@ -143,7 +143,11 @@ result <- result %>%
   dplyr::summarize(result = mean(result))
 
 # visualise the result
-boxplot(result$result)
+boxplot(
+  result$result,
+  ylab = "Accuracy",
+  main = "Cross-validation performance"
+)
 ```
 
 # Without Cross-validation
