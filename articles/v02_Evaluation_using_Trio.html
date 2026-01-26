@@ -182,7 +182,7 @@ and then compute the specified metric (Balanced Accuracy).</p>
 <span>      <span class="va">y_test</span>  <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="va">trainIDs</span><span class="op">]</span></span>
 <span></span>
 <span>      <span class="co"># Find the best lambda for LASSO regression</span></span>
-<span>      <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span></span>
+<span>      <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span></span>
 <span>        x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>,</span>
 <span>        y <span class="op">=</span> <span class="va">y_train</span>,</span>
 <span>        alpha <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -191,7 +191,7 @@ and then compute the specified metric (Balanced Accuracy).</p>
 <span>      <span class="va">lam</span> <span class="op">&lt;-</span> <span class="va">cv_lasso</span><span class="op">$</span><span class="va">lambda.1se</span></span>
 <span></span>
 <span>      <span class="co"># Fit a model with the best lambda on training data</span></span>
-<span>      <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glmnet.stanford.edu/reference/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span></span>
+<span>      <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span></span>
 <span>        x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>,</span>
 <span>        y <span class="op">=</span> <span class="va">y_train</span>,</span>
 <span>        alpha <span class="op">=</span> <span class="fl">1</span>,</span>

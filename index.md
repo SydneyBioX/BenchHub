@@ -69,6 +69,8 @@ objects. It stores references to collections of Trio objects and helper
 functions that standardise method outputs into a common form to
 evaluation.
 
+![](inst/benchmarkStudy.png)
+
 ## Vignettes
 
 We provide a comprehensive list of vignettes for every key step of
