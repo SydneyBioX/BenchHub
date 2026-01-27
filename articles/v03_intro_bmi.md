@@ -149,7 +149,16 @@ differences.
 bmi$getHeatmap(bmi$evalSummary)
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png)
+![Heatmap of benchmarking performance across simulation methods and
+evaluation metrics. Each row corresponds to a simulation method and each
+column to an evaluation criterion. The size and colour of the circles
+represent the normalised metric values (scaled to \[0,
+1\]).](v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png)
+
+Heatmap of benchmarking performance across simulation methods and
+evaluation metrics. Each row corresponds to a simulation method and each
+column to an evaluation criterion. The size and colour of the circles
+represent the normalised metric values (scaled to \[0, 1\]).
 
 This funkyheatmap summarises the comparative performance of spatial
 transcriptomics simulation methods across a diverse set of evaluation
@@ -173,7 +182,16 @@ dependencies among evaluation components.
 bmi$getCorplot(bmi$evalSummary, "method")
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png)
+![Correlation plot illustrating relationships among evaluation metrics
+across different methods. Correlation coefficients are computed based on
+benchmarking results, with colour intensity indicating the strength and
+direction of
+association.](v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png)
+
+Correlation plot illustrating relationships among evaluation metrics
+across different methods. Correlation coefficients are computed based on
+benchmarking results, with colour intensity indicating the strength and
+direction of association.
 
 Splatter and SRTsim show moderate similarity, which is consistent with
 their shared generative framework: both methods estimate global
@@ -195,7 +213,14 @@ trade-offs and performance consistency.
 bmi$getScatterplot(bmi$evalSummary, c("recall", "precision"))
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png)
+![Scatter plot illustrating the relationship between recall and
+precision across methods. Each point represents a method, with positions
+reflecting its performance on the two
+metrics.](v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png)
+
+Scatter plot illustrating the relationship between recall and precision
+across methods. Each point represents a method, with positions
+reflecting its performance on the two metrics.
 
 scDesign3 variants and SRTsim are positioned toward the top right of the
 plot, indicating strong and well-balanced performance in terms of both
@@ -214,7 +239,14 @@ increases, revealing potential efficiency trade-offs.
 bmi$getLineplot(bmi$evalSummary, metricVariable = "memory")
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png)
+![Line plot illustrating memory usage across increasing data complexity
+for different methods. Each line represents a method, showing how memory
+consumption scales under varying
+conditions.](v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png)
+
+Line plot illustrating memory usage across increasing data complexity
+for different methods. Each line represents a method, showing how memory
+consumption scales under varying conditions.
 
 Most methods exhibit only modest increases in memory usage as dataset
 size grows and remain relatively efficient overall. In contrast,
@@ -236,7 +268,18 @@ factors.
 bmi$getForestplot(bmi$evalSummary, "metric", "method")
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png)
+![Forest plot of regression coefficients estimating the influence of
+evaluation metrics on method performance. The vertical line at zero
+indicates no difference relative to the reference method; larger
+absolute coefficients indicate stronger metric-specific discrimination
+between
+methods.](v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png)
+
+Forest plot of regression coefficients estimating the influence of
+evaluation metrics on method performance. The vertical line at zero
+indicates no difference relative to the reference method; larger
+absolute coefficients indicate stronger metric-specific discrimination
+between methods.
 
 In the forest plot, the x-axis represents regression coefficients
 obtained from linear models fitted to each evaluation metric, with the
@@ -267,7 +310,14 @@ instability when applied to different datasets.
 bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", evidenceVariable = "scaledVar")
 ```
 
-![](v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png)
+![Boxplot showing the distribution of KDEstat values across simulation
+methods under the selected evidence setting. Differences in spread
+reflect variability and stability of method performance across
+datasets.](v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png)
+
+Boxplot showing the distribution of KDEstat values across simulation
+methods under the selected evidence setting. Differences in spread
+reflect variability and stability of method performance across datasets.
 
 Regarding the interpretation of values, there is no single universally
 “good” value for this boxplot, as the scale and direction depend on the

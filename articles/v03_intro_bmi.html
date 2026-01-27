@@ -204,7 +204,14 @@ overall trends, making it easier to compare methods and performance
 differences.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="960"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])." width="960"><p class="caption">
+Heatmap of benchmarking performance across simulation methods and
+evaluation metrics. Each row corresponds to a simulation method and each
+column to an evaluation criterion. The size and colour of the circles
+represent the normalised metric values (scaled to [0, 1]).
+</p>
+</div>
 <p>This funkyheatmap summarises the comparative performance of spatial
 transcriptomics simulation methods across a diverse set of evaluation
 tasks. Methods such as SRTsim and scDesign3 (NB/Poisson variants) show
@@ -227,7 +234,14 @@ are interrelated. This helps identify patterns, redundancies, or
 dependencies among evaluation components.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="700"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association." width="700"><p class="caption">
+Correlation plot illustrating relationships among evaluation metrics
+across different methods. Correlation coefficients are computed based on
+benchmarking results, with colour intensity indicating the strength and
+direction of association.
+</p>
+</div>
 <p>Splatter and SRTsim show moderate similarity, which is consistent
 with their shared generative framework: both methods estimate global
 distributional properties from real data and simulate counts using
@@ -244,7 +258,13 @@ metrics align or diverge across different methods, providing insights
 into trade-offs and performance consistency.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="700"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics." width="700"><p class="caption">
+Scatter plot illustrating the relationship between recall and precision
+across methods. Each point represents a method, with positions
+reflecting its performance on the two metrics.
+</p>
+</div>
 <p>scDesign3 variants and SRTsim are positioned toward the top right of
 the plot, indicating strong and well-balanced performance in terms of
 both precision and recall. In contrast, splatter and symsim exhibit
@@ -260,7 +280,13 @@ different conditions. This helps identify how methods perform as data
 complexity increases, revealing potential efficiency trade-offs.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"memory"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions." width="700"><p class="caption">
+Line plot illustrating memory usage across increasing data complexity
+for different methods. Each line represents a method, showing how memory
+consumption scales under varying conditions.
+</p>
+</div>
 <p>Most methods exhibit only modest increases in memory usage as dataset
 size grows and remain relatively efficient overall. In contrast,
 zinbwave shows the highest and steepest increase in memory consumption,
@@ -279,7 +305,15 @@ of different metrics, helping to identify the most critical evaluation
 factors.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"metric"</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods." width="700"><p class="caption">
+Forest plot of regression coefficients estimating the influence of
+evaluation metrics on method performance. The vertical line at zero
+indicates no difference relative to the reference method; larger
+absolute coefficients indicate stronger metric-specific discrimination
+between methods.
+</p>
+</div>
 <p>In the forest plot, the x-axis represents regression coefficients
 obtained from linear models fitted to each evaluation metric, with the
 vertical line at zero indicating no difference relative to the reference
@@ -307,7 +341,13 @@ the variability of method performance, highlighting robustness or
 instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
+<div class="figure">
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets." width="700"><p class="caption">
+Boxplot showing the distribution of KDEstat values across simulation
+methods under the selected evidence setting. Differences in spread
+reflect variability and stability of method performance across datasets.
+</p>
+</div>
 <p>Regarding the interpretation of values, there is no single
 universally “good” value for this boxplot, as the scale and direction
 depend on the definition of the metric. Instead, the plot is intended to
