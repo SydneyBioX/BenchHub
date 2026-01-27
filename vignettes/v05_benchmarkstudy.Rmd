@@ -95,12 +95,12 @@ study$addMappingFunction(
 Example 2: calculate the normalized library size per cell.  
 
 ```{r}
-
+library(edgeR)
 # Define the mapping function 
 norm_lib_size <-  function(data) {
-  dge <- edgeR::SE2DGEList(data)
-  dge <- edgeR::normLibSizes(dge)
-  return(edgeR::getNormLibSizes(dge))
+  dge <- SE2DGEList(data)
+  dge <- normLibSizes(dge)
+  return(getNormLibSizes(dge))
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
@@ -112,8 +112,6 @@ study$addMappingFunction(
 )
 
 ```
-
- 
 
 ## Uploading to Curated Trio Datasets
 
