@@ -109,13 +109,28 @@ BenchmarkInsights <- R6::R6Class(
         value.var = "avg_result"
       ) %>%
         replace(is.na(.), 0)
+      
+      
 
       # Set method as rownames and remove the method column
       rownames(reshaped_df) <- reshaped_df$method
-      reshaped_df$method <- NULL
+      reshaped_df <- reshaped_df %>%
+        dplyr::rename(id = method)
+      
+      cinfo <- tibble::tibble(
+        id = colnames(reshaped_df),
+        group = c(NA_character_, rep("", ncol(reshaped_df) - 1)),
+        options = replicate(ncol(reshaped_df), rlang::list2(), simplify = FALSE)
+      )
+      
+      cinfo$palette <- c(NA, rep("performance_score", ncol(reshaped_df) - 1))
+      
+      palettes <- list(performance_score = "Blues")
+      
       heatmap <- suppressMessages(suppressWarnings(funkyheatmap::funky_heatmap(
-        reshaped_df
+        reshaped_df, column_info = cinfo, palettes = palettes
       )))
+      
 
       return(heatmap)
     },
