@@ -88,11 +88,12 @@ study$addMappingFunction(
 Example 2: calculate the normalized library size per cell.
 
 ``` r
+library(edgeR)
 # Define the mapping function 
 norm_lib_size <-  function(data) {
-  dge <- edgeR::SE2DGEList(data)
-  dge <- edgeR::normLibSizes(dge)
-  return(edgeR::getNormLibSizes(dge))
+  dge <- SE2DGEList(data)
+  dge <- normLibSizes(dge)
+  return(getNormLibSizes(dge))
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
@@ -175,7 +176,7 @@ study$trios[[1]]
     ##   slots
     ## Data Source: "figshare"
     ## Dataset ID: "29565947/57477553"
-    ## Cache Path: "/home/runner/.cache/R/TrioR"
+    ## Cache Path: "/home/runner/.cache/R/BenchHub"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -307,14 +308,15 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BenchHub_0.99.9             scuttle_1.20.0             
-    ##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
-    ##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       
-    ##  [7] Seqinfo_1.0.0               IRanges_2.44.0             
-    ##  [9] S4Vectors_0.48.0            BiocGenerics_0.56.0        
-    ## [11] generics_0.1.4              MatrixGenerics_1.22.0      
-    ## [13] matrixStats_1.5.0           R6_2.6.1                   
-    ## [15] BiocStyle_2.38.0           
+    ##  [1] edgeR_4.8.2                 limma_3.66.0               
+    ##  [3] BenchHub_0.99.9             scuttle_1.20.0             
+    ##  [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+    ##  [7] Biobase_2.70.0              GenomicRanges_1.62.1       
+    ##  [9] Seqinfo_1.0.0               IRanges_2.44.0             
+    ## [11] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+    ## [13] generics_0.1.4              MatrixGenerics_1.22.0      
+    ## [15] matrixStats_1.5.0           R6_2.6.1                   
+    ## [17] BiocStyle_2.38.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.1.7           
@@ -327,30 +329,29 @@ sessionInfo()
     ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
     ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    broom_1.0.11          
     ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.9.0           
-    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     limma_3.66.0          
-    ##  [34] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
-    ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
-    ##  [40] base64enc_0.1-3        parameters_0.28.3      splines_4.5.2         
-    ##  [43] Matrix_1.7-4           nnet_7.3-20            tidyselect_1.2.1      
-    ##  [46] rstudioapi_0.18.0      abind_1.4-8            yaml_2.3.12           
-    ##  [49] codetools_0.2-20       curl_7.0.0             plyr_1.8.9            
-    ##  [52] lattice_0.22-7         tibble_3.3.1           ks_1.15.1             
-    ##  [55] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
-    ##  [58] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
-    ##  [61] survival_3.8-3         desc_1.4.3             mclust_6.1.2          
-    ##  [64] pillar_1.11.1          BiocManager_1.30.27    KernSmooth_2.23-26    
-    ##  [67] checkmate_2.3.3        insight_1.4.4          ggplot2_4.0.1         
-    ##  [70] scales_1.4.0           glue_1.8.0             Hmisc_5.2-5           
-    ##  [73] tools_4.5.2            data.table_1.18.0      locfit_1.5-9.12       
-    ##  [76] mvtnorm_1.3-3          fs_1.6.6               grid_4.5.2            
-    ##  [79] tidyr_1.3.2            datawizard_1.3.0       edgeR_4.8.2           
-    ##  [82] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ##  [85] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
-    ##  [88] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
-    ##  [91] rappdirs_0.3.4         textshaping_1.0.4      gargle_1.6.0          
-    ##  [94] S4Arrays_1.10.1        dplyr_1.1.4            gtable_0.3.6          
-    ##  [97] ggcorrplot_0.1.4.1     ggsci_4.2.0            sass_0.4.10           
-    ## [100] digest_0.6.39          SparseArray_1.10.8     ggrepel_0.9.6         
-    ## [103] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
-    ## [106] pkgdown_2.2.0          lifecycle_1.0.5        httr_1.4.7            
-    ## [109] statmod_1.5.1          dotwhisker_0.8.4
+    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
+    ##  [34] jquerylib_0.1.4        cellranger_1.1.0       Rcpp_1.1.1            
+    ##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-3       
+    ##  [40] parameters_0.28.3      splines_4.5.2          Matrix_1.7-4          
+    ##  [43] nnet_7.3-20            tidyselect_1.2.1       rstudioapi_0.18.0     
+    ##  [46] abind_1.4-8            yaml_2.3.12            codetools_0.2-20      
+    ##  [49] curl_7.0.0             plyr_1.8.9             lattice_0.22-7        
+    ##  [52] tibble_3.3.1           ks_1.15.1              withr_3.0.2           
+    ##  [55] bayestestR_0.17.0      S7_0.2.1               evaluate_1.0.5        
+    ##  [58] marginaleffects_0.31.0 foreign_0.8-90         survival_3.8-3        
+    ##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         
+    ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.3       
+    ##  [67] insight_1.4.4          ggplot2_4.0.1          scales_1.4.0          
+    ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.2           
+    ##  [73] data.table_1.18.0      locfit_1.5-9.12        mvtnorm_1.3-3         
+    ##  [76] fs_1.6.6               grid_4.5.2             tidyr_1.3.2           
+    ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
+    ##  [82] patchwork_1.3.2        performance_0.15.3     htmlTable_2.4.3       
+    ##  [85] googledrive_2.1.2      splitTools_1.0.1       Formula_1.2-5         
+    ##  [88] cli_3.6.5              rappdirs_0.3.4         textshaping_1.0.4     
+    ##  [91] gargle_1.6.0           S4Arrays_1.10.1        dplyr_1.1.4           
+    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
+    ##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.8    
+    ## [100] ggrepel_0.9.6          htmlwidgets_1.6.4      farver_2.1.2          
+    ## [103] htmltools_0.5.9        pkgdown_2.2.0          lifecycle_1.0.5       
+    ## [106] httr_1.4.7             statmod_1.5.1          dotwhisker_0.8.4

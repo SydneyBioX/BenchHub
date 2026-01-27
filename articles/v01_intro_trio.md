@@ -34,6 +34,16 @@ Trio objects can be created using the `Trio$new` constructor. There are
 If the dataset can’t be loaded using Trio’s inbuilt loader, a custom
 loader can be provided.
 
+### Settings
+
+This vignette demonstrates importing a data set from a Google Sheet. To
+avoid unnecessary authentication, read-only mode is specified.
+
+``` r
+library(googlesheets4)
+gs4_deauth()
+```
+
 ### Method 1: Curated Trio Datasets
 
 You can directly use the name from the Curated Trio Datasets sheet to
@@ -65,7 +75,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/Rtmp9YtCTb"
+    ## Cache Path: "/tmp/RtmpXraOcU"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -130,7 +140,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmp9YtCTb"
+    ## Cache Path: "/tmp/RtmpXraOcU"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -148,12 +158,14 @@ Trio can also be created by passing an object directly into the
 constructor. This method is useful when you already have a dataset
 loaded in your R environment and want to use it with Trio.
 
-If you have your own dataset, you can easily create a trio object as
+If you have your own dataset, you can easily create a Trio object as
 well. Below is an example using a microbiome dataset.
 
 ``` r
-data("lubomski_microbiome_data", package = "BenchHub")
-trioB <- Trio$new(data = x, evidence = list(`Diagnosis` = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
+exampleEnv <- new.env(parent = emptyenv())
+data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
+
+trioB <- Trio$new(data = exampleEnv[["x"]], evidence = list(`Diagnosis` = list(evidence = exampleEnv[["lubomPD"]], metrics = "Balanced Accuracy")),
                   metrics = list(`Balanced Accuracy` = balAccMetric),
                   datasetID = "lubomski_microbiome")
 ```
@@ -259,8 +271,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x563affa26fd0>
-    ## <environment: 0x563afddaf078>
+    ## <bytecode: 0x56296d8f8f48>
+    ## <environment: 0x56296b88ff08>
 
 ## Other Features
 
@@ -383,7 +395,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.9  BiocStyle_2.38.0
+    ## [1] googlesheets4_1.1.2 BenchHub_0.99.9     BiocStyle_2.38.0   
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.1.4            farver_2.1.2          
@@ -413,7 +425,7 @@ sessionInfo()
     ## [73] tibble_3.3.1           pillar_1.11.1          rappdirs_0.3.4        
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.4      evaluate_1.0.5         lattice_0.22-7        
-    ## [82] backports_1.5.0        googlesheets4_1.1.2    broom_1.0.11          
-    ## [85] ggsci_4.2.0            gargle_1.6.0           bslib_0.9.0           
-    ## [88] Rcpp_1.1.1             gridExtra_2.3          checkmate_2.3.3       
-    ## [91] xfun_0.56              fs_1.6.6               pkgconfig_2.0.3
+    ## [82] backports_1.5.0        broom_1.0.11           ggsci_4.2.0           
+    ## [85] gargle_1.6.0           bslib_0.9.0            Rcpp_1.1.1            
+    ## [88] gridExtra_2.3          checkmate_2.3.3        xfun_0.56             
+    ## [91] fs_1.6.6               pkgconfig_2.0.3
