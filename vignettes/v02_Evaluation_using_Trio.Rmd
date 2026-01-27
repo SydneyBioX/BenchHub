@@ -77,74 +77,94 @@ Using the `CVindices`, user can subset to training and test data. As an example,
 
 Once predictions are obtained for the test set, we pass them to Trio using the same evidence name as stored in the Trio object (i.e., `Diagnosis`). Specifically, we call `trio$evaluate(list(lasso = list(Diagnosis = pred)))`, which instructs `evaluate()` to compare `pred` against the reference labels `Diagnosis` stored in `trio`, and then compute the specified metric (Balanced Accuracy).
 
+We first construct an explicit cross-validation plan that records fold and repeat identifiers, and then iterate over this plan to evaluate each split.
+
 ```{r}
 set.seed(1234)
 
-# Loop through 2 folds x 5 repeats = 10 runs
-result <- do.call(
-  rbind,
-  mapply(
-    function(trainIDs, crossValID) {
-      x_train <- x[trainIDs, ]
-      x_test  <- x[-trainIDs, ]
-      y_train <- y[trainIDs]
-      y_test  <- y[-trainIDs]
-
-      # Find the best lambda for LASSO regression
-      cv_lasso <- cv.glmnet(
-        x = as.matrix(x_train),
-        y = y_train,
-        alpha = 1,
-        family = "binomial"
-      )
-      lam <- cv_lasso$lambda.1se
-
-      # Fit a model with the best lambda on training data
-      fit <- glmnet(
-        x = as.matrix(x_train),
-        y = y_train,
-        alpha = 1,
-        lambda = lam,
-        family = "binomial"
-      )
-
-      # Evaluate the model on test data
-      pred <- predict(
-        fit,
-        newx = as.matrix(x_test),
-        s = lam,
-        type = "class"
-      )
-      pred <- setNames(as.factor(as.vector(pred)), rownames(x_test))
-
-      # Get the chosen evaluation metric from the Trio
-      eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
-
-      # Keep track of the repeat and fold information
-      eval_res$track <- crossValID
-      eval_res
-    },
-    CVindices,
-    names(CVindices),
-    SIMPLIFY = FALSE
+cv_plan <- tibble::tibble(
+  trainIDs = CVindices,
+  fold = vapply(
+    strsplit(names(CVindices), ".", fixed = TRUE),
+    `[`,
+    character(1),
+    1
+  ),
+  repeat_id = vapply(
+    strsplit(names(CVindices), ".", fixed = TRUE),
+    `[`,
+    character(1),
+    2
   )
 )
 
+
+run_one_cv <- function(trainIDs, fold, repeat_id, trio, x, y) {
+  x_train <- x[trainIDs, ]
+  x_test  <- x[-trainIDs, ]
+  y_train <- y[trainIDs]
+  y_test  <- y[-trainIDs]
+
+  cv_lasso <- glmnet::cv.glmnet(
+    x = as.matrix(x_train),
+    y = y_train,
+    alpha = 1,
+    family = "binomial"
+  )
+  lam <- cv_lasso$lambda.1se
+
+  fit <- glmnet::glmnet(
+    x = as.matrix(x_train),
+    y = y_train,
+    alpha = 1,
+    lambda = lam,
+    family = "binomial"
+  )
+
+  pred <- predict(
+    fit,
+    newx = as.matrix(x_test),
+    s = lam,
+    type = "class"
+  )
+  pred <- setNames(as.factor(as.vector(pred)), rownames(x_test))
+
+  eval_res <- trio$evaluate(list(lasso = list(Diagnosis = pred)))
+
+  # attach metadata explicitly
+  eval_res$fold <- fold
+  eval_res$repeat_id <- repeat_id
+
+  eval_res
+}
+
+result_list <- vector("list", nrow(cv_plan))
+
+for (i in seq_len(nrow(cv_plan))) {
+  result_list[[i]] <- run_one_cv(
+    trainIDs = cv_plan$trainIDs[[i]],
+    fold = cv_plan$fold[[i]],
+    repeat_id = cv_plan$repeat_id[[i]],
+    trio = trio,
+    x = x,
+    y = y
+  )
+}
 ```
 
 After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats.
 
 ```{r fig.cap = "Mean cross-validation accuracy across repeats."}
-result$fold <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 1))
-result$repeats <- unlist(lapply(strsplit(result$track, ".", fixed = TRUE), `[`, 2))
+result <- dplyr::bind_rows(result_list)
 
-result <- result %>%
-  dplyr::group_by(datasetID, method, evidence, metric, repeats) %>%
-  dplyr::summarize(result = mean(result))
+result_summary <- result %>%
+  dplyr::group_by(datasetID, method, evidence, metric, repeat_id) %>%
+  dplyr::summarise(result = mean(result), .groups = "drop")
+
 
 # visualise the result
 boxplot(
-  result$result,
+  result_summary$result,
   ylab = "Accuracy",
   main = "Cross-validation performance"
 )
