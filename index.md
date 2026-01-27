@@ -69,7 +69,7 @@ objects. It stores references to collections of Trio objects and helper
 functions that standardise method outputs into a common form to
 evaluation.
 
-![](inst/benchmarkStudy.png)
+![](https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkStudy.png)
 
 ## Vignettes
 
