@@ -205,8 +205,8 @@ differences.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])." width="960"><p class="caption">
-Heatmap of benchmarking performance across simulation methods and
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Fig.1 Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])." width="960"><p class="caption">
+Fig.1 Heatmap of benchmarking performance across simulation methods and
 evaluation metrics. Each row corresponds to a simulation method and each
 column to an evaluation criterion. The size and colour of the circles
 represent the normalised metric values (scaled to [0, 1]).
@@ -235,11 +235,11 @@ dependencies among evaluation components.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association." width="700"><p class="caption">
-Correlation plot illustrating relationships among evaluation metrics
-across different methods. Correlation coefficients are computed based on
-benchmarking results, with colour intensity indicating the strength and
-direction of association.
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Fig.2 Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association." width="700"><p class="caption">
+Fig.2 Correlation plot illustrating relationships among evaluation
+metrics across different methods. Correlation coefficients are computed
+based on benchmarking results, with colour intensity indicating the
+strength and direction of association.
 </p>
 </div>
 <p>Splatter and SRTsim show moderate similarity, which is consistent
@@ -259,9 +259,9 @@ into trade-offs and performance consistency.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics." width="700"><p class="caption">
-Scatter plot illustrating the relationship between recall and precision
-across methods. Each point represents a method, with positions
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Fig.3 Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics." width="700"><p class="caption">
+Fig.3 Scatter plot illustrating the relationship between recall and
+precision across methods. Each point represents a method, with positions
 reflecting its performance on the two metrics.
 </p>
 </div>
@@ -281,10 +281,10 @@ complexity increases, revealing potential efficiency trade-offs.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"memory"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions." width="700"><p class="caption">
-Line plot illustrating memory usage across increasing data complexity
-for different methods. Each line represents a method, showing how memory
-consumption scales under varying conditions.
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Fig.4 Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions." width="700"><p class="caption">
+Fig.4 Line plot illustrating memory usage across increasing data
+complexity for different methods. Each line represents a method, showing
+how memory consumption scales under varying conditions.
 </p>
 </div>
 <p>Most methods exhibit only modest increases in memory usage as dataset
@@ -306,8 +306,8 @@ factors.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, <span class="st">"metric"</span>, <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods." width="700"><p class="caption">
-Forest plot of regression coefficients estimating the influence of
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Fig.5 Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods." width="700"><p class="caption">
+Fig.5 Forest plot of regression coefficients estimating the influence of
 evaluation metrics on method performance. The vertical line at zero
 indicates no difference relative to the reference method; larger
 absolute coefficients indicate stronger metric-specific discrimination
@@ -342,10 +342,11 @@ instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">bmi</span><span class="op">$</span><span class="va">evalSummary</span>, metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets." width="700"><p class="caption">
-Boxplot showing the distribution of KDEstat values across simulation
-methods under the selected evidence setting. Differences in spread
-reflect variability and stability of method performance across datasets.
+<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Fig.6 Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets." width="700"><p class="caption">
+Fig.6 Boxplot showing the distribution of KDEstat values across
+simulation methods under the selected evidence setting. Differences in
+spread reflect variability and stability of method performance across
+datasets.
 </p>
 </div>
 <p>Regarding the interpretation of values, there is no single

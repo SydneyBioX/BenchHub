@@ -211,10 +211,10 @@ boxplot(
 )
 ```
 
-![Mean cross-validation accuracy across
+![Fig.1 Mean cross-validation accuracy across
 repeats.](v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png)
 
-Mean cross-validation accuracy across repeats.
+Fig.1 Mean cross-validation accuracy across repeats.
 
 ## Without Cross-validation
 
