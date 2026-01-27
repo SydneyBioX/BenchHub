@@ -154,7 +154,7 @@ for (i in seq_len(nrow(cv_plan))) {
 
 After cross-validation, we can visualise cross-validation results by averaging results across folds within each repeats.
 
-```{r fig.cap = "Mean cross-validation accuracy across repeats."}
+```{r fig.cap = "Fig.1 Mean cross-validation accuracy across repeats."}
 result <- dplyr::bind_rows(result_list)
 
 result_summary <- result %>%
