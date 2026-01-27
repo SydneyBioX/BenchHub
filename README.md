@@ -57,7 +57,7 @@ Benchmarking often involve large amount of datasets and processing scripts. Benc
 
 <p align="center">
 
-![](inst/benchmarkStudy.png){width="334"}
+<img src="https://raw.githubusercontent.com/SydneyBioX/BenchHub/devel/inst/benchmarkStudy.png" width="55%"/>
 
 </p>
 
