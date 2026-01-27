@@ -67,7 +67,9 @@ Suggests:
     BiocStyle,
     tidyverse,
     glmnet,
-    scran
+    scran,
+    scuttle,
+    edgeR
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 BugReports: https://github.com/SydneyBioX/BenchHub/issues

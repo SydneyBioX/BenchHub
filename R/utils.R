@@ -197,9 +197,7 @@ getTrioCachePath <- function(cachePath) {
 
   # if cachePath is TRUE, use the default cache location without prompting user
   if (cachePath == TRUE) {
-    cachePath <- fs::path_join(
-      c(tools::R_user_dir("", which = "cache"), "TrioR")
-    )
+    cachePath <- tools::R_user_dir("BenchHub", which = "cache")
     if (!fs::dir_exists(cachePath)) {
       fs::dir_create(cachePath)
     }
@@ -207,9 +205,7 @@ getTrioCachePath <- function(cachePath) {
   }
 
   if (cachePath == FALSE) {
-    cachePath <- fs::path_join(
-      c(tools::R_user_dir("", which = "cache"), "TrioR")
-    )
+    cachePath <- tools::R_user_dir("BenchHub", which = "cache")
     defaultPath <- TRUE
   }
   cacheExists <- fs::dir_exists(cachePath)

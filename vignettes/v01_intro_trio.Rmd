@@ -32,7 +32,6 @@ BenchHub contains two key components: `Trio` and `BenchmarkInsight`:
 
 With BenchHub, researchers can quickly compare new methods, gain insights, and produce trustworthy their benchmarking studies. 
 
-
 # Creating Trio object
 
 The Trio class is designed to facilitate the storing and sharing of benchmarking datasets. 
@@ -45,6 +44,15 @@ Trio objects can be created using the `Trio$new` constructor. There are 3 ways t
 - Load an object directly
 
 If the dataset can't be loaded using Trio's inbuilt loader, a custom loader can be provided.
+
+## Settings
+
+This vignette demonstrates importing a data set from a Google Sheet. To avoid unnecessary authentication, read-only mode is specified.
+
+```{r}
+library(googlesheets4)
+gs4_deauth()
+```
 
 ## Method 1: Curated Trio Datasets
 
@@ -87,11 +95,13 @@ trioA
 
 Trio can also be created by passing an object directly into the constructor. This method is useful when you already have a dataset loaded in your R environment and want to use it with Trio.
 
-If you have your own dataset, you can easily create a trio object as well. Below is an example using a microbiome dataset.
+If you have your own dataset, you can easily create a Trio object as well. Below is an example using a microbiome dataset.
 
 ```{r}
-data("lubomski_microbiome_data", package = "BenchHub")
-trioB <- Trio$new(data = x, evidence = list(`Diagnosis` = list(evidence = lubomPD, metrics = "Balanced Accuracy")),
+exampleEnv <- new.env(parent = emptyenv())
+data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
+
+trioB <- Trio$new(data = exampleEnv[["x"]], evidence = list(`Diagnosis` = list(evidence = exampleEnv[["lubomPD"]], metrics = "Balanced Accuracy")),
                   metrics = list(`Balanced Accuracy` = balAccMetric),
                   datasetID = "lubomski_microbiome")
 trioB
