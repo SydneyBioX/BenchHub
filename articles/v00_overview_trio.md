@@ -105,7 +105,7 @@ sessionInfo()
     ## [10] rmarkdown_2.30      lifecycle_1.0.5     cli_3.6.5          
     ## [13] sass_0.4.10         pkgdown_2.2.0       textshaping_1.0.4  
     ## [16] jquerylib_0.1.4     systemfonts_1.3.1   compiler_4.5.2     
-    ## [19] tools_4.5.2         ragg_1.5.0          bslib_0.9.0        
+    ## [19] tools_4.5.2         ragg_1.5.0          bslib_0.10.0       
     ## [22] evaluate_1.0.5      yaml_2.3.12         BiocManager_1.30.27
     ## [25] jsonlite_2.0.0      rlang_1.1.7         fs_1.6.6           
     ## [28] htmlwidgets_1.6.4

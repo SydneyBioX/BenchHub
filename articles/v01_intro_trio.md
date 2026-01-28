@@ -75,7 +75,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpdglcJU"
+    ## Cache Path: "/tmp/RtmpZ8viGO"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -140,7 +140,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpdglcJU"
+    ## Cache Path: "/tmp/RtmpZ8viGO"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -271,8 +271,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55b42c7cf598>
-    ## <environment: 0x55b42a4d1148>
+    ## <bytecode: 0x55abb2553e00>
+    ## <environment: 0x55abafde84a0>
 
 ## Other Features
 
@@ -395,7 +395,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] googlesheets4_1.1.2 BenchHub_0.99.9     BiocStyle_2.38.0   
+    ## [1] googlesheets4_1.1.2 BenchHub_0.99.10    BiocStyle_2.38.0   
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.1.4            farver_2.1.2          
@@ -410,7 +410,7 @@ sessionInfo()
     ## [28] purrr_1.2.1            desc_1.4.3             nnet_7.3-20           
     ## [31] grid_4.5.2             datawizard_1.3.0       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.1          scales_1.4.0          
-    ## [37] insight_1.4.4          cli_3.6.5              rmarkdown_2.30        
+    ## [37] insight_1.4.5          cli_3.6.5              rmarkdown_2.30        
     ## [40] dotwhisker_0.8.4       ragg_1.5.0             generics_0.1.4        
     ## [43] rstudioapi_0.18.0      performance_0.15.3     httr_1.4.7            
     ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    
@@ -426,6 +426,6 @@ sessionInfo()
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.4      evaluate_1.0.5         lattice_0.22-7        
     ## [82] backports_1.5.0        broom_1.0.11           ggsci_4.2.0           
-    ## [85] gargle_1.6.0           bslib_0.9.0            Rcpp_1.1.1            
+    ## [85] gargle_1.6.0           bslib_0.10.0           Rcpp_1.1.1            
     ## [88] gridExtra_2.3          checkmate_2.3.3        xfun_0.56             
     ## [91] fs_1.6.6               pkgconfig_2.0.3

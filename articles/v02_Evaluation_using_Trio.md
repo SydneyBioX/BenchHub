@@ -347,7 +347,7 @@ sessionInfo()
     ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.1      readr_2.1.6     
     ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.1    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.9  BiocStyle_2.38.0
+    ## [13] BenchHub_0.99.10 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
@@ -358,7 +358,7 @@ sessionInfo()
     ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            
     ## [19] xfun_0.56              cachem_1.1.0           jsonlite_2.0.0        
     ## [22] broom_1.0.11           cluster_2.1.8.1        R6_2.6.1              
-    ## [25] bslib_0.9.0            stringi_1.8.7          RColorBrewer_1.1-3    
+    ## [25] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
     ## [31] Rcpp_1.1.1             bookdown_0.46          iterators_1.0.14      
     ## [34] knitr_1.51             base64enc_0.1-3        parameters_0.28.3     
@@ -369,7 +369,7 @@ sessionInfo()
     ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
     ## [52] foreign_0.8-90         desc_1.4.3             survival_3.8-3        
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ## [58] foreach_1.5.2          insight_1.4.4          generics_0.1.4        
+    ## [58] foreach_1.5.2          insight_1.4.5          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
     ## [64] Hmisc_5.2-5            tools_4.5.2            data.table_1.18.0     
     ## [67] fs_1.6.6               grid_4.5.2             datawizard_1.3.0      

@@ -309,7 +309,7 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] edgeR_4.8.2                 limma_3.66.0               
-    ##  [3] BenchHub_0.99.9             scuttle_1.20.0             
+    ##  [3] BenchHub_0.99.10            scuttle_1.20.0             
     ##  [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
     ##  [7] Biobase_2.70.0              GenomicRanges_1.62.1       
     ##  [9] Seqinfo_1.0.0               IRanges_2.44.0             
@@ -328,7 +328,7 @@ sessionInfo()
     ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.56             
     ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
     ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    broom_1.0.11          
-    ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.9.0           
+    ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.10.0          
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       Rcpp_1.1.1            
     ##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-3       
@@ -341,7 +341,7 @@ sessionInfo()
     ##  [58] marginaleffects_0.31.0 foreign_0.8-90         survival_3.8-3        
     ##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         
     ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.3       
-    ##  [67] insight_1.4.4          ggplot2_4.0.1          scales_1.4.0          
+    ##  [67] insight_1.4.5          ggplot2_4.0.1          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.2           
     ##  [73] data.table_1.18.0      locfit_1.5-9.12        mvtnorm_1.3-3         
     ##  [76] fs_1.6.6               grid_4.5.2             tidyr_1.3.2           

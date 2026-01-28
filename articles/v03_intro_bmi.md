@@ -375,7 +375,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] stringr_1.6.0    dplyr_1.1.4      readr_2.1.6      BenchHub_0.99.9 
+    ## [1] stringr_1.6.0    dplyr_1.1.4      readr_2.1.6      BenchHub_0.99.10
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
@@ -388,7 +388,7 @@ sessionInfo()
     ##  [19] ragg_1.5.0             purrr_1.2.1            bit_4.6.0             
     ##  [22] xfun_0.56              cachem_1.1.0           jsonlite_2.0.0        
     ##  [25] tweenr_2.0.3           broom_1.0.11           parallel_4.5.2        
-    ##  [28] cluster_2.1.8.1        R6_2.6.1               bslib_0.9.0           
+    ##  [28] cluster_2.1.8.1        R6_2.6.1               bslib_0.10.0          
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      
     ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
@@ -400,7 +400,7 @@ sessionInfo()
     ##  [55] evaluate_1.0.5         marginaleffects_0.31.0 foreign_0.8-90        
     ##  [58] desc_1.4.3             survival_3.8-3         polyclip_1.10-7       
     ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ##  [64] insight_1.4.4          generics_0.1.4         vroom_1.6.7           
+    ##  [64] insight_1.4.5          generics_0.1.4         vroom_1.6.7           
     ##  [67] hms_1.1.4              ggplot2_4.0.1          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.2           
     ##  [73] data.table_1.18.0      fs_1.6.6               cowplot_1.2.0         
