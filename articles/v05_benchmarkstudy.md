@@ -286,9 +286,9 @@ BenchmarkStudy framework:
 sessionInfo()
 ```
 
-    ## R version 4.5.2 (2025-10-31)
+    ## R version 4.5.3 (2026-03-11)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -313,45 +313,45 @@ sessionInfo()
     ##  [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
     ##  [7] Biobase_2.70.0              GenomicRanges_1.62.1       
     ##  [9] Seqinfo_1.0.0               IRanges_2.44.0             
-    ## [11] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+    ## [11] S4Vectors_0.48.1            BiocGenerics_0.56.0        
     ## [13] generics_0.1.4              MatrixGenerics_1.22.0      
     ## [15] matrixStats_1.5.0           R6_2.6.1                   
     ## [17] BiocStyle_2.38.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.1.7           
-    ##   [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##   [7] reshape2_1.4.5         systemfonts_1.3.1      vctrs_0.7.1           
+    ##   [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
+    ##   [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.2           
     ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
-    ##  [13] backports_1.5.0        XVector_0.50.0         utf8_1.2.6            
-    ##  [16] ggstance_0.3.7         rmarkdown_2.30         pracma_2.4.6          
-    ##  [19] ragg_1.5.0             purrr_1.2.1            xfun_0.56             
+    ##  [13] backports_1.5.1        XVector_0.50.0         utf8_1.2.6            
+    ##  [16] ggstance_0.3.7         rmarkdown_2.31         pracma_2.4.6          
+    ##  [19] ragg_1.5.2             purrr_1.2.1            xfun_0.57             
     ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
-    ##  [25] DelayedArray_0.36.0    BiocParallel_1.44.0    broom_1.0.11          
-    ##  [28] parallel_4.5.2         cluster_2.1.8.1        bslib_0.10.0          
+    ##  [25] DelayedArray_0.36.1    BiocParallel_1.44.0    broom_1.0.12          
+    ##  [28] parallel_4.5.3         cluster_2.1.8.2        bslib_0.10.0          
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       Rcpp_1.1.1            
-    ##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-3       
-    ##  [40] parameters_0.28.3      splines_4.5.2          Matrix_1.7-4          
+    ##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-6       
+    ##  [40] parameters_0.28.3      splines_4.5.3          Matrix_1.7-4          
     ##  [43] nnet_7.3-20            tidyselect_1.2.1       rstudioapi_0.18.0     
     ##  [46] abind_1.4-8            yaml_2.3.12            codetools_0.2-20      
-    ##  [49] curl_7.0.0             plyr_1.8.9             lattice_0.22-7        
+    ##  [49] curl_7.0.0             plyr_1.8.9             lattice_0.22-9        
     ##  [52] tibble_3.3.1           ks_1.15.1              withr_3.0.2           
     ##  [55] bayestestR_0.17.0      S7_0.2.1               evaluate_1.0.5        
-    ##  [58] marginaleffects_0.31.0 foreign_0.8-90         survival_3.8-3        
+    ##  [58] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
     ##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         
-    ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.3       
-    ##  [67] insight_1.4.5          ggplot2_4.0.1          scales_1.4.0          
-    ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.2           
-    ##  [73] data.table_1.18.0      locfit_1.5-9.12        mvtnorm_1.3-3         
-    ##  [76] fs_1.6.6               grid_4.5.2             tidyr_1.3.2           
+    ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.4       
+    ##  [67] insight_1.4.6          ggplot2_4.0.2          scales_1.4.0          
+    ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.3           
+    ##  [73] data.table_1.18.2.1    locfit_1.5-9.12        mvtnorm_1.3-6         
+    ##  [76] fs_2.0.1               grid_4.5.3             tidyr_1.3.2           
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
-    ##  [82] patchwork_1.3.2        performance_0.15.3     htmlTable_2.4.3       
+    ##  [82] patchwork_1.3.2        performance_0.16.0     htmlTable_2.4.3       
     ##  [85] googledrive_2.1.2      splitTools_1.0.1       Formula_1.2-5         
-    ##  [88] cli_3.6.5              rappdirs_0.3.4         textshaping_1.0.4     
-    ##  [91] gargle_1.6.0           S4Arrays_1.10.1        dplyr_1.1.4           
+    ##  [88] cli_3.6.5              rappdirs_0.3.4         textshaping_1.0.5     
+    ##  [91] gargle_1.6.1           S4Arrays_1.10.1        dplyr_1.2.1           
     ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
-    ##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.8    
-    ## [100] ggrepel_0.9.6          htmlwidgets_1.6.4      farver_2.1.2          
+    ##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.10   
+    ## [100] ggrepel_0.9.8          htmlwidgets_1.6.4      farver_2.1.2          
     ## [103] htmltools_0.5.9        pkgdown_2.2.0          lifecycle_1.0.5       
-    ## [106] httr_1.4.7             statmod_1.5.1          dotwhisker_0.8.4
+    ## [106] httr_1.4.8             statmod_1.5.1          dotwhisker_0.8.4

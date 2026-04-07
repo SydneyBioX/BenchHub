@@ -299,8 +299,12 @@ result <- result %>%
   dplyr::summarize(result = mean(result))
 ```
 
-    ## `summarise()` has grouped output by 'datasetID', 'method', 'evidence'. You can
-    ## override using the `.groups` argument.
+    ## `summarise()` has regrouped the output.
+    ## ℹ Summaries were computed grouped by datasetID, method, evidence, and metric.
+    ## ℹ Output is grouped by datasetID, method, and evidence.
+    ## ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+    ## ℹ Use `summarise(.by = c(datasetID, method, evidence, metric))` for
+    ##   per-operation grouping (`?dplyr::dplyr_by`) instead.
 
 ``` r
 result <- rbind(result, eval_res)
@@ -323,9 +327,9 @@ functions in `BenchmarkInsights`.
 sessionInfo()
 ```
 
-    ## R version 4.5.2 (2025-10-31)
+    ## R version 4.5.3 (2026-03-11)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -344,40 +348,40 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.4  forcats_1.0.1   
-    ##  [5] stringr_1.6.0    dplyr_1.1.4      purrr_1.2.1      readr_2.1.6     
-    ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.1    tidyverse_2.0.0 
+    ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.5  forcats_1.0.1   
+    ##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.1      readr_2.2.0     
+    ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.2    tidyverse_2.0.0 
     ## [13] BenchHub_0.99.10 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
-    ##  [4] magrittr_2.0.4         compiler_4.5.2         survAUC_1.4-0         
-    ##  [7] systemfonts_1.3.1      vctrs_0.7.1            reshape2_1.4.5        
+    ##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
+    ##  [7] systemfonts_1.3.2      vctrs_0.7.2            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
-    ## [13] backports_1.5.0        utf8_1.2.6             ggstance_0.3.7        
-    ## [16] rmarkdown_2.30         tzdb_0.5.0             ragg_1.5.0            
-    ## [19] xfun_0.56              cachem_1.1.0           jsonlite_2.0.0        
-    ## [22] broom_1.0.11           cluster_2.1.8.1        R6_2.6.1              
+    ## [13] backports_1.5.1        utf8_1.2.6             ggstance_0.3.7        
+    ## [16] rmarkdown_2.31         tzdb_0.5.0             ragg_1.5.2            
+    ## [19] xfun_0.57              cachem_1.1.0           jsonlite_2.0.0        
+    ## [22] broom_1.0.12           cluster_2.1.8.2        R6_2.6.1              
     ## [25] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
     ## [31] Rcpp_1.1.1             bookdown_0.46          iterators_1.0.14      
-    ## [34] knitr_1.51             base64enc_0.1-3        parameters_0.28.3     
-    ## [37] splines_4.5.2          nnet_7.3-20            timechange_0.3.0      
+    ## [34] knitr_1.51             base64enc_0.1-6        parameters_0.28.3     
+    ## [37] splines_4.5.3          nnet_7.3-20            timechange_0.4.0      
     ## [40] tidyselect_1.2.1       rstudioapi_0.18.0      yaml_2.3.12           
-    ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-7        
+    ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-9        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
-    ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.31.0
-    ## [52] foreign_0.8-90         desc_1.4.3             survival_3.8-3        
-    ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.3       
-    ## [58] foreach_1.5.2          insight_1.4.5          generics_0.1.4        
+    ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.32.0
+    ## [52] foreign_0.8-91         desc_1.4.3             survival_3.8-6        
+    ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
+    ## [58] foreach_1.5.2          insight_1.4.6          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
-    ## [64] Hmisc_5.2-5            tools_4.5.2            data.table_1.18.0     
-    ## [67] fs_1.6.6               grid_4.5.2             datawizard_1.3.0      
+    ## [64] Hmisc_5.2-5            tools_4.5.3            data.table_1.18.2.1   
+    ## [67] fs_2.0.1               grid_4.5.3             datawizard_1.3.0      
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [73] performance_0.15.3     htmlTable_2.4.3        googledrive_2.1.2     
+    ## [73] performance_0.16.0     htmlTable_2.4.3        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.5             
-    ## [79] rappdirs_0.3.4         textshaping_1.0.4      gargle_1.6.0          
+    ## [79] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
     ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
-    ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.6         
+    ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.8         
     ## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
     ## [91] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4
