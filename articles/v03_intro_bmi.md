@@ -380,7 +380,7 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] Rdpack_2.6.6           gridExtra_2.3          httr2_1.2.2           
-    ##   [4] rlang_1.1.7            magrittr_2.0.5         compiler_4.5.3        
+    ##   [4] rlang_1.2.0            magrittr_2.0.5         compiler_4.5.3        
     ##   [7] survAUC_1.4-0          systemfonts_1.3.2      vctrs_0.7.2           
     ##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          
     ##  [13] fastmap_1.2.0          backports_1.5.1        labeling_0.4.3        

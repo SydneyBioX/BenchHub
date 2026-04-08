@@ -107,5 +107,5 @@ sessionInfo()
     ## [16] jquerylib_0.1.4     systemfonts_1.3.2   compiler_4.5.3     
     ## [19] tools_4.5.3         ragg_1.5.2          bslib_0.10.0       
     ## [22] evaluate_1.0.5      yaml_2.3.12         BiocManager_1.30.27
-    ## [25] jsonlite_2.0.0      rlang_1.1.7         fs_2.0.1           
+    ## [25] jsonlite_2.0.0      rlang_1.2.0         fs_2.0.1           
     ## [28] htmlwidgets_1.6.4

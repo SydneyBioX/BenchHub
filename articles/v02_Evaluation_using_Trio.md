@@ -354,7 +354,7 @@ sessionInfo()
     ## [13] BenchHub_0.99.10 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.1.7           
+    ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           
     ##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
     ##  [7] systemfonts_1.3.2      vctrs_0.7.2            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
