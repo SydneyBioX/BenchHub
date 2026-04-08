@@ -47,18 +47,20 @@ trio <- build_combined_simbench_trio(
 
 print(trio)
 
-Sys.unsetenv("GITHUB_PAT")
-res <- writeSubmission(
-  trio = trio,
-  n_tasks = 19,
-  prepare_files = TRUE,
-  upload_custom_metrics = TRUE,
-  githubPat = Sys.getenv("GITHUB_PAT"),
-  review = TRUE,
-  submit = TRUE,
-  url = "https://script.google.com/macros/s/AKfycbx2kgx2N0lbAlr0Q35PEwYsy3sFKvnWZVYEmjRsHDSRFEIWB-TLFM3r4HEd09TNfFxO/exec",
-  submittedBy = "xiaoqi.liang@sydney.edu.au",
-  build_payload = TRUE,
-  build_json = TRUE
-)
+source("inst/scripts/case-studies/simbench/05_submission_helpers.R")
 
+# Start with submit = FALSE for review. Switch to TRUE only after checking the
+# generated tables/payload.
+res <- prepare_simbench_submission(
+  trio = trio,
+  dataset_defaults = simbench_dataset_defaults(
+    trio = trio,
+    organism = "Homo sapiens",
+    tissue = "cell line",
+    status = "other"
+  ),
+  review = TRUE,
+  submit = FALSE,
+  url = "https://script.google.com/macros/s/AKfycbx2kgx2N0lbAlr0Q35PEwYsy3sFKvnWZVYEmjRsHDSRFEIWB-TLFM3r4HEd09TNfFxO/exec",
+  submittedBy = "xiaoqi.liang@sydney.edu.au"
+)

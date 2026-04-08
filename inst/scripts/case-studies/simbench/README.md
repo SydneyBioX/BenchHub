@@ -184,12 +184,10 @@ After checking one combined Trio, prepare a review bundle with:
 source("inst/scripts/case-studies/simbench/05_prepare_one_simbench_submission.R")
 ```
 
-This uses `writeSubmission()` with two tasks:
-
-- `Data property estimation`: all data-property evidence objects.
-- `Biological signals`: `differentially_expression`, `differentially_variable`,
-  `differentially_distributed`, `differential_prop`, and
-  `bimodally_distributed`.
+This uses `writeSubmission()` with 19 tasks: one task per supporting evidence
+object. Shared metadata such as task stage, task type, evidence type, and
+metric type is filled from `05_submission_helpers.R` so you do not need to
+re-enter the same choices for every Trio.
 
 The script reuses the ExperimentHub source for the dataset, saves supporting
 evidence under `ignore/simbench/submission/`, builds the submission payload and
