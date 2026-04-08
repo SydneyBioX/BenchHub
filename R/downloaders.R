@@ -302,3 +302,292 @@ zenodoDl <- function(ID, cachePath) {
   if(length(splitID) == 3) dlLocation <- fs::path_join(c(dlPath, specificFile)) else dlLocation <- dlPath
   dlLocation
 }
+
+#' Download a Trio from the five-table submission database
+#'
+#' @param datasetID Dataset identifier from the `Dataset` table.
+#' @param ss Google Sheets spreadsheet ID containing the five database tables.
+#' @param cachePath Directory for downloaded files. Defaults to `tempdir()`.
+#' @return A populated `Trio` object.
+#' @export
+downloadSubmissionTrio <- function(
+    datasetID,
+    ss = "1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg",
+    cachePath = tempdir()
+) {
+  if (missing(datasetID) || is.null(datasetID) ||
+      length(datasetID) != 1 || is.na(datasetID) || !nzchar(datasetID)) {
+    cli::cli_abort("{.arg datasetID} must be a single non-empty string.")
+  }
+
+  if (!curl::has_internet()) {
+    cli::cli_abort("No internet connection available.")
+  }
+
+  tables <- private_read_submission_database_tables(ss)
+
+  dataset_row <- tables$Dataset[tables$Dataset$datasetID == datasetID, , drop = FALSE]
+  if (nrow(dataset_row) == 0) {
+    cli::cli_abort(c(
+      "Could not find {.arg datasetID} in the Dataset table.",
+      "i" = "Checked datasetID: {.val {datasetID}}"
+    ))
+  }
+  if (nrow(dataset_row) > 1) {
+    cli::cli_abort("Dataset table contains multiple rows for datasetID {.val {datasetID}}.")
+  }
+
+  dataset_source <- private_submission_db_chr(dataset_row$source[[1]])
+  dataset_source_id <- private_submission_db_chr(dataset_row$datasourceID[[1]])
+
+  data <- private_download_submission_object(
+    source = dataset_source,
+    source_id = dataset_source_id,
+    cachePath = cachePath,
+    label = "dataset"
+  )
+
+  task_rows <- tables$DatasetTask[tables$DatasetTask$datasetID == datasetID, , drop = FALSE]
+  if (nrow(task_rows) == 0) {
+    cli::cli_abort("No DatasetTask rows found for datasetID {.val {datasetID}}.")
+  }
+
+  evidence_rows <- tables$DatasetEvidence[
+    tables$DatasetEvidence$datasetTaskID %in% task_rows$datasetTaskID,
+    ,
+    drop = FALSE
+  ]
+  if (nrow(evidence_rows) == 0) {
+    cli::cli_abort("No DatasetEvidence rows found for datasetID {.val {datasetID}}.")
+  }
+
+  task_metric_rows <- tables$DatasetTaskMetric[
+    tables$DatasetTaskMetric$datasetTaskID %in% task_rows$datasetTaskID,
+    ,
+    drop = FALSE
+  ]
+  if (nrow(task_metric_rows) == 0) {
+    cli::cli_abort("No DatasetTaskMetric rows found for datasetID {.val {datasetID}}.")
+  }
+
+  metric_rows <- tables$Metric[
+    tables$Metric$metricID %in% task_metric_rows$metricID,
+    ,
+    drop = FALSE
+  ]
+  if (nrow(metric_rows) == 0) {
+    cli::cli_abort("No Metric rows found for datasetID {.val {datasetID}}.")
+  }
+
+  metrics <- private_reconstruct_submission_metrics(metric_rows)
+  evidence <- private_reconstruct_submission_evidence(
+    evidence_rows = evidence_rows,
+    task_metric_rows = task_metric_rows,
+    metric_rows = metric_rows,
+    cachePath = cachePath
+  )
+
+  trio <- Trio$new(
+    datasetID = datasetID,
+    data = data,
+    evidence = evidence,
+    metrics = metrics,
+    cachePath = cachePath,
+    description = private_submission_db_chr(dataset_row$description[[1]]),
+    name = private_submission_db_chr(dataset_row$name[[1]])
+  )
+
+  trio$dataSource <- dataset_source
+  trio$dataSourceID <- dataset_source_id
+  trio$evidenceSourceID <- stats::setNames(
+    evidence_rows$evidenceSourceID,
+    evidence_rows$supportingEvidence
+  )
+
+  trio
+}
+
+private_read_submission_database_tables <- function(ss) {
+  list(
+    Dataset = private_read_submission_database_sheet(ss, "Dataset"),
+    DatasetTask = private_read_submission_database_sheet(ss, "DatasetTask"),
+    DatasetEvidence = private_read_submission_database_sheet(ss, "DatasetEvidence"),
+    Metric = private_read_submission_database_sheet(ss, "Metric"),
+    DatasetTaskMetric = private_read_submission_database_sheet(ss, "DatasetTaskMetric")
+  )
+}
+
+private_read_submission_database_sheet <- function(ss, sheet) {
+  suppressMessages(
+    googlesheets4::read_sheet(
+      ss = ss,
+      sheet = sheet
+    )
+  ) |>
+    as.data.frame()
+}
+
+private_download_submission_object <- function(source, source_id, cachePath, label) {
+  if (is.na(source) || is.na(source_id)) {
+    cli::cli_abort("Cannot download {label}: source and source ID are required.")
+  }
+
+  downloader_name <- paste0(tolower(source), "Dl")
+  if (!exists(downloader_name, mode = "function")) {
+    cli::cli_abort(c(
+      "No downloader is available for source {.val {source}}.",
+      "i" = "Expected function: {.fn {downloader_name}}"
+    ))
+  }
+
+  path <- do.call(
+    downloader_name,
+    list(ID = source_id, cachePath = cachePath)
+  )
+
+  loadFile(path)
+}
+
+private_reconstruct_submission_evidence <- function(
+    evidence_rows,
+    task_metric_rows,
+    metric_rows,
+    cachePath
+) {
+  evidence <- list()
+  evidence_cache <- new.env(parent = emptyenv())
+
+  for (i in seq_len(nrow(evidence_rows))) {
+    evidence_row <- evidence_rows[i, , drop = FALSE]
+    evidence_name <- private_submission_db_chr(evidence_row$supportingEvidence[[1]])
+    evidence_source_id <- private_submission_db_chr(evidence_row$evidenceSourceID[[1]])
+
+    evidence_data <- private_load_submission_evidence_data(
+      evidence_name = evidence_name,
+      evidence_source_id = evidence_source_id,
+      cachePath = cachePath,
+      cache = evidence_cache
+    )
+
+    metric_ids <- unique(task_metric_rows$metricID[
+      task_metric_rows$datasetTaskID == evidence_row$datasetTaskID[[1]]
+    ])
+    metric_names <- metric_rows$metricName[match(metric_ids, metric_rows$metricID)]
+    metric_names <- metric_names[!is.na(metric_names) & nzchar(metric_names)]
+
+    evidence[[evidence_name]] <- list(
+      evidence = evidence_data,
+      metrics = metric_names
+    )
+  }
+
+  evidence
+}
+
+private_load_submission_evidence_data <- function(
+    evidence_name,
+    evidence_source_id,
+    cachePath,
+    cache
+) {
+  if (is.na(evidence_source_id)) {
+    cli::cli_abort("Evidence {.val {evidence_name}} has no evidenceSourceID.")
+  }
+
+  if (!exists(evidence_source_id, envir = cache, inherits = FALSE)) {
+    assign(
+      evidence_source_id,
+      private_download_submission_object(
+        source = "figshare",
+        source_id = evidence_source_id,
+        cachePath = cachePath,
+        label = paste("evidence", evidence_name)
+      ),
+      envir = cache
+    )
+  }
+
+  loaded <- get(evidence_source_id, envir = cache, inherits = FALSE)
+
+  if (is.list(loaded) &&
+      evidence_name %in% names(loaded) &&
+      is.list(loaded[[evidence_name]]) &&
+      "evidence" %in% names(loaded[[evidence_name]])) {
+    return(loaded[[evidence_name]]$evidence)
+  }
+
+  if (is.list(loaded) && evidence_name %in% names(loaded)) {
+    return(loaded[[evidence_name]])
+  }
+
+  loaded
+}
+
+private_reconstruct_submission_metrics <- function(metric_rows) {
+  metric_rows <- metric_rows[!duplicated(metric_rows$metricID), , drop = FALSE]
+  metrics <- list()
+
+  for (i in seq_len(nrow(metric_rows))) {
+    metric_row <- metric_rows[i, , drop = FALSE]
+    metric_name <- private_submission_db_chr(metric_row$metricName[[1]])
+    wrapper_r <- private_submission_db_col_chr(metric_row, "wrapper_r")
+    source_type <- if ("metricSourceType" %in% names(metric_row)) {
+      private_submission_db_chr(metric_row$metricSourceType[[1]])
+    } else {
+      NA_character_
+    }
+    gist_url <- private_submission_db_col_chr(metric_row, "gist_url")
+
+    metrics[[metric_name]] <- private_reconstruct_submission_metric(
+      metric_name = metric_name,
+      wrapper_r = wrapper_r,
+      source_type = source_type,
+      gist_url = gist_url
+    )
+  }
+
+  metrics
+}
+
+private_reconstruct_submission_metric <- function(
+    metric_name,
+    wrapper_r,
+    source_type,
+    gist_url
+) {
+  if (!is.na(wrapper_r) &&
+      (identical(source_type, "internal") || is.na(gist_url))) {
+    return(match.fun(wrapper_r))
+  }
+
+  if (!is.na(gist_url)) {
+    metric_env <- new.env(parent = baseenv())
+    sys.source(downloadGist(gist_url), envir = metric_env)
+
+    if (!is.na(wrapper_r) && exists(wrapper_r, envir = metric_env, inherits = FALSE)) {
+      return(get(wrapper_r, envir = metric_env, inherits = FALSE))
+    }
+
+    if (exists(metric_name, envir = metric_env, inherits = FALSE)) {
+      return(get(metric_name, envir = metric_env, inherits = FALSE))
+    }
+  }
+
+  cli::cli_abort("Could not reconstruct metric {.val {metric_name}}.")
+}
+
+private_submission_db_chr <- function(x) {
+  if (is.null(x) || length(x) == 0 || is.na(x) || !nzchar(as.character(x))) {
+    return(NA_character_)
+  }
+
+  as.character(x)
+}
+
+private_submission_db_col_chr <- function(row, column) {
+  if (!column %in% names(row)) {
+    return(NA_character_)
+  }
+
+  private_submission_db_chr(row[[column]][[1]])
+}

@@ -83,7 +83,9 @@ Trio <- R6::R6Class(
       task = NULL,
       metrics = NULL,
       cachePath = FALSE,
-      verbose = FALSE
+      verbose = FALSE,
+      description = NULL,
+      name = NULL
     ) {
       if (!interactive()) {
         googlesheets4::gs4_deauth()
@@ -96,20 +98,37 @@ Trio <- R6::R6Class(
       self$verbose <- verbose
       # if users have their own data without datasetID
       if (!is.null(data)) {
-        if (interactive()) {
-          self$description <- readline("Briefly describe the dataset: ")
-          self$dataSourceID <- ifelse(
-            is.null(datasetID) || datasetID == "",
-            readline("Name the dataset: "),
-            datasetID
-          )
-        } else {
-          self$dataSourceID <- ifelse(
-            is.null(datasetID) || datasetID == "",
-            "local_data",
-            datasetID
-          )
+        if (!identical(cachePath, FALSE)) {
+          self$cachePath <- getTrioCachePath(cachePath)
         }
+
+        has_description <- !is.null(description) &&
+          !is.na(as.character(description)) &&
+          nzchar(as.character(description))
+        has_name <- !is.null(name) &&
+          !is.na(as.character(name)) &&
+          nzchar(as.character(name))
+
+        if (has_description) {
+          self$description <- as.character(description)
+        } else if (interactive()) {
+          self$description <- readline("Briefly describe the dataset: ")
+        }
+
+        self$dataSourceID <- ifelse(
+          is.null(datasetID) || datasetID == "",
+          ifelse(
+            has_name,
+            as.character(name),
+            ifelse(interactive(), readline("Name the dataset: "), "local_data")
+          ),
+          datasetID
+        )
+        self$name <- ifelse(
+          has_name,
+          as.character(name),
+          self$dataSourceID
+        )
         self$data <- data
         # If any evidence is missing sample IDs.
         missingNames <- vapply(

@@ -1964,12 +1964,15 @@ private_verify_submission_figshare <- function(
     cli::cli_abort("No files were found in the Figshare article.")
   }
 
-  dataset_match <- private_match_submission_figshare_file(
-    available = file_df,
-    preferred = datasetFileName,
-    default_name = prepared$dataset$fileName,
-    suffix = "_dataset.rds"
-  )
+  dataset_match <- NULL
+  if (isTRUE(prepared$dataset$prepared)) {
+    dataset_match <- private_match_submission_figshare_file(
+      available = file_df,
+      preferred = datasetFileName,
+      default_name = prepared$dataset$fileName,
+      suffix = "_dataset.rds"
+    )
+  }
 
   evidence_match <- NULL
   if (isTRUE(prepared$evidence$prepared)) {
@@ -1981,9 +1984,11 @@ private_verify_submission_figshare <- function(
     )
   }
 
-  dataset_md5_ok <- isTRUE(prepared$dataset$prepared) &&
-    !is.na(prepared$dataset$md5) &&
-    identical(unname(file_df$computed_md5[dataset_match$row]), prepared$dataset$md5)
+  dataset_md5_ok <- NA
+  if (!is.null(dataset_match)) {
+    dataset_md5_ok <- !is.na(prepared$dataset$md5) &&
+      identical(unname(file_df$computed_md5[dataset_match$row]), prepared$dataset$md5)
+  }
 
   if (isTRUE(prepared$dataset$prepared) && !dataset_md5_ok && !skipMd5Check) {
     cli::cli_abort("Uploaded dataset file MD5 does not match the prepared dataset file.")
@@ -2000,13 +2005,17 @@ private_verify_submission_figshare <- function(
 
   list(
     article_id = article_id,
-    dataset = list(
-      fileName = dataset_match$file_name,
-      fileID = as.character(file_df$id[dataset_match$row]),
-      source = "figshare",
-      sourceID = paste0(article_id, "/", file_df$id[dataset_match$row]),
-      md5_ok = if (isTRUE(prepared$dataset$prepared)) dataset_md5_ok else NA
-    ),
+    dataset = if (is.null(dataset_match)) {
+      NULL
+    } else {
+      list(
+        fileName = dataset_match$file_name,
+        fileID = as.character(file_df$id[dataset_match$row]),
+        source = "figshare",
+        sourceID = paste0(article_id, "/", file_df$id[dataset_match$row]),
+        md5_ok = dataset_md5_ok
+      )
+    },
     evidence = if (is.null(evidence_match)) {
       NULL
     } else {
@@ -2109,9 +2118,54 @@ private_prepare_write_submission_file_args <- function(trio, name, file_args) {
     return(file_args)
   }
 
-  if (is.null(file_args$outputDir)) {
+  if (is.null(file_args$useExistingSource)) {
+    existing_source_available <- !is.null(trio$dataSource) &&
+      nzchar(as.character(trio$dataSource)) &&
+      !is.null(trio$dataSourceID) &&
+      nzchar(as.character(trio$dataSourceID))
+
+    if (existing_source_available) {
+      use_existing <- utils::askYesNo(
+        "Do you want to keep the existing Trio download source instead of preparing a new dataset file?"
+      )
+      if (is.na(use_existing)) {
+        cli::cli_abort("Submission file preparation cancelled.")
+      }
+      if (isTRUE(use_existing)) {
+        file_args$useExistingSource <- TRUE
+        file_args$saveData <- FALSE
+      } else {
+        file_args$useExistingSource <- FALSE
+      }
+    } else {
+      file_args$useExistingSource <- FALSE
+    }
+  }
+
+  if (is.null(file_args$saveData)) {
+    file_args$saveData <- !isTRUE(file_args$useExistingSource)
+  }
+  if (is.null(file_args$saveEvidence)) {
+    file_args$saveEvidence <- TRUE
+  }
+
+  if (isTRUE(file_args$useExistingSource) && !isTRUE(file_args$saveData)) {
+    cli::cli_inform(c(
+      "Using existing Trio dataset source.",
+      "i" = paste0(
+        "Dataset source: ",
+        private_submission_chr(trio$dataSource),
+        " / ",
+        private_submission_chr(trio$dataSourceID)
+      ),
+      "i" = "Only supporting evidence will be prepared if needed."
+    ))
+  }
+
+  if (is.null(file_args$outputDir) &&
+      (isTRUE(file_args$saveData) || isTRUE(file_args$saveEvidence))) {
     use_current_dir <- utils::askYesNo(
-      "Do you want to save the data to an RDS file in the current dir?"
+      "Do you want to save the submission RDS file(s) in the current dir?"
     )
 
     if (is.na(use_current_dir)) {
@@ -2132,35 +2186,8 @@ private_prepare_write_submission_file_args <- function(trio, name, file_args) {
     }
   }
 
-  if (is.null(file_args$saveData)) {
-    file_args$saveData <- TRUE
-  }
-  if (is.null(file_args$saveEvidence)) {
-    file_args$saveEvidence <- TRUE
-  }
-
-  if (is.null(file_args$useExistingSource)) {
-    existing_source_available <- !is.null(trio$dataSource) &&
-      nzchar(as.character(trio$dataSource)) &&
-      !is.null(trio$dataSourceID) &&
-      nzchar(as.character(trio$dataSourceID))
-
-    if (existing_source_available) {
-      use_existing <- utils::askYesNo(
-        "Do you want to keep the existing Trio download source instead of preparing a new dataset file?"
-      )
-      if (isTRUE(use_existing)) {
-        file_args$useExistingSource <- TRUE
-        file_args$saveData <- FALSE
-      } else {
-        file_args$useExistingSource <- FALSE
-      }
-    } else {
-      file_args$useExistingSource <- FALSE
-    }
-  }
-
-  if (isTRUE(file_args$saveData) && is.null(file_args$verifyFigshare)) {
+  if ((isTRUE(file_args$saveData) || isTRUE(file_args$saveEvidence)) &&
+      is.null(file_args$verifyFigshare)) {
     verify_figshare <- utils::askYesNo(
       "After uploading to Figshare, do you want to verify the article link now?"
     )
@@ -2508,11 +2535,16 @@ private_inform_prepared_submission_files <- function(files) {
   }
 
   if (length(lines) > 0) {
-    lines <- c(
-      lines,
-      "",
-      "Upload these file(s) to the same Figshare article, then continue with verification if needed."
+    prepared_labels <- c(
+      if (isTRUE(files$dataset$prepared)) "dataset" else character(0),
+      if (isTRUE(files$evidence$prepared)) "supporting evidence" else character(0)
     )
+    upload_note <- if (identical(prepared_labels, "supporting evidence")) {
+      "Upload the supporting evidence file to Figshare, then continue with verification if needed."
+    } else {
+      "Upload these file(s) to the same Figshare article, then continue with verification if needed."
+    }
+    lines <- c(lines, "", upload_note)
     cli::cli_inform(lines)
   }
 
