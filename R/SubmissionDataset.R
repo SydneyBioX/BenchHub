@@ -765,6 +765,11 @@ buildMetricSubmission <- function(trio) {
     ),
     metricType = rep(NA_character_, length(metric_names)),
     metricSourceType = metric_type,
+    metricKey = vapply(
+      metric_names,
+      private_metric_key,
+      character(1)
+    ),
     wrapper_py = rep(NA_character_, length(metric_names)),
     gist_url = rep(NA_character_, length(metric_names)),
     stringsAsFactors = FALSE
@@ -841,6 +846,17 @@ prepareTrioSubmissionMetrics <- function(
     } else {
       gist$html_url
     }
+    metric_tbl$metricKey[custom_rows] <- vapply(
+      seq_along(metric_tbl$metricName[custom_rows]),
+      function(i) {
+        private_metric_key(
+          metric_name = metric_tbl$metricName[custom_rows][[i]],
+          metric_type = metric_tbl$metricSourceType[custom_rows][[i]],
+          gist_url = metric_tbl$gist_url[custom_rows][[i]]
+        )
+      },
+      character(1)
+    )
   }
 
   list(
@@ -1577,17 +1593,13 @@ buildTrioSubmission <- function(
         task_temp_id = evidence_task_ids,
         stringsAsFactors = FALSE
       ),
-      metric = data.frame(
-        metric_temp_id = metric_temp_ids,
-        metricName = metric_tbl$metricName,
-        stringsAsFactors = FALSE
-      ),
+      metric = private_build_metric_links(metric_tbl, metric_temp_ids),
       task_metric = private_build_task_metric_links(
         trio = trio,
         evidence_names = ordered_evidence_names,
         evidence_task_ids = evidence_task_ids,
         metric_temp_ids = metric_temp_ids,
-        metric_names = metric_tbl$metricName
+        metric_tbl = metric_tbl
       )
     )
   )
@@ -1776,6 +1788,10 @@ private_get_submission_num_samples <- function(data) {
     return(NA_integer_)
   }
 
+  if (inherits(data, "SingleCellExperiment")) {
+    return(as.integer(ncol(data)))
+  }
+
   if (isTabular(data) && !is.null(nrow(data))) {
     return(as.integer(nrow(data)))
   }
@@ -1897,6 +1913,47 @@ private_metric_wrapper_r <- function(metric_name, metric_type) {
   }
 
   NA_character_
+}
+
+private_metric_key <- function(metric_name, metric_type = NULL, gist_url = NULL) {
+  if (is.null(metric_type) || is.na(metric_type) || !nzchar(metric_type)) {
+    metric_type <- private_infer_metric_type(metric_name)
+  }
+
+  if (identical(metric_type, "internal")) {
+    wrapper <- private_find_internal_metric_wrapper(metric_name)
+    if (is.na(wrapper)) {
+      return(NA_character_)
+    }
+    return(wrapper)
+  }
+
+  if (identical(metric_type, "gist")) {
+    if (is.null(gist_url) || is.na(gist_url) || !nzchar(gist_url)) {
+      return(NA_character_)
+    }
+    gist_id <- private_extract_gist_id(gist_url)
+    if (is.na(gist_id) || !nzchar(gist_id)) {
+      return(NA_character_)
+    }
+    return(paste0(gist_id, "|", metric_name))
+  }
+
+  NA_character_
+}
+
+private_extract_gist_id <- function(gist_url) {
+  if (is.null(gist_url) || is.na(gist_url) || !nzchar(gist_url)) {
+    return(NA_character_)
+  }
+
+  parts <- strsplit(gist_url, "/")[[1]]
+  parts <- parts[nzchar(parts)]
+  if (length(parts) == 0) {
+    return(NA_character_)
+  }
+
+  tail(parts, 1)
 }
 
 private_submission_df_to_records <- function(df) {
@@ -2259,18 +2316,25 @@ private_build_submission_links <- function(trio, task_args, evidence_args, metri
       task_temp_id = evidence_args$datasetTaskID,
       stringsAsFactors = FALSE
     ),
-    metric = data.frame(
-      metric_temp_id = metric_temp_ids,
-      metricName = metric_tbl$metricName,
-      stringsAsFactors = FALSE
-    ),
+    metric = private_build_metric_links(metric_tbl, metric_temp_ids),
     task_metric = private_build_task_metric_links(
       trio = trio,
       evidence_names = evidence_args$evidenceName,
       evidence_task_ids = evidence_args$datasetTaskID,
       metric_temp_ids = metric_temp_ids,
-      metric_names = metric_tbl$metricName
+      metric_tbl = metric_tbl
     )
+  )
+}
+
+private_build_metric_links <- function(metric_tbl, metric_temp_ids) {
+  data.frame(
+    metric_temp_id = metric_temp_ids,
+    metricName = metric_tbl$metricName,
+    metricSourceType = metric_tbl$metricSourceType,
+    metricKey = metric_tbl$metricKey,
+    gist_url = metric_tbl$gist_url,
+    stringsAsFactors = FALSE
   )
 }
 
@@ -2279,9 +2343,12 @@ private_build_task_metric_links <- function(
     evidence_names,
     evidence_task_ids,
     metric_temp_ids,
-    metric_names
+    metric_tbl
 ) {
-  metric_lookup <- stats::setNames(metric_temp_ids, metric_names)
+  metric_lookup <- stats::setNames(metric_temp_ids, metric_tbl$metricName)
+  source_lookup <- stats::setNames(metric_tbl$metricSourceType, metric_tbl$metricName)
+  metric_key_lookup <- stats::setNames(metric_tbl$metricKey, metric_tbl$metricName)
+  gist_url_lookup <- stats::setNames(metric_tbl$gist_url, metric_tbl$metricName)
 
   rows <- lapply(seq_along(evidence_names), function(i) {
     one_evidence_name <- evidence_names[[i]]
@@ -2297,6 +2364,9 @@ private_build_task_metric_links <- function(
       task_temp_id = rep(one_task_temp_id, length(one_metric_names)),
       metric_temp_id = unname(metric_lookup[one_metric_names]),
       metricName = one_metric_names,
+      metricSourceType = unname(source_lookup[one_metric_names]),
+      metricKey = unname(metric_key_lookup[one_metric_names]),
+      gist_url = unname(gist_url_lookup[one_metric_names]),
       stringsAsFactors = FALSE
     )
   })
@@ -2308,6 +2378,9 @@ private_build_task_metric_links <- function(
       task_temp_id = character(0),
       metric_temp_id = character(0),
       metricName = character(0),
+      metricSourceType = character(0),
+      metricKey = character(0),
+      gist_url = character(0),
       stringsAsFactors = FALSE
     ))
   }

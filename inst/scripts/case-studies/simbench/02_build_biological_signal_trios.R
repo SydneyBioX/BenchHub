@@ -15,25 +15,91 @@ propDiffMetric <- function(evidence, predicted) {
   abs(as.numeric(predicted) - as.numeric(evidence))
 }
 
-get_celltype <- function(obj, dataset_name) {
+get_celltype <- function(obj, dataset_name, celltype_col = NULL) {
   celltype <- NULL
+  candidate_cols <- c(
+    "celltype",
+    "cell_type",
+    "CellType",
+    "Cell_Type",
+    "cell.types",
+    "cell_types",
+    "celltype_final",
+    "cell_type1",
+    "Celltype",
+    "cell_types1",
+    "label",
+    "labels",
+    "cluster",
+    "clusters",
+    "ident",
+    "orig.ident"
+  )
 
   if (inherits(obj, "Seurat")) {
-    celltype <- obj$celltype
+    metadata <- obj[[]]
+    metadata_cols <- colnames(metadata)
+    selected_col <- celltype_col
+
+    if (is.null(selected_col)) {
+      matching_cols <- candidate_cols[candidate_cols %in% metadata_cols]
+      selected_col <- if (length(matching_cols) > 0L) matching_cols[[1]] else NULL
+    }
+
+    if (!is.null(selected_col) && selected_col %in% metadata_cols) {
+      celltype <- metadata[[selected_col]]
+    }
   } else if (inherits(obj, "SingleCellExperiment")) {
-    celltype <- SummarizedExperiment::colData(obj)$celltype
+    metadata <- as.data.frame(SummarizedExperiment::colData(obj))
+    metadata_cols <- colnames(metadata)
+    selected_col <- celltype_col
+
+    if (is.null(selected_col)) {
+      matching_cols <- candidate_cols[candidate_cols %in% metadata_cols]
+      selected_col <- if (length(matching_cols) > 0L) matching_cols[[1]] else NULL
+    }
+
+    if (!is.null(selected_col) && selected_col %in% metadata_cols) {
+      celltype <- metadata[[selected_col]]
+    }
+  } else {
+    metadata_cols <- character()
   }
 
   if (is.null(celltype)) {
     stop(
       "Could not find a `celltype` field for dataset ",
       dataset_name,
-      ".",
+      ". Available metadata columns: ",
+      paste(metadata_cols, collapse = ", "),
       call. = FALSE
     )
   }
 
   celltype
+}
+
+get_celltype_or_default <- function(obj, dataset_name, celltype_col = NULL) {
+  tryCatch(
+    get_celltype(obj, dataset_name = dataset_name, celltype_col = celltype_col),
+    error = function(e) {
+      message(
+        "Could not identify cell type labels for ",
+        dataset_name,
+        "; assigning all cells to `cell type I`."
+      )
+
+      if (inherits(obj, "Seurat")) {
+        n_cells <- ncol(obj)
+      } else if (inherits(obj, "SingleCellExperiment")) {
+        n_cells <- ncol(obj)
+      } else {
+        stop(e)
+      }
+
+      rep("cell type I", n_cells)
+    }
+  )
 }
 
 subset_top_two_celltypes <- function(exprs_mat, celltype) {
@@ -290,7 +356,7 @@ build_simbench_biological_signal_trios <- function(
 
     obj <- alldata[[id]]
     counts_mat <- get_counts_matrix(obj, ds_name)
-    celltype <- get_celltype(obj, ds_name)
+    celltype <- get_celltype_or_default(obj, ds_name)
 
     trios[[ds_name]] <- build_biological_signal_trio(
       counts_mat = counts_mat,

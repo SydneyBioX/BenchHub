@@ -35,7 +35,7 @@ obj <- alldata[[id]]
 dataset_name <- dataset_map[[id]]
 
 counts_mat <- get_counts_matrix(obj, dataset_name = dataset_name)
-celltype <- get_celltype(obj, dataset_name = dataset_name)
+celltype <- get_celltype_or_default(obj, dataset_name = dataset_name)
 
 trio <- build_combined_simbench_trio(
   counts_mat = counts_mat,

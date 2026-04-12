@@ -106,7 +106,7 @@ build_simbench_combined_trios <- function(
 
     obj <- alldata[[id]]
     counts_mat <- get_counts_matrix(obj, ds_name)
-    celltype <- get_celltype(obj, ds_name)
+    celltype <- get_celltype_or_default(obj, ds_name)
 
     trios[[ds_name]] <- build_combined_simbench_trio(
       counts_mat = counts_mat,

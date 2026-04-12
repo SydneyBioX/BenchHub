@@ -94,6 +94,7 @@ testthat::test_that("buildTrioSubmission supports multiple evidence rows per tas
     c("PMID123456", "DOI:10.xxx")
   )
   expect_true(all(is.na(submission$Metric$metricID)))
+  expect_true("metricKey" %in% names(submission$Metric))
   expect_equal(nrow(submission$DatasetTaskMetric), 2)
   expect_true(all(is.na(submission$DatasetTaskMetric$datasetTaskID)))
   expect_true(all(is.na(submission$DatasetTaskMetric$metricID)))
@@ -101,6 +102,16 @@ testthat::test_that("buildTrioSubmission supports multiple evidence rows per tas
   expect_equal(nrow(submission$submission_links$task), 1)
   expect_equal(nrow(submission$submission_links$evidence), 2)
   expect_equal(nrow(submission$submission_links$metric), 2)
+  expect_true(all(c(
+    "metricSourceType",
+    "metricKey",
+    "gist_url"
+  ) %in% names(submission$submission_links$metric)))
+  expect_true(all(c(
+    "metricSourceType",
+    "metricKey",
+    "gist_url"
+  ) %in% names(submission$submission_links$task_metric)))
 })
 
 testthat::test_that("prepareTrioSubmissionFiles saves dataset and evidence files", {
@@ -666,6 +677,10 @@ testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom
     "MSEmetric"
   )
   expect_equal(
+    metric_info$Metric$metricKey[metric_info$Metric$metricName == "MSE"],
+    "MSEmetric"
+  )
+  expect_equal(
     metric_info$Metric$metricSourceType[metric_info$Metric$metricName == "customScore"],
     "gist"
   )
@@ -673,6 +688,9 @@ testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom
     metric_info$Metric$wrapper_r[metric_info$Metric$metricName == "customScore"],
     "customScore"
   )
+  expect_true(is.na(
+    metric_info$Metric$metricKey[metric_info$Metric$metricName == "customScore"]
+  ))
   expect_true(all(is.na(metric_info$Metric$metricType)))
   expect_true(is.na(
     metric_info$Metric$gist_url[metric_info$Metric$metricName == "customScore"]
@@ -755,6 +773,7 @@ testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist
     "https://gist.github.com/example/custom-metric"
   )
   expect_equal(metric_info$Metric$wrapper_r, "customScore")
+  expect_equal(metric_info$Metric$metricKey, "custom-metric|customScore")
 })
 
 testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {

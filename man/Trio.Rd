@@ -77,7 +77,9 @@ Create a Trio object
   task = NULL,
   metrics = NULL,
   cachePath = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  description = NULL,
+  name = NULL
 )}\if{html}{\out{</div>}}
 }
 

@@ -13,17 +13,17 @@ if (requireNamespace("pkgload", quietly = TRUE)) {
 source("inst/scripts/case-studies/simbench/03_build_combined_simbench_trios.R")
 source("inst/scripts/case-studies/simbench/05_submission_helpers.R")
 
-id <- "EH5387"
+id <- "EH5418"
 pearson_sample_size <- 100L
 metadata <- showMetaData()
 print(metadata[metadata$ExperimentHub_ID == id, , drop = FALSE])
 
 dataset_metadata <- list(
-  organism = "Homo sapiens",
-  tissue = "Cell line",
-  status = "diseased",
-  doi = "10.1016/j.cell.2018.05.060",
-  technology = "10x Genomics"
+  organism = "Mus musculus",
+  tissue = "Liver",
+  status = "healthy",
+  doi = "10.1002/hep.29353",
+  technology = "Illumina HiSeq 2000 (Mus musculus);Illumina HiSeq 2500 (Mus musculus)"
 )
 
 submission_url <- "https://script.google.com/macros/s/AKfycbx2kgx2N0lbAlr0Q35PEwYsy3sFKvnWZVYEmjRsHDSRFEIWB-TLFM3r4HEd09TNfFxO/exec"
@@ -41,7 +41,8 @@ obj <- alldata[[id]]
 dataset_name <- dataset_map[[id]]
 
 counts_mat <- get_counts_matrix(obj, dataset_name = dataset_name)
-celltype <- get_celltype(obj, dataset_name = dataset_name)
+celltype <- get_celltype_or_default(obj, dataset_name = dataset_name)
+# celltype <- rep("BC09", length(celltype))
 
 if (length(unique(as.character(celltype))) >= 2L) {
   trio <- build_combined_simbench_trio(
@@ -63,7 +64,10 @@ if (length(unique(as.character(celltype))) >= 2L) {
   )
 }
 
+trio$description <- "Single-cell RNA-seq of mouse fetal liver cells (healthy), profiling hepatoblast differentiation into hepatocytes and cholangiocytes."
 print(trio)
+
+
 
 res <- prepare_simbench_submission(
   trio = trio,

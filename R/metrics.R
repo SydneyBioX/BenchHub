@@ -196,6 +196,147 @@ MSEmetric <- function(evidence, predicted) {
   mean((evidence - predicted)^2)
 }
 
+#' Root Mean Squared Error (RMSE) Metric
+#'
+#' @description Computes the root mean squared error of the predictions.
+#' @param evidence The true values.
+#' @param predicted The predicted values.
+#' @return The root mean squared error.
+#' @examples
+#' evidence <- c(1, 2, 3, 4)
+#' predicted <- c(1.1, 2.1, 2.9, 4.2)
+#' RMSEmetric(evidence, predicted)
+#' @export
+RMSEmetric <- function(evidence, predicted) {
+  unname(sqrt(MSEmetric(evidence, predicted)))
+}
+
+#' Adjusted Rand Index (ARI) Metric
+#'
+#' @description Computes the adjusted Rand index between two cluster labelings.
+#' @param evidence The true labels.
+#' @param predicted The predicted labels.
+#' @return The adjusted Rand index.
+#' @examples
+#' evidence <- factor(c("A", "A", "B", "B"))
+#' predicted <- factor(c("A", "A", "B", "B"))
+#' ARImetric(evidence, predicted)
+#' @export
+ARImetric <- function(evidence, predicted) {
+  contingency <- table(evidence, predicted)
+  n <- sum(contingency)
+
+  if (n < 2) {
+    return(NA_real_)
+  }
+
+  sum_comb_cells <- sum(choose(contingency, 2))
+  row_totals <- rowSums(contingency)
+  col_totals <- colSums(contingency)
+  sum_comb_rows <- sum(choose(row_totals, 2))
+  sum_comb_cols <- sum(choose(col_totals, 2))
+  total_comb <- choose(n, 2)
+
+  expected_index <- (sum_comb_rows * sum_comb_cols) / total_comb
+  max_index <- 0.5 * (sum_comb_rows + sum_comb_cols)
+  denominator <- max_index - expected_index
+
+  if (denominator == 0) {
+    return(if (identical(as.character(evidence), as.character(predicted))) 1 else 0)
+  }
+
+  unname((sum_comb_cells - expected_index) / denominator)
+}
+
+#' Normalized Mutual Information (NMI) Metric
+#'
+#' @description Computes the normalized mutual information between two cluster
+#'   labelings.
+#' @param evidence The true labels.
+#' @param predicted The predicted labels.
+#' @return The normalized mutual information.
+#' @examples
+#' evidence <- factor(c("A", "A", "B", "B"))
+#' predicted <- factor(c("A", "A", "B", "B"))
+#' NMImetric(evidence, predicted)
+#' @export
+NMImetric <- function(evidence, predicted) {
+  contingency <- table(evidence, predicted)
+  n <- sum(contingency)
+
+  if (n == 0) {
+    return(NA_real_)
+  }
+
+  joint_prob <- contingency / n
+  evidence_prob <- rowSums(joint_prob)
+  predicted_prob <- colSums(joint_prob)
+
+  mutual_information <- 0
+  for (i in seq_len(nrow(joint_prob))) {
+    for (j in seq_len(ncol(joint_prob))) {
+      p_ij <- joint_prob[i, j]
+      if (p_ij > 0) {
+        mutual_information <- mutual_information + p_ij * log(
+          p_ij / (evidence_prob[i] * predicted_prob[j])
+        )
+      }
+    }
+  }
+
+  evidence_entropy <- -sum(evidence_prob[evidence_prob > 0] * log(evidence_prob[evidence_prob > 0]))
+  predicted_entropy <- -sum(predicted_prob[predicted_prob > 0] * log(predicted_prob[predicted_prob > 0]))
+  denominator <- sqrt(evidence_entropy * predicted_entropy)
+
+  if (denominator == 0) {
+    return(if (identical(as.character(evidence), as.character(predicted))) 1 else 0)
+  }
+
+  unname(mutual_information / denominator)
+}
+
+#' Jensen-Shannon Divergence (JSD) Metric
+#'
+#' @description Computes the Jensen-Shannon divergence between two non-negative
+#'   numeric vectors after normalizing them to probability distributions.
+#' @param evidence The true values.
+#' @param predicted The predicted values.
+#' @return The Jensen-Shannon divergence.
+#' @examples
+#' evidence <- c(0.2, 0.3, 0.5)
+#' predicted <- c(0.1, 0.4, 0.5)
+#' JSDmetric(evidence, predicted)
+#' @export
+JSDmetric <- function(evidence, predicted) {
+  evidence <- as.numeric(evidence)
+  predicted <- as.numeric(predicted)
+
+  if (length(evidence) != length(predicted)) {
+    cli::cli_abort("{.arg evidence} and {.arg predicted} must have the same length.")
+  }
+
+  if (any(evidence < 0, na.rm = TRUE) || any(predicted < 0, na.rm = TRUE)) {
+    cli::cli_abort("{.arg evidence} and {.arg predicted} must contain only non-negative values.")
+  }
+
+  evidence_sum <- sum(evidence)
+  predicted_sum <- sum(predicted)
+  if (evidence_sum == 0 || predicted_sum == 0) {
+    cli::cli_abort("{.arg evidence} and {.arg predicted} must each sum to a positive value.")
+  }
+
+  p <- evidence / evidence_sum
+  q <- predicted / predicted_sum
+  m <- 0.5 * (p + q)
+
+  kl_divergence <- function(x, y) {
+    non_zero <- x > 0
+    sum(x[non_zero] * log2(x[non_zero] / y[non_zero]))
+  }
+
+  unname(0.5 * kl_divergence(p, m) + 0.5 * kl_divergence(q, m))
+}
+
 #' Kernel Density Estimation (KDE) Metric
 #'
 #' @description Computes the kernel density estimation test statistic.
