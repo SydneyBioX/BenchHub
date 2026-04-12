@@ -75,7 +75,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/Rtmp6V70EZ"
+    ## Cache Path: "/tmp/RtmpjxCedm"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -140,7 +140,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmp6V70EZ"
+    ## Cache Path: "/tmp/RtmpjxCedm"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -271,8 +271,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x559c80bb5c00>
-    ## <environment: 0x559c7eac6000>
+    ## <bytecode: 0x55649784f9a8>
+    ## <environment: 0x55649823eab0>
 
 ## Other Features
 
@@ -407,16 +407,16 @@ sessionInfo()
     ## [19] data.table_1.18.2.1    knitr_1.51             htmlwidgets_1.6.4     
     ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
     ## [25] RColorBrewer_1.1-3     foreign_0.8-91         withr_3.0.2           
-    ## [28] purrr_1.2.1            desc_1.4.3             nnet_7.3-20           
+    ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
     ## [31] grid_4.5.3             datawizard_1.3.0       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.2          scales_1.4.0          
-    ## [37] insight_1.4.6          cli_3.6.5              rmarkdown_2.31        
+    ## [37] insight_1.4.6          cli_3.6.6              rmarkdown_2.31        
     ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        
     ## [43] rstudioapi_0.18.0      performance_0.16.0     httr_1.4.8            
     ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    
     ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.5.3         
     ## [52] BiocManager_1.30.27    cellranger_1.1.0       base64enc_0.1-6       
-    ## [55] marginaleffects_0.32.0 vctrs_0.7.2            Matrix_1.7-4          
+    ## [55] marginaleffects_0.32.0 vctrs_0.7.3            Matrix_1.7-4          
     ## [58] jsonlite_2.0.0         bookdown_0.46          patchwork_1.3.2       
     ## [61] ggrepel_0.9.8          Formula_1.2-5          htmlTable_2.4.3       
     ## [64] systemfonts_1.3.2      tidyr_1.3.2            jquerylib_0.1.4       
@@ -425,7 +425,7 @@ sessionInfo()
     ## [73] tibble_3.3.1           pillar_1.11.1          rappdirs_0.3.4        
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.5      evaluate_1.0.5         lattice_0.22-9        
-    ## [82] backports_1.5.1        broom_1.0.12           ggsci_4.2.0           
+    ## [82] backports_1.5.1        broom_1.0.12           ggsci_4.3.0           
     ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1            
     ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
     ## [91] fs_2.0.1               pkgconfig_2.0.3

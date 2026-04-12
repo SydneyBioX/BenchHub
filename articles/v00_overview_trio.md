@@ -102,7 +102,7 @@ sessionInfo()
     ##  [1] digest_0.6.39       desc_1.4.3          R6_2.6.1           
     ##  [4] bookdown_0.46       fastmap_1.2.0       xfun_0.57          
     ##  [7] cachem_1.1.0        knitr_1.51          htmltools_0.5.9    
-    ## [10] rmarkdown_2.31      lifecycle_1.0.5     cli_3.6.5          
+    ## [10] rmarkdown_2.31      lifecycle_1.0.5     cli_3.6.6          
     ## [13] sass_0.4.10         pkgdown_2.2.0       textshaping_1.0.5  
     ## [16] jquerylib_0.1.4     systemfonts_1.3.2   compiler_4.5.3     
     ## [19] tools_4.5.3         ragg_1.5.2          bslib_0.10.0       

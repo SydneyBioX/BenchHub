@@ -321,11 +321,11 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           
     ##   [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
-    ##   [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.2           
+    ##   [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           
     ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
     ##  [13] backports_1.5.1        XVector_0.50.0         utf8_1.2.6            
     ##  [16] ggstance_0.3.7         rmarkdown_2.31         pracma_2.4.6          
-    ##  [19] ragg_1.5.2             purrr_1.2.1            xfun_0.57             
+    ##  [19] ragg_1.5.2             purrr_1.2.2            xfun_0.57             
     ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
     ##  [25] DelayedArray_0.36.1    BiocParallel_1.44.0    broom_1.0.12          
     ##  [28] parallel_4.5.3         cluster_2.1.8.2        bslib_0.10.0          
@@ -348,9 +348,9 @@ sessionInfo()
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
     ##  [82] patchwork_1.3.2        performance_0.16.0     htmlTable_2.4.3       
     ##  [85] googledrive_2.1.2      splitTools_1.0.1       Formula_1.2-5         
-    ##  [88] cli_3.6.5              rappdirs_0.3.4         textshaping_1.0.5     
+    ##  [88] cli_3.6.6              rappdirs_0.3.4         textshaping_1.0.5     
     ##  [91] gargle_1.6.1           S4Arrays_1.10.1        dplyr_1.2.1           
-    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.2.0           
+    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.3.0           
     ##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.10   
     ## [100] ggrepel_0.9.8          htmlwidgets_1.6.4      farver_2.1.2          
     ## [103] htmltools_0.5.9        pkgdown_2.2.0          lifecycle_1.0.5       
