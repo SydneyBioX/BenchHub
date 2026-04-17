@@ -373,7 +373,7 @@ sessionInfo()
     ## [49] S7_0.2.1               evaluate_1.0.5         marginaleffects_0.32.0
     ## [52] foreign_0.8-91         desc_1.4.3             survival_3.8-6        
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
-    ## [58] foreach_1.5.2          insight_1.4.6          generics_0.1.4        
+    ## [58] foreach_1.5.2          insight_1.5.0          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.0            
     ## [64] Hmisc_5.2-5            tools_4.5.3            data.table_1.18.2.1   
     ## [67] fs_2.0.1               grid_4.5.3             datawizard_1.3.0      

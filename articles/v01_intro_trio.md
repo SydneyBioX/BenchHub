@@ -75,7 +75,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpjxCedm"
+    ## Cache Path: "/tmp/RtmpnrMj8K"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -140,7 +140,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpjxCedm"
+    ## Cache Path: "/tmp/RtmpnrMj8K"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -271,8 +271,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55649784f9a8>
-    ## <environment: 0x55649823eab0>
+    ## <bytecode: 0x55a93e32f660>
+    ## <environment: 0x55a92fe83120>
 
 ## Other Features
 
@@ -410,7 +410,7 @@ sessionInfo()
     ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
     ## [31] grid_4.5.3             datawizard_1.3.0       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.2          scales_1.4.0          
-    ## [37] insight_1.4.6          cli_3.6.6              rmarkdown_2.31        
+    ## [37] insight_1.5.0          cli_3.6.6              rmarkdown_2.31        
     ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        
     ## [43] rstudioapi_0.18.0      performance_0.16.0     httr_1.4.8            
     ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    

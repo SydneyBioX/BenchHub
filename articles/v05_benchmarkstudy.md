@@ -341,7 +341,7 @@ sessionInfo()
     ##  [58] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
     ##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         
     ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.4       
-    ##  [67] insight_1.4.6          ggplot2_4.0.2          scales_1.4.0          
+    ##  [67] insight_1.5.0          ggplot2_4.0.2          scales_1.4.0          
     ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.3           
     ##  [73] data.table_1.18.2.1    locfit_1.5-9.12        mvtnorm_1.3-6         
     ##  [76] fs_2.0.1               grid_4.5.3             tidyr_1.3.2           
