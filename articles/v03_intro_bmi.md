@@ -65,12 +65,12 @@ bmi
     ##     addMetadata: function (metadata) 
     ##     clone: function (deep = FALSE) 
     ##     evalSummary: spec_tbl_df, tbl_df, tbl, data.frame
-    ##     getBoxplot: function (evalResult, metricVariable, evidenceVariable) 
-    ##     getCorplot: function (evalResult, input_type) 
-    ##     getForestplot: function (evalResult, input_group, input_model) 
-    ##     getHeatmap: function (evalSummary) 
-    ##     getLineplot: function (evalResult, order = NULL, metricVariable) 
-    ##     getScatterplot: function (evalResult, variables) 
+    ##     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) 
+    ##     getCorplot: function (evalResult = NULL, input_type) 
+    ##     getForestplot: function (evalResult = NULL, input_group, input_model) 
+    ##     getHeatmap: function (evalSummary = NULL) 
+    ##     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) 
+    ##     getScatterplot: function (evalResult = NULL, variables) 
     ##     initialize: function (evalResult = NULL) 
     ##     metadata: NULL
 
@@ -117,24 +117,30 @@ bmi$addMetadata(metadata_srtsim)
 
 ### Available plot
 
-- `getHeatmap(evalResult)`: Creates a heatmap from the evaluation
-  summary by averaging results across datasets.
+- `getHeatmap()`: Creates a heatmap from the stored evaluation summary
+  by averaging results across datasets. You can also provide a custom
+  `evalResult` dataframe if needed.
 
-- `getCorplot(evalResult, input_type)`: Creates a correlation plot based
-  on the provided evaluation summary.
+- `getCorplot(input_type)`: Creates a correlation plot based on the
+  stored evaluation summary. You can also provide a custom `evalResult`
+  dataframe if needed.
 
-- `getBoxplot(evalResult)`: Creates a boxplot based on the provided
-  evaluation summary.
+- `getBoxplot(metricVariable, evidenceVariable)`: Creates a boxplot
+  based on the stored evaluation summary. You can also provide a custom
+  `evalResult` dataframe if needed.
 
-- `getForestplot(evalResult, input_group, input_model)`: Create a forest
-  plot using linear models based on the comparison between groups in the
-  provided evaluation summary.
+- `getForestplot(input_group, input_model)`: Create a forest plot using
+  linear models based on the comparison between groups in the stored
+  evaluation summary. You can also provide a custom `evalResult`
+  dataframe if needed.
 
-- `getScatterplot(evalResult, variables)`: a scatter plot for the same
-  evidence, with two method metrics.
+- `getScatterplot(variables)`: a scatter plot for the same evidence,
+  with two method metrics, using the stored evaluation summary by
+  default.
 
-- `getLineplot(evalResult, order)`: Creates a line plot for the given x
-  and y variables, with an optional grouping and fixed x order.
+- `getLineplot(metricVariable, order)`: Creates a line plot for the
+  given x and y variables, with an optional grouping and fixed x order,
+  using the stored evaluation summary by default.
 
 ### Interpretation benchmark result
 
@@ -146,7 +152,7 @@ overall trends, making it easier to compare methods and performance
 differences.
 
 ``` r
-bmi$getHeatmap(bmi$evalSummary)
+bmi$getHeatmap()
 ```
 
 ![Fig.1 Heatmap of benchmarking performance across simulation methods
@@ -179,7 +185,7 @@ interrelated. This helps identify patterns, redundancies, or
 dependencies among evaluation components.
 
 ``` r
-bmi$getCorplot(bmi$evalSummary, "method")
+bmi$getCorplot(input_type = "method")
 ```
 
 ![Fig.2 Correlation plot illustrating relationships among evaluation
@@ -210,7 +216,7 @@ align or diverge across different methods, providing insights into
 trade-offs and performance consistency.
 
 ``` r
-bmi$getScatterplot(bmi$evalSummary, c("recall", "precision"))
+bmi$getScatterplot(variables = c("recall", "precision"))
 ```
 
 ![Fig.3 Scatter plot illustrating the relationship between recall and
@@ -236,7 +242,7 @@ conditions. This helps identify how methods perform as data complexity
 increases, revealing potential efficiency trade-offs.
 
 ``` r
-bmi$getLineplot(bmi$evalSummary, metricVariable = "memory")
+bmi$getLineplot(metricVariable = "memory")
 ```
 
 ![Fig.4 Line plot illustrating memory usage across increasing data
@@ -265,7 +271,7 @@ of different metrics, helping to identify the most critical evaluation
 factors.
 
 ``` r
-bmi$getForestplot(bmi$evalSummary, "metric", "method")
+bmi$getForestplot(input_group = "metric", input_model = "method")
 ```
 
 ![Fig.5 Forest plot of regression coefficients estimating the influence
@@ -307,7 +313,7 @@ variability of method performance, highlighting robustness or
 instability when applied to different datasets.
 
 ``` r
-bmi$getBoxplot(bmi$evalSummary, metricVariable = "KDEstat", evidenceVariable = "scaledVar")
+bmi$getBoxplot(metricVariable = "KDEstat", evidenceVariable = "scaledVar")
 ```
 
 ![Fig.6 Boxplot showing the distribution of KDEstat values across
@@ -339,14 +345,14 @@ robustness across methods.
 
 ### Cheatsheet
 
-|              Question              | Code                                                  |
-|:----------------------------------:|:------------------------------------------------------|
-|          Summary Overview          | `getHeatmap(evalResult)`                              |
-|        Correlation Analysis        | `getCorplot(evalResult, input_type)`                  |
-|  Scalability Trend (Time/ Memory)  | `getLineplot(evalResult, order)`                      |
-|   Metric-Model Impact (Modeling)   | `getForestplot(evalResult, input_group, input_model)` |
-| Method Variability Across Datasets | `getBoxplot(evalResult)`                              |
-|        Metric Relationship         | `getScatterplot(evalResult, variables)`               |
+|              Question              | Code                                           |
+|:----------------------------------:|:-----------------------------------------------|
+|          Summary Overview          | `getHeatmap()`                                 |
+|        Correlation Analysis        | `getCorplot(input_type)`                       |
+|  Scalability Trend (Time/ Memory)  | `getLineplot(metricVariable, order)`           |
+|   Metric-Model Impact (Modeling)   | `getForestplot(input_group, input_model)`      |
+| Method Variability Across Datasets | `getBoxplot(metricVariable, evidenceVariable)` |
+|        Metric Relationship         | `getScatterplot(variables)`                    |
 
 ## Session Info
 

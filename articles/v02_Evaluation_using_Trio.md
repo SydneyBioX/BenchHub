@@ -9,18 +9,21 @@ library(glmnet)
 ## Import microbiome data
 
 The `Trio` object in `BenchHub` can take datasets provided by users. To
-demonstrate, its ability to take user-provided datasets, we’ll be using
-a microbiome dataset called `Lubomski` obtained from the `PD16Sdata`
-package. The following code will import the `Lubomksi` data into R.
-`lubomski_microbiome_data.Rdata` contains two data objects: `x` and
-`lubomPD`. `x` is a 575 by 1192 matrix containing the abundance of 1192
-microbial taxa for 575 samples. `lubom_pd` is a factor vector of binary
-patient classes for 575 samples where where `1` represents `PD` and `0`
-represents `HC`.
+demonstrate this workflow, we use the `lubomski_microbiome_data` example
+dataset distributed with `BenchHub`. We first load the example objects
+into a temporary environment to avoid placing `x` and `lubomPD` directly
+into the global workspace. The dataset contains two objects: `x`, a 575
+by 1192 matrix of microbial abundances for 575 samples, and `lubomPD`, a
+binary factor indicating Parkinson’s disease (`PD`) or healthy control
+(`HC`) status for each sample.
 
 ``` r
-# import the microbiome data
-data("lubomski_microbiome_data", package = "BenchHub")
+# import the microbiome data into a temporary environment
+exampleEnv <- new.env(parent = emptyenv())
+data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
+
+x <- exampleEnv[["x"]]
+lubomPD <- exampleEnv[["lubomPD"]]
 
 # check the dimension of the microbiome matrix
 dim(x)
@@ -34,6 +37,11 @@ length(lubomPD)
 ```
 
     ## [1] 575
+
+``` r
+# Add sample IDs so the evidence matches the dataset rows by name.
+names(lubomPD) <- rownames(x)
+```
 
 The task we’ll be evaluating uses a binary classification task where
 each sample is either a Parkinson’s Disease (PD) patient or Healthy
@@ -59,9 +67,6 @@ trio <- Trio$new(data = x,
                  datasetID = "lubomski_microbiome"
                  )
 ```
-
-    ## Warning: No sample IDs found on evidence. Assuming same order as data
-    ## and adding them.
 
 The supporting evidence is the disease diagnosis, which is the `lubomPD`
 vector that we extracted from the `Lubomski` data above and the relevant

@@ -142,8 +142,8 @@ Create a Trio object
 
 - `evidenceColumns`:
 
-  If `evidenceID` is not `NULL`, then the columns of the table
-  containing the supporting evidence.
+  If specified, extract supporting evidence from columns in the loaded
+  dataset.
 
 - `evidenceLoader`:
 
@@ -422,8 +422,6 @@ The objects of this class are cloneable with this method.
 
 ``` r
 trio <- Trio$new("figshare:26054188/47112109", cachePath = tempdir())
-#> ✔ Reading from Curated Trio Datasets.
-#> ✔ Range ''Datasets''.
 #> has no supporting evidence for this dataset.
 #> ℹ Please add your own supporting evidence for evaluation.
 ```

@@ -288,12 +288,12 @@ BenchmarkInsights$new()
 #>     addevalSummary: function (additional_evalResult) 
 #>     clone: function (deep = FALSE) 
 #>     evalSummary: data.frame
-#>     getBoxplot: function (evalResult, metricVariable, evidenceVariable) 
-#>     getCorplot: function (evalResult, input_type) 
-#>     getForestplot: function (evalResult, input_group, input_model) 
-#>     getHeatmap: function (evalSummary) 
-#>     getLineplot: function (evalResult, order = NULL, metricVariable) 
-#>     getScatterplot: function (evalResult, variables) 
+#>     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) 
+#>     getCorplot: function (evalResult = NULL, input_type) 
+#>     getForestplot: function (evalResult = NULL, input_group, input_model) 
+#>     getHeatmap: function (evalSummary = NULL) 
+#>     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) 
+#>     getScatterplot: function (evalResult = NULL, variables) 
 #>     initialize: function (evalResult = NULL) 
 #>     metadata: NULL
 ```

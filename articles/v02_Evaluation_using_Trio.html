@@ -77,19 +77,22 @@
 <h2 id="import-microbiome-data">Import microbiome data<a class="anchor" aria-label="anchor" href="#import-microbiome-data"></a>
 </h2>
 <p>The <code>Trio</code> object in <code>BenchHub</code> can take
-datasets provided by users. To demonstrate, its ability to take
-user-provided datasets, we’ll be using a microbiome dataset called
-<code>Lubomski</code> obtained from the <code>PD16Sdata</code> package.
-The following code will import the <code>Lubomksi</code> data into R.
-<code>lubomski_microbiome_data.Rdata</code> contains two data objects:
-<code>x</code> and <code>lubomPD</code>. <code>x</code> is a 575 by 1192
-matrix containing the abundance of 1192 microbial taxa for 575 samples.
-<code>lubom_pd</code> is a factor vector of binary patient classes for
-575 samples where where <code>1</code> represents <code>PD</code> and
-<code>0</code> represents <code>HC</code>.</p>
+datasets provided by users. To demonstrate this workflow, we use the
+<code>lubomski_microbiome_data</code> example dataset distributed with
+<code>BenchHub</code>. We first load the example objects into a
+temporary environment to avoid placing <code>x</code> and
+<code>lubomPD</code> directly into the global workspace. The dataset
+contains two objects: <code>x</code>, a 575 by 1192 matrix of microbial
+abundances for 575 samples, and <code>lubomPD</code>, a binary factor
+indicating Parkinson’s disease (<code>PD</code>) or healthy control
+(<code>HC</code>) status for each sample.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># import the microbiome data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lubomski_microbiome_data"</span>, package <span class="op">=</span> <span class="st">"BenchHub"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># import the microbiome data into a temporary environment</span></span>
+<span><span class="va">exampleEnv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">emptyenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lubomski_microbiome_data"</span>, envir <span class="op">=</span> <span class="va">exampleEnv</span>, package <span class="op">=</span> <span class="st">"BenchHub"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">exampleEnv</span><span class="op">[[</span><span class="st">"x"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">lubomPD</span> <span class="op">&lt;-</span> <span class="va">exampleEnv</span><span class="op">[[</span><span class="st">"lubomPD"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># check the dimension of the microbiome matrix</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
@@ -98,6 +101,9 @@ matrix containing the abundance of 1192 microbial taxa for 575 samples.
 <code class="sourceCode R"><span><span class="co"># check the length of the patient status</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">lubomPD</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 575</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Add sample IDs so the evidence matches the dataset rows by name.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">lubomPD</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p>The task we’ll be evaluating uses a binary classification task where
 each sample is either a Parkinson’s Disease (PD) patient or Healthy
 Control (HC). Once the data are ready to be inputted to
@@ -107,7 +113,7 @@ Control (HC). Once the data are ready to be inputted to
 <h2 id="initialise-a-trio-object">Initialise a Trio object<a class="anchor" aria-label="anchor" href="#initialise-a-trio-object"></a>
 </h2>
 <p>To initialise a Trio object, we use a <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">new()</a></code> method.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>data <span class="op">=</span> <span class="va">x</span>, </span>
 <span>                 evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                   Diagnosis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -120,8 +126,6 @@ Control (HC). Once the data are ready to be inputted to
 <span>                   <span class="op">)</span>,</span>
 <span>                 datasetID <span class="op">=</span> <span class="st">"lubomski_microbiome"</span></span>
 <span>                 <span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: No sample IDs found on evidence. Assuming same order as data</span></span>
-<span><span class="co">## and adding them.</span></span></code></pre>
 <p>The supporting evidence is the disease diagnosis, which is the
 <code>lubomPD</code> vector that we extracted from the
 <code>Lubomski</code> data above and the relevant metric to evaluate it

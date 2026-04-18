@@ -4,19 +4,6 @@
 library(BenchHub)
 ```
 
-## Motivation
-
-BenchHub is an R ecosystem built to make benchmarking easier.
-
-BenchHub contains two key components: `Trio` and `BenchmarkInsight`:  
-- `Trio` object constructs benchmarking data by organising data,
-evaluation metrics, and supporting evidence (gold standards).  
-- `BenchmarkInsight` is a visualization tool that helps interpret the
-results of benchmarking studies.
-
-With BenchHub, researchers can quickly compare new methods, gain
-insights, and produce trustworthy their benchmarking studies.
-
 ## Creating Trio object
 
 The Trio class is designed to facilitate the storing and sharing of
@@ -34,26 +21,17 @@ Trio objects can be created using the `Trio$new` constructor. There are
 If the dataset can’t be loaded using Trio’s inbuilt loader, a custom
 loader can be provided.
 
-### Settings
+### Method 1: BenchHub datasets
 
-This vignette demonstrates importing a data set from a Google Sheet. To
-avoid unnecessary authentication, read-only mode is specified.
-
-``` r
-library(googlesheets4)
-gs4_deauth()
-```
-
-### Method 1: Curated Trio Datasets
-
-You can directly use the name from the Curated Trio Datasets sheet to
-initialise a Trio object populated with some metrics and supporting
-evidence. This method is useful when you want to quickly start with a
-predefined dataset.
+You can directly use the name from the [BenchHub
+Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing)
+sheet to initialise a Trio object populated with some metrics and
+supporting evidence. This method is useful when you want to quickly
+start with a predefined dataset.
 
 ``` r
 tempCache <- tempdir()
-trio <- Trio$new("Veteran_data", cachePath = tempCache)
+trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 trio
 ```
 
@@ -62,36 +40,28 @@ trio
     ## 
     ## ── Dataset 
     ## Dataset Details:
-    ##   Classes 'data.table' and 'data.frame': 137 obs. of 9 variables:
-    ##   $ V1 : int 1 2 3 4 5 6 7 8 9 10 ...
-    ##   $ trt : int 1 1 1 1 1 1 1 1 1 1 ...
-    ##   $ celltype: int 1 1 1 1 1 1 1 1 1 1 ...
-    ##   $ time : int 72 411 228 126 118 10 82 110 314 100 ...
-    ##   $ status : int 1 1 1 1 1 1 1 1 1 0 ...
-    ##   $ karno : int 60 70 60 60 70 20 40 80 50 70 ...
-    ##   $ diagtime: int 7 5 3 9 11 5 10 29 18 6 ...
-    ##   $ age : int 69 64 38 63 65 49 69 68 43 70 ...
-    ##   $ prior : int 0 10 0 10 10 0 10 0 0 0 ...
-    ##   ... (truncated)
+    ##   'data.frame': 4 obs. of 4 variables:
+    ##   $ x : num 1 1 2 2
+    ##   $ y : num 1 2 1 2
+    ##   $ gene_A: num 10 9 2 1
+    ##   $ gene_B: num 1 2 8 9
     ## Data Source: "figshare"
-    ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/Rtmp1edofJ"
+    ## Dataset ID: "30007327/63474198"
+    ## Cache Path: "/tmp/RtmpSN9gH3"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
-    ## Number of Supporting Evidence: 1
-    ## Names of Supporting Evidence: "survival_data"
+    ## Number of Supporting Evidence: 2
+    ## Names of Supporting Evidence: "annotated_domain" and "celltype_proportions"
     ## 
     ## ── Metrics 
-    ## Number of Metrics: 6
-    ## Names of Metrics: "harrell_cindex", "begg_cindex", "uno_cindex", "gh_cindex",
-    ## "brier_score", and "time_dep_auc"
+    ## Number of Metrics: 4
+    ## Names of Metrics: "domainAgreement", "domainPurity", "propRMSE", and "propMAE"
 
 The above output shows that we have a Trio with a dataset, metrics, and
-supporting evidence. The dataset contains 137 rows and 9 columns, and
-the metrics and supporting evidence are already populated and printed.
-
-This Trio is ready for use in survival prediction evaluation.
+supporting evidence. The dataset contains 4 observation of 4 variables,
+and the metrics and supporting evidence are already populated and
+printed.
 
 ### Method 2: Source and ID
 
@@ -127,7 +97,7 @@ trioA
     ## 
     ## ── Dataset 
     ## Dataset Details:
-    ##   Classes 'data.table' and 'data.frame': 58 obs. of 19820 variables:
+    ##   Classes 'data.table' and 'data.frame': 58 obs. of 19818 variables:
     ##   $ V1 : chr "GSM746861" "GSM746862" "GSM746863" "GSM746864" ...
     ##   $ A1BG : num 6.16 5.75 5.9 6 6.98 ...
     ##   $ A1BG-AS1 : num 6.53 7.21 6.71 6.79 7.21 ...
@@ -140,17 +110,16 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmp1edofJ"
+    ## Cache Path: "/tmp/RtmpSN9gH3"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
     ## Number of Supporting Evidence: 1
-    ## Names of Supporting Evidence: "survival_data"
+    ## Names of Supporting Evidence: "Risk Estimation"
     ## 
     ## ── Metrics 
-    ## Number of Metrics: 6
-    ## Names of Metrics: "harrell_cindex", "begg_cindex", "uno_cindex", "gh_cindex",
-    ## "brier_score", and "time_dep_auc"
+    ## Number of Metrics: 2
+    ## Names of Metrics: "Harrell C-index" and "Begg C-index"
 
 ### Method 3: Load an object directly
 
@@ -159,21 +128,21 @@ constructor. This method is useful when you already have a dataset
 loaded in your R environment and want to use it with Trio.
 
 If you have your own dataset, you can easily create a Trio object as
-well. Below is an example using a microbiome dataset.
+well. Below is an example using a microbiome dataset. When trioB is
+created in an interactive R session, BenchHub will prompt Briefly
+describe the dataset:; the text you enter is stored in the Trio object’s
+description field.
 
 ``` r
 exampleEnv <- new.env(parent = emptyenv())
 data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
 
+# Add sample IDs so the evidence matches the dataset rows by name.
+names(exampleEnv[["lubomPD"]]) <- rownames(exampleEnv[["x"]])
+
 trioB <- Trio$new(data = exampleEnv[["x"]], evidence = list(`Diagnosis` = list(evidence = exampleEnv[["lubomPD"]], metrics = "Balanced Accuracy")),
                   metrics = list(`Balanced Accuracy` = balAccMetric),
                   datasetID = "lubomski_microbiome")
-```
-
-    ## Warning: No sample IDs found on evidence. Assuming same order as data
-    ## and adding them.
-
-``` r
 trioB
 ```
 
@@ -271,8 +240,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x56331e369dd8>
-    ## <environment: 0x56331e8c3590>
+    ## <bytecode: 0x556fe86f4828>
+    ## <environment: 0x556fe826bcd0>
 
 ## Other Features
 
@@ -281,7 +250,7 @@ trio$metrics$inequality
 Trio uses caching to avoid lengthy downloads after the first time a data
 set is accessed. The `cachePath` parameter specifies the path to the
 cache directory. If not specified, the cache directory defaults to
-`~/.cache/R/TrioR/`.
+`~/.cache/R/BenchHub/`.
 
 ### Data Splitting
 
@@ -395,7 +364,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] googlesheets4_1.1.2 BenchHub_0.99.10    BiocStyle_2.38.0   
+    ## [1] BenchHub_0.99.10 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
@@ -425,7 +394,7 @@ sessionInfo()
     ## [73] tibble_3.3.1           pillar_1.11.1          rappdirs_0.3.4        
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.5      evaluate_1.0.5         lattice_0.22-9        
-    ## [82] backports_1.5.1        broom_1.0.12           ggsci_5.0.0           
-    ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1-1          
-    ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
-    ## [91] fs_2.0.1               pkgconfig_2.0.3
+    ## [82] backports_1.5.1        googlesheets4_1.1.2    broom_1.0.12          
+    ## [85] ggsci_5.0.0            gargle_1.6.1           bslib_0.10.0          
+    ## [88] Rcpp_1.1.1-1           gridExtra_2.3          checkmate_2.3.4       
+    ## [91] xfun_0.57              fs_2.0.1               pkgconfig_2.0.3
