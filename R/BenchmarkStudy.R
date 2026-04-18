@@ -584,7 +584,7 @@ listCuratedTrioStudies <- function(
     ))
     return(NULL)
   }
-  studies <- googlesheets4::read_sheet(
+  studies <- read_public_sheet(
     ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
     sheet = "Studies"
   ) |>

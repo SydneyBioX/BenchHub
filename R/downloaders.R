@@ -509,11 +509,9 @@ private_read_submission_database_tables <- function(ss) {
 }
 
 private_read_submission_database_sheet <- function(ss, sheet) {
-  suppressMessages(
-    googlesheets4::read_sheet(
-      ss = ss,
-      sheet = sheet
-    )
+  read_public_sheet(
+    ss = ss,
+    sheet = sheet
   ) |>
     as.data.frame()
 }

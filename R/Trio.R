@@ -1444,7 +1444,7 @@ Trio <- R6::R6Class(
       parsed <- unlist(stringr::str_split(userInput, ":"))
 
       if (length(parsed) == 1) {
-        datasets <- googlesheets4::read_sheet(
+        datasets <- read_public_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
           sheet = "Datasets"
         )
@@ -1634,7 +1634,7 @@ Trio <- R6::R6Class(
         ))
         return(NULL)
       }
-      datasetsMetaData <- googlesheets4::read_sheet(
+      datasetsMetaData <- read_public_sheet(
         ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
         sheet = "Datasets"
       )
@@ -1731,11 +1731,9 @@ Trio <- R6::R6Class(
           )
         ))
       }
-      evidenceMetaData <- suppressMessages(
-        googlesheets4::read_sheet(
-          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          sheet = "Dataset-Evidence",
-        )
+      evidenceMetaData <- read_public_sheet(
+        ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
+        sheet = "Dataset-Evidence"
       )
       evidID <- evidenceMetaData[["sourceID"]][match(
         evidID,
@@ -1761,16 +1759,16 @@ Trio <- R6::R6Class(
 
       # get the relevant metrics and respective information from the sheet.
       metrics <- suppressMessages(
-        googlesheets4::read_sheet(
+        read_public_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          sheet = "Task-Evidence Type-Metric",
+          sheet = "Task-Evidence Type-Metric"
         ) |>
           dplyr::filter(`Evidence Type` %in% evidence) %>%
           dplyr::left_join(
             .,
-            googlesheets4::read_sheet(
+            read_public_sheet(
               ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-              sheet = "Metrics",
+              sheet = "Metrics"
             )
           ) |>
           dplyr::distinct(MetricID, .keep_all = TRUE)
@@ -2013,7 +2011,7 @@ listCuratedTrioDatasets <- function(
     ))
     return(NULL)
   }
-  datasets <- googlesheets4::read_sheet(
+  datasets <- read_public_sheet(
     ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
     sheet = "Datasets"
   ) |>

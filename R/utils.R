@@ -312,6 +312,22 @@ getTrioCachePath <- function(cachePath) {
   cachePath
 }
 
+# Read from a public Google Sheet without requiring user auth.
+# @param ss Google Sheet ID or URL.
+# @param sheet Sheet name.
+# @param ... Additional arguments passed to googlesheets4::read_sheet().
+# @noRd
+read_public_sheet <- function(ss, sheet, ...) {
+  googlesheets4::gs4_deauth()
+  suppressMessages(
+    googlesheets4::read_sheet(
+      ss = ss,
+      sheet = sheet,
+      ...
+    )
+  )
+}
+
 
 assertSuggestAvail <- function(packages) {
   lapply(packages, \(package) {
