@@ -35,6 +35,23 @@ in the community:
 - **Benchmark Consumers**: BenchHub allows exploring and interpretation
   of results to make informed method selections
 
+### Motivation
+
+Researchers often need to organise benchmarking studies across multiple
+datasets, methods, and evaluation metrics, while ensuring that results
+remain comparable and reproducible. Existing frameworks such as
+OpenProblems, Omnibenchmark, and OpenEBench provide structured
+benchmarking workflows, but integrating datasets, metrics, and
+supporting evidence across tasks can still require substantial manual
+coordination.
+
+BenchHub addresses this by providing a unified framework that explicitly
+represents datasets, metrics, and supporting evidence through the Trio
+abstraction, while allowing users to run benchmarking pipelines locally
+without modifying existing workflows. This design facilitates consistent
+evaluation across tasks and improves reproducibility through structured
+metadata and study reconstruction.
+
 ### The Trio Framework
 
 Trio is built around three key components:

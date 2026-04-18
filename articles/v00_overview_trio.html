@@ -105,6 +105,23 @@ selections</p></li>
 </ul>
 </div>
 <div class="section level3">
+<h3 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
+</h3>
+<p>Researchers often need to organise benchmarking studies across
+multiple datasets, methods, and evaluation metrics, while ensuring that
+results remain comparable and reproducible. Existing frameworks such as
+OpenProblems, Omnibenchmark, and OpenEBench provide structured
+benchmarking workflows, but integrating datasets, metrics, and
+supporting evidence across tasks can still require substantial manual
+coordination.</p>
+<p>BenchHub addresses this by providing a unified framework that
+explicitly represents datasets, metrics, and supporting evidence through
+the Trio abstraction, while allowing users to run benchmarking pipelines
+locally without modifying existing workflows. This design facilitates
+consistent evaluation across tasks and improves reproducibility through
+structured metadata and study reconstruction.</p>
+</div>
+<div class="section level3">
 <h3 id="the-trio-framework">The Trio Framework<a class="anchor" aria-label="anchor" href="#the-trio-framework"></a>
 </h3>
 <p>Trio is built around three key components:</p>
