@@ -18,7 +18,7 @@ writeSubmission(
   gistPublic = TRUE,
   review = TRUE,
   submit = NULL,
-  url = NULL,
+  url = submission_webapp_url,
   submittedBy = NULL,
   build_payload = TRUE,
   build_json = FALSE

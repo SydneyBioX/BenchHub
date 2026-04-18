@@ -5,85 +5,88 @@ vignette: >
   %\VignetteIndexEntry{5 Benchmark Study}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
---- 
+---
 
 ```{r setup, warning=FALSE, message=FALSE, include=FALSE}
 knitr::opts_chunk$set( warning = FALSE, message = FALSE)
 library(R6)
 library(scuttle) 
 ```
-  
+
 ```{r}
 library(BenchHub)
 ```
-  
-  
+
 # Overview
 
-The `BenchmarkStudy` object is designed to encapsulate all necessary components in a benchmarking study, including the data and functions associated. It provides a unified structure for benchmark developers to share their work and for method developers to interact with an existing benchmark study.     
- 
-- **Benchmark developers** can store *Trio* objects (containing the input data, metrics, and supporting evidence), any mapping functions and distribute a ready-to-use study object.     
-- **Method developers**  can apply their methods to the provided data and evaluate their outputs using the built-in metrics.  
+The `BenchmarkStudy` object is designed to encapsulate all necessary components in a benchmarking study, including the data and functions associated. It provides a unified structure for benchmark developers to share their work and for method developers to interact with an existing benchmark study.
 
-This vignette provides guide for both usage.  
+-   **Benchmark developers** can store *Trio* objects (containing the input data, metrics, and supporting evidence), any mapping functions and distribute a ready-to-use study object.\
+-   **Method developers** can apply their methods to the provided data and evaluate their outputs using the built-in metrics.
 
- 
+This vignette provides a guide for both use cases under the current BenchHub submission workflow.
 
-# For Benchmark Developer  
+# For Benchmark Developer
 
-This section demonstrates how to create a `BenchmarkStudy` object from a benchmarking study. 
+This section demonstrates how to create a `BenchmarkStudy` object from a benchmarking study.
 
 ## Initialising the Study
 
-We begin by creating an empty `BenchmarkStudy` object.  
+We begin by creating an empty `BenchmarkStudy` object.
 
 ```{r}
 
 study <- BenchmarkStudy$new()
  
 ```
- 
-## Adding Trio
 
-Assume the benchmark developer has created a trio object for one of the data used for the benchmarking. Here, we use a Trio from the curated trio dataset. 
+```{r eval=FALSE}
+# Download an existing Trio from the submission database
+example_trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 
-```{r}
-# Download the Trio from the database using its name 
-example_trio <- suppressMessages( Trio$new("benchhub_vignette_example", cachePath = TRUE) )
-
-# Add to study
-study$addTrio(example_trio)
-
-
+example_trio
 ```
 
-## Define mapping function
+## Define mapping function and protocol function
 
-A mapping function is a helper function that process the data into a format that can then be input into the evaluation metrics.    
+A mapping function is a helper function that processes method output into a format that can then be compared with the supporting evidence stored in the reference `Trio`. There are three ways to contribute the mapping function:
 
-For example, in single-cell RNA-sequencing simulation studies, the output from a simulator is often a cell by gene count matrix. When benchmarking, we often map the matrix output to derived statistics (e.g., gene-level sparsity or cell-level library sizes) that can be compared against a reference (e.g., real single-cell RNA-seq matrix). 
+1.  Leave blank: if you don't want to contribute now
+2.  Use existing GitHub repository: if your mapping function has been uploaded to the GitHub repository in the published paper
+3.  Upload mapping functions stored in the study object
+4.  Upload local mapping function to gist: define the mapping function locally
 
-We define two examples of mapping functions.  
+In this toy spatial transcriptomics example, the `Trio` contains the following supporting evidence:
 
-Example 1: calculate the sparsity (proportion of zero counts) per gene.  
+-   `annotated_domain`
+-   `celltype_proportions`
+
+We therefore define two mapping functions that extract those objects from a method result.
+
+Example 1: extract predicted spatial domains.
 
 ```{r}
 # Define the mapping function 
-proportion_zero_gene <- function(data) {
-  return(colMeans(counts(data) == 0))
+extract_domains <- function(result) {
+  if (is.data.frame(result) && "annotated_domain" %in% colnames(result)) {
+    return(result$annotated_domain)
+  }
+  if (is.list(result) && "annotated_domain" %in% names(result)) {
+    return(result$annotated_domain)
+  }
+  stop("Could not find 'annotated_domain' in the method output.")
 }
 
 # Add the mapping function
 study$addMappingFunction(
-  name = "Fraction Zero Genes",
-  func = proportion_zero_gene,
-  inputDescription = "SingleCellExperiment or matrix with gene expression counts.",
-  outputDescription = "Numeric vector of fraction of zero counts per gene.",
+  name = "annotated_domain",
+  func = extract_domains,
+  inputDescription = "Method output containing one predicted spatial domain label per spot.",
+  outputDescription = "A vector of predicted spatial domain labels aligned to spots.",
   exampleUsage = paste(
     "## Minimal example",
-    "#mat <- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)",
-    "#mat <- SingleCellExperiment(assays = list(counts = mat)",
-    "#res <- study$runMapping('Fraction.Zero.Genes', mat)",
+    "#result <- list(annotated_domain = c('domain_1', 'domain_1', 'domain_2', 'domain_2'))",
+    "#res <- study$runMapping('annotated_domain', result)",
     "#head(res)",
     sep = "\n"
   )
@@ -91,157 +94,176 @@ study$addMappingFunction(
  
  
 ```
- 
-Example 2: calculate the normalized library size per cell.  
+
+Example 2: extract predicted cell type proportions.
 
 ```{r}
-library(edgeR)
 # Define the mapping function 
-norm_lib_size <-  function(data) {
-  dge <- SE2DGEList(data)
-  dge <- normLibSizes(dge)
-  return(getNormLibSizes(dge))
+extract_celltype_props <- function(result) {
+  if (is.data.frame(result) && "celltype_proportions" %in% names(result)) {
+    return(result$celltype_proportions)
+  }
+  if (is.list(result) && "celltype_proportions" %in% names(result)) {
+    return(result$celltype_proportions)
+  }
+  if (is.matrix(result) || is.data.frame(result)) {
+    mat <- as.matrix(result)
+    rs <- rowSums(mat)
+    rs[rs == 0] <- 1
+    return(mat / rs)
+  }
+  stop("Could not extract cell type proportions from the method output.")
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
 study$addMappingFunction(
-  name = "normalized library size",
-  func = norm_lib_size,
-  inputDescription = "SingleCellExperiment or matrix with gene expression counts.",
-  outputDescription = "Numeric vector of normalised library size per cell."
+  name = "celltype_proportions",
+  func = extract_celltype_props,
+  inputDescription = "Method output containing cell type proportions per spot.",
+  outputDescription = "A matrix or data frame of cell type proportions aligned to spots.",
+  exampleUsage = paste(
+    "## Minimal example",
+    "#props <- matrix(c(0.9, 0.1, 0.8, 0.2, 0.2, 0.8, 0.1, 0.9), ncol = 2, byrow = TRUE)",
+    "#study$runMapping('celltype_proportions', props)",
+    sep = "\n"
+  )
 )
 
 ```
 
-## Uploading to Curated Trio Datasets
+Similar as mapping functions, the protocol function is the full workflow of benchmarking study. There are three ways to contribute the protocol function:
 
+1.  Leave blank: if you don't want to contribute now
+2.  Use existing protocol gist URL: if your protocol function has been uploaded to the GitHub repository in the published paper
+3.  Upload local protocol file to gist
 
-Once the BenchmarkStudy object includes:   
-- A study name and description    
-- At least three Trio objects   
-- Mapping functions [optional]      
+## Upload Study
 
-The BenchmarkStudy object can be uploaded to the database. 
+Once the BenchmarkStudy object includes:
 
-```{r}
-# because we need at least three Trio 
-# pretend we have added three unique Trios 
-study$addTrio(example_trio) 
-study$addTrio(example_trio)
+1.  A study name and description
+2.  One or more Trio objects already represented in the submission database
+3.  Mapping functions [optional]
+4.  Protocol functions [optional]
 
-# Note that each Trio needs to be already exist in the database. 
-# Trios can be uploaded to the database using the `writeCTD()` function. 
-# For more details, see the vignette on Trio construction.
-# example_trio$writeCTD("example_trio")
+the recommended next step is to an interactive console workflow via `interactivePrepareStudySubmission(study)`.
 
+```{r eval=FALSE}
 # Set name and description manually
-study$name <- "Benchhubstudy vignette"
-study$description <- "This study compares simulated spatial transcriptomics data."
+study <- BenchmarkStudy$new(name = "ST toy study")
+study$description <- "Toy spatial transcriptomics study."
 
+interactivePrepareStudySubmission(study)
 ```
 
-The object can be uploaded using the `writeBenchmarkStudy()` function.
-```{r}
-# We comment it out in the vignette so that it does not get repetitively added
-# study$writeBenchmarkStudy()
+In that interactive workflow, BenchHub will guide you through:
 
-```
+-   selecting or confirming dataset IDs to link to the study,
+-   entering the study description,
+-   optionally providing a protocol gist,
+-   optionally providing a mapping-functions gist or uploading mapping functions already stored in the `study` object,
+-   reviewing the submission bundle, and
+-   optionally submitting the Study immediately.
 
-
-
-
- 
 # For Method Developer
 
-This section illustrates how a method developer can use the benchmark study object created by another user, apply their method, and evaluate its performance.   
+This section illustrates how a method developer can use the benchmark study object created by another user, apply their method, and evaluate its performance.
 
 ## Loading the Study
 
-A BenchmarkStudy object can be downloaded from the database through its name.  
+A `BenchmarkStudy` object can be downloaded from the submission database through its `studyID`.
 
-```{r message=FALSE}
-study  <- suppressMessages( BenchmarkStudy$new("Benchhubstudy vignette", fetchFromCtd = TRUE))
+```{r eval=FALSE}
+loaded_study <- downloadSubmissionStudy(studyID = "ST005", cachePath = tempdir())
 ```
 
+This returns a populated `BenchmarkStudy` object. For example:
 
+```{r eval=FALSE}
+loaded_study
+loaded_study$name
+loaded_study$description
+loaded_study$version
+length(loaded_study$trios)
+```
 
-Inspect the list of available trios, and available mapping functions 
+Inspect the list of available trios, and available mapping functions
 
-We see that this study has three Trios. Each Trio has supporting evidence that we can compare with. 
+Each entry of `loaded_study$trios` is a `Trio` object with supporting evidence that can be used for evaluation.
 
-```{r}
-length(study$trios)
+```{r eval=FALSE}
+length(loaded_study$trios)
 
-study$trios[[1]]
+loaded_study$trios[[1]]
 
 ```
 
+This study provides mapping functions to process method outputs into a format that can be used for evaluation.
 
-This study provides two mapping function to process the data into a format that can be used for evaluation. 
+Each mapping function has documentation.
 
-
-Each mapping function has documentation.  
-
-```{r}
+```{r eval=FALSE}
 # list the names of the mapping function
-study$listMappingFunctions()
+loaded_study$listMappingFunctions()
 
 # choose one to print the documentation 
-study$printMappingFunctionDocumentation("Fraction.Zero.Genes")
+loaded_study$printMappingFunctionDocumentation("annotated_domain")
 
 ```
 
 ## Preparing for evaluation
 
-This benchmark study wants to assess the quality of simulated data. 
+This benchmark study wants to assess predicted spatial domains and cell type proportions.
 
-Suppose the method developer has generated a simulated data with their method, and they want to compare with the real data to see how realistic the simulated data is.  
+Suppose the method developer has run a method and obtained predicted domain labels and cell type proportions for each spot.
 
-```{r}
-# Use scuttle to simulate a data 
-set.seed(0)
-sim <- scuttle::mockSCE(ncells =  4744, ngenes = 1000)
+```{r eval=FALSE}
+method_output <- list(
+  annotated_domain = c("domain_1", "domain_1", "domain_2", "domain_2"),
+  celltype_proportions = data.frame(
+    celltype_A = c(0.9, 0.8, 0.2, 0.1),
+    celltype_B = c(0.1, 0.2, 0.8, 0.9)
+  )
+)
 ```
 
-The method developer can apply the mapping functions to the simulated data to generate the relevant features to evaluate such as the sparsity of the genes and the library size.  
- 
-```{r}
+The method developer can apply the mapping functions to the method output to generate the objects required for evaluation.
 
-mydata_prop_zero_gene <- study$runMapping("Fraction.Zero.Genes", sim)
-mydata_lib_size <- study$runMapping( "normalized.library.size", sim)
+```{r eval=FALSE}
+
+domain_pred <- loaded_study$runMapping("annotated_domain", method_output)
+prop_pred <- loaded_study$runMapping("celltype_proportions", method_output)
 ```
 
-## Evaluate 
+## Evaluate
 
+Now we can compare the simulated data against an experimental dataset using the `evaluate` function.
 
-Now we can compare the simulated data against an experimental data using the `evaluate` function.
+The evaluate function is in the format of `study$evaluate(trio_name, list(supporting evidence = output to compare with))`.
 
-The evaluate function is in the format of `study$evaluate(trio_name, list( supporting evidence = output to compare with ))`. 
+In the function below, the names in the list correspond to supporting evidence stored in the reference `Trio`.
 
-In the function below, the `Fraction zero genes` and `normalized library size` are the names of the supporting evidence that can be found in the `example_trio_1` Trio object. 
-
-
-```{r}
+```{r eval=FALSE}
  
-result <- study$evaluate("benchhub_vignette_example",  # name of the trio to compare with  , can be accessed by study$trios[[1]]$name
-  list("Fraction zero genes" = mydata_prop_zero_gene  , # name of the supporting evidence 
-   "normalized library size" = mydata_prop_zero_gene )) # name of the supporting evidence   
+result <- loaded_study$evaluate(loaded_study$trios[[1]]$name,  # name of the Trio to compare with
+  list(
+    "annotated_domain" = domain_pred,
+    "celltype_proportions" = prop_pred
+  ))
 
 result
 
 ```
 
-# Summary 
+# Summary
 
-This vignette demonstrated two ways that users can interact with the BenchmarkStudy framework:     
+This vignette demonstrated two ways that users can interact with the `BenchmarkStudy` framework:
 
-- Benchmark developers: create or update a `BenchmarkStudy` by adding `Trio` objects and optional mapping functions with clear documentation, then upload the study to the Trio Database.
+-   Benchmark developers: create or update a `BenchmarkStudy` by adding `Trio` objects and optional mapping functions with clear documentation, then prepare and submit the study through the current Study submission workflow.
 
-- Method developers: load an existing `BenchmarkStudy` from the Trio Database, use the `Trio` objects to execute benchmarking methods of interest, use the mapping functions to convert method outputs where needed, evaluate those outputs against the study’s supporting evidence using the `evaluate()` function.
- 
+-   Method developers: load an existing `BenchmarkStudy` from the submission database, use the `Trio` objects to execute benchmarking methods of interest, use the mapping functions to convert method outputs where needed, and evaluate those outputs against the study’s supporting evidence using the `evaluate()` function.
 
 # Session Info
-
 
 ```{r}
 

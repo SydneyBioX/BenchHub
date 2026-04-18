@@ -78,10 +78,11 @@ downloadGist <- function(gist_url) {
 
 #' Load downloaded files.
 #' @param filePath A path to the file to load.
+#' @param context Optional label describing what is being loaded.
 #' @importFrom withr with_output_sink
 #' @importFrom fs path_join
 #' @noRd
-loadFile <- function(filePath) {
+loadFile <- function(filePath, context = NULL) {
   ext <- tools::file_ext(filePath)
 
   if (tolower(ext) == "rds") {
@@ -107,7 +108,7 @@ loadFile <- function(filePath) {
     # Check what files were extracted
     if (length(decompressedPaths) == 1) {
       # If only one file was extracted, process it recursively
-      return(loadFile(decompressedPaths))
+      return(loadFile(decompressedPaths, context = context))
     } else if (length(decompressedPaths) > 1) {
       # Check if there's exactly one supported file
       supportedExts <- c("rds", "h5ad", "csv")
@@ -120,18 +121,55 @@ loadFile <- function(filePath) {
 
       if (length(supportedFiles) == 1) {
         # If exactly one supported file, load it
-        return(loadFile(supportedFiles))
+        return(loadFile(supportedFiles, context = context))
+      } else if (length(supportedFiles) > 1) {
+        # Prefer .rds files for BenchHub downloads; otherwise take the first
+        # supported file in a deterministic order to avoid interactive menus.
+        supportedLower <- tolower(tools::file_ext(supportedFiles))
+        rdsFiles <- supportedFiles[supportedLower == "rds"]
+
+        if (length(rdsFiles) > 0) {
+          chosenFile <- sort(rdsFiles)[[1]]
+          cli::cli_inform(c(
+            if (is.null(context) || is.na(context) || !nzchar(context)) {
+              "The archive contains multiple supported files."
+            } else {
+              "The archive for {.val {context}} contains multiple supported files."
+            },
+            "i" = "Automatically selected {.file {basename(chosenFile)}}."
+          ))
+        } else {
+          chosenFile <- sort(supportedFiles)[[1]]
+          cli::cli_inform(c(
+            if (is.null(context) || is.na(context) || !nzchar(context)) {
+              "The archive contains multiple supported files."
+            } else {
+              "The archive for {.val {context}} contains multiple supported files."
+            },
+            "i" = "Automatically selected {.file {basename(chosenFile)}}."
+          ))
+        }
+
+        return(loadFile(chosenFile, context = context))
       } else {
-        # If multiple files or no single supported file, prompt user to select
+        # If there are no supported files, fall back to interactive selection.
         cli::cli_inform(c(
-          "The archive contains multiple files.",
+          if (is.null(context) || is.na(context) || !nzchar(context)) {
+            "The archive contains multiple files."
+          } else {
+            "The archive for {.val {context}} contains multiple files."
+          },
           "i" = "For more control over file loading, consider using the {.code dataLoader} parameter in {.code Trio$new()} (see {.code ?Trio} for details)."
         ))
 
         # List files for user selection
-        cli::cli_inform("Select a file to load:")
+        if (is.null(context) || is.na(context) || !nzchar(context)) {
+          cli::cli_inform("Select a file to load:")
+        } else {
+          cli::cli_inform("Select a file to load for {.val {context}}:")
+        }
         selectedFile <- decompressedPaths[utils::menu(decompressedPaths)]
-        return(loadFile(selectedFile))
+        return(loadFile(selectedFile, context = context))
       }
     } else {
       cli::cli_abort(c(

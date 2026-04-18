@@ -20,9 +20,9 @@ BenchmarkStudy <- R6Class(
     version = NULL,
 
     #` @description Create a new BenchmarkStudy object
-    #' @param name A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.
+    #' @param name A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from the submission database.
     #' @param trios A list of Trio objects to initialize the study.
-    #' @param fetchFromCtd Logical indicating whether to fetch study details from Curated Trio Datasets.
+    #' @param fetchFromCtd Logical indicating whether to fetch study details from the submission database.
     #' @param version Optional integer specifying which version of the study to fetch (when fetchFromCtd is TRUE).
     initialize = function(
       name = NULL,
@@ -31,172 +31,16 @@ BenchmarkStudy <- R6Class(
       version = NULL
     ) {
       if (fetchFromCtd && !is.null(name)) {
-        # Read existing studies from the sheet
-        studies <- googlesheets4::read_sheet(
-          ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
-          sheet = "Studies"
+        loaded_study <- downloadSubmissionStudy(
+          name = name,
+          version = version,
+          cachePath = tempdir()
         )
-
-        # Find the study by name
-        studyRows <- studies$studyName == name
-        if (!any(studyRows)) {
-          stop("Study '", name, "' not found in Curated Trio Datasets.")
-        }
-
-        # If version is specified, filter for that version
-        if (!is.null(version)) {
-          studyRows <- studyRows & studies$version == version
-          if (!any(studyRows)) {
-            stop(
-              "Version ",
-              version,
-              " of study '",
-              name,
-              "' not found."
-            )
-          }
-          self$version <- version
-        } else {
-          # If no version specified, use the latest
-          latestVersion <- max(studies$version[studyRows])
-          studyRows <- studyRows & studies$version == latestVersion
-          self$version <- latestVersion
-        }
-
-        studyData <- studies[studyRows, ][1, ]
-        self$name <- studyData$studyName
-        self$description <- studyData$description
-        self$version <- studyData$version
-
-        # Parse and load related trios
-        if (!is.na(studyData$relatedTrios) && studyData$relatedTrios != "") {
-          trioNames <- strsplit(studyData$relatedTrios, ":")[[1]]
-          self$trios <- list()
-          for (trioName in trioNames) {
-            # Create new Trio object and add it to the list
-            trio <- Trio$new(trioName, cachePath = TRUE)
-            self$addTrio(trio)
-          }
-        }
-
-        # Load mapping functions if available
-        if (
-          !is.na(studyData$mappingFunctions) && studyData$mappingFunctions != ""
-        ) {
-          cli::cli_inform("Loading mapping functions from gist...")
-          tryCatch(
-            {
-              # Get the gist ID from the URL
-              gistUrl <- studyData$mappingFunctions
-              gistId <- sub(".*github.com/[^/]+/", "", gistUrl)
-              gistId <- sub("/.*", "", gistId)
-
-              # Get the gist content (lines)
-              temp_file <- downloadGist(gistUrl)
-              mappingCode <- readLines(temp_file)
-              unlink(temp_file)
-
-              # Create a new environment to evaluate the code
-              tempEnv <- new.env()
-              # eval expects a single string, so collapse lines with newlines
-              eval(parse(text = paste(mappingCode, collapse = "\n")), envir = tempEnv)
-
-              # mappingCode is a character vector of lines; use it directly
-              funcLines <- mappingCode
-              currentFunc <- NULL
-              # initialize expected doc fields to ensure they get passed through (may be NULL)
-              currentDoc <- list(input = NULL, output = NULL, example = NULL)
-
-              # We'll support multi-line documentation blocks. Keep track of which
-              # doc field we're currently accumulating (input/output/example).
-              currentField <- NULL
-              for (line in funcLines) {
-                # normalize leading whitespace
-                l <- trimws(line)
-
-                if (startsWith(l, "# Function:")) {
-                  # If we were processing a previous function, add it
-                  if (!is.null(currentFunc)) {
-                    funcName <- ls(
-                      envir = tempEnv,
-                      pattern = paste0("^", currentFunc, "$")
-                    )
-                    if (length(funcName) > 0) {
-                      self$addMappingFunction(
-                        name = currentFunc,
-                        func = get(funcName, envir = tempEnv),
-                        inputDescription = currentDoc$input,
-                        outputDescription = currentDoc$output,
-                        exampleUsage = currentDoc$example
-                      )
-                    }
-                  }
-                  # Start new function (strip the prefix and any surrounding whitespace)
-                  currentFunc <- sub("^# Function:\\s*", "", l)
-                  currentDoc <- list(input = NULL, output = NULL, example = NULL)
-                  currentField <- NULL
-
-                } else if (startsWith(l, "# Input:")) {
-                  currentDoc$input <- sub("^# Input:\\s*", "", l)
-                  currentField <- "input"
-
-                } else if (startsWith(l, "# Output:")) {
-                  currentDoc$output <- sub("^# Output:\\s*", "", l)
-                  currentField <- "output"
-
-                } else if (startsWith(l, "# Example:")) {
-                  currentDoc$example <- sub("^# Example:\\s*", "", l)
-                  currentField <- "example"
-
-                } else if (startsWith(l, "#")) {
-                  # Continuation line for the current doc field (if any).
-                  # Remove the leading '#' and any single leading space.
-                  cont <- sub("^#\\s?", "", l)
-                  if (!is.null(currentField) && nzchar(cont)) {
-                    # Append with newline if existing content present
-                    prev <- currentDoc[[currentField]]
-                    if (is.null(prev) || !nzchar(prev)) {
-                      currentDoc[[currentField]] <- cont
-                    } else {
-                      currentDoc[[currentField]] <- paste(prev, cont, sep = "\n")
-                    }
-                  }
-                } else {
-                  # Non-comment line: reset currentField (end of doc block)
-                  currentField <- NULL
-                }
-              }
-
-              # Add the last function if there is one
-              if (!is.null(currentFunc)) {
-                funcName <- ls(
-                  envir = tempEnv,
-                  pattern = paste0("^", currentFunc, "$")
-                )
-                if (length(funcName) > 0) {
-                  self$addMappingFunction(
-                    name = currentFunc,
-                    func = get(funcName, envir = tempEnv),
-                    inputDescription = currentDoc$input,
-                    outputDescription = currentDoc$output,
-                    exampleUsage = currentDoc$example
-                  )
-                }
-              }
-
-              cli::cli_inform(c(
-                "v" = "Successfully loaded mapping functions",
-                "i" = "Loaded {length(self$mappingFunctions)} functions"
-              ))
-            },
-            error = function(e) {
-              cli::cli_warn(c(
-                "Failed to load mapping functions from gist",
-                "x" = "Error: {conditionMessage(e)}"
-              ))
-            }
-          )
-        }
+        self$name <- loaded_study$name
+        self$trios <- loaded_study$trios
+        self$description <- loaded_study$description
+        self$mappingFunctions <- loaded_study$mappingFunctions
+        self$version <- loaded_study$version
       } else {
         self$name <- name
         self$trios <- trios
@@ -633,6 +477,98 @@ Describe the benchmark task and dataset.
     }
   )
 )
+
+private_load_study_mapping_functions <- function(study, gist_url) {
+  if (is.na(gist_url) || !nzchar(gist_url)) {
+    return(invisible(study))
+  }
+
+  cli::cli_inform("Loading mapping functions from gist...")
+
+  tryCatch(
+    {
+      temp_file <- downloadGist(gist_url)
+      on.exit(unlink(temp_file), add = TRUE)
+      mapping_code <- readLines(temp_file)
+
+      temp_env <- new.env()
+      eval(parse(text = paste(mapping_code, collapse = "\n")), envir = temp_env)
+
+      current_func <- NULL
+      current_doc <- list(input = NULL, output = NULL, example = NULL)
+      current_field <- NULL
+
+      add_current_function <- function() {
+        if (is.null(current_func)) {
+          return(invisible(NULL))
+        }
+
+        func_name <- ls(
+          envir = temp_env,
+          pattern = paste0("^", current_func, "$")
+        )
+        if (length(func_name) > 0) {
+          study$addMappingFunction(
+            name = current_func,
+            func = get(func_name, envir = temp_env),
+            inputDescription = current_doc$input,
+            outputDescription = current_doc$output,
+            exampleUsage = current_doc$example
+          )
+        }
+
+        invisible(NULL)
+      }
+
+      for (line in mapping_code) {
+        trimmed <- trimws(line)
+
+        if (startsWith(trimmed, "# Function:")) {
+          add_current_function()
+          current_func <- sub("^# Function:\\s*", "", trimmed)
+          current_doc <- list(input = NULL, output = NULL, example = NULL)
+          current_field <- NULL
+        } else if (startsWith(trimmed, "# Input:")) {
+          current_doc$input <- sub("^# Input:\\s*", "", trimmed)
+          current_field <- "input"
+        } else if (startsWith(trimmed, "# Output:")) {
+          current_doc$output <- sub("^# Output:\\s*", "", trimmed)
+          current_field <- "output"
+        } else if (startsWith(trimmed, "# Example:")) {
+          current_doc$example <- sub("^# Example:\\s*", "", trimmed)
+          current_field <- "example"
+        } else if (startsWith(trimmed, "#")) {
+          continuation <- sub("^#\\s?", "", trimmed)
+          if (!is.null(current_field) && nzchar(continuation)) {
+            previous <- current_doc[[current_field]]
+            if (is.null(previous) || !nzchar(previous)) {
+              current_doc[[current_field]] <- continuation
+            } else {
+              current_doc[[current_field]] <- paste(previous, continuation, sep = "\n")
+            }
+          }
+        } else {
+          current_field <- NULL
+        }
+      }
+
+      add_current_function()
+
+      cli::cli_inform(c(
+        "v" = "Successfully loaded mapping functions",
+        "i" = "Loaded {length(study$mappingFunctions)} functions"
+      ))
+    },
+    error = function(e) {
+      cli::cli_warn(c(
+        "Failed to load mapping functions from gist",
+        "x" = "Error: {conditionMessage(e)}"
+      ))
+    }
+  )
+
+  invisible(study)
+}
 #' List the curated Trio studies
 #' @param name_filter
 #'   A string to filter studies by name (case-insensitive partial match)

@@ -407,6 +407,97 @@ downloadSubmissionTrio <- function(
   trio
 }
 
+#' Download a BenchmarkStudy from the submission database
+#'
+#' @param studyID Study identifier from the `Study` table.
+#' @param name Optional study name fallback for compatibility. Prefer
+#'   `studyID` for new code.
+#' @param version Optional version string used only when loading by `name`.
+#' @param ss Google Sheets spreadsheet ID containing the submission tables.
+#' @param cachePath Directory for downloaded files. Defaults to `tempdir()`.
+#'
+#' @return A populated `BenchmarkStudy` object.
+#' @export
+downloadSubmissionStudy <- function(
+    studyID,
+    name = NULL,
+    version = NULL,
+    ss = "1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg",
+    cachePath = tempdir()
+) {
+  if (!curl::has_internet()) {
+    cli::cli_abort("No internet connection available.")
+  }
+
+  studies <- private_read_submission_database_sheet(ss, "Study")
+  study_datasets <- private_read_submission_database_sheet(ss, "StudyDataset")
+
+  if (!missing(studyID) && !is.null(studyID) && length(studyID) == 1 &&
+      !is.na(studyID) && nzchar(as.character(studyID))) {
+    study_row <- studies[private_submission_chr_vec(studies$studyID) == studyID, , drop = FALSE]
+  } else {
+    if (is.null(name) || length(name) != 1 || is.na(name) || !nzchar(name)) {
+      cli::cli_abort("Provide a single non-empty {.arg studyID}. The {.arg name} fallback is only for compatibility.")
+    }
+
+    matching_rows <- private_submission_chr_vec(studies$studyName) == as.character(name)
+    if (!is.null(version)) {
+      matching_rows <- matching_rows &
+        private_submission_chr_vec(studies$version) == as.character(version)
+    }
+
+    study_row <- studies[matching_rows, , drop = FALSE]
+    if (nrow(study_row) > 1) {
+      ranks <- vapply(
+        private_submission_chr_vec(study_row$version),
+        private_study_version_rank,
+        numeric(1)
+      )
+      study_row <- study_row[which.max(ranks), , drop = FALSE]
+    }
+  }
+
+  if (nrow(study_row) == 0) {
+    cli::cli_abort("Requested Study was not found in the submission database.")
+  }
+  if (nrow(study_row) > 1) {
+    cli::cli_abort("Study query matched multiple rows; please specify {.arg studyID} or {.arg version}.")
+  }
+
+  resolved_study_id <- private_submission_db_chr(study_row$studyID[[1]])
+  linked_rows <- study_datasets[
+    private_submission_chr_vec(study_datasets$studyID) == resolved_study_id,
+    ,
+    drop = FALSE
+  ]
+
+  if (nrow(linked_rows) == 0) {
+    cli::cli_abort("No StudyDataset rows found for studyID {.val {resolved_study_id}}.")
+  }
+
+  dataset_ids <- unique(private_submission_chr_vec(linked_rows$datasetID))
+  dataset_ids <- dataset_ids[!is.na(dataset_ids)]
+  trios <- lapply(dataset_ids, function(dataset_id) {
+    downloadSubmissionTrio(datasetID = dataset_id, ss = ss, cachePath = cachePath)
+  })
+
+  study <- BenchmarkStudy$new(
+    name = private_submission_db_chr(study_row$studyName[[1]]),
+    trios = trios
+  )
+  study$description <- private_submission_db_chr(study_row$description[[1]])
+  study$version <- private_submission_db_chr(study_row$version[[1]])
+
+  if ("mappingFunctions" %in% names(study_row)) {
+    private_load_study_mapping_functions(
+      study = study,
+      gist_url = private_submission_db_chr(study_row$mappingFunctions[[1]])
+    )
+  }
+
+  study
+}
+
 private_read_submission_database_tables <- function(ss) {
   list(
     Dataset = private_read_submission_database_sheet(ss, "Dataset"),
@@ -445,7 +536,7 @@ private_download_submission_object <- function(source, source_id, cachePath, lab
     list(ID = source_id, cachePath = cachePath)
   )
 
-  loadFile(path)
+  loadFile(path, context = label)
 }
 
 private_reconstruct_submission_evidence <- function(

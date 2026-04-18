@@ -1,94 +1,103 @@
 ---
-title: "4 Uploading a Trio to Curated Trio Datasets"
+title: "4 Preparing and Submitting a Trio"
 author: "BenchHub Team"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{4 Upload Trio class}
+  %\VignetteIndexEntry{4 Preparing and submitting a Trio}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-# Instructions for Uploading a Trio to Curated Trio Datasets
+# Preparing and Submitting a Trio
 
-This guide provides step-by-step instructions for uploading a Trio object to the [Curated Trio Datasets sheet](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/edit). Curated Trio Dataset is a list of datasets with proven utility. It includes creating a GitHub Personal Access Token (PAT) with gist write access and uploading data to Figshare.
+This guide provides step-by-step instructions for preparing and submitting a `Trio` object to the [BenchHub Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing). The recommended workflow is to first build a submission bundle with `writeSubmission()`, review the collected metadata, and then submit it.
 
+The workflow has two common entry points:
 
-## Step 1: Create a GitHub Personal Access Token (PAT)
+-   `writeSubmission()`: interactive helper for preparing and optionally submitting a Trio.
+-   `submitTrioSubmission()`: submit Trio to [BenchHub Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing).
 
-To upload metrics as a GitHub Gist, you need a GitHub PAT with gist write access.
+```{r}
+library(BenchHub)
+```
 
-1. Log in to your GitHub account.
-2. Navigate to **Settings** > **Developer settings** > **Personal access tokens** > **Tokens (classic)**.
-3. Click **Generate new token**.
-4. Select the following scopes:
-   - `gist` (for creating and managing gists)
-5. Click **Generate token** and copy the token.
+## Step 1: GitHub Personal Access Token (PAT)
+
+A GitHub personal access token is needed for uploading custom metrics to a GitHub gist.
+
+1.  Log in to your GitHub account.
+2.  Navigate to **Settings** \> **Developer settings** \> **Personal access tokens** \> **Tokens (classic)**.
+3.  Click **Generate new token**.
+4.  Select the following scopes:
+    -   `gist` (for creating and managing gists)
+5.  Click **Generate token** and copy the token.
 
 ### Set the PAT in R
+
 Add the token to your environment in R:
 
-```r
+``` r
 Sys.setenv(GITHUB_PAT = "your_personal_access_token")
 ```
 
 Replace `"your_personal_access_token"` with the token you copied.
 
-### Ensure `googlesheets4` is set up
+## Step 2: Build the submission bundle
 
-1. Install the `googlesheets4` package if you haven't already:
-   ```r
-   install.packages("googlesheets4")
-   ```
-2. Authenticate with your Google account:
-   ```r
-   googlesheets4::gs4_auth()
-   ```
+1.  In R, create a `Trio` object and ensure it is properly populated with data, supporting evidence, and metrics.
+2.  Use `writeSubmission()` to prepare the Trio submission:
 
-
-## Step 2: Add the Trio to Curated Trio Datasets
-
-1. In R, create a `Trio` object and ensure it is properly populated with data, supporting evidence, and metrics.
-2. Use the `writeCTD()` method to upload the Trio metadata to the Curated Trio Datasets sheet:
-
-```r
-trio$writeCTD(name = "Your Dataset Name")
+``` r
+bundle <- writeSubmission(trio)
 ```
 
-3. Follow the prompts to:
-   - Save the dataset and supporting evidence locally (optional).
-   - Provide the Figshare URL. For more detailed instructions on uploading to Figshare, see below.
-   - Select the data type (e.g., omics, clinical, spatial, other).
-   - Confirm the upload of supporting evidence to Figshare.
+During the interactive workflow, `writeSubmission()` may prompt you for:
 
+-   dataset metadata such as the dataType, technology and description
+-   task information for the Trio
+-   mappings between supporting evidence and tasks
+-   metric metadata where needed
+-   file preparation details, including whether to verify a Figshare article, and
+-   optional submission details if you choose to submit immediately.
 
+## Step 3: Submit the Trio
 
-## Step 3: Verify the Upload
+After reviewing the generated bundle, you can submit it with `submitTrioSubmission()`:
 
-1. Check the Curated Trio Datasets Google Sheet to ensure your dataset has been added:
-   [Curated Trio Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)
+``` r
+response <- submitTrioSubmission(
+  submission = bundle$submission,
+  submittedBy = "your.name@example.org"
+)
+```
 
-2. Verify that the metrics have been uploaded as a GitHub Gist.
+If you prefer a single interactive step, you can also let `writeSubmission()` submit at the end:
 
+``` r
+bundle <- writeSubmission(
+  trio,
+  submittedBy = "your.name@example.org",
+  submit = TRUE
+)
+```
 
+## Step 4: Verify the submission
+
+Once you upload the Trio, it will be first uploaded in to Submission_Master sheet. After BenchHub team completed the review and approved, the Trio information will update to Dataset, DatasetTask, DatasetEvidence, DatasetTaskMetric and Metric table. Check the [BenchHub Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing) to ensure your dataset has been added under the submission tables.
+
+## Step 5: Downloading an existing Trio
+
+You can also download a previously submitted Trio by its dataset ID under Dataset sheet:
+
+``` r
+trio <- downloadSubmissionTrio("datasetID", cachePath = tempdir())
+```
 
 ## Notes
 
-- Ensure you have an active internet connection during the upload process.
-- If you encounter any issues, check that your GitHub PAT and Figshare URL are correctly set.
-
-### Uploading Data to Figshare
-
-1. Log in to your Figshare account.
-2. Click **Create a new item**.
-3. Fill in the required metadata fields (e.g., title, description, tags).
-4. Upload your dataset files (e.g., `.rds` files for the dataset and supporting evidence). 
-   - NOTE: `writeCTD` can create the
-5. Publish the item to make it publicly accessible.
-6. Copy the Figshare URL of the published item.
-
-
-Happy uploading!
+-   Ensure you have an active internet connection during the upload process.
+-   If you encounter any issues, check that your Figshare URL and submission details are correctly set.
 
 # Session Info
 

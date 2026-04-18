@@ -767,7 +767,12 @@ buildMetricSubmission <- function(trio) {
     metricSourceType = metric_type,
     metricKey = vapply(
       metric_names,
-      private_metric_key,
+      function(metric_name) {
+        private_metric_key(
+          metric_name = metric_name,
+          wrapper_r = private_metric_wrapper_r(metric_name, metric_type[[metric_name]])
+        )
+      },
       character(1)
     ),
     wrapper_py = rep(NA_character_, length(metric_names)),
@@ -852,7 +857,8 @@ prepareTrioSubmissionMetrics <- function(
         private_metric_key(
           metric_name = metric_tbl$metricName[custom_rows][[i]],
           metric_type = metric_tbl$metricSourceType[custom_rows][[i]],
-          gist_url = metric_tbl$gist_url[custom_rows][[i]]
+          gist_url = metric_tbl$gist_url[custom_rows][[i]],
+          wrapper_r = metric_tbl$wrapper_r[custom_rows][[i]]
         )
       },
       character(1)
@@ -1096,7 +1102,7 @@ writeSubmission <- function(
     gistPublic = TRUE,
     review = TRUE,
     submit = NULL,
-    url = NULL,
+    url = submission_webapp_url,
     submittedBy = NULL,
     build_payload = TRUE,
     build_json = FALSE
@@ -1915,17 +1921,20 @@ private_metric_wrapper_r <- function(metric_name, metric_type) {
   NA_character_
 }
 
-private_metric_key <- function(metric_name, metric_type = NULL, gist_url = NULL) {
+private_metric_key <- function(metric_name, metric_type = NULL, gist_url = NULL, wrapper_r = NULL) {
   if (is.null(metric_type) || is.na(metric_type) || !nzchar(metric_type)) {
     metric_type <- private_infer_metric_type(metric_name)
   }
 
+  if (is.null(wrapper_r) || is.na(wrapper_r) || !nzchar(wrapper_r)) {
+    wrapper_r <- private_metric_wrapper_r(metric_name, metric_type)
+  }
+
   if (identical(metric_type, "internal")) {
-    wrapper <- private_find_internal_metric_wrapper(metric_name)
-    if (is.na(wrapper)) {
+    if (is.null(wrapper_r) || is.na(wrapper_r) || !nzchar(wrapper_r)) {
       return(NA_character_)
     }
-    return(wrapper)
+    return(wrapper_r)
   }
 
   if (identical(metric_type, "gist")) {
@@ -1936,7 +1945,10 @@ private_metric_key <- function(metric_name, metric_type = NULL, gist_url = NULL)
     if (is.na(gist_id) || !nzchar(gist_id)) {
       return(NA_character_)
     }
-    return(paste0(gist_id, "|", metric_name))
+    if (is.null(wrapper_r) || is.na(wrapper_r) || !nzchar(wrapper_r)) {
+      return(NA_character_)
+    }
+    return(paste0(gist_id, "|", wrapper_r))
   }
 
   NA_character_

@@ -31,17 +31,19 @@ function doPost(e) {
     }
 
     const body = JSON.parse(e.postData.contents || '{}');
+    const incomingPayload = body.payload || {};
+    const normalizedPayload = incomingPayload.payload ? incomingPayload.payload : incomingPayload;
 
     const submissionID = generateSubmissionID_();
     const submittedTime = new Date();
     const submittedBy = body.submittedBy || '';
-    const submittedType = body.submittedType || '';
+    const submittedType = body.submittedType || inferSubmittedType_(normalizedPayload);
     const status = 'pending';
     const reviewedBy = '';
     const reviewedTime = '';
     const syncStatus = 'not_synced';
     const notes = '';
-    const payloadJson = JSON.stringify(body.payload || {});
+    const payloadJson = JSON.stringify(incomingPayload);
 
     sheet.appendRow([
       submissionID,
@@ -76,6 +78,24 @@ function doPost(e) {
   }
 }
 
+function inferSubmittedType_(payload) {
+  const normalizedPayload = payload && payload.payload ? payload.payload : payload || {};
+
+  if (normalizedPayload.Study && normalizedPayload.StudyDataset &&
+      !normalizedPayload.DatasetTask && !normalizedPayload.DatasetEvidence &&
+      !normalizedPayload.DatasetTaskMetric) {
+    return 'Study';
+  }
+
+  if (normalizedPayload.Dataset && normalizedPayload.DatasetTask &&
+      normalizedPayload.DatasetEvidence && normalizedPayload.Metric &&
+      normalizedPayload.DatasetTaskMetric) {
+    return 'Trio';
+  }
+
+  return '';
+}
+
 function syncApprovedSubmissions() {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -108,25 +128,33 @@ function syncApprovedSubmissions() {
         const container = JSON.parse(row[col.payload_json] || '{}');
         const payload = container.payload ? container.payload : container;
         const submissionLinks = container.submission_links || {};
+        const submittedType = normalizeString_(row[col.submittedType] || '');
 
-        validatePayload_(payload, submissionLinks);
+        if (submittedType === 'Study') {
+          validateStudyPayload_(payload);
+          const resolvedStudy = resolveStudySubmissionPayload_(ss, payload);
+          appendArrayToSheet_(ss, 'Study', resolvedStudy.Study);
+          appendArrayToSheet_(ss, 'StudyDataset', resolvedStudy.StudyDataset);
+        } else {
+          validatePayload_(payload, submissionLinks);
 
-        const resolved = resolveSubmissionPayload_(ss, payload, submissionLinks);
+          const resolved = resolveSubmissionPayload_(ss, payload, submissionLinks);
 
-        if (resolved.Study.length > 0) {
-          appendArrayToSheet_(ss, 'Study', resolved.Study);
+          if (resolved.Study.length > 0) {
+            appendArrayToSheet_(ss, 'Study', resolved.Study);
+          }
+
+          appendArrayToSheet_(ss, 'Dataset', resolved.Dataset);
+          appendArrayToSheet_(ss, 'DatasetTask', resolved.DatasetTask);
+          appendArrayToSheet_(ss, 'DatasetEvidence', resolved.DatasetEvidence);
+          appendArrayToSheet_(ss, 'Metric', resolved.Metric);
+
+          if (resolved.StudyDataset.length > 0) {
+            appendArrayToSheet_(ss, 'StudyDataset', resolved.StudyDataset);
+          }
+
+          appendArrayToSheet_(ss, 'DatasetTaskMetric', resolved.DatasetTaskMetric);
         }
-
-        appendArrayToSheet_(ss, 'Dataset', resolved.Dataset);
-        appendArrayToSheet_(ss, 'DatasetTask', resolved.DatasetTask);
-        appendArrayToSheet_(ss, 'DatasetEvidence', resolved.DatasetEvidence);
-        appendArrayToSheet_(ss, 'Metric', resolved.Metric);
-
-        if (resolved.StudyDataset.length > 0) {
-          appendArrayToSheet_(ss, 'StudyDataset', resolved.StudyDataset);
-        }
-
-        appendArrayToSheet_(ss, 'DatasetTaskMetric', resolved.DatasetTaskMetric);
 
         master.getRange(i + 1, col.syncStatus + 1).setValue('synced');
         master.getRange(i + 1, col.notes + 1).setValue('');
@@ -276,6 +304,42 @@ function resolveSubmissionPayload_(ss, payload, submissionLinks) {
   return resolved;
 }
 
+function resolveStudySubmissionPayload_(ss, payload) {
+  const studyRows = toArray_(payload.Study);
+  const studyDatasetRows = payload.StudyDataset || [];
+
+  if (studyRows.length !== 1) {
+    throw new Error('Study submission must contain exactly one Study row');
+  }
+
+  const nextStudyId = makeIdAllocator_(ss, 'Study', ID_PREFIX.Study);
+  const nextStudyDatasetId = makeIdAllocator_(ss, 'StudyDataset', ID_PREFIX.StudyDataset);
+  const datasetIds = buildExistingIdSet_(ss, 'Dataset', 'datasetID');
+
+  const resolvedStudy = studyRows.map(function(row) {
+    return Object.assign({}, row, {
+      studyID: row.studyID || nextStudyId()
+    });
+  });
+
+  const studyID = resolvedStudy[0].studyID;
+  const resolvedStudyDataset = studyDatasetRows.map(function(row) {
+    if (!datasetIds[row.datasetID]) {
+      throw new Error('Dataset not found for StudyDataset: ' + row.datasetID);
+    }
+
+    return Object.assign({}, row, {
+      studyDatasetID: row.studyDatasetID || nextStudyDatasetId(),
+      studyID: row.studyID || studyID
+    });
+  });
+
+  return {
+    Study: resolvedStudy,
+    StudyDataset: resolvedStudyDataset
+  };
+}
+
 function resolveTaskMetricRows_(taskMetricRows, submissionLinks, taskMap, metricMap, nextTaskMetricId) {
   const taskMetricLinks = submissionLinks.task_metric || [];
 
@@ -367,6 +431,39 @@ function validatePayload_(payload, submissionLinks) {
   });
 }
 
+function validateStudyPayload_(payload) {
+  if (!payload) {
+    throw new Error('payload is empty');
+  }
+
+  const studyRows = toArray_(payload.Study);
+  if (studyRows.length !== 1) {
+    throw new Error('Study is required and must contain exactly one row');
+  }
+
+  const study = studyRows[0];
+  ['studyName', 'version', 'description', 'type'].forEach(function(field) {
+    if (!normalizeString_(study[field])) {
+      throw new Error('Study.' + field + ' is required');
+    }
+  });
+
+  if (['original', 'update'].indexOf(normalizeString_(study.type)) === -1) {
+    throw new Error('Study.type must be original or update');
+  }
+
+  const studyDatasetRows = payload.StudyDataset || [];
+  if (studyDatasetRows.length === 0) {
+    throw new Error('StudyDataset is required');
+  }
+
+  studyDatasetRows.forEach(function(row, idx) {
+    if (!normalizeString_(row.datasetID)) {
+      throw new Error('StudyDataset row ' + (idx + 1) + ' requires datasetID');
+    }
+  });
+}
+
 function appendObjectToSheet_(ss, sheetName, obj) {
   if (!obj) return;
   appendArrayToSheet_(ss, sheetName, [obj]);
@@ -451,15 +548,46 @@ function buildExistingMetricKeyIndex_(ss) {
   return index;
 }
 
+function buildExistingIdSet_(ss, sheetName, idColumnName) {
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    throw new Error('Sheet not found: ' + sheetName);
+  }
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length <= 1) {
+    return {};
+  }
+
+  const header = values[0];
+  const col = indexMap_(header);
+  const idx = col[idColumnName];
+  const set = {};
+
+  if (idx === undefined) {
+    throw new Error('Column not found in ' + sheetName + ': ' + idColumnName);
+  }
+
+  for (let i = 1; i < values.length; i++) {
+    const id = normalizeString_(values[i][idx]);
+    if (id) {
+      set[id] = true;
+    }
+  }
+
+  return set;
+}
+
 function buildMetricKey_(row) {
   const sourceType = inferMetricSourceType_(row);
   const metricName = normalizeString_(row.metricName);
-  const metricKey = normalizeString_(firstNonEmpty_(row.metricKey, row.internalMetricKey, row.gistMetricKey, row.wrapper_r));
+  const wrapperR = normalizeString_(firstNonEmpty_(row.wrapper_r, row['wrapper.r']));
+  const metricKey = normalizeString_(firstNonEmpty_(row.metricKey, row.internalMetricKey, row.gistMetricKey, wrapperR));
   const gistUrl = normalizeString_(firstNonEmpty_(row.gist_url, row.gistUrl));
   const gistId = extractGistId_(gistUrl);
 
   if (sourceType === 'internal') {
-    const key = metricKey || metricName;
+    const key = metricKey || wrapperR || metricName;
     if (!key) {
       throw new Error('internal metrics require metricKey or metricName');
     }
@@ -467,9 +595,9 @@ function buildMetricKey_(row) {
   }
 
   if (sourceType === 'gist') {
-    const key = metricKey || (gistId && metricName ? gistId + '|' + metricName : '') || gistId || metricName;
+    const key = metricKey || (gistId && wrapperR ? gistId + '|' + wrapperR : '') || wrapperR || metricName;
     if (!key) {
-      throw new Error('gist metrics require metricKey, gist_url, or metricName');
+      throw new Error('gist metrics require metricKey, gist_url, wrapper.r, or metricName');
     }
     return 'gist|' + key;
   }
@@ -491,7 +619,7 @@ function inferMetricSourceType_(row) {
     return 'gist';
   }
 
-  if (firstNonEmpty_(row.metricKey, row.internalMetricKey, row.wrapper_r)) {
+  if (firstNonEmpty_(row.metricKey, row.internalMetricKey, row.wrapper_r, row['wrapper.r'])) {
     return 'internal';
   }
 

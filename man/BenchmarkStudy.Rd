@@ -58,11 +58,11 @@ It allows adding new trios, mapping functions, and running mappings on data.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from Curated Trio Datasets.}
+\item{\code{name}}{A character string to name the study. If fetchFromCtd is TRUE, this name will be used to fetch the study from the submission database.}
 
 \item{\code{trios}}{A list of Trio objects to initialize the study.}
 
-\item{\code{fetchFromCtd}}{Logical indicating whether to fetch study details from Curated Trio Datasets.}
+\item{\code{fetchFromCtd}}{Logical indicating whether to fetch study details from the submission database.}
 
 \item{\code{version}}{Optional integer specifying which version of the study to fetch (when fetchFromCtd is TRUE).}
 }
