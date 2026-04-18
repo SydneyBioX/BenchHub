@@ -103,8 +103,8 @@ is of length-two and named \code{"evidence"} and \code{"metrics"}. The \code{"ev
 component has supporting evidence and the \code{"metrics"} component has a character vector
 of metric names (corresponding to the names of the list provided to the \code{metrics} parameter).}
 
-\item{\code{evidenceColumns}}{If \code{evidenceID} is not \code{NULL}, then the columns of the table containing
-the supporting evidence.}
+\item{\code{evidenceColumns}}{If specified, extract supporting evidence from columns in the loaded
+dataset.}
 
 \item{\code{evidenceLoader}}{Alternative to \code{evidence} and \code{evidenceColumns}. Extract the evidence in a flexible way.}
 

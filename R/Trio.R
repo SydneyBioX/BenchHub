@@ -62,8 +62,8 @@ Trio <- R6::R6Class(
     #'   component has supporting evidence and the \code{"metrics"} component has a character vector
     #'   of metric names (corresponding to the names of the list provided to the \code{metrics} parameter).
     #' @param evidenceColumns
-    #'   If `evidenceID` is not `NULL`, then the columns of the table containing
-    #'   the supporting evidence.
+    #'   If specified, extract supporting evidence from columns in the loaded
+    #'   dataset.
     #' @param evidenceLoader
     #'   Alternative to `evidence` and `evidenceColumns`. Extract the evidence in a flexible way.
     #' @param task
@@ -179,6 +179,9 @@ Trio <- R6::R6Class(
       }
       # parse user input and set dataSource and dataSourceID
       private$parseIDString(datasetID)
+      if (!is.null(evidenceID)) {
+        private$parseIDString(evidenceID, IDtype = "evidence")
+      }
 
       self$cachePath <- getTrioCachePath(cachePath)
       self$data <- private$getData(
@@ -1574,6 +1577,56 @@ Trio <- R6::R6Class(
       task,
       metrics
     ) {
+      # Prefer explicit constructor inputs over curated metadata lookups.
+      if (!is.null(evidence)) {
+        self$evidence <- evidence
+        self$metrics <- metrics
+        return(NULL)
+      } else if (!is.null(evidenceID)) {
+        self$evidence <- list(
+          task = list(
+            evidence = private$getData(
+              self$evidenceSource,
+              self$evidenceSourceID,
+              self$cachePath,
+              evidenceLoader
+            ),
+            metrics = names(metrics)
+          )
+        )
+        self$metrics <- metrics
+        return(NULL)
+      } else if (!is.null(evidenceColumns)) {
+        extracted_evidence <- if (data.table::is.data.table(self$data)) {
+          self$data[, evidenceColumns, with = FALSE]
+        } else {
+          self$data[, evidenceColumns, drop = FALSE]
+        }
+        self$evidence <- list(list(
+          evidence = extracted_evidence,
+          metrics = names(metrics)
+        ))
+        names(self$evidence) <- task
+        self$metrics <- metrics
+        self$evidenceSourceID <- self$dataSourceID
+        self$data <- self$data[, -match(evidenceColumns, colnames(self$data))]
+        # Evidence extracted and removed from data to avoid use as covariate.
+        return(NULL)
+      } else if (!is.null(evidenceLoader)) {
+        self$evidence <- list(list(
+          evidence = private$getData(
+            self$dataSource,
+            self$dataSourceID,
+            self$cachePath,
+            evidenceLoader
+          ),
+          metrics = names(metrics)
+        ))
+        names(self$evidence) <- task
+        self$metrics <- metrics
+        return(NULL)
+      }
+
       if (!curl::has_internet()) {
         cli::cli_warn(c(
           "Couldn't populate Trio from Curated Trio Datasets.",
@@ -1702,51 +1755,6 @@ Trio <- R6::R6Class(
           "i" = "Please add your own supporting evidence for evaluation."
         ))
         return(NULL)
-      }
-
-      if (nrow(evidenceMetaData) == 0) {
-        # Not curated. Getting it directly from a source.
-        if (!is.null(evidence)) {
-          self$evidence <- evidence
-          self$metrics <- metrics
-        } else if (!is.null(evidenceID)) {
-          self$evidence <- list(
-            task = list(
-              evidence = private$getData(
-                self$evidenceSource,
-                self$evidenceSourceID,
-                self$cachePath,
-                evidenceLoader$evidence
-              ),
-              metrics = names(metrics)
-            ),
-            metrics = metrics
-          )
-        } else if (!is.null(evidenceColumns)) {
-          # evidenceID is NULL, so evidence is in columns of data table.
-          self$evidence <- list(list(
-            evidence = self$data[, evidenceColumns],
-            metrics = names(metrics)
-          ))
-          names(self$evidence) <- task
-          self$metrics <- metrics
-          self$evidenceSourceID <- self$dataSourceID
-          self$data <- self$data[, -match(evidenceColumns, colnames(self$data))]
-          # Evidence extracted and removed from data to avoid use as covariate.
-        } else if (!is.null(evidenceLoader)) {
-          # Evidence is extracted from data object using dataLoader.
-          self$evidence <- list(list(
-            evidence = private$getData(
-              self$dataSource,
-              self$dataSourceID,
-              self$cachePath,
-              evidenceLoader
-            ),
-            metrics = names(metrics)
-          ))
-          names(self$evidence) <- task
-          self$metrics <- metrics
-        }
       }
 
       evidence <- evidenceMetaData |> purrr::pluck("Supporting Evidence")
@@ -1903,9 +1911,14 @@ Trio <- R6::R6Class(
                   ", ",
                   TRUE
                 ))
+                evidence_data <- if (data.table::is.data.table(self$data)) {
+                  self$data[, evidenceCols, with = FALSE]
+                } else {
+                  self$data[, evidenceCols, drop = FALSE]
+                }
                 self$addEvidence(
                   name = evidenceName,
-                  evidence = self$data[, evidenceCols],
+                  evidence = evidence_data,
                   metrics = metrics |>
                     dplyr::filter(`Evidence Type` == evidenceName) |>
                     purrr::pluck("MetricID")
