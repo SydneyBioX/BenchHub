@@ -69,11 +69,11 @@ BenchmarkInsights <- R6::R6Class(
     },
 
     #' @description Creates a heatmap from the evaluation summary by averaging results across datasets.
-    #' @param evalSummary A dataframe containing the evaluation summary.
+    #' @param evalSummary A dataframe containing the evaluation summary. Defaults to `self$evalSummary`.
     #' @importFrom reshape2 dcast
     #' @return A heatmap object.
 
-    getHeatmap = function(evalSummary) {
+    getHeatmap = function(evalSummary = NULL) {
       if (!requireNamespace("reshape2", quietly = TRUE)) {
         cli::cli_abort(c(
           "Install {.pkg reshape2}.",
@@ -81,6 +81,9 @@ BenchmarkInsights <- R6::R6Class(
         ))
       }
       if (is.null(evalSummary)) {
+        evalSummary <- self$evalSummary
+      }
+      if (is.null(evalSummary) || nrow(evalSummary) == 0) {
         stop("Evaluation summary is required to generate heatmap.")
       }
       # Average results across datasets by evidence, method, and metric
@@ -136,11 +139,14 @@ BenchmarkInsights <- R6::R6Class(
     },
 
     #' @description Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
-    #' @param evalResult subset of evaluation summary.
+    #' @param evalResult subset of evaluation summary. Defaults to `self$evalSummary`.
     #' @param order An optional vector specifying the order of x-axis values.
     #' @param metricVariable Specify subset value in metric column.
     #' @return A ggplot2 line plot object.
-    getLineplot = function(evalResult, order = NULL, metricVariable) {
+    getLineplot = function(evalResult = NULL, order = NULL, metricVariable) {
+      if (is.null(evalResult)) {
+        evalResult <- self$evalSummary
+      }
       if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
@@ -194,11 +200,14 @@ BenchmarkInsights <- R6::R6Class(
     },
 
     #' @description Creates a scatter plot for the same evidence, with an two methodd metrics.
-    #' @param evalResult subset of evaluation summary, only include two different metrics, all evidence should be same
+    #' @param evalResult subset of evaluation summary, only include two different metrics, all evidence should be same. Defaults to `self$evalSummary`.
     #' @param variables A character vector of length two specifying the metric names to be used for the x and y axes.
     #' @return A ggplot2 line plot object.
     #' @importFrom ggrepel geom_label_repel
-    getScatterplot = function(evalResult, variables) {
+    getScatterplot = function(evalResult = NULL, variables) {
+      if (is.null(evalResult)) {
+        evalResult <- self$evalSummary
+      }
       if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
@@ -246,12 +255,15 @@ BenchmarkInsights <- R6::R6Class(
       return(plot)
     },
     #' @description Creates boxplot plots for the mutiple evidence, different method, one metric.
-    #' @param evalResult subset of evaluation summary, only include two different metrics, all evidence should be same.
+    #' @param evalResult subset of evaluation summary, only include two different metrics, all evidence should be same. Defaults to `self$evalSummary`.
     #' @param metricVariable Specify subset value in metric column.
     #' @param evidenceVariable Specify subset value in evidence column.
     #' @return A ggplot2 line plot object.
     #' @importFrom ggsci scale_fill_npg
-    getBoxplot = function(evalResult, metricVariable, evidenceVariable) {
+    getBoxplot = function(evalResult = NULL, metricVariable, evidenceVariable) {
+      if (is.null(evalResult)) {
+        evalResult <- self$evalSummary
+      }
       if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
@@ -279,7 +291,7 @@ BenchmarkInsights <- R6::R6Class(
           panel.grid.minor = element_blank(),
           panel.background = element_rect(
             colour = "black",
-            size = 0.2,
+            linewidth = 0.2,
             fill = NA
           )
         )
@@ -289,11 +301,14 @@ BenchmarkInsights <- R6::R6Class(
 
     #' @description Creates a correlation plot based on the provided evaluation summary and the specified input type (either "evidence", "metric", or "method").
     #' The correlation plot shows the pairwise correlation between results for different categories (evidence, metric, or method).
-    #' @param evalResult A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values.
+    #' @param evalResult A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values. Defaults to `self$evalSummary`.
     #' @param input_type A string that specifies the input type for generating the correlation plot. It must be either "evidence", "metric", or "method".
     #' @return A ggplot2 correlation plot object. The plot visualizes the correlation matrix using ggcorrplot with aesthetic enhancements like labeled values and angled axis text.
     #' @importFrom ggcorrplot ggcorrplot
-    getCorplot = function(evalResult, input_type) {
+    getCorplot = function(evalResult = NULL, input_type) {
+      if (is.null(evalResult)) {
+        evalResult <- self$evalSummary
+      }
       if (!is.data.frame(evalResult)) {
         stop("Input data must be a dataframe.")
       }
@@ -334,12 +349,12 @@ BenchmarkInsights <- R6::R6Class(
         select_if(is.numeric) %>%
         cor(use = "pairwise.complete.obs")
 
-      p1 <- ggcorrplot::ggcorrplot(
+      p1 <- suppressWarnings(ggcorrplot::ggcorrplot(
         cor_matrix,
         method = "square",
         type = "lower",
         lab = TRUE
-      ) +
+      )) +
         theme(
           axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
           panel.grid.major = element_blank(),
@@ -363,13 +378,16 @@ BenchmarkInsights <- R6::R6Class(
     #' @description This function generates a forest plot using linear models based on the
     #' comparison between groups in the provided evaluation summary. The plot is created
     #' using dotwhisker and broom packages, with custom grouping and labeling.
-    #' @param evalResult A data frame containing the evaluation summary.
+    #' @param evalResult A data frame containing the evaluation summary. Defaults to `self$evalSummary`.
     #' @param input_group A string specifying the grouping variable (only "datasetID", "method", or "evidence" allowed).
     #' @param input_model A string specifying the model variable (only "datasetID", "method", or  "evidence" allowed).
     #' @return A forest plot showing the comparison of models across groups.
     #' @importFrom broom tidy
     #' @importFrom dotwhisker relabel_predictors
-    getForestplot = function(evalResult, input_group, input_model) {
+    getForestplot = function(evalResult = NULL, input_group, input_model) {
+      if (is.null(evalResult)) {
+        evalResult <- self$evalSummary
+      }
       allowed_values <- c("datasetID", "method", "evidence", "metric")
       if (!input_group %in% allowed_values) {
         stop(
@@ -398,10 +416,10 @@ BenchmarkInsights <- R6::R6Class(
 
       to_plot <- dotwhisker::relabel_predictors(to_plot, predictor_labels)
 
-      g <- dotwhisker::dwplot(
+      g <- suppressWarnings(dotwhisker::dwplot(
         to_plot,
         vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)
-      ) +
+      )) +
         labs(
           x = "Regression coefficient"
         ) +

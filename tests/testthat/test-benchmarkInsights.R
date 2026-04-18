@@ -198,6 +198,21 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   expect_true(!is.null(forest_plot))
 })
 
+test_that("BenchmarkInsights plot methods default to self$evalSummary", {
+  evalResult <- data.frame(
+    datasetID = c("dataset1", "dataset1", "dataset1", "dataset1"),
+    method = c("methodA", "methodA", "methodB", "methodB"),
+    evidence = c("task1", "task2", "task1", "task2"),
+    metric = c("metric1", "metric2", "metric1", "metric2"),
+    result = c(0.1, 0.2, 0.3, 0.4)
+  )
+
+  benchmark <- BenchmarkInsights$new(evalResult)
+
+  expect_true(!is.null(benchmark$getHeatmap()))
+  expect_true(!is.null(benchmark$getCorplot(input_type = "method")))
+})
+
 
 test_that("addMetadata handles multiple entries correctly", {
   benchmark <- BenchmarkInsights$new()
