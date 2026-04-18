@@ -18,7 +18,8 @@ benchmark study.
 - **Method developers** can apply their methods to the provided data and
   evaluate their outputs using the built-in metrics.
 
-This vignette provides guide for both usage.
+This vignette provides a guide for both use cases under the current
+BenchHub submission workflow.
 
 ## For Benchmark Developer
 
@@ -33,109 +34,140 @@ We begin by creating an empty `BenchmarkStudy` object.
 study <- BenchmarkStudy$new()
 ```
 
-### Adding Trio
-
-Assume the benchmark developer has created a trio object for one of the
-data used for the benchmarking. Here, we use a Trio from the curated
-trio dataset.
-
 ``` r
-# Download the Trio from the database using its name 
-example_trio <- suppressMessages( Trio$new("benchhub_vignette_example", cachePath = TRUE) )
+# Download an existing Trio from the submission database
+example_trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 
-# Add to study
-study$addTrio(example_trio)
+example_trio
 ```
 
-### Define mapping function
+### Define mapping function and protocol function
 
-A mapping function is a helper function that process the data into a
-format that can then be input into the evaluation metrics.
+A mapping function is a helper function that processes method output
+into a format that can then be compared with the supporting evidence
+stored in the reference `Trio`. There are three ways to contribute the
+mapping function:
 
-For example, in single-cell RNA-sequencing simulation studies, the
-output from a simulator is often a cell by gene count matrix. When
-benchmarking, we often map the matrix output to derived statistics
-(e.g., gene-level sparsity or cell-level library sizes) that can be
-compared against a reference (e.g., real single-cell RNA-seq matrix).
+1.  Leave blank: if you don’t want to contribute now
+2.  Use existing GitHub repository: if your mapping function has been
+    uploaded to the GitHub repository in the published paper
+3.  Upload mapping functions stored in the study object
+4.  Upload local mapping function to gist: define the mapping function
+    locally
 
-We define two examples of mapping functions.
+In this toy spatial transcriptomics example, the `Trio` contains the
+following supporting evidence:
 
-Example 1: calculate the sparsity (proportion of zero counts) per gene.
+- `annotated_domain`
+- `celltype_proportions`
+
+We therefore define two mapping functions that extract those objects
+from a method result.
+
+Example 1: extract predicted spatial domains.
 
 ``` r
 # Define the mapping function 
-proportion_zero_gene <- function(data) {
-  return(colMeans(counts(data) == 0))
+extract_domains <- function(result) {
+  if (is.data.frame(result) && "annotated_domain" %in% colnames(result)) {
+    return(result$annotated_domain)
+  }
+  if (is.list(result) && "annotated_domain" %in% names(result)) {
+    return(result$annotated_domain)
+  }
+  stop("Could not find 'annotated_domain' in the method output.")
 }
 
 # Add the mapping function
 study$addMappingFunction(
-  name = "Fraction Zero Genes",
-  func = proportion_zero_gene,
-  inputDescription = "SingleCellExperiment or matrix with gene expression counts.",
-  outputDescription = "Numeric vector of fraction of zero counts per gene.",
+  name = "annotated_domain",
+  func = extract_domains,
+  inputDescription = "Method output containing one predicted spatial domain label per spot.",
+  outputDescription = "A vector of predicted spatial domain labels aligned to spots.",
   exampleUsage = paste(
     "## Minimal example",
-    "#mat <- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)",
-    "#mat <- SingleCellExperiment(assays = list(counts = mat)",
-    "#res <- study$runMapping('Fraction.Zero.Genes', mat)",
+    "#result <- list(annotated_domain = c('domain_1', 'domain_1', 'domain_2', 'domain_2'))",
+    "#res <- study$runMapping('annotated_domain', result)",
     "#head(res)",
     sep = "\n"
   )
 )
 ```
 
-Example 2: calculate the normalized library size per cell.
+Example 2: extract predicted cell type proportions.
 
 ``` r
-library(edgeR)
 # Define the mapping function 
-norm_lib_size <-  function(data) {
-  dge <- SE2DGEList(data)
-  dge <- normLibSizes(dge)
-  return(getNormLibSizes(dge))
+extract_celltype_props <- function(result) {
+  if (is.data.frame(result) && "celltype_proportions" %in% names(result)) {
+    return(result$celltype_proportions)
+  }
+  if (is.list(result) && "celltype_proportions" %in% names(result)) {
+    return(result$celltype_proportions)
+  }
+  if (is.matrix(result) || is.data.frame(result)) {
+    mat <- as.matrix(result)
+    rs <- rowSums(mat)
+    rs[rs == 0] <- 1
+    return(mat / rs)
+  }
+  stop("Could not extract cell type proportions from the method output.")
 }
 
 # Add the mapping function, it is optional but recommended to add example usage 
 study$addMappingFunction(
-  name = "normalized library size",
-  func = norm_lib_size,
-  inputDescription = "SingleCellExperiment or matrix with gene expression counts.",
-  outputDescription = "Numeric vector of normalised library size per cell."
+  name = "celltype_proportions",
+  func = extract_celltype_props,
+  inputDescription = "Method output containing cell type proportions per spot.",
+  outputDescription = "A matrix or data frame of cell type proportions aligned to spots.",
+  exampleUsage = paste(
+    "## Minimal example",
+    "#props <- matrix(c(0.9, 0.1, 0.8, 0.2, 0.2, 0.8, 0.1, 0.9), ncol = 2, byrow = TRUE)",
+    "#study$runMapping('celltype_proportions', props)",
+    sep = "\n"
+  )
 )
 ```
 
-### Uploading to Curated Trio Datasets
+Similar as mapping functions, the protocol function is the full workflow
+of benchmarking study. There are three ways to contribute the protocol
+function:
 
-Once the BenchmarkStudy object includes:  
-- A study name and description  
-- At least three Trio objects  
-- Mapping functions \[optional\]
+1.  Leave blank: if you don’t want to contribute now
+2.  Use existing protocol gist URL: if your protocol function has been
+    uploaded to the GitHub repository in the published paper
+3.  Upload local protocol file to gist
 
-The BenchmarkStudy object can be uploaded to the database.
+### Upload Study
+
+Once the BenchmarkStudy object includes:
+
+1.  A study name and description
+2.  One or more Trio objects already represented in the submission
+    database
+3.  Mapping functions \[optional\]
+4.  Protocol functions \[optional\]
+
+the recommended next step is to an interactive console workflow via
+`interactivePrepareStudySubmission(study)`.
 
 ``` r
-# because we need at least three Trio 
-# pretend we have added three unique Trios 
-study$addTrio(example_trio) 
-study$addTrio(example_trio)
-
-# Note that each Trio needs to be already exist in the database. 
-# Trios can be uploaded to the database using the `writeCTD()` function. 
-# For more details, see the vignette on Trio construction.
-# example_trio$writeCTD("example_trio")
-
 # Set name and description manually
-study$name <- "Benchhubstudy vignette"
-study$description <- "This study compares simulated spatial transcriptomics data."
+study <- BenchmarkStudy$new(name = "ST toy study")
+study$description <- "Toy spatial transcriptomics study."
+
+interactivePrepareStudySubmission(study)
 ```
 
-The object can be uploaded using the `writeBenchmarkStudy()` function.
+In that interactive workflow, BenchHub will guide you through:
 
-``` r
-# We comment it out in the vignette so that it does not get repetitively added
-# study$writeBenchmarkStudy()
-```
+- selecting or confirming dataset IDs to link to the study,
+- entering the study description,
+- optionally providing a protocol gist,
+- optionally providing a mapping-functions gist or uploading mapping
+  functions already stored in the `study` object,
+- reviewing the submission bundle, and
+- optionally submitting the Study immediately.
 
 ## For Method Developer
 
@@ -145,140 +177,109 @@ its performance.
 
 ### Loading the Study
 
-A BenchmarkStudy object can be downloaded from the database through its
-name.
+A `BenchmarkStudy` object can be downloaded from the submission database
+through its `studyID`.
 
 ``` r
-study  <- suppressMessages( BenchmarkStudy$new("Benchhubstudy vignette", fetchFromCtd = TRUE))
+loaded_study <- downloadSubmissionStudy(studyID = "ST005", cachePath = tempdir())
+```
+
+This returns a populated `BenchmarkStudy` object. For example:
+
+``` r
+loaded_study
+loaded_study$name
+loaded_study$description
+loaded_study$version
+length(loaded_study$trios)
 ```
 
 Inspect the list of available trios, and available mapping functions
 
-We see that this study has three Trios. Each Trio has supporting
-evidence that we can compare with.
+Each entry of `loaded_study$trios` is a `Trio` object with supporting
+evidence that can be used for evaluation.
 
 ``` r
-length(study$trios)
+length(loaded_study$trios)
+
+loaded_study$trios[[1]]
 ```
 
-    ## [1] 3
-
-``` r
-study$trios[[1]]
-```
-
-    ## 
-    ## ── Trio Object ─────────────────────────────────────────────────────────────────
-    ## 
-    ## ── Dataset 
-    ## Dataset Details:
-    ##   Formal class 'SingleCellExperiment' [package "SingleCellExperiment"] with 9
-    ##   slots
-    ## Data Source: "figshare"
-    ## Dataset ID: "29565947/57477553"
-    ## Cache Path: "/home/runner/.cache/R/BenchHub"
-    ## Split Indices: "None"
-    ## 
-    ## ── Supporting Evidence 
-    ## Number of Supporting Evidence: 3
-    ## Names of Supporting Evidence: "Fraction zero genes", "Fraction zero cells", and
-    ## "normalized library size"
-    ## 
-    ## ── Metrics 
-    ## Number of Metrics: 1
-    ## Names of Metrics: "KS_stats"
-
-This study provides two mapping function to process the data into a
+This study provides mapping functions to process method outputs into a
 format that can be used for evaluation.
 
 Each mapping function has documentation.
 
 ``` r
 # list the names of the mapping function
-study$listMappingFunctions()
-```
+loaded_study$listMappingFunctions()
 
-    ## [1] "Fraction.Zero.Genes"     "normalized.library.size"
-
-``` r
 # choose one to print the documentation 
-study$printMappingFunctionDocumentation("Fraction.Zero.Genes")
+loaded_study$printMappingFunctionDocumentation("annotated_domain")
 ```
-
-    ## Input:
-    ##   SingleCellExperiment or matrix with gene expression counts.
-    ## Output:
-    ##   Numeric vector of fraction of zero counts per gene.
-    ## Example:
-    ## ## Minimal example
-    ## mat <- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)
-    ## mat <- SingleCellExperiment(assays = list(counts = mat)
-    ## res <- study$runMapping('Fraction.Zero.Genes', mat)
-    ## head(res)
 
 ### Preparing for evaluation
 
-This benchmark study wants to assess the quality of simulated data.
+This benchmark study wants to assess predicted spatial domains and cell
+type proportions.
 
-Suppose the method developer has generated a simulated data with their
-method, and they want to compare with the real data to see how realistic
-the simulated data is.
+Suppose the method developer has run a method and obtained predicted
+domain labels and cell type proportions for each spot.
 
 ``` r
-# Use scuttle to simulate a data 
-set.seed(0)
-sim <- scuttle::mockSCE(ncells =  4744, ngenes = 1000)
+method_output <- list(
+  annotated_domain = c("domain_1", "domain_1", "domain_2", "domain_2"),
+  celltype_proportions = data.frame(
+    celltype_A = c(0.9, 0.8, 0.2, 0.1),
+    celltype_B = c(0.1, 0.2, 0.8, 0.9)
+  )
+)
 ```
 
-The method developer can apply the mapping functions to the simulated
-data to generate the relevant features to evaluate such as the sparsity
-of the genes and the library size.
+The method developer can apply the mapping functions to the method
+output to generate the objects required for evaluation.
 
 ``` r
-mydata_prop_zero_gene <- study$runMapping("Fraction.Zero.Genes", sim)
-mydata_lib_size <- study$runMapping( "normalized.library.size", sim)
+domain_pred <- loaded_study$runMapping("annotated_domain", method_output)
+prop_pred <- loaded_study$runMapping("celltype_proportions", method_output)
 ```
 
 ### Evaluate
 
-Now we can compare the simulated data against an experimental data using
-the `evaluate` function.
+Now we can compare the simulated data against an experimental dataset
+using the `evaluate` function.
 
 The evaluate function is in the format of
-`study$evaluate(trio_name, list( supporting evidence = output to compare with ))`.
+`study$evaluate(trio_name, list(supporting evidence = output to compare with))`.
 
-In the function below, the `Fraction zero genes` and
-`normalized library size` are the names of the supporting evidence that
-can be found in the `example_trio_1` Trio object.
+In the function below, the names in the list correspond to supporting
+evidence stored in the reference `Trio`.
 
 ``` r
-result <- study$evaluate("benchhub_vignette_example",  # name of the trio to compare with  , can be accessed by study$trios[[1]]$name
-  list("Fraction zero genes" = mydata_prop_zero_gene  , # name of the supporting evidence 
-   "normalized library size" = mydata_prop_zero_gene )) # name of the supporting evidence   
+result <- loaded_study$evaluate(loaded_study$trios[[1]]$name,  # name of the Trio to compare with
+  list(
+    "annotated_domain" = domain_pred,
+    "celltype_proportions" = prop_pred
+  ))
 
 result
 ```
 
-    ## # A tibble: 2 × 4
-    ##   datasetID         evidence                metric   result
-    ##   <chr>             <chr>                   <chr>     <dbl>
-    ## 1 29565947/57477553 Fraction zero genes     KS_stats  268. 
-    ## 2 29565947/57477553 normalized library size KS_stats   98.1
-
 ## Summary
 
 This vignette demonstrated two ways that users can interact with the
-BenchmarkStudy framework:
+`BenchmarkStudy` framework:
 
 - Benchmark developers: create or update a `BenchmarkStudy` by adding
   `Trio` objects and optional mapping functions with clear
-  documentation, then upload the study to the Trio Database.
+  documentation, then prepare and submit the study through the current
+  Study submission workflow.
 
-- Method developers: load an existing `BenchmarkStudy` from the Trio
-  Database, use the `Trio` objects to execute benchmarking methods of
-  interest, use the mapping functions to convert method outputs where
-  needed, evaluate those outputs against the study’s supporting evidence
-  using the `evaluate()` function.
+- Method developers: load an existing `BenchmarkStudy` from the
+  submission database, use the `Trio` objects to execute benchmarking
+  methods of interest, use the mapping functions to convert method
+  outputs where needed, and evaluate those outputs against the study’s
+  supporting evidence using the `evaluate()` function.
 
 ## Session Info
 
@@ -308,50 +309,46 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] edgeR_4.8.2                 limma_3.66.0               
-    ##  [3] BenchHub_0.99.10            scuttle_1.20.0             
-    ##  [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
-    ##  [7] Biobase_2.70.0              GenomicRanges_1.62.1       
-    ##  [9] Seqinfo_1.0.0               IRanges_2.44.0             
-    ## [11] S4Vectors_0.48.1            BiocGenerics_0.56.0        
-    ## [13] generics_0.1.4              MatrixGenerics_1.22.0      
-    ## [15] matrixStats_1.5.0           R6_2.6.1                   
-    ## [17] BiocStyle_2.38.0           
+    ##  [1] BenchHub_0.99.10            scuttle_1.20.0             
+    ##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+    ##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       
+    ##  [7] Seqinfo_1.0.0               IRanges_2.44.0             
+    ##  [9] S4Vectors_0.48.1            BiocGenerics_0.56.0        
+    ## [11] generics_0.1.4              MatrixGenerics_1.22.0      
+    ## [13] matrixStats_1.5.0           R6_2.6.1                   
+    ## [15] BiocStyle_2.38.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           
-    ##   [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
-    ##   [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           
-    ##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
-    ##  [13] backports_1.5.1        XVector_0.50.0         utf8_1.2.6            
-    ##  [16] ggstance_0.3.7         rmarkdown_2.31         pracma_2.4.6          
-    ##  [19] ragg_1.5.2             purrr_1.2.2            xfun_0.57             
-    ##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        
-    ##  [25] DelayedArray_0.36.1    BiocParallel_1.44.0    broom_1.0.12          
-    ##  [28] parallel_4.5.3         cluster_2.1.8.2        bslib_0.10.0          
-    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
-    ##  [34] jquerylib_0.1.4        cellranger_1.1.0       Rcpp_1.1.1            
-    ##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-6       
-    ##  [40] parameters_0.28.3      splines_4.5.3          Matrix_1.7-4          
-    ##  [43] nnet_7.3-20            tidyselect_1.2.1       rstudioapi_0.18.0     
-    ##  [46] abind_1.4-8            yaml_2.3.12            codetools_0.2-20      
-    ##  [49] curl_7.0.0             plyr_1.8.9             lattice_0.22-9        
-    ##  [52] tibble_3.3.1           ks_1.15.1              withr_3.0.2           
-    ##  [55] bayestestR_0.17.0      S7_0.2.1               evaluate_1.0.5        
-    ##  [58] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
-    ##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         
-    ##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.4       
-    ##  [67] insight_1.5.0          ggplot2_4.0.2          scales_1.4.0          
-    ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.3           
-    ##  [73] data.table_1.18.2.1    locfit_1.5-9.12        mvtnorm_1.3-6         
-    ##  [76] fs_2.0.1               grid_4.5.3             tidyr_1.3.2           
-    ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
-    ##  [82] patchwork_1.3.2        performance_0.16.0     htmlTable_2.4.3       
-    ##  [85] googledrive_2.1.2      splitTools_1.0.1       Formula_1.2-5         
-    ##  [88] cli_3.6.6              rappdirs_0.3.4         textshaping_1.0.5     
-    ##  [91] gargle_1.6.1           S4Arrays_1.10.1        dplyr_1.2.1           
-    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.3.0           
-    ##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.10   
-    ## [100] ggrepel_0.9.8          htmlwidgets_1.6.4      farver_2.1.2          
-    ## [103] htmltools_0.5.9        pkgdown_2.2.0          lifecycle_1.0.5       
-    ## [106] httr_1.4.8             statmod_1.5.1          dotwhisker_0.8.4
+    ##  [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           
+    ##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
+    ##  [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           
+    ## [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
+    ## [13] backports_1.5.1        XVector_0.50.0         ggstance_0.3.7        
+    ## [16] rmarkdown_2.31         ragg_1.5.2             purrr_1.2.2           
+    ## [19] xfun_0.57              cachem_1.1.0           beachmat_2.26.0       
+    ## [22] jsonlite_2.0.0         DelayedArray_0.36.1    BiocParallel_1.44.0   
+    ## [25] broom_1.0.12           parallel_4.5.3         cluster_2.1.8.2       
+    ## [28] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
+    ## [31] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
+    ## [34] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            
+    ## [37] base64enc_0.1-6        parameters_0.28.3      splines_4.5.3         
+    ## [40] Matrix_1.7-4           nnet_7.3-20            tidyselect_1.2.1      
+    ## [43] rstudioapi_0.18.0      abind_1.4-8            yaml_2.3.12           
+    ## [46] codetools_0.2-20       curl_7.0.0             plyr_1.8.9            
+    ## [49] lattice_0.22-9         tibble_3.3.1           withr_3.0.2           
+    ## [52] bayestestR_0.17.0      S7_0.2.1-1             evaluate_1.0.5        
+    ## [55] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
+    ## [58] desc_1.4.3             pillar_1.11.1          BiocManager_1.30.27   
+    ## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.2         
+    ## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-5           
+    ## [67] tools_4.5.3            data.table_1.18.2.1    fs_2.0.1              
+    ## [70] grid_4.5.3             tidyr_1.3.2            datawizard_1.3.0      
+    ## [73] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
+    ## [76] performance_0.16.0     htmlTable_2.4.3        googledrive_2.1.2     
+    ## [79] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
+    ## [82] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
+    ## [85] S4Arrays_1.10.1        dplyr_1.2.1            gtable_0.3.6          
+    ## [88] ggcorrplot_0.1.4.1     ggsci_5.0.0            sass_0.4.10           
+    ## [91] digest_0.6.39          SparseArray_1.10.10    ggrepel_0.9.8         
+    ## [94] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
+    ## [97] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4

@@ -75,7 +75,7 @@ trio
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361073"
-    ## Cache Path: "/tmp/RtmpnrMj8K"
+    ## Cache Path: "/tmp/Rtmpk5CAtM"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -140,7 +140,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpnrMj8K"
+    ## Cache Path: "/tmp/Rtmpk5CAtM"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -271,8 +271,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x55a93e32f660>
-    ## <environment: 0x55a92fe83120>
+    ## <bytecode: 0x55ec90d69d08>
+    ## <environment: 0x55ec912bceb0>
 
 ## Other Features
 
@@ -399,7 +399,7 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
-    ##  [4] S7_0.2.1               fastmap_1.2.0          bayestestR_0.17.0     
+    ##  [4] S7_0.2.1-1             fastmap_1.2.0          bayestestR_0.17.0     
     ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.5       
     ## [10] cluster_2.1.8.2        survival_3.8-6         magrittr_2.0.5        
     ## [13] compiler_4.5.3         rlang_1.2.0            Hmisc_5.2-5           
@@ -420,12 +420,12 @@ sessionInfo()
     ## [58] jsonlite_2.0.0         bookdown_0.46          patchwork_1.3.2       
     ## [61] ggrepel_0.9.8          Formula_1.2-5          htmlTable_2.4.3       
     ## [64] systemfonts_1.3.2      tidyr_1.3.2            jquerylib_0.1.4       
-    ## [67] splitTools_1.0.1       glue_1.8.0             pkgdown_2.2.0         
+    ## [67] splitTools_1.0.1       glue_1.8.1             pkgdown_2.2.0         
     ## [70] survAUC_1.4-0          stringi_1.8.7          gtable_0.3.6          
     ## [73] tibble_3.3.1           pillar_1.11.1          rappdirs_0.3.4        
     ## [76] htmltools_0.5.9        R6_2.6.1               httr2_1.2.2           
     ## [79] textshaping_1.0.5      evaluate_1.0.5         lattice_0.22-9        
-    ## [82] backports_1.5.1        broom_1.0.12           ggsci_4.3.0           
-    ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1            
+    ## [82] backports_1.5.1        broom_1.0.12           ggsci_5.0.0           
+    ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1-1          
     ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
     ## [91] fs_2.0.1               pkgconfig_2.0.3

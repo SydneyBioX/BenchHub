@@ -126,6 +126,10 @@ see all vignettes listed below:
   : Build DatasetTask submission rows from a Trio object
 - [`buildMetricSubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildMetricSubmission.md)
   : Build Metric submission rows from a Trio object
+- [`buildStudySubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildStudySubmission.md)
+  : Build Study and StudyDataset submission tables
+- [`buildStudySubmissionPayload()`](https://sydneybiox.github.io/BenchHub/reference/buildStudySubmissionPayload.md)
+  : Convert a Study submission to payload structure
 - [`buildTrioSubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildTrioSubmission.md)
   : Build a combined Trio submission object
 - [`buildTrioSubmissionPayload()`](https://sydneybiox.github.io/BenchHub/reference/buildTrioSubmissionPayload.md)
@@ -138,20 +142,36 @@ see all vignettes listed below:
   : Collect DatasetEvidence submission metadata interactively
 - [`collectMetricSubmissionInfo()`](https://sydneybiox.github.io/BenchHub/reference/collectMetricSubmissionInfo.md)
   : Collect Metric submission metadata interactively
+- [`collectStudySubmissionInfo()`](https://sydneybiox.github.io/BenchHub/reference/collectStudySubmissionInfo.md)
+  : Collect Study submission metadata
 - [`collectTaskSubmissionInfo()`](https://sydneybiox.github.io/BenchHub/reference/collectTaskSubmissionInfo.md)
   : Collect DatasetTask submission metadata interactively
+- [`downloadSubmissionStudy()`](https://sydneybiox.github.io/BenchHub/reference/downloadSubmissionStudy.md)
+  : Download a BenchmarkStudy from the submission database
 - [`downloadSubmissionTrio()`](https://sydneybiox.github.io/BenchHub/reference/downloadSubmissionTrio.md)
   : Download a Trio from the five-table submission database
+- [`getSubmissionStudy()`](https://sydneybiox.github.io/BenchHub/reference/getSubmissionStudy.md)
+  : Get one existing Study row by studyID
+- [`getSubmissionStudyDatasets()`](https://sydneybiox.github.io/BenchHub/reference/getSubmissionStudyDatasets.md)
+  : Get linked StudyDataset rows by studyID
 - [`ghCIndexMetric()`](https://sydneybiox.github.io/BenchHub/reference/ghCIndexMetric.md)
   : GH C-Index Metric
 - [`harrelCIndexMetric()`](https://sydneybiox.github.io/BenchHub/reference/harrelCIndexMetric.md)
   : Harrel's C-Index Metric
+- [`interactivePrepareStudySubmission()`](https://sydneybiox.github.io/BenchHub/reference/interactivePrepareStudySubmission.md)
+  : Interactively prepare a Study submission
+- [`interactivePrepareStudyUpdateSubmission()`](https://sydneybiox.github.io/BenchHub/reference/interactivePrepareStudyUpdateSubmission.md)
+  : Interactively prepare a Study update submission
 - [`kdeMetric()`](https://sydneybiox.github.io/BenchHub/reference/kdeMetric.md)
   : Kernel Density Estimation (KDE) Metric
 - [`listCuratedTrioDatasets()`](https://sydneybiox.github.io/BenchHub/reference/listCuratedTrioDatasets.md)
   : List the curated Trio datasets
 - [`listCuratedTrioStudies()`](https://sydneybiox.github.io/BenchHub/reference/listCuratedTrioStudies.md)
   : List the curated Trio studies
+- [`listSubmissionStudies()`](https://sydneybiox.github.io/BenchHub/reference/listSubmissionStudies.md)
+  : List existing Study rows
+- [`listSubmissionStudyDatasets()`](https://sydneybiox.github.io/BenchHub/reference/listSubmissionStudyDatasets.md)
+  : List available datasets for Study submission
 - [`lubomski_microbiome_data`](https://sydneybiox.github.io/BenchHub/reference/lubomski_microbiome_data.md)
   [`x`](https://sydneybiox.github.io/BenchHub/reference/lubomski_microbiome_data.md)
   [`lubomPD`](https://sydneybiox.github.io/BenchHub/reference/lubomski_microbiome_data.md)
@@ -168,12 +188,20 @@ see all vignettes listed below:
   : Micro Precision Metric
 - [`microRecMetric()`](https://sydneybiox.github.io/BenchHub/reference/microRecMetric.md)
   : Micro Recall Metric
+- [`prepareStudySubmission()`](https://sydneybiox.github.io/BenchHub/reference/prepareStudySubmission.md)
+  : Prepare a Study submission bundle
+- [`prepareStudyUpdateSubmission()`](https://sydneybiox.github.io/BenchHub/reference/prepareStudyUpdateSubmission.md)
+  : Prepare an update submission from an existing Study version
 - [`prepareTrioSubmissionBundle()`](https://sydneybiox.github.io/BenchHub/reference/prepareTrioSubmissionBundle.md)
   : Build a pre-submit Trio submission bundle
 - [`prepareTrioSubmissionFiles()`](https://sydneybiox.github.io/BenchHub/reference/prepareTrioSubmissionFiles.md)
   : Prepare Trio files and download metadata for submission
 - [`prepareTrioSubmissionMetrics()`](https://sydneybiox.github.io/BenchHub/reference/prepareTrioSubmissionMetrics.md)
   : Prepare Trio metric metadata for submission
+- [`studySubmissionToJSON()`](https://sydneybiox.github.io/BenchHub/reference/studySubmissionToJSON.md)
+  : Convert a Study submission to JSON
+- [`submitStudySubmission()`](https://sydneybiox.github.io/BenchHub/reference/submitStudySubmission.md)
+  : Submit a Study submission payload to Google Apps Script
 - [`submitTrioSubmission()`](https://sydneybiox.github.io/BenchHub/reference/submitTrioSubmission.md)
   : Submit a Trio submission payload to Google Apps Script
 - [`timeDependentAUCMetric()`](https://sydneybiox.github.io/BenchHub/reference/timeDependentAUCMetric.md)
@@ -197,7 +225,7 @@ see all vignettes listed below:
   Trio](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.md):
 - [3 Introduction of BenchmarkInsights
   class](https://sydneybiox.github.io/BenchHub/articles/v03_intro_bmi.md):
-- [4 Uploading a Trio to Curated Trio
-  Datasets](https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.md):
+- [4 Preparing and Submitting a
+  Trio](https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.md):
 - [5
   BenchmarkStudy](https://sydneybiox.github.io/BenchHub/articles/v05_benchmarkstudy.md):

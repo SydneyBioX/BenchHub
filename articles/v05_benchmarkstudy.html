@@ -37,7 +37,7 @@
     <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of BenchmarkInsights class</a></li>
-    <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Uploading a Trio to Curated Trio Datasets</a></li>
+    <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Preparing and Submitting a Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v05_benchmarkstudy.html">5 BenchmarkStudy</a></li>
   </ul>
 </li>
@@ -63,7 +63,7 @@
       <h1>5 BenchmarkStudy</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/v0.0.9/vignettes/v05_benchmarkstudy.Rmd" class="external-link"><code>vignettes/v05_benchmarkstudy.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/devel/vignettes/v05_benchmarkstudy.Rmd" class="external-link"><code>vignettes/v05_benchmarkstudy.Rmd</code></a></small>
       <div class="d-none name"><code>v05_benchmarkstudy.Rmd</code></div>
     </div>
 
@@ -90,7 +90,8 @@ any mapping functions and distribute a ready-to-use study object.<br>
 provided data and evaluate their outputs using the built-in
 metrics.</li>
 </ul>
-<p>This vignette provides guide for both usage.</p>
+<p>This vignette provides a guide for both use cases under the current
+BenchHub submission workflow.</p>
 </div>
 <div class="section level2">
 <h2 id="for-benchmark-developer">For Benchmark Developer<a class="anchor" aria-label="anchor" href="#for-benchmark-developer"></a>
@@ -103,100 +104,133 @@ object from a benchmarking study.</p>
 <p>We begin by creating an empty <code>BenchmarkStudy</code> object.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">study</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/BenchmarkStudy.html">BenchmarkStudy</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="adding-trio">Adding Trio<a class="anchor" aria-label="anchor" href="#adding-trio"></a>
-</h3>
-<p>Assume the benchmark developer has created a trio object for one of
-the data used for the benchmarking. Here, we use a Trio from the curated
-trio dataset.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Download the Trio from the database using its name </span></span>
-<span><span class="va">example_trio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span> <span class="va"><a href="../reference/Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"benchhub_vignette_example"</span>, cachePath <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Download an existing Trio from the submission database</span></span>
+<span><span class="va">example_trio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downloadSubmissionTrio.html">downloadSubmissionTrio</a></span><span class="op">(</span><span class="st">"D001"</span>, cachePath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Add to study</span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="fu">addTrio</span><span class="op">(</span><span class="va">example_trio</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">example_trio</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="define-mapping-function">Define mapping function<a class="anchor" aria-label="anchor" href="#define-mapping-function"></a>
+<h3 id="define-mapping-function-and-protocol-function">Define mapping function and protocol function<a class="anchor" aria-label="anchor" href="#define-mapping-function-and-protocol-function"></a>
 </h3>
-<p>A mapping function is a helper function that process the data into a
-format that can then be input into the evaluation metrics.</p>
-<p>For example, in single-cell RNA-sequencing simulation studies, the
-output from a simulator is often a cell by gene count matrix. When
-benchmarking, we often map the matrix output to derived statistics
-(e.g., gene-level sparsity or cell-level library sizes) that can be
-compared against a reference (e.g., real single-cell RNA-seq
-matrix).</p>
-<p>We define two examples of mapping functions.</p>
-<p>Example 1: calculate the sparsity (proportion of zero counts) per
-gene.</p>
+<p>A mapping function is a helper function that processes method output
+into a format that can then be compared with the supporting evidence
+stored in the reference <code>Trio</code>. There are three ways to
+contribute the mapping function:</p>
+<ol style="list-style-type: decimal">
+<li>Leave blank: if you don’t want to contribute now</li>
+<li>Use existing GitHub repository: if your mapping function has been
+uploaded to the GitHub repository in the published paper</li>
+<li>Upload mapping functions stored in the study object</li>
+<li>Upload local mapping function to gist: define the mapping function
+locally</li>
+</ol>
+<p>In this toy spatial transcriptomics example, the <code>Trio</code>
+contains the following supporting evidence:</p>
+<ul>
+<li><code>annotated_domain</code></li>
+<li><code>celltype_proportions</code></li>
+</ul>
+<p>We therefore define two mapping functions that extract those objects
+from a method result.</p>
+<p>Example 1: extract predicted spatial domains.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define the mapping function </span></span>
-<span><span class="va">proportion_zero_gene</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="fu">counts</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">extract_domains</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="st">"annotated_domain"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">annotated_domain</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="st">"annotated_domain"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">annotated_domain</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Could not find 'annotated_domain' in the method output."</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Add the mapping function</span></span>
 <span><span class="va">study</span><span class="op">$</span><span class="fu">addMappingFunction</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"Fraction Zero Genes"</span>,</span>
-<span>  func <span class="op">=</span> <span class="va">proportion_zero_gene</span>,</span>
-<span>  inputDescription <span class="op">=</span> <span class="st">"SingleCellExperiment or matrix with gene expression counts."</span>,</span>
-<span>  outputDescription <span class="op">=</span> <span class="st">"Numeric vector of fraction of zero counts per gene."</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"annotated_domain"</span>,</span>
+<span>  func <span class="op">=</span> <span class="va">extract_domains</span>,</span>
+<span>  inputDescription <span class="op">=</span> <span class="st">"Method output containing one predicted spatial domain label per spot."</span>,</span>
+<span>  outputDescription <span class="op">=</span> <span class="st">"A vector of predicted spatial domain labels aligned to spots."</span>,</span>
 <span>  exampleUsage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
 <span>    <span class="st">"## Minimal example"</span>,</span>
-<span>    <span class="st">"#mat &lt;- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)"</span>,</span>
-<span>    <span class="st">"#mat &lt;- SingleCellExperiment(assays = list(counts = mat)"</span>,</span>
-<span>    <span class="st">"#res &lt;- study$runMapping('Fraction.Zero.Genes', mat)"</span>,</span>
+<span>    <span class="st">"#result &lt;- list(annotated_domain = c('domain_1', 'domain_1', 'domain_2', 'domain_2'))"</span>,</span>
+<span>    <span class="st">"#res &lt;- study$runMapping('annotated_domain', result)"</span>,</span>
 <span>    <span class="st">"#head(res)"</span>,</span>
 <span>    sep <span class="op">=</span> <span class="st">"\n"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Example 2: calculate the normalized library size per cell.</p>
+<p>Example 2: extract predicted cell type proportions.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/edgeR/" class="external-link">edgeR</a></span><span class="op">)</span></span>
-<span><span class="co"># Define the mapping function </span></span>
-<span><span class="va">norm_lib_size</span> <span class="op">&lt;-</span>  <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">dge</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/SE2DGEList.html" class="external-link">SE2DGEList</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span>  <span class="va">dge</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">normLibSizes</a></span><span class="op">(</span><span class="va">dge</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/effectiveLibSizes.html" class="external-link">getNormLibSizes</a></span><span class="op">(</span><span class="va">dge</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Define the mapping function </span></span>
+<span><span class="va">extract_celltype_props</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="st">"celltype_proportions"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">celltype_proportions</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="st">"celltype_proportions"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">celltype_proportions</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">is.matrix</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>    <span class="va">rs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
+<span>    <span class="va">rs</span><span class="op">[</span><span class="va">rs</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">mat</span> <span class="op">/</span> <span class="va">rs</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Could not extract cell type proportions from the method output."</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Add the mapping function, it is optional but recommended to add example usage </span></span>
 <span><span class="va">study</span><span class="op">$</span><span class="fu">addMappingFunction</span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"normalized library size"</span>,</span>
-<span>  func <span class="op">=</span> <span class="va">norm_lib_size</span>,</span>
-<span>  inputDescription <span class="op">=</span> <span class="st">"SingleCellExperiment or matrix with gene expression counts."</span>,</span>
-<span>  outputDescription <span class="op">=</span> <span class="st">"Numeric vector of normalised library size per cell."</span></span>
+<span>  name <span class="op">=</span> <span class="st">"celltype_proportions"</span>,</span>
+<span>  func <span class="op">=</span> <span class="va">extract_celltype_props</span>,</span>
+<span>  inputDescription <span class="op">=</span> <span class="st">"Method output containing cell type proportions per spot."</span>,</span>
+<span>  outputDescription <span class="op">=</span> <span class="st">"A matrix or data frame of cell type proportions aligned to spots."</span>,</span>
+<span>  exampleUsage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>    <span class="st">"## Minimal example"</span>,</span>
+<span>    <span class="st">"#props &lt;- matrix(c(0.9, 0.1, 0.8, 0.2, 0.2, 0.8, 0.1, 0.9), ncol = 2, byrow = TRUE)"</span>,</span>
+<span>    <span class="st">"#study$runMapping('celltype_proportions', props)"</span>,</span>
+<span>    sep <span class="op">=</span> <span class="st">"\n"</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Similar as mapping functions, the protocol function is the full
+workflow of benchmarking study. There are three ways to contribute the
+protocol function:</p>
+<ol style="list-style-type: decimal">
+<li>Leave blank: if you don’t want to contribute now</li>
+<li>Use existing protocol gist URL: if your protocol function has been
+uploaded to the GitHub repository in the published paper</li>
+<li>Upload local protocol file to gist</li>
+</ol>
 </div>
 <div class="section level3">
-<h3 id="uploading-to-curated-trio-datasets">Uploading to Curated Trio Datasets<a class="anchor" aria-label="anchor" href="#uploading-to-curated-trio-datasets"></a>
+<h3 id="upload-study">Upload Study<a class="anchor" aria-label="anchor" href="#upload-study"></a>
 </h3>
-<p>Once the BenchmarkStudy object includes:<br>
-- A study name and description<br>
-- At least three Trio objects<br>
-- Mapping functions [optional]</p>
-<p>The BenchmarkStudy object can be uploaded to the database.</p>
+<p>Once the BenchmarkStudy object includes:</p>
+<ol style="list-style-type: decimal">
+<li>A study name and description</li>
+<li>One or more Trio objects already represented in the submission
+database</li>
+<li>Mapping functions [optional]</li>
+<li>Protocol functions [optional]</li>
+</ol>
+<p>the recommended next step is to an interactive console workflow via
+<code>interactivePrepareStudySubmission(study)</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># because we need at least three Trio </span></span>
-<span><span class="co"># pretend we have added three unique Trios </span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="fu">addTrio</span><span class="op">(</span><span class="va">example_trio</span><span class="op">)</span> </span>
-<span><span class="va">study</span><span class="op">$</span><span class="fu">addTrio</span><span class="op">(</span><span class="va">example_trio</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Set name and description manually</span></span>
+<span><span class="va">study</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/BenchmarkStudy.html">BenchmarkStudy</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"ST toy study"</span><span class="op">)</span></span>
+<span><span class="va">study</span><span class="op">$</span><span class="va">description</span> <span class="op">&lt;-</span> <span class="st">"Toy spatial transcriptomics study."</span></span>
 <span></span>
-<span><span class="co"># Note that each Trio needs to be already exist in the database. </span></span>
-<span><span class="co"># Trios can be uploaded to the database using the `writeCTD()` function. </span></span>
-<span><span class="co"># For more details, see the vignette on Trio construction.</span></span>
-<span><span class="co"># example_trio$writeCTD("example_trio")</span></span>
-<span></span>
-<span><span class="co"># Set name and description manually</span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"Benchhubstudy vignette"</span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="va">description</span> <span class="op">&lt;-</span> <span class="st">"This study compares simulated spatial transcriptomics data."</span></span></code></pre></div>
-<p>The object can be uploaded using the
-<code>writeBenchmarkStudy()</code> function.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># We comment it out in the vignette so that it does not get repetitively added</span></span>
-<span><span class="co"># study$writeBenchmarkStudy()</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/interactivePrepareStudySubmission.html">interactivePrepareStudySubmission</a></span><span class="op">(</span><span class="va">study</span><span class="op">)</span></span></code></pre></div>
+<p>In that interactive workflow, BenchHub will guide you through:</p>
+<ul>
+<li>selecting or confirming dataset IDs to link to the study,</li>
+<li>entering the study description,</li>
+<li>optionally providing a protocol gist,</li>
+<li>optionally providing a mapping-functions gist or uploading mapping
+functions already stored in the <code>study</code> object,</li>
+<li>reviewing the submission bundle, and</li>
+<li>optionally submitting the Study immediately.</li>
+</ul>
 </div>
 </div>
 <div class="section level2">
@@ -208,124 +242,98 @@ its performance.</p>
 <div class="section level3">
 <h3 id="loading-the-study">Loading the Study<a class="anchor" aria-label="anchor" href="#loading-the-study"></a>
 </h3>
-<p>A BenchmarkStudy object can be downloaded from the database through
-its name.</p>
+<p>A <code>BenchmarkStudy</code> object can be downloaded from the
+submission database through its <code>studyID</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">loaded_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downloadSubmissionStudy.html">downloadSubmissionStudy</a></span><span class="op">(</span>studyID <span class="op">=</span> <span class="st">"ST005"</span>, cachePath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>This returns a populated <code>BenchmarkStudy</code> object. For
+example:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">study</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span> <span class="va"><a href="../reference/BenchmarkStudy.html">BenchmarkStudy</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"Benchhubstudy vignette"</span>, fetchFromCtd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">loaded_study</span></span>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="va">name</span></span>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="va">description</span></span>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="va">version</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">loaded_study</span><span class="op">$</span><span class="va">trios</span><span class="op">)</span></span></code></pre></div>
 <p>Inspect the list of available trios, and available mapping
 functions</p>
-<p>We see that this study has three Trios. Each Trio has supporting
-evidence that we can compare with.</p>
+<p>Each entry of <code>loaded_study$trios</code> is a <code>Trio</code>
+object with supporting evidence that can be used for evaluation.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">study</span><span class="op">$</span><span class="va">trios</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 3</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">study</span><span class="op">$</span><span class="va">trios</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Trio Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ── Dataset </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Dataset Details</span>:</span></span>
-<span><span class="co">##   Formal class 'SingleCellExperiment' [package "SingleCellExperiment"] with 9</span></span>
-<span><span class="co">##   slots</span></span>
-<span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"29565947/57477553"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/home/runner/.cache/R/BenchHub"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ── Supporting Evidence </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Supporting Evidence</span>: <span style="color: #0000BB;">3</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Supporting Evidence</span>: <span style="color: #0000BB;">"Fraction zero genes"</span>, <span style="color: #0000BB;">"Fraction zero cells"</span>, and</span></span>
-<span><span class="co">## <span style="color: #0000BB;">"normalized library size"</span></span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ── Metrics </span></span>
-<span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">1</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"KS_stats"</span></span></span></code></pre>
-<p>This study provides two mapping function to process the data into a
-format that can be used for evaluation.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">loaded_study</span><span class="op">$</span><span class="va">trios</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="va">trios</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<p>This study provides mapping functions to process method outputs into
+a format that can be used for evaluation.</p>
 <p>Each mapping function has documentation.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># list the names of the mapping function</span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="fu">listMappingFunctions</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Fraction.Zero.Genes"     "normalized.library.size"</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># choose one to print the documentation </span></span>
-<span><span class="va">study</span><span class="op">$</span><span class="fu">printMappingFunctionDocumentation</span><span class="op">(</span><span class="st">"Fraction.Zero.Genes"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Input:</span></span>
-<span><span class="co">##   SingleCellExperiment or matrix with gene expression counts.</span></span>
-<span><span class="co">## Output:</span></span>
-<span><span class="co">##   Numeric vector of fraction of zero counts per gene.</span></span>
-<span><span class="co">## Example:</span></span>
-<span><span class="co">## ## Minimal example</span></span>
-<span><span class="co">## mat &lt;- matrix(rpois(100, lambda = 1), nrow = 10, ncol = 10)</span></span>
-<span><span class="co">## mat &lt;- SingleCellExperiment(assays = list(counts = mat)</span></span>
-<span><span class="co">## res &lt;- study$runMapping('Fraction.Zero.Genes', mat)</span></span>
-<span><span class="co">## head(res)</span></span></code></pre>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="fu">listMappingFunctions</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># choose one to print the documentation </span></span>
+<span><span class="va">loaded_study</span><span class="op">$</span><span class="fu">printMappingFunctionDocumentation</span><span class="op">(</span><span class="st">"annotated_domain"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="preparing-for-evaluation">Preparing for evaluation<a class="anchor" aria-label="anchor" href="#preparing-for-evaluation"></a>
 </h3>
-<p>This benchmark study wants to assess the quality of simulated
-data.</p>
-<p>Suppose the method developer has generated a simulated data with
-their method, and they want to compare with the real data to see how
-realistic the simulated data is.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use scuttle to simulate a data </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/mockSCE.html" class="external-link">mockSCE</a></span><span class="op">(</span>ncells <span class="op">=</span>  <span class="fl">4744</span>, ngenes <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-<p>The method developer can apply the mapping functions to the simulated
-data to generate the relevant features to evaluate such as the sparsity
-of the genes and the library size.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mydata_prop_zero_gene</span> <span class="op">&lt;-</span> <span class="va">study</span><span class="op">$</span><span class="fu">runMapping</span><span class="op">(</span><span class="st">"Fraction.Zero.Genes"</span>, <span class="va">sim</span><span class="op">)</span></span>
-<span><span class="va">mydata_lib_size</span> <span class="op">&lt;-</span> <span class="va">study</span><span class="op">$</span><span class="fu">runMapping</span><span class="op">(</span> <span class="st">"normalized.library.size"</span>, <span class="va">sim</span><span class="op">)</span></span></code></pre></div>
+<p>This benchmark study wants to assess predicted spatial domains and
+cell type proportions.</p>
+<p>Suppose the method developer has run a method and obtained predicted
+domain labels and cell type proportions for each spot.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">method_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  annotated_domain <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"domain_1"</span>, <span class="st">"domain_1"</span>, <span class="st">"domain_2"</span>, <span class="st">"domain_2"</span><span class="op">)</span>,</span>
+<span>  celltype_proportions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    celltype_A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>    celltype_B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The method developer can apply the mapping functions to the method
+output to generate the objects required for evaluation.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">domain_pred</span> <span class="op">&lt;-</span> <span class="va">loaded_study</span><span class="op">$</span><span class="fu">runMapping</span><span class="op">(</span><span class="st">"annotated_domain"</span>, <span class="va">method_output</span><span class="op">)</span></span>
+<span><span class="va">prop_pred</span> <span class="op">&lt;-</span> <span class="va">loaded_study</span><span class="op">$</span><span class="fu">runMapping</span><span class="op">(</span><span class="st">"celltype_proportions"</span>, <span class="va">method_output</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="evaluate">Evaluate<a class="anchor" aria-label="anchor" href="#evaluate"></a>
 </h3>
-<p>Now we can compare the simulated data against an experimental data
+<p>Now we can compare the simulated data against an experimental dataset
 using the <code>evaluate</code> function.</p>
 <p>The evaluate function is in the format of
-<code>study$evaluate(trio_name, list( supporting evidence = output to compare with ))</code>.</p>
-<p>In the function below, the <code>Fraction zero genes</code> and
-<code>normalized library size</code> are the names of the supporting
-evidence that can be found in the <code>example_trio_1</code> Trio
-object.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">study</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="st">"benchhub_vignette_example"</span>,  <span class="co"># name of the trio to compare with  , can be accessed by study$trios[[1]]$name</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Fraction zero genes"</span> <span class="op">=</span> <span class="va">mydata_prop_zero_gene</span>  , <span class="co"># name of the supporting evidence </span></span>
-<span>   <span class="st">"normalized library size"</span> <span class="op">=</span> <span class="va">mydata_prop_zero_gene</span> <span class="op">)</span><span class="op">)</span> <span class="co"># name of the supporting evidence   </span></span>
+<code>study$evaluate(trio_name, list(supporting evidence = output to compare with))</code>.</p>
+<p>In the function below, the names in the list correspond to supporting
+evidence stored in the reference <code>Trio</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">loaded_study</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="va">loaded_study</span><span class="op">$</span><span class="va">trios</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">name</span>,  <span class="co"># name of the Trio to compare with</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="st">"annotated_domain"</span> <span class="op">=</span> <span class="va">domain_pred</span>,</span>
+<span>    <span class="st">"celltype_proportions"</span> <span class="op">=</span> <span class="va">prop_pred</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
-<span><span class="co">##   datasetID         evidence                metric   result</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> 29565947/57477553 Fraction zero genes     KS_stats  268. </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> 29565947/57477553 normalized library size KS_stats   98.1</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
 <p>This vignette demonstrated two ways that users can interact with the
-BenchmarkStudy framework:</p>
+<code>BenchmarkStudy</code> framework:</p>
 <ul>
 <li><p>Benchmark developers: create or update a
 <code>BenchmarkStudy</code> by adding <code>Trio</code> objects and
-optional mapping functions with clear documentation, then upload the
-study to the Trio Database.</p></li>
+optional mapping functions with clear documentation, then prepare and
+submit the study through the current Study submission workflow.</p></li>
 <li><p>Method developers: load an existing <code>BenchmarkStudy</code>
-from the Trio Database, use the <code>Trio</code> objects to execute
-benchmarking methods of interest, use the mapping functions to convert
-method outputs where needed, evaluate those outputs against the study’s
-supporting evidence using the <code>evaluate()</code> function.</p></li>
+from the submission database, use the <code>Trio</code> objects to
+execute benchmarking methods of interest, use the mapping functions to
+convert method outputs where needed, and evaluate those outputs against
+the study’s supporting evidence using the <code>evaluate()</code>
+function.</p></li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.5.3 (2026-03-11)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
@@ -349,53 +357,49 @@ supporting evidence using the <code>evaluate()</code> function.</p></li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] edgeR_4.8.2                 limma_3.66.0               </span></span>
-<span><span class="co">##  [3] BenchHub_0.99.10            scuttle_1.20.0             </span></span>
-<span><span class="co">##  [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0</span></span>
-<span><span class="co">##  [7] Biobase_2.70.0              GenomicRanges_1.62.1       </span></span>
-<span><span class="co">##  [9] Seqinfo_1.0.0               IRanges_2.44.0             </span></span>
-<span><span class="co">## [11] S4Vectors_0.48.1            BiocGenerics_0.56.0        </span></span>
-<span><span class="co">## [13] generics_0.1.4              MatrixGenerics_1.22.0      </span></span>
-<span><span class="co">## [15] matrixStats_1.5.0           R6_2.6.1                   </span></span>
-<span><span class="co">## [17] BiocStyle_2.38.0           </span></span>
+<span><span class="co">##  [1] BenchHub_0.99.10            scuttle_1.20.0             </span></span>
+<span><span class="co">##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0</span></span>
+<span><span class="co">##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       </span></span>
+<span><span class="co">##  [7] Seqinfo_1.0.0               IRanges_2.44.0             </span></span>
+<span><span class="co">##  [9] S4Vectors_0.48.1            BiocGenerics_0.56.0        </span></span>
+<span><span class="co">## [11] generics_0.1.4              MatrixGenerics_1.22.0      </span></span>
+<span><span class="co">## [13] matrixStats_1.5.0           R6_2.6.1                   </span></span>
+<span><span class="co">## [15] BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           </span></span>
-<span><span class="co">##   [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         </span></span>
-<span><span class="co">##   [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           </span></span>
-<span><span class="co">##  [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         </span></span>
-<span><span class="co">##  [13] backports_1.5.1        XVector_0.50.0         utf8_1.2.6            </span></span>
-<span><span class="co">##  [16] ggstance_0.3.7         rmarkdown_2.31         pracma_2.4.6          </span></span>
-<span><span class="co">##  [19] ragg_1.5.2             purrr_1.2.2            xfun_0.57             </span></span>
-<span><span class="co">##  [22] cachem_1.1.0           beachmat_2.26.0        jsonlite_2.0.0        </span></span>
-<span><span class="co">##  [25] DelayedArray_0.36.1    BiocParallel_1.44.0    broom_1.0.12          </span></span>
-<span><span class="co">##  [28] parallel_4.5.3         cluster_2.1.8.2        bslib_0.10.0          </span></span>
-<span><span class="co">##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          </span></span>
-<span><span class="co">##  [34] jquerylib_0.1.4        cellranger_1.1.0       Rcpp_1.1.1            </span></span>
-<span><span class="co">##  [37] bookdown_0.46          knitr_1.51             base64enc_0.1-6       </span></span>
-<span><span class="co">##  [40] parameters_0.28.3      splines_4.5.3          Matrix_1.7-4          </span></span>
-<span><span class="co">##  [43] nnet_7.3-20            tidyselect_1.2.1       rstudioapi_0.18.0     </span></span>
-<span><span class="co">##  [46] abind_1.4-8            yaml_2.3.12            codetools_0.2-20      </span></span>
-<span><span class="co">##  [49] curl_7.0.0             plyr_1.8.9             lattice_0.22-9        </span></span>
-<span><span class="co">##  [52] tibble_3.3.1           ks_1.15.1              withr_3.0.2           </span></span>
-<span><span class="co">##  [55] bayestestR_0.17.0      S7_0.2.1               evaluate_1.0.5        </span></span>
-<span><span class="co">##  [58] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        </span></span>
-<span><span class="co">##  [61] desc_1.4.3             mclust_6.1.2           pillar_1.11.1         </span></span>
-<span><span class="co">##  [64] BiocManager_1.30.27    KernSmooth_2.23-26     checkmate_2.3.4       </span></span>
-<span><span class="co">##  [67] insight_1.5.0          ggplot2_4.0.2          scales_1.4.0          </span></span>
-<span><span class="co">##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.3           </span></span>
-<span><span class="co">##  [73] data.table_1.18.2.1    locfit_1.5-9.12        mvtnorm_1.3-6         </span></span>
-<span><span class="co">##  [76] fs_2.0.1               grid_4.5.3             tidyr_1.3.2           </span></span>
-<span><span class="co">##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   </span></span>
-<span><span class="co">##  [82] patchwork_1.3.2        performance_0.16.0     htmlTable_2.4.3       </span></span>
-<span><span class="co">##  [85] googledrive_2.1.2      splitTools_1.0.1       Formula_1.2-5         </span></span>
-<span><span class="co">##  [88] cli_3.6.6              rappdirs_0.3.4         textshaping_1.0.5     </span></span>
-<span><span class="co">##  [91] gargle_1.6.1           S4Arrays_1.10.1        dplyr_1.2.1           </span></span>
-<span><span class="co">##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.3.0           </span></span>
-<span><span class="co">##  [97] sass_0.4.10            digest_0.6.39          SparseArray_1.10.10   </span></span>
-<span><span class="co">## [100] ggrepel_0.9.8          htmlwidgets_1.6.4      farver_2.1.2          </span></span>
-<span><span class="co">## [103] htmltools_0.5.9        pkgdown_2.2.0          lifecycle_1.0.5       </span></span>
-<span><span class="co">## [106] httr_1.4.8             statmod_1.5.1          dotwhisker_0.8.4</span></span></code></pre>
+<span><span class="co">##  [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           </span></span>
+<span><span class="co">##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         </span></span>
+<span><span class="co">##  [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           </span></span>
+<span><span class="co">## [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         </span></span>
+<span><span class="co">## [13] backports_1.5.1        XVector_0.50.0         ggstance_0.3.7        </span></span>
+<span><span class="co">## [16] rmarkdown_2.31         ragg_1.5.2             purrr_1.2.2           </span></span>
+<span><span class="co">## [19] xfun_0.57              cachem_1.1.0           beachmat_2.26.0       </span></span>
+<span><span class="co">## [22] jsonlite_2.0.0         DelayedArray_0.36.1    BiocParallel_1.44.0   </span></span>
+<span><span class="co">## [25] broom_1.0.12           parallel_4.5.3         cluster_2.1.8.2       </span></span>
+<span><span class="co">## [28] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    </span></span>
+<span><span class="co">## [31] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      </span></span>
+<span><span class="co">## [34] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            </span></span>
+<span><span class="co">## [37] base64enc_0.1-6        parameters_0.28.3      splines_4.5.3         </span></span>
+<span><span class="co">## [40] Matrix_1.7-4           nnet_7.3-20            tidyselect_1.2.1      </span></span>
+<span><span class="co">## [43] rstudioapi_0.18.0      abind_1.4-8            yaml_2.3.12           </span></span>
+<span><span class="co">## [46] codetools_0.2-20       curl_7.0.0             plyr_1.8.9            </span></span>
+<span><span class="co">## [49] lattice_0.22-9         tibble_3.3.1           withr_3.0.2           </span></span>
+<span><span class="co">## [52] bayestestR_0.17.0      S7_0.2.1-1             evaluate_1.0.5        </span></span>
+<span><span class="co">## [55] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        </span></span>
+<span><span class="co">## [58] desc_1.4.3             pillar_1.11.1          BiocManager_1.30.27   </span></span>
+<span><span class="co">## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.2         </span></span>
+<span><span class="co">## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-5           </span></span>
+<span><span class="co">## [67] tools_4.5.3            data.table_1.18.2.1    fs_2.0.1              </span></span>
+<span><span class="co">## [70] grid_4.5.3             tidyr_1.3.2            datawizard_1.3.0      </span></span>
+<span><span class="co">## [73] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       </span></span>
+<span><span class="co">## [76] performance_0.16.0     htmlTable_2.4.3        googledrive_2.1.2     </span></span>
+<span><span class="co">## [79] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             </span></span>
+<span><span class="co">## [82] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          </span></span>
+<span><span class="co">## [85] S4Arrays_1.10.1        dplyr_1.2.1            gtable_0.3.6          </span></span>
+<span><span class="co">## [88] ggcorrplot_0.1.4.1     ggsci_5.0.0            sass_0.4.10           </span></span>
+<span><span class="co">## [91] digest_0.6.39          SparseArray_1.10.10    ggrepel_0.9.8         </span></span>
+<span><span class="co">## [94] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       </span></span>
+<span><span class="co">## [97] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -1,18 +1,30 @@
-# 4 Uploading a Trio to Curated Trio Datasets
+# 4 Preparing and Submitting a Trio
 
-## Instructions for Uploading a Trio to Curated Trio Datasets
+## Preparing and Submitting a Trio
 
-This guide provides step-by-step instructions for uploading a Trio
-object to the [Curated Trio Datasets
-sheet](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/edit).
-Curated Trio Dataset is a list of datasets with proven utility. It
-includes creating a GitHub Personal Access Token (PAT) with gist write
-access and uploading data to Figshare.
+This guide provides step-by-step instructions for preparing and
+submitting a `Trio` object to the [BenchHub
+Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing).
+The recommended workflow is to first build a submission bundle with
+[`writeSubmission()`](https://sydneybiox.github.io/BenchHub/reference/writeSubmission.md),
+review the collected metadata, and then submit it.
 
-### Step 1: Create a GitHub Personal Access Token (PAT)
+The workflow has two common entry points:
 
-To upload metrics as a GitHub Gist, you need a GitHub PAT with gist
-write access.
+- [`writeSubmission()`](https://sydneybiox.github.io/BenchHub/reference/writeSubmission.md):
+  interactive helper for preparing and optionally submitting a Trio.
+- [`submitTrioSubmission()`](https://sydneybiox.github.io/BenchHub/reference/submitTrioSubmission.md):
+  submit Trio to [BenchHub
+  Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing).
+
+``` r
+library(BenchHub)
+```
+
+### Step 1: GitHub Personal Access Token (PAT)
+
+A GitHub personal access token is needed for uploading custom metrics to
+a GitHub gist.
 
 1.  Log in to your GitHub account.
 2.  Navigate to **Settings** \> **Developer settings** \> **Personal
@@ -32,66 +44,78 @@ Sys.setenv(GITHUB_PAT = "your_personal_access_token")
 
 Replace `"your_personal_access_token"` with the token you copied.
 
-#### Ensure `googlesheets4` is set up
-
-1.  Install the `googlesheets4` package if you haven’t already:
-
-    ``` r
-    install.packages("googlesheets4")
-    ```
-
-2.  Authenticate with your Google account:
-
-    ``` r
-    googlesheets4::gs4_auth()
-    ```
-
-### Step 2: Add the Trio to Curated Trio Datasets
+### Step 2: Build the submission bundle
 
 1.  In R, create a `Trio` object and ensure it is properly populated
     with data, supporting evidence, and metrics.
-2.  Use the `writeCTD()` method to upload the Trio metadata to the
-    Curated Trio Datasets sheet:
+2.  Use
+    [`writeSubmission()`](https://sydneybiox.github.io/BenchHub/reference/writeSubmission.md)
+    to prepare the Trio submission:
 
 ``` r
-trio$writeCTD(name = "Your Dataset Name")
+bundle <- writeSubmission(trio)
 ```
 
-3.  Follow the prompts to:
-    - Save the dataset and supporting evidence locally (optional).
-    - Provide the Figshare URL. For more detailed instructions on
-      uploading to Figshare, see below.
-    - Select the data type (e.g., omics, clinical, spatial, other).
-    - Confirm the upload of supporting evidence to Figshare.
+During the interactive workflow,
+[`writeSubmission()`](https://sydneybiox.github.io/BenchHub/reference/writeSubmission.md)
+may prompt you for:
 
-### Step 3: Verify the Upload
+- dataset metadata such as the dataType, technology and description
+- task information for the Trio
+- mappings between supporting evidence and tasks
+- metric metadata where needed
+- file preparation details, including whether to verify a Figshare
+  article, and
+- optional submission details if you choose to submit immediately.
 
-1.  Check the Curated Trio Datasets Google Sheet to ensure your dataset
-    has been added: [Curated Trio
-    Datasets](https://docs.google.com/spreadsheets/d/1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY/)
+### Step 3: Submit the Trio
 
-2.  Verify that the metrics have been uploaded as a GitHub Gist.
+After reviewing the generated bundle, you can submit it with
+[`submitTrioSubmission()`](https://sydneybiox.github.io/BenchHub/reference/submitTrioSubmission.md):
+
+``` r
+response <- submitTrioSubmission(
+  submission = bundle$submission,
+  submittedBy = "your.name@example.org"
+)
+```
+
+If you prefer a single interactive step, you can also let
+[`writeSubmission()`](https://sydneybiox.github.io/BenchHub/reference/writeSubmission.md)
+submit at the end:
+
+``` r
+bundle <- writeSubmission(
+  trio,
+  submittedBy = "your.name@example.org",
+  submit = TRUE
+)
+```
+
+### Step 4: Verify the submission
+
+Once you upload the Trio, it will be first uploaded in to
+Submission_Master sheet. After BenchHub team completed the review and
+approved, the Trio information will update to Dataset, DatasetTask,
+DatasetEvidence, DatasetTaskMetric and Metric table. Check the [BenchHub
+Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing)
+to ensure your dataset has been added under the submission tables.
+
+### Step 5: Downloading an existing Trio
+
+You can also download a previously submitted Trio by its dataset ID
+under Dataset sheet:
+
+``` r
+trio <- downloadSubmissionTrio("datasetID", cachePath = tempdir())
+```
 
 ### Notes
 
 - Ensure you have an active internet connection during the upload
   process.
-- If you encounter any issues, check that your GitHub PAT and Figshare
-  URL are correctly set.
-
-#### Uploading Data to Figshare
-
-1.  Log in to your Figshare account.
-2.  Click **Create a new item**.
-3.  Fill in the required metadata fields (e.g., title, description,
-    tags).
-4.  Upload your dataset files (e.g., `.rds` files for the dataset and
-    supporting evidence).
-    - NOTE: `writeCTD` can create the
-5.  Publish the item to make it publicly accessible.
-6.  Copy the Figshare URL of the published item.
-
-Happy uploading!
+- If you encounter any issues, check that your Figshare URL and
+  submission details are correctly set.
 
 ## Session Info
 
@@ -120,16 +144,37 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.10 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] digest_0.6.39       desc_1.4.3          R6_2.6.1           
-    ##  [4] bookdown_0.46       fastmap_1.2.0       xfun_0.57          
-    ##  [7] cachem_1.1.0        knitr_1.51          htmltools_0.5.9    
-    ## [10] rmarkdown_2.31      lifecycle_1.0.5     cli_3.6.6          
-    ## [13] sass_0.4.10         pkgdown_2.2.0       textshaping_1.0.5  
-    ## [16] jquerylib_0.1.4     systemfonts_1.3.2   compiler_4.5.3     
-    ## [19] tools_4.5.3         ragg_1.5.2          bslib_0.10.0       
-    ## [22] evaluate_1.0.5      yaml_2.3.12         BiocManager_1.30.27
-    ## [25] jsonlite_2.0.0      rlang_1.2.0         fs_2.0.1           
-    ## [28] htmlwidgets_1.6.4
+    ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
+    ##  [4] S7_0.2.1-1             fastmap_1.2.0          bayestestR_0.17.0     
+    ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.5       
+    ## [10] cluster_2.1.8.2        survival_3.8-6         magrittr_2.0.5        
+    ## [13] compiler_4.5.3         rlang_1.2.0            Hmisc_5.2-5           
+    ## [16] sass_0.4.10            tools_4.5.3            yaml_2.3.12           
+    ## [19] data.table_1.18.2.1    knitr_1.51             htmlwidgets_1.6.4     
+    ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
+    ## [25] RColorBrewer_1.1-3     foreign_0.8-91         withr_3.0.2           
+    ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
+    ## [31] grid_4.5.3             datawizard_1.3.0       googledrive_2.1.2     
+    ## [34] colorspace_2.1-2       ggplot2_4.0.2          scales_1.4.0          
+    ## [37] insight_1.5.0          cli_3.6.6              rmarkdown_2.31        
+    ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        
+    ## [43] rstudioapi_0.18.0      performance_0.16.0     reshape2_1.4.5        
+    ## [46] parameters_0.28.3      ggcorrplot_0.1.4.1     cachem_1.1.0          
+    ## [49] stringr_1.6.0          splines_4.5.3          BiocManager_1.30.27   
+    ## [52] cellranger_1.1.0       base64enc_0.1-6        marginaleffects_0.32.0
+    ## [55] vctrs_0.7.3            Matrix_1.7-4           jsonlite_2.0.0        
+    ## [58] bookdown_0.46          patchwork_1.3.2        ggrepel_0.9.8         
+    ## [61] Formula_1.2-5          htmlTable_2.4.3        systemfonts_1.3.2     
+    ## [64] tidyr_1.3.2            jquerylib_0.1.4        splitTools_1.0.1      
+    ## [67] glue_1.8.1             pkgdown_2.2.0          survAUC_1.4-0         
+    ## [70] stringi_1.8.7          gtable_0.3.6           tibble_3.3.1          
+    ## [73] pillar_1.11.1          rappdirs_0.3.4         htmltools_0.5.9       
+    ## [76] R6_2.6.1               httr2_1.2.2            textshaping_1.0.5     
+    ## [79] evaluate_1.0.5         lattice_0.22-9         backports_1.5.1       
+    ## [82] googlesheets4_1.1.2    broom_1.0.12           ggsci_5.0.0           
+    ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1-1          
+    ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
+    ## [91] fs_2.0.1               pkgconfig_2.0.3

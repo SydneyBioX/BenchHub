@@ -391,18 +391,18 @@ sessionInfo()
     ##  [28] cluster_2.1.8.2        R6_2.6.1               bslib_0.10.0          
     ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      
-    ##  [37] Rcpp_1.1.1             bookdown_0.46          knitr_1.51            
+    ##  [37] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            
     ##  [40] base64enc_0.1-6        parameters_0.28.3      Matrix_1.7-4          
     ##  [43] splines_4.5.3          nnet_7.3-20            tidyselect_1.2.1      
     ##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.0.0            
     ##  [49] lattice_0.22-9         tibble_3.3.1           plyr_1.8.9            
-    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1              
+    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1-1            
     ##  [55] evaluate_1.0.5         marginaleffects_0.32.0 foreign_0.8-91        
     ##  [58] desc_1.4.3             survival_3.8-6         polyclip_1.10-7       
     ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
     ##  [64] insight_1.5.0          generics_0.1.4         vroom_1.7.1           
     ##  [67] hms_1.1.4              ggplot2_4.0.2          scales_1.4.0          
-    ##  [70] glue_1.8.0             Hmisc_5.2-5            tools_4.5.3           
+    ##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.5.3           
     ##  [73] data.table_1.18.2.1    fs_2.0.1               cowplot_1.2.0         
     ##  [76] grid_4.5.3             tidyr_1.3.2            rbibutils_2.4.1       
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
@@ -410,7 +410,7 @@ sessionInfo()
     ##  [85] htmlTable_2.4.3        googledrive_2.1.2      splitTools_1.0.1      
     ##  [88] Formula_1.2-5          cli_3.6.6              rappdirs_0.3.4        
     ##  [91] textshaping_1.0.5      gargle_1.6.1           funkyheatmap_0.5.2    
-    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_4.3.0           
+    ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_5.0.0           
     ##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.8         
     ## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
     ## [103] pkgdown_2.2.0          lifecycle_1.0.5        MASS_7.3-65           

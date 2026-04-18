@@ -76,7 +76,7 @@ A `BenchmarkStudy` object.
 - `name`:
 
   A character string to name the study. If fetchFromCtd is TRUE, this
-  name will be used to fetch the study from Curated Trio Datasets.
+  name will be used to fetch the study from the submission database.
 
 - `trios`:
 
@@ -84,8 +84,8 @@ A `BenchmarkStudy` object.
 
 - `fetchFromCtd`:
 
-  Logical indicating whether to fetch study details from Curated Trio
-  Datasets.
+  Logical indicating whether to fetch study details from the submission
+  database.
 
 - `version`:
 
