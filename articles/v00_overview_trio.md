@@ -15,11 +15,11 @@ The three components currently in BenchHub are:
   to faciliate the sharing of benchmarking datasets within the
   community.
 
-- **BenchmarkInsight**: A data structure for storing benchmarking
+- **BenchmarkInsights**: A data structure for storing benchmarking
   results and provides a collection of visualisations to faciliate the
   analysis of benchmarking results.
 
-- **BenchmarkInsight**: A data structure for storing collections of Trio
+- **BenchmarkStudy**: A data structure for storing collections of Trio
   objects and helper functions for specific benchmarking tasks.
 
 BenchHub aims to make benchmarking easier for multiple groups of users
