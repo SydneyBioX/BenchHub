@@ -15,6 +15,7 @@
 #'   present.
 #' @param doi DOI reference for the dataset.
 #' @param tissue Free-text tissue label.
+#' @param organism Free-text organism label.
 #' @param status One of `"healthy"`, `"diseased"`, `"developmental"`,
 #'   or `"other"`.
 #'
@@ -552,6 +553,8 @@ collectTaskSubmissionInfo <- function(
 #'   generated task IDs when not supplied.
 #' @param evidenceName Character vector of Trio evidence names to include.
 #'   Defaults to all evidence in `trio`.
+#' @param evidenceType Either \code{"columns"} or \code{"figshare"} indicating
+#' where to find the evidence.
 #'
 #' @return A `data.frame` matching the proposed `DatasetEvidence` table schema.
 #'   `evidenceID` is left as `NA`.
@@ -1620,6 +1623,7 @@ buildTrioSubmission <- function(
 #'
 #' @return A named list with a top-level `payload` entry ready for
 #'   `jsonlite::toJSON(..., auto_unbox = TRUE)`.
+#' @importFrom jsonlite toJSON
 #' @export
 buildTrioSubmissionPayload <- function(submission) {
   required_names <- c(

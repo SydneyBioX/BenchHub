@@ -96,16 +96,9 @@ Add metadata to the BenchmarkInsights object
 \subsection{Method \code{getHeatmap()}}{
 Creates a heatmap from the evaluation summary by averaging results across datasets.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getHeatmap(evalSummary)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getHeatmap()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{evalSummary}}{A dataframe containing the evaluation summary.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 A heatmap object.
 }
@@ -116,14 +109,12 @@ A heatmap object.
 \subsection{Method \code{getLineplot()}}{
 Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getLineplot(evalResult, order = NULL, metricVariable)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getLineplot(order = NULL, metricVariable)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary.}
-
 \item{\code{order}}{An optional vector specifying the order of x-axis values.}
 
 \item{\code{metricVariable}}{Specify subset value in metric column.}
@@ -138,16 +129,14 @@ A ggplot2 line plot object.
 \if{html}{\out{<a id="method-BenchmarkInsights-getScatterplot"></a>}}
 \if{latex}{\out{\hypertarget{method-BenchmarkInsights-getScatterplot}{}}}
 \subsection{Method \code{getScatterplot()}}{
-Creates a scatter plot for the same evidence, with an two methodd metrics.
+Creates a scatter plot for the same evidence, with an two method metrics.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getScatterplot(evalResult, variables)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getScatterplot(variables)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all evidence should be same}
-
 \item{\code{variables}}{A character vector of length two specifying the metric names to be used for the x and y axes.}
 }
 \if{html}{\out{</div>}}
@@ -162,14 +151,12 @@ A ggplot2 line plot object.
 \subsection{Method \code{getBoxplot()}}{
 Creates boxplot plots for the mutiple evidence, different method, one metric.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getBoxplot(evalResult, metricVariable, evidenceVariable)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getBoxplot(metricVariable, evidenceVariable)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{subset of evaluation summary, only include two different metrics, all evidence should be same.}
-
 \item{\code{metricVariable}}{Specify subset value in metric column.}
 
 \item{\code{evidenceVariable}}{Specify subset value in evidence column.}
@@ -187,14 +174,12 @@ A ggplot2 line plot object.
 Creates a correlation plot based on the provided evaluation summary and the specified input type (either "evidence", "metric", or "method").
 The correlation plot shows the pairwise correlation between results for different categories (evidence, metric, or method).
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getCorplot(evalResult, input_type)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getCorplot(input_type)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values.}
-
 \item{\code{input_type}}{A string that specifies the input type for generating the correlation plot. It must be either "evidence", "metric", or "method".}
 }
 \if{html}{\out{</div>}}
@@ -211,14 +196,12 @@ This function generates a forest plot using linear models based on the
 comparison between groups in the provided evaluation summary. The plot is created
 using dotwhisker and broom packages, with custom grouping and labeling.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getForestplot(evalResult, input_group, input_model)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BenchmarkInsights$getForestplot(input_group, input_model)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{evalResult}}{A data frame containing the evaluation summary.}
-
 \item{\code{input_group}}{A string specifying the grouping variable (only "datasetID", "method", or "evidence" allowed).}
 
 \item{\code{input_model}}{A string specifying the model variable (only "datasetID", "method", or  "evidence" allowed).}

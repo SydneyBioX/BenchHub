@@ -19,6 +19,9 @@ generated task IDs when not supplied.}
 
 \item{evidenceName}{Character vector of Trio evidence names to include.
 Defaults to all evidence in \code{trio}.}
+
+\item{evidenceType}{Either \code{"columns"} or \code{"figshare"} indicating
+where to find the evidence.}
 }
 \value{
 A \code{data.frame} matching the proposed \code{DatasetEvidence} table schema.

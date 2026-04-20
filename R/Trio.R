@@ -72,9 +72,10 @@ Trio <- R6::R6Class(
     #' @param cachePath The path to the data cache
     #' @param verbose Set the verbosity of Trio. Defaults to `FALSE`.
     #' @param description A description of the dataset.
+    #' @param name The name of the Trio object, as defined in Curated Trio Datasets.
     initialize = function(
-      datasetID = NULL,
-      data = NULL,
+    datasetID = NULL,
+    data = NULL,
       dataLoader = NULL,
       evidenceID = NULL,
       evidence = NULL,

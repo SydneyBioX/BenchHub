@@ -1,27 +1,4 @@
-submission_dataset_source <- local({
-  candidates <- c(
-    file.path("R", "SubmissionDataset.R"),
-    file.path("..", "..", "R", "SubmissionDataset.R")
-  )
-  existing <- candidates[file.exists(candidates)]
-
-  if (length(existing) == 0) {
-    stop("Could not locate R/SubmissionDataset.R for tests.")
-  }
-
-  normalizePath(existing[[1]], mustWork = TRUE)
-})
-
 testthat::test_that("buildTrioSubmission supports multiple evidence rows per task", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
-
   data <- data.frame(
     x = c(1, 2, 3),
     y = c(4, 5, 6)
@@ -115,15 +92,6 @@ testthat::test_that("buildTrioSubmission supports multiple evidence rows per tas
 })
 
 testthat::test_that("prepareTrioSubmissionFiles saves dataset and evidence files", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
-
   data <- data.frame(
     x = c(1, 2, 3),
     y = c(4, 5, 6)
@@ -168,15 +136,6 @@ testthat::test_that("prepareTrioSubmissionFiles saves dataset and evidence files
 })
 
 testthat::test_that("collectDatasetSubmissionInfo returns dataset args in non-interactive mode", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
-
   data <- data.frame(
     x = c(1, 2, 3),
     y = c(4, 5, 6)
@@ -224,15 +183,6 @@ testthat::test_that("collectDatasetSubmissionInfo returns dataset args in non-in
 })
 
 testthat::test_that("collectTaskSubmissionInfo returns task args in non-interactive mode", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
-
   data <- data.frame(
     x = c(1, 2, 3),
     y = c(4, 5, 6)
@@ -273,15 +223,6 @@ testthat::test_that("collectTaskSubmissionInfo returns task args in non-interact
 })
 
 testthat::test_that("collectTaskSubmissionInfo rejects more tasks than evidence", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
-
   data <- data.frame(
     x = c(1, 2, 3),
     y = c(4, 5, 6)
@@ -317,14 +258,6 @@ testthat::test_that("collectTaskSubmissionInfo rejects more tasks than evidence"
 })
 
 testthat::test_that("collectEvidenceSubmissionInfo assigns evidence to tasks", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -384,14 +317,6 @@ testthat::test_that("collectEvidenceSubmissionInfo assigns evidence to tasks", {
 })
 
 testthat::test_that("collectEvidenceSubmissionInfo rejects tasks without evidence", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -433,14 +358,6 @@ testthat::test_that("collectEvidenceSubmissionInfo rejects tasks without evidenc
 })
 
 testthat::test_that("collectMetricSubmissionInfo returns metric args in non-interactive mode", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -478,14 +395,6 @@ testthat::test_that("collectMetricSubmissionInfo returns metric args in non-inte
 })
 
 testthat::test_that("collectDatasetTaskMetricSubmission builds task-metric links", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -543,16 +452,10 @@ testthat::test_that("collectDatasetTaskMetricSubmission builds task-metric links
 })
 
 testthat::test_that("prepareTrioSubmissionFiles verifies prepared files against Figshare metadata", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
+
   dataset_md5 <- NULL
   evidence_md5 <- NULL
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
+  
   original_figshare <- if (exists("figshareListFiles", envir = environment(), inherits = FALSE)) {
     get("figshareListFiles", envir = environment(), inherits = FALSE)
   } else {
@@ -629,14 +532,6 @@ testthat::test_that("prepareTrioSubmissionFiles verifies prepared files against 
 })
 
 testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom metrics", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -699,14 +594,6 @@ testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom
 })
 
 testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   original_creat <- if (exists("creatGist", envir = environment(), inherits = FALSE)) {
     get("creatGist", envir = environment(), inherits = FALSE)
@@ -777,16 +664,10 @@ testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist
 })
 
 testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
+
   dataset_md5 <- NULL
   evidence_md5 <- NULL
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
+
   original_figshare <- if (exists("figshareListFiles", envir = environment(), inherits = FALSE)) {
     get("figshareListFiles", envir = environment(), inherits = FALSE)
   } else {
@@ -887,14 +768,6 @@ testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {
 })
 
 testthat::test_that("writeSubmission builds a full pre-submit object without topic", {
-  sys.source(
-    submission_dataset_source,
-    envir = environment()
-  )
-  testthat::local_mocked_bindings(
-    interactive = function() FALSE,
-    .package = "base"
-  )
 
   data <- data.frame(
     x = c(1, 2, 3),

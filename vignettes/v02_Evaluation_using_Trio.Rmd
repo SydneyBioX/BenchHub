@@ -88,8 +88,9 @@ We first construct an explicit cross-validation plan that records fold and repea
 
 ```{r}
 set.seed(1234)
+library(tibble)
 
-cv_plan <- tibble::tibble(
+cv_plan <- tibble(
   trainIDs = CVindices,
   fold = vapply(
     strsplit(names(CVindices), ".", fixed = TRUE),
@@ -104,7 +105,6 @@ cv_plan <- tibble::tibble(
     2
   )
 )
-
 
 run_one_cv <- function(trainIDs, fold, repeat_id, trio, x, y) {
   x_train <- x[trainIDs, ]

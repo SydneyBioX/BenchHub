@@ -44,7 +44,6 @@ balErrMetric <- function(evidence, predicted) {
 #' predicted <- factor(c("A", "A", "A", "B"))
 #' .positivesNegatives(evidence, predicted)
 #' @keywords internal
-#' @export
 .positivesNegatives <- function(evidence, predicted) {
   confusionMatrix <- table(evidence, predicted)
   truePositives <- diag(confusionMatrix)

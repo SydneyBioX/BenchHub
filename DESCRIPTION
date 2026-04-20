@@ -1,6 +1,6 @@
 Package: BenchHub
 Title: Comprehensive Collection of Curated Benchmarking Datasets and their Evaluation
-Version: 0.99.10
+Version: 0.99.11
 Authors@R: c(
     person("Cabiria", "Liang", , "xiaoqi.liang@sydney.edu.au", role = "aut"),
     person("Sanghyun", "Kim", , "sanghyun.kim@sydney.edu.au", role = "aut"),
@@ -11,7 +11,7 @@ Authors@R: c(
     person("Jean", "Yang", , "jean.yang@sydney.edu.au", role = "aut"),
     person("SOMS", "Maintainer", , "maths.bioconductor@sydney.edu.au", role = c("aut", "cre"))
   )
-Description: The trio is the combination of a data set, a metric and supporting evidence which provides some best case scenario, if not the ground truth itself. TrioR has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and supporting evidence. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.
+Description: The trio is the combination of a data set, a metric and supporting evidence which provides some best case scenario, if not the ground truth itself. BenchHub has data downloaders for FigShare, G.E.O., and ExperimentHub. Caching is used to avoid lengthy downloads after the first time a data set is accessed. The user may also specify their own data set and supporting evidence. The Benchmark Insights module provides functionality for comparing and contrasting the performance of alternative algorithms.
 biocViews: Infrastructure, DataImport, DataRepresentation, Software, WorkflowStep, Visualization
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -44,7 +44,8 @@ Imports:
     magrittr,
     withr,
     ggplot2,
-    data.table
+    data.table,
+    jsonlite
 Suggests: 
     anndata,
     readr,

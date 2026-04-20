@@ -298,6 +298,7 @@ buildStudySubmissionPayload <- function(submission) {
 #' @param pretty Whether to pretty-print the JSON. Defaults to `TRUE`.
 #'
 #' @return A JSON string.
+#' @importFrom jsonlite toJSON
 #' @export
 studySubmissionToJSON <- function(
     submission,

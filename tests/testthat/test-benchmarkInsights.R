@@ -175,22 +175,16 @@ test_that("getHeatmap handles multiple datasets with duplicate GS names by using
   benchmark$addevalSummary(evalResult3)
 
   # Generate heatmap and check it was created correctly
-  heatmap <- benchmark$getHeatmap(benchmark$evalSummary)
+  heatmap <- benchmark$getHeatmap()
 
   KDE_summary <- benchmark$evalSummary |>
     dplyr::filter(metric == "KS")
 
-  grouped_boxplot <- benchmark$getBoxplot(KDE_summary, "KS", "fracZero_spot")
-
-  GS_corplot <- benchmark$getCorplot(benchmark$evalSummary, "evidence")
-  metric_corplot <- benchmark$getCorplot(benchmark$evalSummary, "metric")
-  Compare_corplot <- benchmark$getCorplot(benchmark$evalSummary, "method")
-
-  forest_plot <- benchmark$getForestplot(
-    benchmark$evalSummary,
-    "metric",
-    "method"
-  )
+  grouped_boxplot <- benchmark$getBoxplot("KS", "fracZero_spot")
+  GS_corplot <- benchmark$getCorplot("evidence")
+  metric_corplot <- benchmark$getCorplot("metric")
+  Compare_corplot <- benchmark$getCorplot("method")
+  forest_plot <- benchmark$getForestplot("metric", "method")
 
   # Ensure the heatmap object is not NULL
   expect_true(!is.null(heatmap))
@@ -362,10 +356,7 @@ test_that("getScatterplot handles multiple datasets with duplicate GS names by u
   benchmark$addevalSummary(evalResult2)
 
   # Generate scatterplot and check it was created correctly
-  scatterplot <- benchmark$getScatterplot(
-    benchmark$evalSummary,
-    c("sensitivity", "specificity")
-  )
+  scatterplot <- benchmark$getScatterplot(c("sensitivity", "specificity"))
 
   # Ensure the scatterplot object is not NULL
   expect_true(!is.null(scatterplot))

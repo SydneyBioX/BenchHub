@@ -36,6 +36,8 @@ present.}
 
 \item{doi}{DOI reference for the dataset.}
 
+\item{organism}{Free-text organism label.}
+
 \item{tissue}{Free-text tissue label.}
 
 \item{status}{One of \code{"healthy"}, \code{"diseased"}, \code{"developmental"},

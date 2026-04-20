@@ -117,6 +117,8 @@ dataset.}
 \item{\code{verbose}}{Set the verbosity of Trio. Defaults to \code{FALSE}.}
 
 \item{\code{description}}{A description of the dataset.}
+
+\item{\code{name}}{The name of the Trio object, as defined in Curated Trio Datasets.}
 }
 \if{html}{\out{</div>}}
 }

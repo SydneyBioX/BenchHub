@@ -88,6 +88,8 @@ trioB <- Trio$new(data = exampleEnv[["x"]], evidence = list(`Diagnosis` = list(e
 trioB
 ```
 
+In an interactive session, a prompt will be displayed, asking you to briefly describe the dataset. This is useful for any pertinent information that is not recorded by the metadata spreadsheet. 
+
 ## Bonus: Using a custom loader
 
 Trio supports custom loaders for data formats not directly supported by Trio. A loader is any function that takes in a path, provided by a downloader, and returns an object to be loaded into Trio.
