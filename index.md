@@ -81,7 +81,7 @@ see all vignettes listed below:
 | Vignette                                                                                                                | Description |
 |-------------------------------------------------------------------------------------------------------------------------|-------------|
 | 1 [Introduction to the Trio Class](https://sydneybiox.github.io/BenchHub/articles/v01_intro_trio.html)                  |             |
-| 2 [Evaluation using TrioR](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.html)               |             |
+| 2 [Evaluation using Trio](https://sydneybiox.github.io/BenchHub/articles/v02_Evaluation_using_Trio.html)                |             |
 | 3 [Introduction to BenchmarkInsight Class](https://sydneybiox.github.io/BenchHub/articles/v03_intro_bmi.html)           |             |
 | 4 [Uploading a Trio to Curated Trio Datasets](https://sydneybiox.github.io/BenchHub/articles/v04_uploading_a_Trio.html) |             |
 | 5 [Working with BenchmarkStudy](https://sydneybiox.github.io/BenchHub/articles/v05_benchmarkstudy.html)                 |             |

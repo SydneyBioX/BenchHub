@@ -31,6 +31,11 @@ buildDatasetEvidenceSubmission(
   Character vector of Trio evidence names to include. Defaults to all
   evidence in `trio`.
 
+- evidenceType:
+
+  Either `"columns"` or `"figshare"` indicating where to find the
+  evidence.
+
 ## Value
 
 A `data.frame` matching the proposed `DatasetEvidence` table schema.

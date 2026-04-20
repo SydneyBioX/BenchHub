@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,8 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v00_overview_trio.html">Overview of the BenchHub</a></li>
-    <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
+<li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of BenchmarkInsights class</a></li>
     <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Preparing and Submitting a Trio</a></li>
@@ -62,7 +61,7 @@
 
       <h1>1 Introduction to the Trio Class</h1>
             
-            <h4 data-toc-skip class="date">18 April 2026</h4>
+            <h4 data-toc-skip class="date">20 April 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SydneyBioX/BenchHub/blob/devel/vignettes/v01_intro_trio.Rmd" class="external-link"><code>vignettes/v01_intro_trio.Rmd</code></a></small>
       <div class="d-none name"><code>v01_intro_trio.Rmd</code></div>
@@ -111,7 +110,7 @@ quickly start with a predefined dataset.</p>
 <span><span class="co">##   $ gene_B: num 1 2 8 9</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"30007327/63474198"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpSN9gH3"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpFMKnWj"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -181,7 +180,7 @@ dataset with a <code>datasetID</code>.</p>
 <span><span class="co">##   ... (truncated)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">Data Source</span>: <span style="color: #0000BB;">"figshare"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Dataset ID</span>: <span style="color: #0000BB;">"26142922/47361079"</span></span></span>
-<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpSN9gH3"</span></span></span>
+<span><span class="co">## <span style="font-weight: bold;">Cache Path</span>: <span style="color: #0000BB;">"/tmp/RtmpFMKnWj"</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Split Indices</span>: <span style="color: #0000BB;">"None"</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ── Supporting Evidence </span></span>
@@ -233,6 +232,9 @@ description field.</p>
 <span><span class="co">## ── Metrics </span></span>
 <span><span class="co">## <span style="font-weight: bold;">Number of Metrics</span>: <span style="color: #0000BB;">1</span></span></span>
 <span><span class="co">## <span style="font-weight: bold;">Names of Metrics</span>: <span style="color: #0000BB;">"Balanced Accuracy"</span></span></span></code></pre>
+<p>In an interactive session, a prompt will be displayed, asking you to
+briefly describe the dataset. This is useful for any pertinent
+information that is not recorded by the metadata spreadsheet.</p>
 </div>
 <div class="section level3">
 <h3 id="bonus-using-a-custom-loader">Bonus: Using a custom loader<a class="anchor" aria-label="anchor" href="#bonus-using-a-custom-loader"></a>
@@ -298,8 +300,8 @@ metric function with the specified arguments.</p>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     do.call(metric, append(list(evidence, to_eval), args))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;bytecode: 0x556fe86f4828&gt;</span></span>
-<span><span class="co">## &lt;environment: 0x556fe826bcd0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;bytecode: 0x56236ced8af0&gt;</span></span>
+<span><span class="co">## &lt;environment: 0x56236ca4ddd8&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -425,7 +427,7 @@ studies more effectively.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] BenchHub_0.99.10 BiocStyle_2.38.0</span></span>
+<span><span class="co">## [1] BenchHub_0.99.11 BiocStyle_2.38.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          </span></span>
@@ -458,7 +460,7 @@ studies more effectively.</p>
 <span><span class="co">## [82] backports_1.5.1        googlesheets4_1.1.2    broom_1.0.12          </span></span>
 <span><span class="co">## [85] ggsci_5.0.0            gargle_1.6.1           bslib_0.10.0          </span></span>
 <span><span class="co">## [88] Rcpp_1.1.1-1           gridExtra_2.3          checkmate_2.3.4       </span></span>
-<span><span class="co">## [91] xfun_0.57              fs_2.0.1               pkgconfig_2.0.3</span></span></code></pre>
+<span><span class="co">## [91] xfun_0.57              fs_2.1.0               pkgconfig_2.0.3</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

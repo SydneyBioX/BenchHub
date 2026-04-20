@@ -9,7 +9,7 @@ analytical tasks."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,8 +20,7 @@ analytical tasks."></head><body>
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v00_overview_trio.html">Overview of the BenchHub</a></li>
-    <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of BenchmarkInsights class</a></li>
     <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Preparing and Submitting a Trio</a></li>
@@ -135,17 +134,9 @@ the evaluation task and related information.</p></dd>
 <h3 id="method-getheatmap-">Method <code>getHeatmap()</code><a class="anchor" aria-label="anchor" href="#method-getheatmap-"></a></h3>
 <p>Creates a heatmap from the evaluation summary by averaging results across datasets.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="va">evalSummary</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalSummary</code></dt>
-<dd><p>A dataframe containing the evaluation summary.</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>A heatmap object.</p>
@@ -155,16 +146,12 @@ the evaluation task and related information.</p></dd>
 <h3 id="method-getlineplot-">Method <code>getLineplot()</code><a class="anchor" aria-label="anchor" href="#method-getlineplot-"></a></h3>
 <p>Creates a line plot for the given x and y variables, with an optional grouping and fixed x order.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span><span class="va">evalResult</span>, order <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">metricVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span>order <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">metricVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>subset of evaluation summary.</p></dd>
-
-
-<dt><code>order</code></dt>
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>order</code></dt>
 <dd><p>An optional vector specifying the order of x-axis values.</p></dd>
 
 
@@ -181,18 +168,14 @@ the evaluation task and related information.</p></dd>
 
 </div><p></p><hr><a id="method-BenchmarkInsights-getScatterplot"></a><div class="section">
 <h3 id="method-getscatterplot-">Method <code>getScatterplot()</code><a class="anchor" aria-label="anchor" href="#method-getscatterplot-"></a></h3>
-<p>Creates a scatter plot for the same evidence, with an two methodd metrics.</p><div class="section">
+<p>Creates a scatter plot for the same evidence, with an two method metrics.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">variables</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span><span class="va">variables</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>subset of evaluation summary, only include two different metrics, all evidence should be same</p></dd>
-
-
-<dt><code>variables</code></dt>
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>variables</code></dt>
 <dd><p>A character vector of length two specifying the metric names to be used for the x and y axes.</p></dd>
 
 
@@ -207,16 +190,12 @@ the evaluation task and related information.</p></dd>
 <h3 id="method-getboxplot-">Method <code>getBoxplot()</code><a class="anchor" aria-label="anchor" href="#method-getboxplot-"></a></h3>
 <p>Creates boxplot plots for the mutiple evidence, different method, one metric.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">metricVariable</span>, <span class="va">evidenceVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span><span class="va">metricVariable</span>, <span class="va">evidenceVariable</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>subset of evaluation summary, only include two different metrics, all evidence should be same.</p></dd>
-
-
-<dt><code>metricVariable</code></dt>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>metricVariable</code></dt>
 <dd><p>Specify subset value in metric column.</p></dd>
 
 
@@ -236,16 +215,12 @@ the evaluation task and related information.</p></dd>
 <p>Creates a correlation plot based on the provided evaluation summary and the specified input type (either "evidence", "metric", or "method").
 The correlation plot shows the pairwise correlation between results for different categories (evidence, metric, or method).</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">input_type</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span><span class="va">input_type</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>A subset of the evaluation summary. It must include columns relevant to the input type (evidence, metric, method) and the result values.</p></dd>
-
-
-<dt><code>input_type</code></dt>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input_type</code></dt>
 <dd><p>A string that specifies the input type for generating the correlation plot. It must be either "evidence", "metric", or "method".</p></dd>
 
 
@@ -262,16 +237,12 @@ The correlation plot shows the pairwise correlation between results for differen
 comparison between groups in the provided evaluation summary. The plot is created
 using dotwhisker and broom packages, with custom grouping and labeling.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">evalResult</span>, <span class="va">input_group</span>, <span class="va">input_model</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">BenchmarkInsights</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span><span class="va">input_group</span>, <span class="va">input_model</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>evalResult</code></dt>
-<dd><p>A data frame containing the evaluation summary.</p></dd>
-
-
-<dt><code>input_group</code></dt>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input_group</code></dt>
 <dd><p>A string specifying the grouping variable (only "datasetID", "method", or "evidence" allowed).</p></dd>
 
 
@@ -294,7 +265,7 @@ using dotwhisker and broom packages, with custom grouping and labeling.</p><div 
 </div>
 
 <div class="section">
-<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -315,12 +286,12 @@ using dotwhisker and broom packages, with custom grouping and labeling.</p><div 
 <span class="r-out co"><span class="r-pr">#&gt;</span>     addevalSummary: function (additional_evalResult) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     clone: function (deep = FALSE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     evalSummary: data.frame</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getCorplot: function (evalResult = NULL, input_type) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getForestplot: function (evalResult = NULL, input_group, input_model) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getHeatmap: function (evalSummary = NULL) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     getScatterplot: function (evalResult = NULL, variables) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getBoxplot: function (metricVariable, evidenceVariable) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getCorplot: function (input_type) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getForestplot: function (input_group, input_model) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getHeatmap: function () </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getLineplot: function (order = NULL, metricVariable) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     getScatterplot: function (variables) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (evalResult = NULL) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     metadata: NULL</span>
 </code></pre></div>

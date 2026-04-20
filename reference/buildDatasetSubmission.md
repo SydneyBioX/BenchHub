@@ -52,6 +52,10 @@ buildDatasetSubmission(
 
   DOI reference for the dataset.
 
+- organism:
+
+  Free-text organism label.
+
 - tissue:
 
   Free-text tissue label.

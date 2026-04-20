@@ -144,7 +144,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.10 BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.11 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
@@ -177,4 +177,4 @@ sessionInfo()
     ## [82] googlesheets4_1.1.2    broom_1.0.12           ggsci_5.0.0           
     ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1-1          
     ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
-    ## [91] fs_2.0.1               pkgconfig_2.0.3
+    ## [91] fs_2.1.0               pkgconfig_2.0.3

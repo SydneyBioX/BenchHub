@@ -2,8 +2,6 @@
 
 ### All vignettes
 
-- [Overview of the
-  BenchHub](https://sydneybiox.github.io/BenchHub/articles/v00_overview_trio.md):
 - [1 Introduction to the Trio
   Class](https://sydneybiox.github.io/BenchHub/articles/v01_intro_trio.md):
 - [2 Evaluation using

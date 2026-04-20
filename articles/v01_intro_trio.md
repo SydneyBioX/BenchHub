@@ -47,7 +47,7 @@ trio
     ##   $ gene_B: num 1 2 8 9
     ## Data Source: "figshare"
     ## Dataset ID: "30007327/63474198"
-    ## Cache Path: "/tmp/RtmpSN9gH3"
+    ## Cache Path: "/tmp/RtmpFMKnWj"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -110,7 +110,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpSN9gH3"
+    ## Cache Path: "/tmp/RtmpFMKnWj"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -165,6 +165,10 @@ trioB
     ## ── Metrics 
     ## Number of Metrics: 1
     ## Names of Metrics: "Balanced Accuracy"
+
+In an interactive session, a prompt will be displayed, asking you to
+briefly describe the dataset. This is useful for any pertinent
+information that is not recorded by the metadata spreadsheet.
 
 ### Bonus: Using a custom loader
 
@@ -240,8 +244,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x556fe86f4828>
-    ## <environment: 0x556fe826bcd0>
+    ## <bytecode: 0x56236ced8af0>
+    ## <environment: 0x56236ca4ddd8>
 
 ## Other Features
 
@@ -364,7 +368,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.10 BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.11 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
@@ -397,4 +401,4 @@ sessionInfo()
     ## [82] backports_1.5.1        googlesheets4_1.1.2    broom_1.0.12          
     ## [85] ggsci_5.0.0            gargle_1.6.1           bslib_0.10.0          
     ## [88] Rcpp_1.1.1-1           gridExtra_2.3          checkmate_2.3.4       
-    ## [91] xfun_0.57              fs_2.0.1               pkgconfig_2.0.3
+    ## [91] xfun_0.57              fs_2.1.0               pkgconfig_2.0.3

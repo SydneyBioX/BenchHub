@@ -100,13 +100,7 @@ across datasets.
 
 #### Usage
 
-    BenchmarkInsights$getHeatmap(evalSummary)
-
-#### Arguments
-
-- `evalSummary`:
-
-  A dataframe containing the evaluation summary.
+    BenchmarkInsights$getHeatmap()
 
 #### Returns
 
@@ -121,13 +115,9 @@ grouping and fixed x order.
 
 #### Usage
 
-    BenchmarkInsights$getLineplot(evalResult, order = NULL, metricVariable)
+    BenchmarkInsights$getLineplot(order = NULL, metricVariable)
 
 #### Arguments
-
-- `evalResult`:
-
-  subset of evaluation summary.
 
 - `order`:
 
@@ -145,19 +135,14 @@ A ggplot2 line plot object.
 
 ### Method `getScatterplot()`
 
-Creates a scatter plot for the same evidence, with an two methodd
+Creates a scatter plot for the same evidence, with an two method
 metrics.
 
 #### Usage
 
-    BenchmarkInsights$getScatterplot(evalResult, variables)
+    BenchmarkInsights$getScatterplot(variables)
 
 #### Arguments
-
-- `evalResult`:
-
-  subset of evaluation summary, only include two different metrics, all
-  evidence should be same
 
 - `variables`:
 
@@ -177,14 +162,9 @@ metric.
 
 #### Usage
 
-    BenchmarkInsights$getBoxplot(evalResult, metricVariable, evidenceVariable)
+    BenchmarkInsights$getBoxplot(metricVariable, evidenceVariable)
 
 #### Arguments
-
-- `evalResult`:
-
-  subset of evaluation summary, only include two different metrics, all
-  evidence should be same.
 
 - `metricVariable`:
 
@@ -209,14 +189,9 @@ different categories (evidence, metric, or method).
 
 #### Usage
 
-    BenchmarkInsights$getCorplot(evalResult, input_type)
+    BenchmarkInsights$getCorplot(input_type)
 
 #### Arguments
-
-- `evalResult`:
-
-  A subset of the evaluation summary. It must include columns relevant
-  to the input type (evidence, metric, method) and the result values.
 
 - `input_type`:
 
@@ -240,13 +215,9 @@ labeling.
 
 #### Usage
 
-    BenchmarkInsights$getForestplot(evalResult, input_group, input_model)
+    BenchmarkInsights$getForestplot(input_group, input_model)
 
 #### Arguments
-
-- `evalResult`:
-
-  A data frame containing the evaluation summary.
 
 - `input_group`:
 
@@ -288,12 +259,12 @@ BenchmarkInsights$new()
 #>     addevalSummary: function (additional_evalResult) 
 #>     clone: function (deep = FALSE) 
 #>     evalSummary: data.frame
-#>     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) 
-#>     getCorplot: function (evalResult = NULL, input_type) 
-#>     getForestplot: function (evalResult = NULL, input_group, input_model) 
-#>     getHeatmap: function (evalSummary = NULL) 
-#>     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) 
-#>     getScatterplot: function (evalResult = NULL, variables) 
+#>     getBoxplot: function (metricVariable, evidenceVariable) 
+#>     getCorplot: function (input_type) 
+#>     getForestplot: function (input_group, input_model) 
+#>     getHeatmap: function () 
+#>     getLineplot: function (order = NULL, metricVariable) 
+#>     getScatterplot: function (variables) 
 #>     initialize: function (evalResult = NULL) 
 #>     metadata: NULL
 ```

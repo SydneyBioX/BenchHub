@@ -65,12 +65,12 @@ bmi
     ##     addMetadata: function (metadata) 
     ##     clone: function (deep = FALSE) 
     ##     evalSummary: spec_tbl_df, tbl_df, tbl, data.frame
-    ##     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) 
-    ##     getCorplot: function (evalResult = NULL, input_type) 
-    ##     getForestplot: function (evalResult = NULL, input_group, input_model) 
-    ##     getHeatmap: function (evalSummary = NULL) 
-    ##     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) 
-    ##     getScatterplot: function (evalResult = NULL, variables) 
+    ##     getBoxplot: function (metricVariable, evidenceVariable) 
+    ##     getCorplot: function (input_type) 
+    ##     getForestplot: function (input_group, input_model) 
+    ##     getHeatmap: function () 
+    ##     getLineplot: function (order = NULL, metricVariable) 
+    ##     getScatterplot: function (variables) 
     ##     initialize: function (evalResult = NULL) 
     ##     metadata: NULL
 
@@ -381,7 +381,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.10
+    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.11
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
@@ -409,7 +409,7 @@ sessionInfo()
     ##  [64] insight_1.5.0          generics_0.1.4         vroom_1.7.1           
     ##  [67] hms_1.1.4              ggplot2_4.0.2          scales_1.4.0          
     ##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.5.3           
-    ##  [73] data.table_1.18.2.1    fs_2.0.1               cowplot_1.2.0         
+    ##  [73] data.table_1.18.2.1    fs_2.1.0               cowplot_1.2.0         
     ##  [76] grid_4.5.3             tidyr_1.3.2            rbibutils_2.4.1       
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
     ##  [82] patchwork_1.3.2        performance_0.16.0     ggforce_0.5.0         

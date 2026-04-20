@@ -171,6 +171,10 @@ Create a Trio object
 
   A description of the dataset.
 
+- `name`:
+
+  The name of the Trio object, as defined in Curated Trio Datasets.
+
 ------------------------------------------------------------------------
 
 ### Method `addEvidence()`

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,8 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v00_overview_trio.html">Overview of the BenchHub</a></li>
-    <li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
+<li><a class="dropdown-item" href="../articles/v01_intro_trio.html">1 Introduction to the Trio Class</a></li>
     <li><a class="dropdown-item" href="../articles/v02_Evaluation_using_Trio.html">2 Evaluation using Trio</a></li>
     <li><a class="dropdown-item" href="../articles/v03_intro_bmi.html">3 Introduction of BenchmarkInsights class</a></li>
     <li><a class="dropdown-item" href="../articles/v04_uploading_a_Trio.html">4 Preparing and Submitting a Trio</a></li>
@@ -127,12 +126,12 @@ expected format.</p>
 <span><span class="co">##     addMetadata: function (metadata) </span></span>
 <span><span class="co">##     clone: function (deep = FALSE) </span></span>
 <span><span class="co">##     evalSummary: spec_tbl_df, tbl_df, tbl, data.frame</span></span>
-<span><span class="co">##     getBoxplot: function (evalResult = NULL, metricVariable, evidenceVariable) </span></span>
-<span><span class="co">##     getCorplot: function (evalResult = NULL, input_type) </span></span>
-<span><span class="co">##     getForestplot: function (evalResult = NULL, input_group, input_model) </span></span>
-<span><span class="co">##     getHeatmap: function (evalSummary = NULL) </span></span>
-<span><span class="co">##     getLineplot: function (evalResult = NULL, order = NULL, metricVariable) </span></span>
-<span><span class="co">##     getScatterplot: function (evalResult = NULL, variables) </span></span>
+<span><span class="co">##     getBoxplot: function (metricVariable, evidenceVariable) </span></span>
+<span><span class="co">##     getCorplot: function (input_type) </span></span>
+<span><span class="co">##     getForestplot: function (input_group, input_model) </span></span>
+<span><span class="co">##     getHeatmap: function () </span></span>
+<span><span class="co">##     getLineplot: function (order = NULL, metricVariable) </span></span>
+<span><span class="co">##     getScatterplot: function (variables) </span></span>
 <span><span class="co">##     initialize: function (evalResult = NULL) </span></span>
 <span><span class="co">##     metadata: NULL</span></span></code></pre>
 <p>If you have additional evaluation result, you can use
@@ -438,7 +437,7 @@ robustness across methods.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.10</span></span>
+<span><span class="co">## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.11</span></span>
 <span><span class="co">## [5] BiocStyle_2.38.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
@@ -466,7 +465,7 @@ robustness across methods.</p>
 <span><span class="co">##  [64] insight_1.5.0          generics_0.1.4         vroom_1.7.1           </span></span>
 <span><span class="co">##  [67] hms_1.1.4              ggplot2_4.0.2          scales_1.4.0          </span></span>
 <span><span class="co">##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.5.3           </span></span>
-<span><span class="co">##  [73] data.table_1.18.2.1    fs_2.0.1               cowplot_1.2.0         </span></span>
+<span><span class="co">##  [73] data.table_1.18.2.1    fs_2.1.0               cowplot_1.2.0         </span></span>
 <span><span class="co">##  [76] grid_4.5.3             tidyr_1.3.2            rbibutils_2.4.1       </span></span>
 <span><span class="co">##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   </span></span>
 <span><span class="co">##  [82] patchwork_1.3.2        performance_0.16.0     ggforce_0.5.0         </span></span>

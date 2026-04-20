@@ -30,20 +30,5 @@ and true negatives.
 evidence <- factor(c("A", "B", "A", "B"))
 predicted <- factor(c("A", "A", "A", "B"))
 .positivesNegatives(evidence, predicted)
-#> $TP
-#> A B 
-#> 2 1 
-#> 
-#> $FP
-#> A B 
-#> 1 0 
-#> 
-#> $FN
-#> A B 
-#> 0 1 
-#> 
-#> $TN
-#> A B 
-#> 1 2 
-#> 
+#> Error in .positivesNegatives(evidence, predicted): could not find function ".positivesNegatives"
 ```
