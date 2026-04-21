@@ -381,7 +381,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.11
+    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.12
     ## [5] BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
