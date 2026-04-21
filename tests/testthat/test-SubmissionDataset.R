@@ -108,6 +108,7 @@ testthat::test_that("prepareTrioSubmissionFiles saves dataset and evidence files
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(
@@ -152,6 +153,7 @@ testthat::test_that("collectDatasetSubmissionInfo returns dataset args in non-in
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -203,6 +205,7 @@ testthat::test_that("collectTaskSubmissionInfo returns task args in non-interact
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -239,6 +242,7 @@ testthat::test_that("collectTaskSubmissionInfo rejects more tasks than evidence"
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -279,6 +283,7 @@ testthat::test_that("collectEvidenceSubmissionInfo assigns evidence to tasks", {
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -334,6 +339,7 @@ testthat::test_that("collectEvidenceSubmissionInfo rejects tasks without evidenc
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -375,6 +381,7 @@ testthat::test_that("collectMetricSubmissionInfo returns metric args in non-inte
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(
@@ -416,6 +423,7 @@ testthat::test_that("collectDatasetTaskMetricSubmission builds task-metric links
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(
@@ -456,15 +464,9 @@ testthat::test_that("prepareTrioSubmissionFiles verifies prepared files against 
 
   dataset_md5 <- NULL
   evidence_md5 <- NULL
-  
-  original_figshare <- if (exists("figshareListFiles", envir = environment(), inherits = FALSE)) {
-    get("figshareListFiles", envir = environment(), inherits = FALSE)
-  } else {
-    NULL
-  }
-  assign(
-    "figshareListFiles",
-    function(articleID, fileID = NULL) {
+
+  testthat::local_mocked_bindings(
+    figshareListFiles = function(articleID, fileID = NULL) {
       data.frame(
         id = c("101", "102"),
         name = c("BREAST_ST_dataset.rds", "BREAST_ST_evidence.rds"),
@@ -472,15 +474,8 @@ testthat::test_that("prepareTrioSubmissionFiles verifies prepared files against 
         stringsAsFactors = FALSE
       )
     },
-    envir = environment()
+    .package = "BenchHub"
   )
-  withr::defer({
-    if (is.null(original_figshare)) {
-      rm("figshareListFiles", envir = environment())
-    } else {
-      assign("figshareListFiles", original_figshare, envir = environment())
-    }
-  })
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -497,6 +492,7 @@ testthat::test_that("prepareTrioSubmissionFiles verifies prepared files against 
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(RMSE = MSEmetric)
@@ -549,6 +545,7 @@ testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(
@@ -596,14 +593,8 @@ testthat::test_that("prepareTrioSubmissionMetrics classifies internal and custom
 
 testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist", {
 
-  original_creat <- if (exists("creatGist", envir = environment(), inherits = FALSE)) {
-    get("creatGist", envir = environment(), inherits = FALSE)
-  } else {
-    NULL
-  }
-  assign(
-    "creatGist",
-    function(content, filename, description, public = TRUE, pat = NULL) {
+  testthat::local_mocked_bindings(
+    creatGist = function(content, filename, description, public = TRUE, pat = NULL) {
       list(
         html_url = "https://gist.github.com/example/custom-metric",
         content = content,
@@ -613,15 +604,8 @@ testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist
         pat = pat
       )
     },
-    envir = environment()
+    .package = "BenchHub"
   )
-  withr::defer({
-    if (is.null(original_creat)) {
-      rm("creatGist", envir = environment())
-    } else {
-      assign("creatGist", original_creat, envir = environment())
-    }
-  })
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -638,6 +622,7 @@ testthat::test_that("prepareTrioSubmissionMetrics uploads custom metrics to gist
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(
@@ -669,14 +654,8 @@ testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {
   dataset_md5 <- NULL
   evidence_md5 <- NULL
 
-  original_figshare <- if (exists("figshareListFiles", envir = environment(), inherits = FALSE)) {
-    get("figshareListFiles", envir = environment(), inherits = FALSE)
-  } else {
-    NULL
-  }
-  assign(
-    "figshareListFiles",
-    function(articleID, fileID = NULL) {
+  testthat::local_mocked_bindings(
+    figshareListFiles = function(articleID, fileID = NULL) {
       data.frame(
         id = c("101", "102"),
         name = c("BREAST_ST_dataset.rds", "BREAST_ST_evidence.rds"),
@@ -684,15 +663,8 @@ testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {
         stringsAsFactors = FALSE
       )
     },
-    envir = environment()
+    .package = "BenchHub"
   )
-  withr::defer({
-    if (is.null(original_figshare)) {
-      rm("figshareListFiles", envir = environment())
-    } else {
-      assign("figshareListFiles", original_figshare, envir = environment())
-    }
-  })
 
   data <- data.frame(
     x = c(1, 2, 3),
@@ -709,6 +681,7 @@ testthat::test_that("prepareTrioSubmissionBundle returns a pre-submit bundle", {
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(MSE = MSEmetric)
@@ -785,6 +758,7 @@ testthat::test_that("writeSubmission builds a full pre-submit object without top
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(MSE = MSEmetric)
