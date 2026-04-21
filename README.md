@@ -16,20 +16,23 @@
 
 BenchHub is a data storage framework implemented in R language to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.
 
-The three components currently in BenchHub are:\
-- **Trio**: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community.\
-- **BenchmarkInsight**: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results. - **BenchmarkInsight**: A data structure for storing collections of Trio objects and helper functions for specific benchmarking tasks.
+The three components currently in BenchHub are:
+- **Trio**: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community.
+- **BenchmarkInsights**: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results.
+- **BenchmarkStudy**: A data structure for storing collections of Trio objects and helper functions for specific benchmarking tasks.
 
-BenchHub aims to make benchmarking easier for multiple groups of users in the community: - **Benchmark Developers**: BenchHub offers a central storage for contributing benchmarking studies with the community - **Method Contributors**: BenchHub allows evaluation of new tools against established benchmarks in the database without starting from scratch\
+BenchHub aims to make benchmarking easier for multiple groups of users in the community: 
+- **Benchmark Developers**: BenchHub offers a central storage for contributing benchmarking studies with the community
+- **Method Contributors**: BenchHub allows evaluation of new tools against established benchmarks in the database without starting from scratch
 - **Benchmark Consumers**: BenchHub allows exploring and interpretation of results to make informed method selections
 
 ### Trio
 
 Trio is built around three key components:
 
-**Data**: Data used by the methods to generate output.\
-**Supporting Evidence**: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.\
-**Metric**: Evaluation metrics used to compare output of methods with supporting evidence.
+- **Data**: Data used by the methods to generate output.
+- **Supporting Evidence**: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.
+- **Metric**: Evaluation metrics used to compare output of methods with supporting evidence.
 
 Trio is implemented as R6 object with fields to store each of the components.
 
@@ -39,7 +42,7 @@ Trio is implemented as R6 object with fields to store each of the components.
 
 </p>
 
-### BenchmarkInsight
+### BenchmarkInsights
 
 BenchmarkInsight serves as a visualisation and analysis tool for benchmarking results. It contains multiple visualisation techniques to help researchers analyse benchmarking results in terms of data, methods and metrics.
 
