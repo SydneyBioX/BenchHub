@@ -795,7 +795,8 @@ testthat::test_that("writeSubmission builds a full pre-submit object without top
     prepare_files = FALSE,
     upload_custom_metrics = FALSE,
     build_payload = TRUE,
-    build_json = TRUE
+    build_json = TRUE,
+    submit = FALSE
   )
 
   expect_true(is.list(result))

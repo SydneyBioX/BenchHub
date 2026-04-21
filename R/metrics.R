@@ -39,11 +39,8 @@ balErrMetric <- function(evidence, predicted) {
 #' @param evidence The true labels.
 #' @param predicted The predicted labels.
 #' @return A list containing the true positives, false positives, false negatives, and true negatives.
-#' @examples
-#' evidence <- factor(c("A", "B", "A", "B"))
-#' predicted <- factor(c("A", "A", "A", "B"))
-#' .positivesNegatives(evidence, predicted)
 #' @keywords internal
+#' @noRd
 .positivesNegatives <- function(evidence, predicted) {
   confusionMatrix <- table(evidence, predicted)
   truePositives <- diag(confusionMatrix)
