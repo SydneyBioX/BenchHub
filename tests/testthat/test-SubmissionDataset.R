@@ -18,6 +18,7 @@ testthat::test_that("buildTrioSubmission supports multiple evidence rows per tas
 
   trio <- Trio$new(
     datasetID = "BREAST_ST",
+    description = "testing",
     data = data,
     evidence = evidence,
     metrics = list(

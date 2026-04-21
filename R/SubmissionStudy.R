@@ -1094,6 +1094,7 @@ private_required_submission_chr_vec <- function(x, arg) {
   }
 
   x_chr <- private_submission_chr_vec(x)
+  names(x_chr) <- names(x)
   x_chr <- x_chr[!is.na(x_chr)]
 
   if (length(x_chr) == 0) {
