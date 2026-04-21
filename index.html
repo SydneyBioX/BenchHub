@@ -71,16 +71,20 @@
 <h2 id="about">About<a class="anchor" aria-label="anchor" href="#about"></a>
 </h2>
 <p>BenchHub is a data storage framework implemented in R language to facilitate living benchmarks. It aims to enhance reproducibility and accessibility of benchmarking studies by making it easier to store, analyse and share benchmarking data.</p>
-<p>The three components currently in BenchHub are:<br>
-- <strong>Trio</strong>: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community.<br>
-- <strong>BenchmarkInsight</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results. - <strong>BenchmarkInsight</strong>: A data structure for storing collections of Trio objects and helper functions for specific benchmarking tasks.</p>
-<p>BenchHub aims to make benchmarking easier for multiple groups of users in the community: - <strong>Benchmark Developers</strong>: BenchHub offers a central storage for contributing benchmarking studies with the community - <strong>Method Contributors</strong>: BenchHub allows evaluation of new tools against established benchmarks in the database without starting from scratch<br>
-- <strong>Benchmark Consumers</strong>: BenchHub allows exploring and interpretation of results to make informed method selections</p>
+<p>The three components currently in BenchHub are: - <strong>Trio</strong>: A data structure consisting of Dataset, Evidence and Metric to faciliate the sharing of benchmarking datasets within the community. - <strong>BenchmarkInsights</strong>: A data structure for storing benchmarking results and provides a collection of visualisations to faciliate the analysis of benchmarking results. - <strong>BenchmarkStudy</strong>: A data structure for storing collections of Trio objects and helper functions for specific benchmarking tasks.</p>
+<p>BenchHub aims to make benchmarking easier for multiple groups of users in the community: - <strong>Benchmark Developers</strong>: BenchHub offers a central storage for contributing benchmarking studies with the community - <strong>Method Contributors</strong>: BenchHub allows evaluation of new tools against established benchmarks in the database without starting from scratch - <strong>Benchmark Consumers</strong>: BenchHub allows exploring and interpretation of results to make informed method selections</p>
 <div class="section level3">
 <h3 id="trio">Trio<a class="anchor" aria-label="anchor" href="#trio"></a>
 </h3>
 <p>Trio is built around three key components:</p>
-<p><strong>Data</strong>: Data used by the methods to generate output.<br><strong>Supporting Evidence</strong>: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.<br><strong>Metric</strong>: Evaluation metrics used to compare output of methods with supporting evidence.</p>
+<ul>
+<li>
+<strong>Data</strong>: Data used by the methods to generate output.</li>
+<li>
+<strong>Supporting Evidence</strong>: Metadata to compare with the output of methods, such as cell type, patient outcome, disease pathway.</li>
+<li>
+<strong>Metric</strong>: Evaluation metrics used to compare output of methods with supporting evidence.</li>
+</ul>
 <p>Trio is implemented as R6 object with fields to store each of the components.</p>
 <p align="center">
 </p>
@@ -88,7 +92,7 @@
 
 </div>
 <div class="section level3">
-<h3 id="benchmarkinsight">BenchmarkInsight<a class="anchor" aria-label="anchor" href="#benchmarkinsight"></a>
+<h3 id="benchmarkinsights">BenchmarkInsights<a class="anchor" aria-label="anchor" href="#benchmarkinsights"></a>
 </h3>
 <p>BenchmarkInsight serves as a visualisation and analysis tool for benchmarking results. It contains multiple visualisation techniques to help researchers analyse benchmarking results in terms of data, methods and metrics.</p>
 <p>Once results are evaluated using Trio, the output can be directly passed into the benchmarkInsight object. BenchmarkInsight currently supports the following plot types.</p>

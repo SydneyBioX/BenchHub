@@ -47,7 +47,7 @@ trio
     ##   $ gene_B: num 1 2 8 9
     ## Data Source: "figshare"
     ## Dataset ID: "30007327/63474198"
-    ## Cache Path: "/tmp/Rtmpq9YU3W"
+    ## Cache Path: "/tmp/RtmpLboWBT"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -110,7 +110,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmpq9YU3W"
+    ## Cache Path: "/tmp/RtmpLboWBT"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -244,8 +244,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x562709a003a8>
-    ## <environment: 0x56270957def0>
+    ## <bytecode: 0x55dc0ce22688>
+    ## <environment: 0x55dc0c9a3f90>
 
 ## Other Features
 
