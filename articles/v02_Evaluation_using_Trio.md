@@ -356,7 +356,7 @@ sessionInfo()
     ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.5  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.2      readr_2.2.0     
     ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.2    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.12 BiocStyle_2.38.0
+    ## [13] BenchHub_0.99.13 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           

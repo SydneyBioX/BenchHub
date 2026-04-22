@@ -309,7 +309,7 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BenchHub_0.99.12            scuttle_1.20.0             
+    ##  [1] BenchHub_0.99.13            scuttle_1.20.0             
     ##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
     ##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       
     ##  [7] Seqinfo_1.0.0               IRanges_2.44.0             

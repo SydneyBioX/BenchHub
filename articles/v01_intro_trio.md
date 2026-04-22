@@ -47,7 +47,7 @@ trio
     ##   $ gene_B: num 1 2 8 9
     ## Data Source: "figshare"
     ## Dataset ID: "30007327/63474198"
-    ## Cache Path: "/tmp/RtmpfjMgZ3"
+    ## Cache Path: "/tmp/Rtmp2HIiT4"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -110,7 +110,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/RtmpfjMgZ3"
+    ## Cache Path: "/tmp/Rtmp2HIiT4"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -244,8 +244,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x5640cbf34258>
-    ## <environment: 0x5640cbaa6b30>
+    ## <bytecode: 0x55727245d168>
+    ## <environment: 0x557271fcfb90>
 
 ## Other Features
 
@@ -368,7 +368,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.12 BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.13 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
