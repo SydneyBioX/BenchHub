@@ -56,3 +56,16 @@ buildStudySubmission(
 ## Value
 
 A named list containing `Study` and `StudyDataset`.
+
+## Examples
+
+``` r
+study <- BenchHub:::private_example_study()
+#> Error: object 'private_example_study' not found
+buildStudySubmission(
+  study,
+  datasetIDs = "dataset_001",
+  existing_studies = BenchHub:::private_example_existing_studies()
+)
+#> Error: object 'study' not found
+```

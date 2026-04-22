@@ -47,3 +47,16 @@ buildDatasetTaskMetricSubmission(
 
 A `data.frame` matching the proposed `DatasetTaskMetric` table schema.
 `datasetTaskMetricID` and `metricID` are left as `NA`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+buildDatasetTaskMetricSubmission(
+  trio,
+  datasetTaskID = "task_001",
+  evidenceTaskID = "task_001"
+)
+#> Error: object 'trio' not found
+```

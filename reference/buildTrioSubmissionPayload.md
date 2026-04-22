@@ -22,3 +22,14 @@ buildTrioSubmissionPayload(submission)
 
 A named list with a top-level `payload` entry ready for
 `jsonlite::toJSON(..., auto_unbox = TRUE)`.
+
+## Examples
+
+``` r
+submission <- BenchHub:::private_example_trio_submission()
+#> Error: object 'private_example_trio_submission' not found
+payload <- buildTrioSubmissionPayload(submission)
+#> Error: object 'submission' not found
+names(payload)
+#> Error: object 'payload' not found
+```

@@ -18,3 +18,14 @@ buildStudySubmissionPayload(submission)
 ## Value
 
 A named list with a top-level `payload` entry.
+
+## Examples
+
+``` r
+submission <- BenchHub:::private_example_study_submission()
+#> Error: object 'private_example_study_submission' not found
+payload <- buildStudySubmissionPayload(submission)
+#> Error: object 'submission' not found
+names(payload)
+#> Error: object 'payload' not found
+```

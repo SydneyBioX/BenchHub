@@ -43,3 +43,17 @@ buildDatasetTaskSubmission(
 
 A `data.frame` matching the proposed `DatasetTask` table schema.
 `datasetTaskID` is left as `NA`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+buildDatasetTaskSubmission(
+  trio,
+  taskStage = "prediction",
+  taskType = "classification",
+  taskName = "class_prediction"
+)
+#> Error: object 'trio' not found
+```

@@ -92,3 +92,18 @@ prepareStudyUpdateSubmission(
 ## Value
 
 A named list containing the updated Study submission bundle.
+
+## Examples
+
+``` r
+result <- prepareStudyUpdateSubmission(
+  studyID = "study_001",
+  studies = BenchHub:::private_example_existing_study_rows(),
+  study_datasets = BenchHub:::private_example_study_dataset_rows(),
+  build_json = FALSE,
+  review = FALSE
+)
+#> Error in private_resolve_submission_studies(studies = studies, ss = ss): object 'private_example_existing_study_rows' not found
+names(result)
+#> Error: object 'result' not found
+```

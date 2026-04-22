@@ -116,3 +116,27 @@ writeSubmission(
 
 A named list containing collected arguments, optional prepared file and
 metric metadata, the final `submission`, and optional `payload`/`json`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+result <- writeSubmission(
+  trio = trio,
+  n_tasks = 1,
+  dataset_defaults = BenchHub:::private_example_dataset_args(),
+  task_defaults = BenchHub:::private_example_task_args(),
+  evidence_defaults = list(
+    taskName = "class_prediction",
+    evidenceType = "experimental_ground_truth"
+  ),
+  metric_defaults = list(metricType = "label_based"),
+  prepare_files = FALSE,
+  build_json = FALSE,
+  review = FALSE
+)
+#> Error: object 'trio' not found
+names(result)
+#> Error: object 'result' not found
+```

@@ -116,3 +116,21 @@ prepareStudySubmission(
 ## Value
 
 A named list containing the Study submission bundle.
+
+## Examples
+
+``` r
+study <- BenchHub:::private_example_study()
+#> Error: object 'private_example_study' not found
+result <- prepareStudySubmission(
+  study,
+  datasetIDs = "dataset_001",
+  available_datasets = BenchHub:::private_example_available_datasets(),
+  existing_studies = BenchHub:::private_example_existing_studies(),
+  build_json = FALSE,
+  review = FALSE
+)
+#> Error: object 'study' not found
+names(result)
+#> Error: object 'result' not found
+```

@@ -78,3 +78,19 @@ prepareTrioSubmissionBundle(
 
 A named list containing the built `submission`, plus optional `files`,
 `metrics`, `payload`, and `json`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+bundle <- prepareTrioSubmissionBundle(
+  trio = trio,
+  dataset_args = BenchHub:::private_example_dataset_args(),
+  task_args = BenchHub:::private_example_task_args(),
+  evidence_task_map = c(class_labels = "class_prediction")
+)
+#> Error: object 'trio' not found
+names(bundle)
+#> Error: object 'bundle' not found
+```

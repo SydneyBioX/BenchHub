@@ -29,3 +29,19 @@ collectDatasetTaskMetricSubmission(trio, evidence_args, task_args)
 ## Value
 
 A `data.frame` matching the `DatasetTaskMetric` schema.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+collectDatasetTaskMetricSubmission(
+  trio,
+  evidence_args = list(
+    datasetTaskID = "task_001",
+    evidenceName = "class_labels"
+  ),
+  task_args = BenchHub:::private_example_task_args()
+)
+#> Error: object 'trio' not found
+```

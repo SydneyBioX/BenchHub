@@ -47,3 +47,17 @@ collectStudySubmissionInfo(
 
 A named list ready to pass into
 [`buildStudySubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildStudySubmission.md).
+
+## Examples
+
+``` r
+study <- BenchHub:::private_example_study()
+#> Error: object 'private_example_study' not found
+collectStudySubmissionInfo(
+  study,
+  datasetIDs = "dataset_001",
+  available_datasets = BenchHub:::private_example_available_datasets(),
+  existing_studies = BenchHub:::private_example_existing_studies()
+)
+#> Error: object 'study' not found
+```

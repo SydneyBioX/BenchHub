@@ -79,3 +79,20 @@ prepareTrioSubmissionFiles(
 
 A named list describing the saved files and/or reusable download sources
 for dataset and evidence.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+files <- prepareTrioSubmissionFiles(
+  trio,
+  outputDir = tempdir(),
+  saveData = TRUE,
+  saveEvidence = TRUE,
+  useExistingSource = FALSE
+)
+#> Error: object 'trio' not found
+names(files)
+#> Error: object 'files' not found
+```

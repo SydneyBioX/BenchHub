@@ -22,3 +22,14 @@ studySubmissionToJSON(submission, pretty = TRUE)
 ## Value
 
 A JSON string.
+
+## Examples
+
+``` r
+submission <- BenchHub:::private_example_study_submission()
+#> Error: object 'private_example_study_submission' not found
+json <- studySubmissionToJSON(submission)
+#> Error: object 'submission' not found
+substr(json, 1, 20)
+#> Error: object 'json' not found
+```

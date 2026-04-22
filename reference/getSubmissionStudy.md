@@ -29,3 +29,13 @@ getSubmissionStudy(
 ## Value
 
 A one-row data frame for the requested Study.
+
+## Examples
+
+``` r
+getSubmissionStudy(
+  "study_001",
+  studies = BenchHub:::private_example_existing_study_rows()
+)
+#> Error in private_resolve_submission_studies(studies = studies, ss = ss): object 'private_example_existing_study_rows' not found
+```

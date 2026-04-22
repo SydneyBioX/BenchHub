@@ -40,3 +40,16 @@ buildDatasetEvidenceSubmission(
 
 A `data.frame` matching the proposed `DatasetEvidence` table schema.
 `evidenceID` is left as `NA`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+buildDatasetEvidenceSubmission(
+  trio,
+  datasetTaskID = "task_001",
+  evidenceType = "experimental_ground_truth"
+)
+#> Error: object 'trio' not found
+```

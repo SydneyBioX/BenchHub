@@ -38,3 +38,19 @@ buildTrioSubmission(trio, dataset_args, task_args, evidence_task_map)
 
 A named list containing `Dataset`, `DatasetTask`, `DatasetEvidence`,
 `Metric`, `DatasetTaskMetric`, and `submission_links`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+submission <- buildTrioSubmission(
+  trio = trio,
+  dataset_args = BenchHub:::private_example_dataset_args(),
+  task_args = BenchHub:::private_example_task_args(),
+  evidence_task_map = c(class_labels = "class_prediction")
+)
+#> Error: object 'trio' not found
+names(submission)
+#> Error: object 'submission' not found
+```

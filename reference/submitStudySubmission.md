@@ -26,3 +26,16 @@ submitStudySubmission(submission, url, submittedBy)
 ## Value
 
 A list containing request status information and response text.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+submission <- BenchHub:::private_example_study_submission()
+submitStudySubmission(
+  submission,
+  url = "https://script.google.com/macros/s/example/exec",
+  submittedBy = "researcher@example.org"
+)
+} # }
+```

@@ -29,3 +29,13 @@ getSubmissionStudyDatasets(
 ## Value
 
 A data frame of StudyDataset rows linked to the supplied studyID.
+
+## Examples
+
+``` r
+getSubmissionStudyDatasets(
+  "study_001",
+  study_datasets = BenchHub:::private_example_study_dataset_rows()
+)
+#> Error in private_resolve_submission_study_datasets(study_datasets = study_datasets,     ss = ss): object 'private_example_study_dataset_rows' not found
+```

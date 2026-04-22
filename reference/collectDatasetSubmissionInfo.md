@@ -25,3 +25,15 @@ collectDatasetSubmissionInfo(trio, defaults = list())
 
 A named list ready to pass as `dataset_args` to
 [`buildDatasetSubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildDatasetSubmission.md).
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+collectDatasetSubmissionInfo(
+  trio,
+  defaults = BenchHub:::private_example_dataset_args()
+)
+#> Error: object 'trio' not found
+```

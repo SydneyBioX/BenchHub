@@ -303,3 +303,12 @@ The objects of this class are cloneable with this method.
 - `deep`:
 
   Whether to make a deep clone.
+
+## Examples
+
+``` r
+study <- BenchmarkStudy$new(name = "example_study")
+study$description <- "A small example benchmark study."
+study$name
+#> [1] "example_study"
+```

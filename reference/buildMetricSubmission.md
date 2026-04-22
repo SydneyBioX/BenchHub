@@ -19,3 +19,12 @@ buildMetricSubmission(trio)
 ## Value
 
 A `data.frame` matching the proposed `Metric` table schema.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+buildMetricSubmission(trio)
+#> Error: object 'trio' not found
+```

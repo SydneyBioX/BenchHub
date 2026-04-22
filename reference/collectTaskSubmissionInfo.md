@@ -31,3 +31,15 @@ collectTaskSubmissionInfo(trio, defaults = list(), n_tasks = NULL)
 
 A named list ready to pass as `task_args` to
 [`buildDatasetTaskSubmission()`](https://sydneybiox.github.io/BenchHub/reference/buildDatasetTaskSubmission.md).
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+collectTaskSubmissionInfo(
+  trio,
+  defaults = BenchHub:::private_example_task_args()
+)
+#> Error: object 'trio' not found
+```

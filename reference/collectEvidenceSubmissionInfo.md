@@ -30,3 +30,21 @@ collectEvidenceSubmissionInfo(trio, task_args, defaults = list())
 
 A named list with `datasetTaskID`, `evidenceName`, `evidenceType`, and
 `evidence_task_map`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+task_args <- BenchHub:::private_example_task_args()
+#> Error: object 'private_example_task_args' not found
+collectEvidenceSubmissionInfo(
+  trio,
+  task_args = task_args,
+  defaults = list(
+    taskName = "class_prediction",
+    evidenceType = "experimental_ground_truth"
+  )
+)
+#> Error: object 'trio' not found
+```

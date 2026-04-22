@@ -135,6 +135,22 @@ matching.</p></dd>
 sources for dataset and evidence.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_submission_trio</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'private_example_submission_trio' not found</span>
+<span class="r-in"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu">prepareTrioSubmissionFiles</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">trio</span>,</span></span>
+<span class="r-in"><span>  outputDir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  saveData <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  saveEvidence <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  useExistingSource <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'trio' not found</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'files' not found</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

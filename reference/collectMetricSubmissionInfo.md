@@ -24,3 +24,15 @@ collectMetricSubmissionInfo(trio, defaults = list())
 ## Value
 
 A named list ready to merge into the `Metric` submission table.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+collectMetricSubmissionInfo(
+  trio,
+  defaults = list(metricType = "label_based")
+)
+#> Error: object 'trio' not found
+```

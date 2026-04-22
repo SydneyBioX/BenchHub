@@ -174,6 +174,29 @@ returning.</p></dd>
 and metric metadata, the final <code>submission</code>, and optional <code>payload</code>/<code>json</code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_submission_trio</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'private_example_submission_trio' not found</span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">writeSubmission</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  trio <span class="op">=</span> <span class="va">trio</span>,</span></span>
+<span class="r-in"><span>  n_tasks <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  dataset_defaults <span class="op">=</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_dataset_args</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  task_defaults <span class="op">=</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_task_args</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  evidence_defaults <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    taskName <span class="op">=</span> <span class="st">"class_prediction"</span>,</span></span>
+<span class="r-in"><span>    evidenceType <span class="op">=</span> <span class="st">"experimental_ground_truth"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  metric_defaults <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>metricType <span class="op">=</span> <span class="st">"label_based"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  prepare_files <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  build_json <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  review <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'trio' not found</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

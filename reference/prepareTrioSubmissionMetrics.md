@@ -42,3 +42,12 @@ prepareTrioSubmissionMetrics(
 ## Value
 
 A list with entries `Metric`, `gist`, and `custom_metric_lines`.
+
+## Examples
+
+``` r
+trio <- BenchHub:::private_example_submission_trio()
+#> Error: object 'private_example_submission_trio' not found
+prepareTrioSubmissionMetrics(trio)
+#> Error: object 'trio' not found
+```
