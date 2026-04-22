@@ -2428,21 +2428,20 @@ private_prepare_write_submission_pat <- function(
 
   cli::cli_inform(c(
     "The GITHUB_PAT environment variable is not set.",
-    "Please set it to your GitHub personal access token with gist access."
+    "A GitHub personal access token with gist access is needed to upload custom metrics."
   ))
 
-  set_pat <- utils::askYesNo(
-    "Do you want to set GITHUB_PAT environment variable?"
+  use_pat <- utils::askYesNo(
+    "Do you want to enter a token for this submission?"
   )
-  if (!isTRUE(set_pat)) {
+  if (!isTRUE(use_pat)) {
     return(githubPat)
   }
 
   pat <- private_collect_submission_text(
-    prompt = "Enter your Github personal access token",
+    prompt = "Enter your GitHub personal access token",
     required = TRUE
   )
-  Sys.setenv(GITHUB_PAT = pat)
   pat
 }
 
