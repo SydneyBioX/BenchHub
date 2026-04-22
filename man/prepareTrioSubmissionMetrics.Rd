@@ -33,3 +33,7 @@ metric handling. Internal package metrics are recorded directly. Custom
 metrics can optionally be uploaded to a GitHub gist and linked from the
 resulting \code{Metric} table rows.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+prepareTrioSubmissionMetrics(trio)
+}

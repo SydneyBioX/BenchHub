@@ -40,3 +40,11 @@ A named list containing \code{Study} and \code{StudyDataset}.
 \description{
 Build Study and StudyDataset submission tables
 }
+\examples{
+study <- BenchHub:::private_example_study()
+buildStudySubmission(
+  study,
+  datasetIDs = "dataset_001",
+  existing_studies = BenchHub:::private_example_existing_studies()
+)
+}

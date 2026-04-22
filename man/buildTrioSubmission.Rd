@@ -28,3 +28,13 @@ A named list containing \code{Dataset}, \code{DatasetTask},
 This helper assembles the five Trio-focused submission tables into a single
 list so it can be inspected locally before any upload step is added.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+submission <- buildTrioSubmission(
+  trio = trio,
+  dataset_args = BenchHub:::private_example_dataset_args(),
+  task_args = BenchHub:::private_example_task_args(),
+  evidence_task_map = c(class_labels = "class_prediction")
+)
+names(submission)
+}

@@ -7,6 +7,10 @@
 #' @field mappingFunctions A list to store mapping functions with metadata.
 #' @field description A character string describing the study.
 #' @field version Integer specifying the version of the study.
+#' @examples
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' study$name
 #' @export
 #' @return A \code{BenchmarkStudy} object.
 BenchmarkStudy <- R6Class(

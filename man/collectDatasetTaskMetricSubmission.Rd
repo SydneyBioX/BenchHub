@@ -22,3 +22,14 @@ This helper builds the \code{DatasetTaskMetric} linking table automatically from
 the evidence-to-task assignments and the metric links already stored inside
 the \code{Trio} object.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+collectDatasetTaskMetricSubmission(
+  trio,
+  evidence_args = list(
+    datasetTaskID = "task_001",
+    evidenceName = "class_labels"
+  ),
+  task_args = BenchHub:::private_example_task_args()
+)
+}

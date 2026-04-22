@@ -25,3 +25,10 @@ A named list ready to pass as \code{task_args} to
 This helper gathers the task-level fields needed for the \code{DatasetTask}
 table. It does not modify the \code{Trio} object.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+collectTaskSubmissionInfo(
+  trio,
+  defaults = BenchHub:::private_example_task_args()
+)
+}

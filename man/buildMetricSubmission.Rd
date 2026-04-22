@@ -16,3 +16,7 @@ A \code{data.frame} matching the proposed \code{Metric} table schema.
 This helper creates one \code{Metric} row per metric in the Trio object. It does
 not upload anything and does not modify the existing writeCTD() path.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+buildMetricSubmission(trio)
+}

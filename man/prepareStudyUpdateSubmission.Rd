@@ -64,3 +64,13 @@ A named list containing the updated Study submission bundle.
 \description{
 Prepare an update submission from an existing Study version
 }
+\examples{
+result <- prepareStudyUpdateSubmission(
+  studyID = "study_001",
+  studies = BenchHub:::private_example_existing_study_rows(),
+  study_datasets = BenchHub:::private_example_study_dataset_rows(),
+  build_json = FALSE,
+  review = FALSE
+)
+names(result)
+}

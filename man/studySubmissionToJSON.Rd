@@ -17,3 +17,8 @@ A JSON string.
 \description{
 Convert a Study submission to JSON
 }
+\examples{
+submission <- BenchHub:::private_example_study_submission()
+json <- studySubmissionToJSON(submission)
+substr(json, 1, 20)
+}

@@ -20,3 +20,10 @@ This helper gathers user-supplied metric classification for each metric in a
 \code{Trio}. The metric names and wrappers still come from the Trio object and the
 package helper logic.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+collectMetricSubmissionInfo(
+  trio,
+  defaults = list(metricType = "label_based")
+)
+}

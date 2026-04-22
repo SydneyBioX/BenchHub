@@ -17,3 +17,8 @@ A JSON string.
 \description{
 Convert a combined Trio submission to JSON
 }
+\examples{
+submission <- BenchHub:::private_example_trio_submission()
+json <- trioSubmissionToJSON(submission)
+substr(json, 1, 20)
+}

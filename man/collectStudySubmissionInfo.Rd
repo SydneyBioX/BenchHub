@@ -34,3 +34,12 @@ A named list ready to pass into \code{buildStudySubmission()}.
 \description{
 Collect Study submission metadata
 }
+\examples{
+study <- BenchHub:::private_example_study()
+collectStudySubmissionInfo(
+  study,
+  datasetIDs = "dataset_001",
+  available_datasets = BenchHub:::private_example_available_datasets(),
+  existing_studies = BenchHub:::private_example_existing_studies()
+)
+}

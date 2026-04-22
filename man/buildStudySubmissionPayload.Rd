@@ -15,3 +15,8 @@ A named list with a top-level \code{payload} entry.
 \description{
 Convert a Study submission to payload structure
 }
+\examples{
+submission <- BenchHub:::private_example_study_submission()
+payload <- buildStudySubmissionPayload(submission)
+names(payload)
+}

@@ -21,3 +21,10 @@ This helper gathers the dataset-level fields needed for the \code{Dataset} table
 It reuses \code{Trio} metadata when already available and only prompts for the
 remaining values in interactive sessions.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+collectDatasetSubmissionInfo(
+  trio,
+  defaults = BenchHub:::private_example_dataset_args()
+)
+}

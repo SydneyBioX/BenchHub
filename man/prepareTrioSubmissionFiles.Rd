@@ -62,3 +62,14 @@ new submission path. It can either save dataset/evidence files locally so
 the user can upload them, or reuse an existing downloadable source already
 attached to the \code{Trio}.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+files <- prepareTrioSubmissionFiles(
+  trio,
+  outputDir = tempdir(),
+  saveData = TRUE,
+  saveEvidence = TRUE,
+  useExistingSource = FALSE
+)
+names(files)
+}

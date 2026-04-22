@@ -23,3 +23,9 @@ A data frame of StudyDataset rows linked to the supplied studyID.
 \description{
 Get linked StudyDataset rows by studyID
 }
+\examples{
+getSubmissionStudyDatasets(
+  "study_001",
+  study_datasets = BenchHub:::private_example_study_dataset_rows()
+)
+}

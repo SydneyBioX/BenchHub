@@ -52,3 +52,14 @@ submission backend.
 This helper is the first step in the new submission workflow. It does not
 upload anything and does not modify the existing writeCTD() path.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+buildDatasetSubmission(
+  trio,
+  dataType = "omics",
+  dataModality = "transcriptomics",
+  technology = "RNA-seq",
+  tissue = "blood",
+  status = "healthy"
+)
+}

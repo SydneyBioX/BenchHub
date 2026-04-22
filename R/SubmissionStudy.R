@@ -40,6 +40,11 @@ listSubmissionStudies <- function(
 #' @param ss Submission spreadsheet ID or URL.
 #'
 #' @return A one-row data frame for the requested Study.
+#' @examples
+#' getSubmissionStudy(
+#'   "study_001",
+#'   studies = BenchHub:::private_example_existing_study_rows()
+#' )
 #' @export
 getSubmissionStudy <- function(
     studyID,
@@ -68,6 +73,11 @@ getSubmissionStudy <- function(
 #' @param ss Submission spreadsheet ID or URL.
 #'
 #' @return A data frame of StudyDataset rows linked to the supplied studyID.
+#' @examples
+#' getSubmissionStudyDatasets(
+#'   "study_001",
+#'   study_datasets = BenchHub:::private_example_study_dataset_rows()
+#' )
 #' @export
 getSubmissionStudyDatasets <- function(
     studyID,
@@ -100,6 +110,14 @@ getSubmissionStudyDatasets <- function(
 #'   `version`, `type`, `protocolGist`, and `mappingFunctions`.
 #'
 #' @return A named list ready to pass into `buildStudySubmission()`.
+#' @examples
+#' study <- BenchHub:::private_example_study()
+#' collectStudySubmissionInfo(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   available_datasets = BenchHub:::private_example_available_datasets(),
+#'   existing_studies = BenchHub:::private_example_existing_studies()
+#' )
 #' @export
 collectStudySubmissionInfo <- function(
     study,
@@ -188,6 +206,13 @@ collectStudySubmissionInfo <- function(
 #' @param mappingFunctions Optional mapping functions gist URL.
 #'
 #' @return A named list containing `Study` and `StudyDataset`.
+#' @examples
+#' study <- BenchHub:::private_example_study()
+#' buildStudySubmission(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   existing_studies = BenchHub:::private_example_existing_studies()
+#' )
 #' @export
 buildStudySubmission <- function(
     study,
@@ -263,6 +288,10 @@ buildStudySubmission <- function(
 #' @param submission A submission object returned by `buildStudySubmission()`.
 #'
 #' @return A named list with a top-level `payload` entry.
+#' @examples
+#' submission <- BenchHub:::private_example_study_submission()
+#' payload <- buildStudySubmissionPayload(submission)
+#' names(payload)
 #' @export
 buildStudySubmissionPayload <- function(submission) {
   required_names <- c("Study", "StudyDataset")
@@ -299,6 +328,10 @@ buildStudySubmissionPayload <- function(submission) {
 #'
 #' @return A JSON string.
 #' @importFrom jsonlite toJSON
+#' @examples
+#' submission <- BenchHub:::private_example_study_submission()
+#' json <- studySubmissionToJSON(submission)
+#' substr(json, 1, 20)
 #' @export
 studySubmissionToJSON <- function(
     submission,
@@ -322,6 +355,15 @@ studySubmissionToJSON <- function(
 #' @param submittedBy Submitter email or identifier.
 #'
 #' @return A list containing request status information and response text.
+#' @examples
+#' \dontrun{
+#' submission <- BenchHub:::private_example_study_submission()
+#' submitStudySubmission(
+#'   submission,
+#'   url = "https://script.google.com/macros/s/example/exec",
+#'   submittedBy = "researcher@example.org"
+#' )
+#' }
 #' @export
 submitStudySubmission <- function(
     submission,
@@ -418,6 +460,17 @@ submitStudySubmission <- function(
 #' @param submittedBy Submitter email or identifier.
 #'
 #' @return A named list containing the Study submission bundle.
+#' @examples
+#' study <- BenchHub:::private_example_study()
+#' result <- prepareStudySubmission(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   available_datasets = BenchHub:::private_example_available_datasets(),
+#'   existing_studies = BenchHub:::private_example_existing_studies(),
+#'   build_json = FALSE,
+#'   review = FALSE
+#' )
+#' names(result)
 #' @export
 prepareStudySubmission <- function(
     study,
@@ -751,6 +804,15 @@ interactivePrepareStudySubmission <- function(
 #' @param submittedBy Submitter email or identifier.
 #'
 #' @return A named list containing the updated Study submission bundle.
+#' @examples
+#' result <- prepareStudyUpdateSubmission(
+#'   studyID = "study_001",
+#'   studies = BenchHub:::private_example_existing_study_rows(),
+#'   study_datasets = BenchHub:::private_example_study_dataset_rows(),
+#'   build_json = FALSE,
+#'   review = FALSE
+#' )
+#' names(result)
 #' @export
 prepareStudyUpdateSubmission <- function(
     studyID,

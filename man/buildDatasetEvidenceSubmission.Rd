@@ -32,3 +32,11 @@ This helper creates one \code{DatasetEvidence} row per supporting evidence entry
 in the Trio object. It does not upload anything and does not modify the
 existing writeCTD() path.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+buildDatasetEvidenceSubmission(
+  trio,
+  datasetTaskID = "task_001",
+  evidenceType = "experimental_ground_truth"
+)
+}

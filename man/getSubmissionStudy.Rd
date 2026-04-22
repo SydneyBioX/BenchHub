@@ -23,3 +23,9 @@ A one-row data frame for the requested Study.
 \description{
 Get one existing Study row by studyID
 }
+\examples{
+getSubmissionStudy(
+  "study_001",
+  studies = BenchHub:::private_example_existing_study_rows()
+)
+}

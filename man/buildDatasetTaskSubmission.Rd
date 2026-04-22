@@ -33,3 +33,12 @@ This helper creates one \code{DatasetTask} row per supporting evidence name in t
 Trio object. It does not upload anything and does not modify the existing
 writeCTD() path.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+buildDatasetTaskSubmission(
+  trio,
+  taskStage = "prediction",
+  taskType = "classification",
+  taskName = "class_prediction"
+)
+}

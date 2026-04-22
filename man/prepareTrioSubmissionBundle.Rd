@@ -52,3 +52,13 @@ prepare dataset/evidence files, prepare metric metadata, build the five-table
 submission object, and return the payload/JSON for inspection before calling
 \code{submitTrioSubmission()}.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+bundle <- prepareTrioSubmissionBundle(
+  trio = trio,
+  dataset_args = BenchHub:::private_example_dataset_args(),
+  task_args = BenchHub:::private_example_task_args(),
+  evidence_task_map = c(class_labels = "class_prediction")
+)
+names(bundle)
+}

@@ -23,3 +23,15 @@ A named list with \code{datasetTaskID}, \code{evidenceName},
 This helper gathers the evidence-to-task assignment and evidence type for
 each supporting evidence item in a \code{Trio}.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+task_args <- BenchHub:::private_example_task_args()
+collectEvidenceSubmissionInfo(
+  trio,
+  task_args = task_args,
+  defaults = list(
+    taskName = "class_prediction",
+    evidenceType = "experimental_ground_truth"
+  )
+)
+}

@@ -19,3 +19,13 @@ A list containing request status information and response text.
 \description{
 Submit a Study submission payload to Google Apps Script
 }
+\examples{
+\dontrun{
+submission <- BenchHub:::private_example_study_submission()
+submitStudySubmission(
+  submission,
+  url = "https://script.google.com/macros/s/example/exec",
+  submittedBy = "researcher@example.org"
+)
+}
+}

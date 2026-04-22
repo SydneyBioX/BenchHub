@@ -85,3 +85,21 @@ Figshare article; optionally uploads custom metrics to a GitHub gist; and
 returns all submission tables ready for review before calling
 \code{submitTrioSubmission()}.
 }
+\examples{
+trio <- BenchHub:::private_example_submission_trio()
+result <- writeSubmission(
+  trio = trio,
+  n_tasks = 1,
+  dataset_defaults = BenchHub:::private_example_dataset_args(),
+  task_defaults = BenchHub:::private_example_task_args(),
+  evidence_defaults = list(
+    taskName = "class_prediction",
+    evidenceType = "experimental_ground_truth"
+  ),
+  metric_defaults = list(metricType = "label_based"),
+  prepare_files = FALSE,
+  build_json = FALSE,
+  review = FALSE
+)
+names(result)
+}

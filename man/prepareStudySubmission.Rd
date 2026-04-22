@@ -79,3 +79,15 @@ A named list containing the Study submission bundle.
 \description{
 Prepare a Study submission bundle
 }
+\examples{
+study <- BenchHub:::private_example_study()
+result <- prepareStudySubmission(
+  study,
+  datasetIDs = "dataset_001",
+  available_datasets = BenchHub:::private_example_available_datasets(),
+  existing_studies = BenchHub:::private_example_existing_studies(),
+  build_json = FALSE,
+  review = FALSE
+)
+names(result)
+}

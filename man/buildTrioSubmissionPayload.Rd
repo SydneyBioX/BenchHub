@@ -17,3 +17,8 @@ A named list with a top-level \code{payload} entry ready for
 This helper converts the output of \code{buildTrioSubmission()} into the nested
 list structure used by the JSON payload in the prototype submission script.
 }
+\examples{
+submission <- BenchHub:::private_example_trio_submission()
+payload <- buildTrioSubmissionPayload(submission)
+names(payload)
+}

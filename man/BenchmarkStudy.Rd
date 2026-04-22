@@ -10,6 +10,11 @@ A \code{BenchmarkStudy} object.
 This class manages a collection of benchmark trios and mapping functions.
 It allows adding new trios, mapping functions, and running mappings on data.
 }
+\examples{
+study <- BenchmarkStudy$new(name = "example_study")
+study$description <- "A small example benchmark study."
+study$name
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
