@@ -26,9 +26,25 @@ This helper gathers the task-level fields needed for the \code{DatasetTask}
 table. It does not modify the \code{Trio} object.
 }
 \examples{
-trio <- BenchHub:::private_example_submission_trio()
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 collectTaskSubmissionInfo(
   trio,
-  defaults = BenchHub:::private_example_task_args()
+  defaults = list(
+    taskStage = "prediction",
+    taskType = "classification",
+    taskName = "class_prediction"
+  )
 )
 }

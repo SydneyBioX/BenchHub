@@ -16,7 +16,23 @@ A named list with a top-level \code{payload} entry.
 Convert a Study submission to payload structure
 }
 \examples{
-submission <- BenchHub:::private_example_study_submission()
+study <- BenchmarkStudy$new(name = "example_study")
+study$description <- "A small example benchmark study."
+existing_studies <- data.frame(
+  studyID = character(0),
+  studyName = character(0),
+  version = character(0),
+  description = character(0),
+  type = character(0),
+  protocolGist = character(0),
+  mappingFunctions = character(0),
+  stringsAsFactors = FALSE
+)
+submission <- buildStudySubmission(
+  study,
+  datasetIDs = "dataset_001",
+  existing_studies = existing_studies
+)
 payload <- buildStudySubmissionPayload(submission)
 names(payload)
 }

@@ -41,9 +41,19 @@ listSubmissionStudies <- function(
 #'
 #' @return A one-row data frame for the requested Study.
 #' @examples
+#' studies <- data.frame(
+#'   studyID = "study_001",
+#'   studyName = "example_study",
+#'   version = "0.0.1",
+#'   description = "A small example benchmark study.",
+#'   type = "original",
+#'   protocolGist = "",
+#'   mappingFunctions = "",
+#'   stringsAsFactors = FALSE
+#' )
 #' getSubmissionStudy(
 #'   "study_001",
-#'   studies = BenchHub:::private_example_existing_study_rows()
+#'   studies = studies
 #' )
 #' @export
 getSubmissionStudy <- function(
@@ -74,9 +84,15 @@ getSubmissionStudy <- function(
 #'
 #' @return A data frame of StudyDataset rows linked to the supplied studyID.
 #' @examples
+#' study_datasets <- data.frame(
+#'   studyDatasetID = "study_dataset_001",
+#'   studyID = "study_001",
+#'   datasetID = "dataset_001",
+#'   stringsAsFactors = FALSE
+#' )
 #' getSubmissionStudyDatasets(
 #'   "study_001",
-#'   study_datasets = BenchHub:::private_example_study_dataset_rows()
+#'   study_datasets = study_datasets
 #' )
 #' @export
 getSubmissionStudyDatasets <- function(
@@ -111,12 +127,28 @@ getSubmissionStudyDatasets <- function(
 #'
 #' @return A named list ready to pass into `buildStudySubmission()`.
 #' @examples
-#' study <- BenchHub:::private_example_study()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' available_datasets <- data.frame(
+#'   datasetID = "dataset_001",
+#'   name = "example_dataset",
+#'   stringsAsFactors = FALSE
+#' )
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
 #' collectStudySubmissionInfo(
 #'   study,
 #'   datasetIDs = "dataset_001",
-#'   available_datasets = BenchHub:::private_example_available_datasets(),
-#'   existing_studies = BenchHub:::private_example_existing_studies()
+#'   available_datasets = available_datasets,
+#'   existing_studies = existing_studies
 #' )
 #' @export
 collectStudySubmissionInfo <- function(
@@ -207,11 +239,22 @@ collectStudySubmissionInfo <- function(
 #'
 #' @return A named list containing `Study` and `StudyDataset`.
 #' @examples
-#' study <- BenchHub:::private_example_study()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
 #' buildStudySubmission(
 #'   study,
 #'   datasetIDs = "dataset_001",
-#'   existing_studies = BenchHub:::private_example_existing_studies()
+#'   existing_studies = existing_studies
 #' )
 #' @export
 buildStudySubmission <- function(
@@ -289,7 +332,23 @@ buildStudySubmission <- function(
 #'
 #' @return A named list with a top-level `payload` entry.
 #' @examples
-#' submission <- BenchHub:::private_example_study_submission()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
+#' submission <- buildStudySubmission(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   existing_studies = existing_studies
+#' )
 #' payload <- buildStudySubmissionPayload(submission)
 #' names(payload)
 #' @export
@@ -329,7 +388,23 @@ buildStudySubmissionPayload <- function(submission) {
 #' @return A JSON string.
 #' @importFrom jsonlite toJSON
 #' @examples
-#' submission <- BenchHub:::private_example_study_submission()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
+#' submission <- buildStudySubmission(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   existing_studies = existing_studies
+#' )
 #' json <- studySubmissionToJSON(submission)
 #' substr(json, 1, 20)
 #' @export
@@ -357,7 +432,23 @@ studySubmissionToJSON <- function(
 #' @return A list containing request status information and response text.
 #' @examples
 #' \dontrun{
-#' submission <- BenchHub:::private_example_study_submission()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
+#' submission <- buildStudySubmission(
+#'   study,
+#'   datasetIDs = "dataset_001",
+#'   existing_studies = existing_studies
+#' )
 #' submitStudySubmission(
 #'   submission,
 #'   url = "https://script.google.com/macros/s/example/exec",
@@ -461,12 +552,28 @@ submitStudySubmission <- function(
 #'
 #' @return A named list containing the Study submission bundle.
 #' @examples
-#' study <- BenchHub:::private_example_study()
+#' study <- BenchmarkStudy$new(name = "example_study")
+#' study$description <- "A small example benchmark study."
+#' available_datasets <- data.frame(
+#'   datasetID = "dataset_001",
+#'   name = "example_dataset",
+#'   stringsAsFactors = FALSE
+#' )
+#' existing_studies <- data.frame(
+#'   studyID = character(0),
+#'   studyName = character(0),
+#'   version = character(0),
+#'   description = character(0),
+#'   type = character(0),
+#'   protocolGist = character(0),
+#'   mappingFunctions = character(0),
+#'   stringsAsFactors = FALSE
+#' )
 #' result <- prepareStudySubmission(
 #'   study,
 #'   datasetIDs = "dataset_001",
-#'   available_datasets = BenchHub:::private_example_available_datasets(),
-#'   existing_studies = BenchHub:::private_example_existing_studies(),
+#'   available_datasets = available_datasets,
+#'   existing_studies = existing_studies,
 #'   build_json = FALSE,
 #'   review = FALSE
 #' )
@@ -805,10 +912,26 @@ interactivePrepareStudySubmission <- function(
 #'
 #' @return A named list containing the updated Study submission bundle.
 #' @examples
+#' studies <- data.frame(
+#'   studyID = "study_001",
+#'   studyName = "example_study",
+#'   version = "0.0.1",
+#'   description = "A small example benchmark study.",
+#'   type = "original",
+#'   protocolGist = "",
+#'   mappingFunctions = "",
+#'   stringsAsFactors = FALSE
+#' )
+#' study_datasets <- data.frame(
+#'   studyDatasetID = "study_dataset_001",
+#'   studyID = "study_001",
+#'   datasetID = "dataset_001",
+#'   stringsAsFactors = FALSE
+#' )
 #' result <- prepareStudyUpdateSubmission(
 #'   studyID = "study_001",
-#'   studies = BenchHub:::private_example_existing_study_rows(),
-#'   study_datasets = BenchHub:::private_example_study_dataset_rows(),
+#'   studies = studies,
+#'   study_datasets = study_datasets,
 #'   build_json = FALSE,
 #'   review = FALSE
 #' )

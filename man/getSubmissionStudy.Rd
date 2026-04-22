@@ -24,8 +24,18 @@ A one-row data frame for the requested Study.
 Get one existing Study row by studyID
 }
 \examples{
+studies <- data.frame(
+  studyID = "study_001",
+  studyName = "example_study",
+  version = "0.0.1",
+  description = "A small example benchmark study.",
+  type = "original",
+  protocolGist = "",
+  mappingFunctions = "",
+  stringsAsFactors = FALSE
+)
 getSubmissionStudy(
   "study_001",
-  studies = BenchHub:::private_example_existing_study_rows()
+  studies = studies
 )
 }

@@ -65,10 +65,26 @@ A named list containing the updated Study submission bundle.
 Prepare an update submission from an existing Study version
 }
 \examples{
+studies <- data.frame(
+  studyID = "study_001",
+  studyName = "example_study",
+  version = "0.0.1",
+  description = "A small example benchmark study.",
+  type = "original",
+  protocolGist = "",
+  mappingFunctions = "",
+  stringsAsFactors = FALSE
+)
+study_datasets <- data.frame(
+  studyDatasetID = "study_dataset_001",
+  studyID = "study_001",
+  datasetID = "dataset_001",
+  stringsAsFactors = FALSE
+)
 result <- prepareStudyUpdateSubmission(
   studyID = "study_001",
-  studies = BenchHub:::private_example_existing_study_rows(),
-  study_datasets = BenchHub:::private_example_study_dataset_rows(),
+  studies = studies,
+  study_datasets = study_datasets,
   build_json = FALSE,
   review = FALSE
 )

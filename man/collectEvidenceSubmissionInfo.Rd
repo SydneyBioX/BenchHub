@@ -24,8 +24,24 @@ This helper gathers the evidence-to-task assignment and evidence type for
 each supporting evidence item in a \code{Trio}.
 }
 \examples{
-trio <- BenchHub:::private_example_submission_trio()
-task_args <- BenchHub:::private_example_task_args()
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
+task_args <- list(
+  taskStage = "prediction",
+  taskType = "classification",
+  taskName = "class_prediction"
+)
 collectEvidenceSubmissionInfo(
   trio,
   task_args = task_args,
