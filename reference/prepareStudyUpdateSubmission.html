@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -141,16 +141,31 @@ submission web app.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">prepareStudyUpdateSubmission</span><span class="op">(</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  studyID <span class="op">=</span> <span class="st">"study_001"</span>,</span></span>
-<span class="r-in"><span>  studies <span class="op">=</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_existing_study_rows</span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  study_datasets <span class="op">=</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_study_dataset_rows</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  studyName <span class="op">=</span> <span class="st">"example_study"</span>,</span></span>
+<span class="r-in"><span>  version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span></span>
+<span class="r-in"><span>  description <span class="op">=</span> <span class="st">"A small example benchmark study."</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"original"</span>,</span></span>
+<span class="r-in"><span>  protocolGist <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  mappingFunctions <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">study_datasets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  studyDatasetID <span class="op">=</span> <span class="st">"study_dataset_001"</span>,</span></span>
+<span class="r-in"><span>  studyID <span class="op">=</span> <span class="st">"study_001"</span>,</span></span>
+<span class="r-in"><span>  datasetID <span class="op">=</span> <span class="st">"dataset_001"</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">prepareStudyUpdateSubmission</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  studyID <span class="op">=</span> <span class="st">"study_001"</span>,</span></span>
+<span class="r-in"><span>  studies <span class="op">=</span> <span class="va">studies</span>,</span></span>
+<span class="r-in"><span>  study_datasets <span class="op">=</span> <span class="va">study_datasets</span>,</span></span>
 <span class="r-in"><span>  build_json <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  review <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in private_resolve_submission_studies(studies = studies, ss = ss):</span> object 'private_example_existing_study_rows' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "study_info" "submission" "payload"   </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

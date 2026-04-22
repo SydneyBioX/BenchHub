@@ -33,9 +33,22 @@ A one-row data frame for the requested Study.
 ## Examples
 
 ``` r
+studies <- data.frame(
+  studyID = "study_001",
+  studyName = "example_study",
+  version = "0.0.1",
+  description = "A small example benchmark study.",
+  type = "original",
+  protocolGist = "",
+  mappingFunctions = "",
+  stringsAsFactors = FALSE
+)
 getSubmissionStudy(
   "study_001",
-  studies = BenchHub:::private_example_existing_study_rows()
+  studies = studies
 )
-#> Error in private_resolve_submission_studies(studies = studies, ss = ss): object 'private_example_existing_study_rows' not found
+#>     studyID     studyName version                      description     type
+#> 1 study_001 example_study   0.0.1 A small example benchmark study. original
+#>   protocolGist mappingFunctions
+#> 1                              
 ```

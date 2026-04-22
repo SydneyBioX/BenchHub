@@ -13,7 +13,7 @@ resulting Metric table rows."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,10 +96,38 @@ GitHub gist.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_submission_trio</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'private_example_submission_trio' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">labels</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va"><a href="Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>,</span></span>
+<span class="r-in"><span>  evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>class_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    evidence <span class="op">=</span> <span class="va">labels</span>,</span></span>
+<span class="r-in"><span>    metrics <span class="op">=</span> <span class="st">"macroF1Metric"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>macroF1Metric <span class="op">=</span> <span class="va">macroF1Metric</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"example_dataset"</span>,</span></span>
+<span class="r-in"><span>  description <span class="op">=</span> <span class="st">"A small example dataset."</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">prepareTrioSubmissionMetrics</span><span class="op">(</span><span class="va">trio</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'trio' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Metric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               metricID    metricName     wrapper_r metricType metricSourceType</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> macroF1Metric     &lt;NA&gt; macroF1Metric macroF1Metric       &lt;NA&gt;             gist</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               metricKey wrapper_py gist_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> macroF1Metric      &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $gist</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $custom_metric_lines</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "macroF1Metric &lt;- function (evidence, predicted) "                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "{"                                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "    2 * macroPrecMetric(evidence, predicted) * macroRecMetric(evidence, "            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "        predicted)/(macroPrecMetric(evidence, predicted) + macroRecMetric(evidence, "</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "        predicted))"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "}"                                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "macroF1MetricArgs &lt;- NULL"                                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

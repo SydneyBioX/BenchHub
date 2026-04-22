@@ -34,10 +34,24 @@ A named list with `datasetTaskID`, `evidenceName`, `evidenceType`, and
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
-task_args <- BenchHub:::private_example_task_args()
-#> Error: object 'private_example_task_args' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
+task_args <- list(
+  taskStage = "prediction",
+  taskType = "classification",
+  taskName = "class_prediction"
+)
 collectEvidenceSubmissionInfo(
   trio,
   task_args = task_args,
@@ -46,5 +60,17 @@ collectEvidenceSubmissionInfo(
     evidenceType = "experimental_ground_truth"
   )
 )
-#> Error: object 'trio' not found
+#> $datasetTaskID
+#> [1] "SUBMISSION_TASK_1"
+#> 
+#> $evidenceName
+#> [1] "class_labels"
+#> 
+#> $evidenceType
+#> [1] "experimental_ground_truth"
+#> 
+#> $evidence_task_map
+#>       class_labels 
+#> "class_prediction" 
+#> 
 ```

@@ -33,15 +33,31 @@ A `data.frame` matching the `DatasetTaskMetric` schema.
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 collectDatasetTaskMetricSubmission(
   trio,
   evidence_args = list(
     datasetTaskID = "task_001",
     evidenceName = "class_labels"
   ),
-  task_args = BenchHub:::private_example_task_args()
+  task_args = list(
+    taskStage = "prediction",
+    taskType = "classification",
+    taskName = "class_prediction"
+  )
 )
-#> Error: object 'trio' not found
+#> [1] datasetTaskMetricID datasetTaskID       metricID           
+#> <0 rows> (or 0-length row.names)
 ```

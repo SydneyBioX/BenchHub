@@ -46,8 +46,36 @@ A list with entries `Metric`, `gist`, and `custom_metric_lines`.
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 prepareTrioSubmissionMetrics(trio)
-#> Error: object 'trio' not found
+#> $Metric
+#>               metricID    metricName     wrapper_r metricType metricSourceType
+#> macroF1Metric     <NA> macroF1Metric macroF1Metric       <NA>             gist
+#>               metricKey wrapper_py gist_url
+#> macroF1Metric      <NA>       <NA>     <NA>
+#> 
+#> $gist
+#> NULL
+#> 
+#> $custom_metric_lines
+#> [1] "macroF1Metric <- function (evidence, predicted) "                                    
+#> [2] "{"                                                                                   
+#> [3] "    2 * macroPrecMetric(evidence, predicted) * macroRecMetric(evidence, "            
+#> [4] "        predicted)/(macroPrecMetric(evidence, predicted) + macroRecMetric(evidence, "
+#> [5] "        predicted))"                                                                 
+#> [6] "}"                                                                                   
+#> [7] "macroF1MetricArgs <- NULL"                                                           
+#> 
 ```

@@ -82,15 +82,37 @@ A named list containing the built `submission`, plus optional `files`,
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
+dataset_args <- list(
+  dataType = "omics",
+  dataModality = "transcriptomics",
+  technology = "RNA-seq",
+  tissue = "blood",
+  status = "healthy"
+)
+task_args <- list(
+  taskStage = "prediction",
+  taskType = "classification",
+  taskName = "class_prediction"
+)
 bundle <- prepareTrioSubmissionBundle(
   trio = trio,
-  dataset_args = BenchHub:::private_example_dataset_args(),
-  task_args = BenchHub:::private_example_task_args(),
+  dataset_args = dataset_args,
+  task_args = task_args,
   evidence_task_map = c(class_labels = "class_prediction")
 )
-#> Error: object 'trio' not found
 names(bundle)
-#> Error: object 'bundle' not found
+#> [1] "submission" "files"      "metrics"    "payload"   
 ```

@@ -60,12 +60,31 @@ A named list containing `Study` and `StudyDataset`.
 ## Examples
 
 ``` r
-study <- BenchHub:::private_example_study()
-#> Error: object 'private_example_study' not found
+study <- BenchmarkStudy$new(name = "example_study")
+study$description <- "A small example benchmark study."
+existing_studies <- data.frame(
+  studyID = character(0),
+  studyName = character(0),
+  version = character(0),
+  description = character(0),
+  type = character(0),
+  protocolGist = character(0),
+  mappingFunctions = character(0),
+  stringsAsFactors = FALSE
+)
 buildStudySubmission(
   study,
   datasetIDs = "dataset_001",
-  existing_studies = BenchHub:::private_example_existing_studies()
+  existing_studies = existing_studies
 )
-#> Error: object 'study' not found
+#> $Study
+#>   studyID     studyName version                      description     type
+#> 1    <NA> example_study   0.0.1 A small example benchmark study. original
+#>   protocolGist mappingFunctions
+#> 1         <NA>             <NA>
+#> 
+#> $StudyDataset
+#>   studyDatasetID studyID   datasetID
+#> 1           <NA>    <NA> dataset_001
+#> 
 ```

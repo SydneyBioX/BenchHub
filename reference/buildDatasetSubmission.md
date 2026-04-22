@@ -73,8 +73,19 @@ the submission backend.
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 buildDatasetSubmission(
   trio,
   dataType = "omics",
@@ -83,5 +94,8 @@ buildDatasetSubmission(
   tissue = "blood",
   status = "healthy"
 )
-#> Error: object 'trio' not found
+#>   datasetID            name source    datasourceID dataType    dataModality
+#> 1      <NA> example_dataset   <NA> example_dataset    omics transcriptomics
+#>   technology              description  doi numSamples organism tissue  status
+#> 1    RNA-seq A small example dataset. <NA>          3     <NA>  blood healthy
 ```

@@ -33,9 +33,16 @@ A data frame of StudyDataset rows linked to the supplied studyID.
 ## Examples
 
 ``` r
+study_datasets <- data.frame(
+  studyDatasetID = "study_dataset_001",
+  studyID = "study_001",
+  datasetID = "dataset_001",
+  stringsAsFactors = FALSE
+)
 getSubmissionStudyDatasets(
   "study_001",
-  study_datasets = BenchHub:::private_example_study_dataset_rows()
+  study_datasets = study_datasets
 )
-#> Error in private_resolve_submission_study_datasets(study_datasets = study_datasets,     ss = ss): object 'private_example_study_dataset_rows' not found
+#>      studyDatasetID   studyID   datasetID
+#> 1 study_dataset_001 study_001 dataset_001
 ```

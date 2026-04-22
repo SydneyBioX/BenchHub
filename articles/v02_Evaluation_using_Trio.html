@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -200,7 +200,7 @@ each split.</p>
 <span>  <span class="va">y_train</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="va">trainIDs</span><span class="op">]</span></span>
 <span>  <span class="va">y_test</span>  <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="va">trainIDs</span><span class="op">]</span></span>
 <span></span>
-<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu">glmnet</span><span class="fu">::</span><span class="fu"><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span></span>
+<span>  <span class="va">cv_lasso</span> <span class="op">&lt;-</span> <span class="fu">glmnet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>,</span>
 <span>    y <span class="op">=</span> <span class="va">y_train</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -208,7 +208,7 @@ each split.</p>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">lam</span> <span class="op">&lt;-</span> <span class="va">cv_lasso</span><span class="op">$</span><span class="va">lambda.1se</span></span>
 <span></span>
-<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">glmnet</span><span class="fu">::</span><span class="fu"><a href="https://glmnet.stanford.edu/reference/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">glmnet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/glmnet/man/glmnet.html" class="external-link">glmnet</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span>,</span>
 <span>    y <span class="op">=</span> <span class="va">y_train</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -388,7 +388,7 @@ functions in <code>BenchmarkInsights</code>.</p>
 <span><span class="co">##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.5  forcats_1.0.1   </span></span>
 <span><span class="co">##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.2      readr_2.2.0     </span></span>
 <span><span class="co">##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.2    tidyverse_2.0.0 </span></span>
-<span><span class="co">## [13] BenchHub_0.99.13 BiocStyle_2.38.0</span></span>
+<span><span class="co">## [13] BenchHub_0.99.14 BiocStyle_2.38.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           </span></span>

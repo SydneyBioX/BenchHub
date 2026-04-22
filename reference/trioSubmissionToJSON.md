@@ -26,10 +26,38 @@ A JSON string.
 ## Examples
 
 ``` r
-submission <- BenchHub:::private_example_trio_submission()
-#> Error: object 'private_example_trio_submission' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
+submission <- buildTrioSubmission(
+  trio = trio,
+  dataset_args = list(
+    dataType = "omics",
+    dataModality = "transcriptomics",
+    technology = "RNA-seq",
+    tissue = "blood",
+    status = "healthy"
+  ),
+  task_args = list(
+    taskStage = "prediction",
+    taskType = "classification",
+    taskName = "class_prediction"
+  ),
+  evidence_task_map = c(class_labels = "class_prediction")
+)
 json <- trioSubmissionToJSON(submission)
-#> Error: object 'submission' not found
 substr(json, 1, 20)
-#> Error: object 'json' not found
+#> {
+#>   "payload": {
+#>     
 ```

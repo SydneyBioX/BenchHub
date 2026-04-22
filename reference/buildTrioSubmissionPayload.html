@@ -9,7 +9,7 @@ list structure used by the JSON payload in the prototype submission script."></h
 
     <a class="navbar-brand me-2" href="../index.html">BenchHub</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,12 +68,38 @@ list structure used by the JSON payload in the prototype submission script.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">submission</span> <span class="op">&lt;-</span> <span class="fu">BenchHub</span><span class="fu">:::</span><span class="fu">private_example_trio_submission</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'private_example_trio_submission' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">labels</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">trio</span> <span class="op">&lt;-</span> <span class="va"><a href="Trio.html">Trio</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>,</span></span>
+<span class="r-in"><span>  evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>class_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    evidence <span class="op">=</span> <span class="va">labels</span>,</span></span>
+<span class="r-in"><span>    metrics <span class="op">=</span> <span class="st">"macroF1Metric"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>macroF1Metric <span class="op">=</span> <span class="va">macroF1Metric</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"example_dataset"</span>,</span></span>
+<span class="r-in"><span>  description <span class="op">=</span> <span class="st">"A small example dataset."</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">submission</span> <span class="op">&lt;-</span> <span class="fu"><a href="buildTrioSubmission.html">buildTrioSubmission</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  trio <span class="op">=</span> <span class="va">trio</span>,</span></span>
+<span class="r-in"><span>  dataset_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    dataType <span class="op">=</span> <span class="st">"omics"</span>,</span></span>
+<span class="r-in"><span>    dataModality <span class="op">=</span> <span class="st">"transcriptomics"</span>,</span></span>
+<span class="r-in"><span>    technology <span class="op">=</span> <span class="st">"RNA-seq"</span>,</span></span>
+<span class="r-in"><span>    tissue <span class="op">=</span> <span class="st">"blood"</span>,</span></span>
+<span class="r-in"><span>    status <span class="op">=</span> <span class="st">"healthy"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  task_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    taskStage <span class="op">=</span> <span class="st">"prediction"</span>,</span></span>
+<span class="r-in"><span>    taskType <span class="op">=</span> <span class="st">"classification"</span>,</span></span>
+<span class="r-in"><span>    taskName <span class="op">=</span> <span class="st">"class_prediction"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  evidence_task_map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>class_labels <span class="op">=</span> <span class="st">"class_prediction"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">payload</span> <span class="op">&lt;-</span> <span class="fu">buildTrioSubmissionPayload</span><span class="op">(</span><span class="va">submission</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'submission' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">payload</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'payload' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "payload"          "submission_links"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

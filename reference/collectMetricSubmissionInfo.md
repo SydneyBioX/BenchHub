@@ -28,11 +28,28 @@ A named list ready to merge into the `Metric` submission table.
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 collectMetricSubmissionInfo(
   trio,
   defaults = list(metricType = "label_based")
 )
-#> Error: object 'trio' not found
+#> $metricName
+#> [1] "macroF1Metric"
+#> 
+#> $metricType
+#> macroF1Metric 
+#> "label_based" 
+#> 
 ```

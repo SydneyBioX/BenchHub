@@ -120,13 +120,34 @@ metric metadata, the final `submission`, and optional `payload`/`json`.
 ## Examples
 
 ``` r
-trio <- BenchHub:::private_example_submission_trio()
-#> Error: object 'private_example_submission_trio' not found
+data <- data.frame(feature = c(1, 2, 3), row.names = paste0("sample", 1:3))
+labels <- factor(c("A", "B", "A"))
+names(labels) <- rownames(data)
+trio <- Trio$new(
+  data = data,
+  evidence = list(class_labels = list(
+    evidence = labels,
+    metrics = "macroF1Metric"
+  )),
+  metrics = list(macroF1Metric = macroF1Metric),
+  name = "example_dataset",
+  description = "A small example dataset."
+)
 result <- writeSubmission(
   trio = trio,
   n_tasks = 1,
-  dataset_defaults = BenchHub:::private_example_dataset_args(),
-  task_defaults = BenchHub:::private_example_task_args(),
+  dataset_defaults = list(
+    dataType = "omics",
+    dataModality = "transcriptomics",
+    technology = "RNA-seq",
+    tissue = "blood",
+    status = "healthy"
+  ),
+  task_defaults = list(
+    taskStage = "prediction",
+    taskType = "classification",
+    taskName = "class_prediction"
+  ),
   evidence_defaults = list(
     taskName = "class_prediction",
     evidenceType = "experimental_ground_truth"
@@ -136,7 +157,7 @@ result <- writeSubmission(
   build_json = FALSE,
   review = FALSE
 )
-#> Error: object 'trio' not found
 names(result)
-#> Error: object 'result' not found
+#> [1] "dataset_args"  "task_args"     "evidence_args" "metric_args"  
+#> [5] "files"         "metrics"       "submission"    "payload"      
 ```

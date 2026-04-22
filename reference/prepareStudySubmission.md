@@ -120,17 +120,31 @@ A named list containing the Study submission bundle.
 ## Examples
 
 ``` r
-study <- BenchHub:::private_example_study()
-#> Error: object 'private_example_study' not found
+study <- BenchmarkStudy$new(name = "example_study")
+study$description <- "A small example benchmark study."
+available_datasets <- data.frame(
+  datasetID = "dataset_001",
+  name = "example_dataset",
+  stringsAsFactors = FALSE
+)
+existing_studies <- data.frame(
+  studyID = character(0),
+  studyName = character(0),
+  version = character(0),
+  description = character(0),
+  type = character(0),
+  protocolGist = character(0),
+  mappingFunctions = character(0),
+  stringsAsFactors = FALSE
+)
 result <- prepareStudySubmission(
   study,
   datasetIDs = "dataset_001",
-  available_datasets = BenchHub:::private_example_available_datasets(),
-  existing_studies = BenchHub:::private_example_existing_studies(),
+  available_datasets = available_datasets,
+  existing_studies = existing_studies,
   build_json = FALSE,
   review = FALSE
 )
-#> Error: object 'study' not found
 names(result)
-#> Error: object 'result' not found
+#> [1] "study_info" "submission" "payload"   
 ```
