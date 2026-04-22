@@ -168,7 +168,7 @@ Describe the benchmark task and dataset.
 
 "
       writeLines(vignetteText, con = outputPath)
-      message(paste("Vignette template written to:", outputPath))
+      message("Vignette template written to:", outputPath)
     },
 
     #' @description
