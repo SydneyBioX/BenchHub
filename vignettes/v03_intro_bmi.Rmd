@@ -14,7 +14,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-```{r}
+```{r load-package}
 library(BenchHub)
 library(readr)
 library(dplyr)
@@ -49,7 +49,7 @@ dataframe includes fixed name columns: `datasetID`, `method`,
 `evidence`, `metric`, and `result`. Here I will use the benchmark result
 from SpatialSimBench to create a new object.
 
-```{r}
+```{r load-result}
 result_path <- system.file("extdata", "spatialsimbench_result.csv", package = "BenchHub")
 spatialsimbench_result <- read_csv(result_path)
 glimpse(spatialsimbench_result)
@@ -60,7 +60,7 @@ formatted as the required dataframe. However, if you use your own
 benchmark evaluation results, you ensure they adhere to the expected
 format.
 
-```{r}
+```{r create-bmi}
 bmi <- BenchmarkInsights$new(spatialsimbench_result)
 bmi
 ```
@@ -68,7 +68,7 @@ bmi
 If you have additional evaluation result, you can use
 `addevalSummary()`. Here is the example:
 
-```{r}
+```{r addeval}
 add_result <- data.frame(
   datasetID = rep("BREAST", 9),
   method = c(
@@ -90,7 +90,7 @@ bmi$addevalSummary(add_result)
 If you add additional metadata of method, you can use `addMetadata()`.
 Here is the example:
 
-```{r}
+```{r addmeta}
 metadata_srtsim <- data.frame(
   method = "SRTsim",
   year = 2023,
@@ -284,6 +284,6 @@ robustness across methods.
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
