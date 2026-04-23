@@ -127,9 +127,9 @@ BenchmarkInsights <- R6::R6Class(
       
       palettes <- list(performance_score = "Blues")
       
-      heatmap <- suppressMessages(suppressWarnings(funkyheatmap::funky_heatmap(
+      heatmap <- funkyheatmap::funky_heatmap(
         reshaped_df, column_info = cinfo, palettes = palettes
-      )))
+      )
       
 
       return(heatmap)
@@ -334,12 +334,12 @@ BenchmarkInsights <- R6::R6Class(
         select_if(is.numeric) %>%
         cor(use = "pairwise.complete.obs")
 
-      p1 <- suppressWarnings(ggcorrplot::ggcorrplot(
+      p1 <-  ggcorrplot::ggcorrplot(
         cor_matrix,
         method = "square",
         type = "lower",
         lab = TRUE
-      )) +
+      ) +
         theme(
           axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
           panel.grid.major = element_blank(),
@@ -398,10 +398,10 @@ BenchmarkInsights <- R6::R6Class(
 
       to_plot <- dotwhisker::relabel_predictors(to_plot, predictor_labels)
 
-      g <- suppressWarnings(dotwhisker::dwplot(
+      g <- dotwhisker::dwplot(
         to_plot,
         vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)
-      )) +
+      ) +
         labs(
           x = "Regression coefficient"
         ) +
