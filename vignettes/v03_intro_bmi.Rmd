@@ -142,7 +142,7 @@ summarize evaluation results across datasets. This helps identify
 overall trends, making it easier to compare methods and performance
 differences.
 
-```{r, fig.width = 10, fig.height = 8, fig.cap = "Fig.1 Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])."}
+```{r heatmap, fig.width = 10, fig.height = 8, fig.cap = "Fig.1 Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])."}
 bmi$getHeatmap()
 ```
 
@@ -164,7 +164,7 @@ use a correlation plot to examine how evidence, metrics, and methods are
 interrelated. This helps identify patterns, redundancies, or
 dependencies among evaluation components.
 
-```{r, fig.cap = "Fig.2 Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association."}
+```{r corplot, fig.cap = "Fig.2 Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association."}
 bmi$getCorplot(input_type = "method")
 ```
 
@@ -184,7 +184,7 @@ use a scatter plot. This visualization helps assess how well two metrics
 align or diverge across different methods, providing insights into
 trade-offs and performance consistency.
 
-```{r, fig.cap = "Fig.3 Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics."}
+```{r scatterplot, fig.cap = "Fig.3 Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics."}
 bmi$getScatterplot(variables = c("recall", "precision"))
 ```
 
@@ -201,7 +201,7 @@ visualize trends in computational time and memory usage across different
 conditions. This helps identify how methods perform as data complexity
 increases, revealing potential efficiency trade-offs.
 
-```{r, fig.cap = "Fig.4 Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions."}
+```{r lineplot, fig.cap = "Fig.4 Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions."}
 bmi$getLineplot(metricVariable = "memory")
 ```
 
@@ -221,7 +221,7 @@ metrics and methods. This allows us to quantify and compare the impact
 of different metrics, helping to identify the most critical evaluation
 factors.
 
-```{r, fig.cap = "Fig.5 Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods."}
+```{r forestplot, fig.cap = "Fig.5 Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods."}
 bmi$getForestplot(input_group = "metric", input_model = "method")
 ```
 
@@ -250,7 +250,7 @@ a given metric, we use a boxplot. This visualization helps assess the
 variability of method performance, highlighting robustness or
 instability when applied to different datasets.
 
-```{r, fig.cap = "Fig.6 Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets."}
+```{r boxplot, fig.cap = "Fig.6 Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets."}
 bmi$getBoxplot(metricVariable = "KDEstat", evidenceVariable = "scaledVar")
 ```
 
