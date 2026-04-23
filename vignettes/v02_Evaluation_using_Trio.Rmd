@@ -17,7 +17,7 @@ library(glmnet)
 
 The `Trio` object in `BenchHub` can take datasets provided by users. To demonstrate this workflow, we use the `lubomski_microbiome_data` example dataset distributed with `BenchHub`. We first load the example objects into a temporary environment to avoid placing `x` and `lubomPD` directly into the global workspace. The dataset contains two objects: `x`, a 575 by 1192 matrix of microbial abundances for 575 samples, and `lubomPD`, a binary factor indicating Parkinson's disease (`PD`) or healthy control (`HC`) status for each sample.
 
-```{r}
+```{r import-data}
 # import the microbiome data into a temporary environment
 exampleEnv <- new.env(parent = emptyenv())
 data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
@@ -41,7 +41,7 @@ The task we'll be evaluating uses a binary classification task where each sample
 
 To initialise a Trio object, we use a `new()` method.
 
-```{r}
+```{r initialise-trio}
 trio <- Trio$new(data = x, 
                  evidence = list(
                    Diagnosis = list(
@@ -64,7 +64,7 @@ In this example, we show a typical classification scenario to classify the patie
 
 Step 1: Obtain relevant data for the model. To build a model, the following code will extract the data matrix and patient status outcome from `Trio` object.
 
-```{r}
+```{r gold-standard}
 # get the gold standard from the Trio object
 x <- trio$data
 y <- trio$getEvidence("Diagnosis")
@@ -72,7 +72,7 @@ y <- trio$getEvidence("Diagnosis")
 
 Step 2: For repeated cross-validation, the `split()` function will split the `y` vector (i.e., `evidence`) into the number of folds and repeats users want. In this case we used `n_fold = 2` and `n_repeat = 5` (i.e., 2-fold cross-validation with 10 repeats). Then users can get cross-validation indices (`CVindices`) for each sample, through `splitIndices`. This gives a simple list where each element represents a combination of folds and repeats for each sample.
 
-```{r}
+```{r train-test}
 # get train and test indices
 trio$split(y = y, n_fold = 2, n_repeat = 5)
 CVindices <- trio$splitIndices
@@ -86,7 +86,7 @@ Once predictions are obtained for the test set, we pass them to Trio using the s
 
 We first construct an explicit cross-validation plan that records fold and repeat identifiers, and then iterate over this plan to evaluate each split.
 
-```{r}
+```{r cross-validation}
 set.seed(1234)
 library(tibble)
 
@@ -185,7 +185,7 @@ Here, we use the microbiome dataset to demonstrate the above case.
 
 Step 1: Simulate a matrix of the same size as the microbiome data using negative binomial. Step 2: Define a function that calculate the sparsity of a given matrix. Step 3: Define a metric that compare difference of two values. Step 4: Evaluate the difference in sparsity of the microbiome data and the simulated data.
 
-```{r}
+```{r simulate}
 set.seed(1)
 
 # generate a simulated matrix
@@ -205,7 +205,7 @@ calc_diff <- function(evidence, predicted) {
 }
 ```
 
-```{r}
+```{r add-metric}
 # add metric that we just defined
 trio$addMetric(name = "Difference", metric = calc_diff)
 
@@ -231,7 +231,7 @@ The result dataframe obtained from `Trio` evaluation can be passed to `Benchmark
 
 Note, to make the result dataframe compatible for BenchmarkInsights, please make sure the dataframe is in the format shown below, where the column names are "datasetID", "method", "evidence", "metric" , "result", and that there is one row for each result.
 
-```{r}
+```{r get-result}
 # in the with cross validation result, we need to average the results from multiple repeats to give one value
 result <- result %>%
   dplyr::group_by(datasetID, method, evidence, metric) %>%
@@ -245,6 +245,6 @@ Please see Vignette 3 for the details on the visualisations and functions in `Be
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
