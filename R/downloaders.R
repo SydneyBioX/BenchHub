@@ -417,6 +417,14 @@ downloadSubmissionTrio <- function(
 #' @param cachePath Directory for downloaded files. Defaults to `tempdir()`.
 #'
 #' @return A populated `BenchmarkStudy` object.
+#' @examples
+#' if (interactive()) {
+#'   study <- downloadSubmissionStudy(
+#'     studyID =  "ST005", 
+#'     cachePath = tempdir()
+#'   )
+#'   study
+#' }
 #' @export
 downloadSubmissionStudy <- function(
     studyID,
