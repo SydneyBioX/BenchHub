@@ -319,13 +319,14 @@ getTrioCachePath <- function(cachePath) {
 # @noRd
 read_public_sheet <- function(ss, sheet, ...) {
   googlesheets4::gs4_deauth()
-  suppressMessages(
+
+  googlesheets4::with_gs4_quiet({
     googlesheets4::read_sheet(
       ss = ss,
       sheet = sheet,
       ...
     )
-  )
+  })
 }
 
 
