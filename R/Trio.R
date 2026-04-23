@@ -1759,21 +1759,20 @@ Trio <- R6::R6Class(
       evidence <- evidenceMetaData |> purrr::pluck("Supporting Evidence")
 
       # get the relevant metrics and respective information from the sheet.
-      metrics <- suppressMessages(
+     metrics <- googlesheets4::with_gs4_quiet({
         read_public_sheet(
           ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
           sheet = "Task-Evidence Type-Metric"
         ) |>
-          dplyr::filter(`Evidence Type` %in% evidence) %>%
+          dplyr::filter(`Evidence Type` %in% evidence) |>
           dplyr::left_join(
-            .,
             read_public_sheet(
               ss = "1zEyB5957aXYq6LvI9Ma65Z7GStpjIDWL16frru73qiY",
               sheet = "Metrics"
             )
           ) |>
           dplyr::distinct(MetricID, .keep_all = TRUE)
-      )
+      })
 
       # create metrics inside the object
       if (nrow(metrics) > 0) {
