@@ -20,7 +20,8 @@ A list containing request status information and response text.
 Submit a Study submission payload to Google Apps Script
 }
 \examples{
-\dontrun{
+ 
+if (interactive()) {
 study <- BenchmarkStudy$new(name = "example_study")
 study$description <- "A small example benchmark study."
 existing_studies <- data.frame(

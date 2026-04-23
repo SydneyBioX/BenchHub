@@ -30,3 +30,12 @@ A populated \code{BenchmarkStudy} object.
 \description{
 Download a BenchmarkStudy from the submission database
 }
+\examples{
+if (interactive()) {
+  study <- downloadSubmissionStudy(
+    studyID =  "ST005", 
+    cachePath = tempdir()
+  )
+  study
+}
+}
