@@ -18,7 +18,7 @@ The workflow has two common entry points:
 -   `writeSubmission()`: interactive helper for preparing and optionally submitting a Trio.
 -   `submitTrioSubmission()`: submit Trio to [BenchHub Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing).
 
-```{r}
+```{r load-package}
 library(BenchHub)
 ```
 
@@ -101,6 +101,6 @@ trio <- downloadSubmissionTrio("datasetID", cachePath = tempdir())
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
