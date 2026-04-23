@@ -430,8 +430,8 @@ studySubmissionToJSON <- function(
 #' @param submittedBy Submitter email or identifier.
 #'
 #' @return A list containing request status information and response text.
-#' @examples
-#' \dontrun{
+#' @examples  
+#' if (interactive()) {
 #' study <- BenchmarkStudy$new(name = "example_study")
 #' study$description <- "A small example benchmark study."
 #' existing_studies <- data.frame(
