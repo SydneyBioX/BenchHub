@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r load-package, message=FALSE, warning=FALSE}
 library(BenchHub)
 ```
 
@@ -38,7 +38,7 @@ If the dataset can't be loaded using Trio's inbuilt loader, a custom loader can 
 
 You can directly use the name from the [BenchHub Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing) sheet to initialise a Trio object populated with some metrics and supporting evidence. This method is useful when you want to quickly start with a predefined dataset.
 
-```{r}
+```{r download-trio}
 tempCache <- tempdir()
 trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 trio
@@ -60,7 +60,7 @@ For example, if you have a dataset ID from Figshare, GEO, or ExperimentHub, you 
 
 The example below shows how to create a Trio object using a Figshare dataset with a `datasetID`.
 
-```{r, message=FALSE, warning=FALSE}
+```{r create-trio, message=FALSE, warning=FALSE}
 trioA <- Trio$new("figshare:26142922/47361079",
                   evidenceColumns = c("time", "status"),
                   task = "Risk Estimation",
@@ -75,7 +75,7 @@ Trio can also be created by passing an object directly into the constructor. Thi
 
 If you have your own dataset, you can easily create a Trio object as well. Below is an example using a microbiome dataset. When trioB is created in an interactive R session, BenchHub will prompt Briefly describe the dataset:; the text you enter is stored in the Trio object’s description field.
 
-```{r}
+```{r load-object}
 exampleEnv <- new.env(parent = emptyenv())
 data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
 
@@ -96,7 +96,7 @@ Trio supports custom loaders for data formats not directly supported by Trio. A 
 
 Below, we use an anonymous function to wrap `GEOquery::getGEO` and `Biobase::phenoData`, and provide them with the path of the downloaded file to extract both the gene expression values and the patient classes from different tables.
 
-```{r eval=FALSE}
+```{r custom-loader, eval=FALSE}
 trioGEO <- Trio$new(
   "GEO:GSE46474",
   dataLoader = \(path) Biobase::exprs(GEOquery::getGEO(filename = path)),
@@ -118,7 +118,7 @@ In Trio, a metric is any pairwise function of the form `f(expected, predicted)` 
 
 We can also add metrics that have additional arguments by passing a list of arguments to the args parameter.
 
-```{r}
+```{r add-metric}
 eq <- \(expected, predicted, inequality = FALSE) {
   if (inequality) {
     return(!expected == predicted)
@@ -138,9 +138,9 @@ trio$addMetric(
 
 In the above example, we added two metrics based on the same function: "equality" and "inequality". The "equality" metric checks if the expected and predicted values are equal, while the "inequality" metric checks if they are not equal.
 
-Underneeth the hood, Trio creates a wrapper function that calls the metric function with the specified arguments.
+Underneath the hood, Trio creates a wrapper function that calls the metric function with the specified arguments.
 
-```{r}
+```{r see-metric}
 trio$metrics$inequality
 ```
 
@@ -156,7 +156,7 @@ Trio supports data splitting for cross-validation. The `split` method splits the
 
 Indices are generated using the `splitTools` package. The `split` method takes in the outcome variable and the number of folds and repeats. The `stratify` parameter can be used to stratify the outcome variable.
 
-```{r}
+```{r split-function}
 trio$split(y = 1:137, n_fold = 2, n_repeat = 5, seed = 1234, stratify = FALSE)
 trio$splitIndices
 ```
@@ -167,6 +167,6 @@ In this vignette, we introduced the Trio class and demonstrated how to create a 
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
