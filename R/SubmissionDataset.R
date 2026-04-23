@@ -579,7 +579,12 @@ collectTaskSubmissionInfo <- function(
       default_value <- if (length(default_lengths) == 0) "1" else as.character(max(default_lengths))
       entered <- readline(paste0("Number of tasks [", default_value, "]: "))
       entered <- if (nzchar(entered)) entered else default_value
-      n_tasks <- suppressWarnings(as.integer(entered))
+      entered_trimmed <- trimws(entered)
+      if (grepl("^[+-]?[0-9]+$", entered_trimmed)) {
+        n_tasks <- as.integer(entered_trimmed)
+      } else {
+        n_tasks <- NA_integer_
+      }
     } else if (length(default_lengths) > 0) {
       n_tasks <- max(default_lengths)
     } else {
