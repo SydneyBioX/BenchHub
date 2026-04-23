@@ -13,7 +13,7 @@ library(R6)
 library(scuttle) 
 ```
 
-```{r}
+```{r load-package}
 library(BenchHub)
 ```
 
@@ -34,13 +34,13 @@ This section demonstrates how to create a `BenchmarkStudy` object from a benchma
 
 We begin by creating an empty `BenchmarkStudy` object.
 
-```{r}
+```{r create-study}
 
 study <- BenchmarkStudy$new()
  
 ```
 
-```{r eval=FALSE}
+```{r download-trio, eval=FALSE}
 # Download an existing Trio from the submission database
 example_trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 
@@ -65,7 +65,7 @@ We therefore define two mapping functions that extract those objects from a meth
 
 Example 1: extract predicted spatial domains.
 
-```{r}
+```{r mapping-function}
 # Define the mapping function 
 extract_domains <- function(result) {
   if (is.data.frame(result) && "annotated_domain" %in% colnames(result)) {
@@ -97,7 +97,7 @@ study$addMappingFunction(
 
 Example 2: extract predicted cell type proportions.
 
-```{r}
+```{r another-mapping}
 # Define the mapping function 
 extract_celltype_props <- function(result) {
   if (is.data.frame(result) && "celltype_proportions" %in% names(result)) {
@@ -148,7 +148,7 @@ Once the BenchmarkStudy object includes:
 
 the recommended next step is to an interactive console workflow via `interactivePrepareStudySubmission(study)`.
 
-```{r eval=FALSE}
+```{r upload-study, eval=FALSE}
 # Set name and description manually
 study <- BenchmarkStudy$new(name = "ST toy study")
 study$description <- "Toy spatial transcriptomics study."
@@ -173,13 +173,13 @@ This section illustrates how a method developer can use the benchmark study obje
 
 A `BenchmarkStudy` object can be downloaded from the submission database through its `studyID`.
 
-```{r eval=FALSE}
+```{r download-previous-study, eval=FALSE}
 loaded_study <- downloadSubmissionStudy(studyID = "ST005", cachePath = tempdir())
 ```
 
 This returns a populated `BenchmarkStudy` object. For example:
 
-```{r eval=FALSE}
+```{r inspect-study, eval=FALSE}
 loaded_study
 loaded_study$name
 loaded_study$description
@@ -191,7 +191,7 @@ Inspect the list of available trios, and available mapping functions
 
 Each entry of `loaded_study$trios` is a `Trio` object with supporting evidence that can be used for evaluation.
 
-```{r eval=FALSE}
+```{r inspect-trio, eval=FALSE}
 length(loaded_study$trios)
 
 loaded_study$trios[[1]]
@@ -202,7 +202,7 @@ This study provides mapping functions to process method outputs into a format th
 
 Each mapping function has documentation.
 
-```{r eval=FALSE}
+```{r inspect-mapping, eval=FALSE}
 # list the names of the mapping function
 loaded_study$listMappingFunctions()
 
@@ -213,11 +213,11 @@ loaded_study$printMappingFunctionDocumentation("annotated_domain")
 
 ## Preparing for evaluation
 
-This benchmark study wants to assess predicted spatial domains and cell type proportions.
+This benchmark study aims to assess predicted spatial domains and cell type proportions.
 
 Suppose the method developer has run a method and obtained predicted domain labels and cell type proportions for each spot.
 
-```{r eval=FALSE}
+```{r simulate-domain, eval=FALSE}
 method_output <- list(
   annotated_domain = c("domain_1", "domain_1", "domain_2", "domain_2"),
   celltype_proportions = data.frame(
@@ -229,7 +229,7 @@ method_output <- list(
 
 The method developer can apply the mapping functions to the method output to generate the objects required for evaluation.
 
-```{r eval=FALSE}
+```{r add-domian, eval=FALSE}
 
 domain_pred <- loaded_study$runMapping("annotated_domain", method_output)
 prop_pred <- loaded_study$runMapping("celltype_proportions", method_output)
@@ -243,7 +243,7 @@ The evaluate function is in the format of `study$evaluate(trio_name, list(suppor
 
 In the function below, the names in the list correspond to supporting evidence stored in the reference `Trio`.
 
-```{r eval=FALSE}
+```{r eval-domain, eval=FALSE}
  
 result <- loaded_study$evaluate(loaded_study$trios[[1]]$name,  # name of the Trio to compare with
   list(
@@ -265,7 +265,7 @@ This vignette demonstrated two ways that users can interact with the `BenchmarkS
 
 # Session Info
 
-```{r}
+```{r session-info}
 
 sessionInfo()
 
