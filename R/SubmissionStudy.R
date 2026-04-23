@@ -1349,7 +1349,7 @@ private_study_bump_version <- function(version) {
   version <- private_required_submission_chr(version, "version")
   parts <- strsplit(version, "\\.")[[1]]
 
-  if (length(parts) != 3 || any(is.na(suppressWarnings(as.integer(parts))))) {
+  if (length(parts) != 3 || any(!grepl("^[0-9]+$", parts))) {
     cli::cli_abort(
       "Study version {.val {version}} must use the format {.val 0.0.1}."
     )
@@ -1361,12 +1361,13 @@ private_study_bump_version <- function(version) {
 }
 
 private_study_version_rank <- function(version) {
-  parts <- strsplit(version, "\\.")[[1]]
-  parts_num <- suppressWarnings(as.numeric(parts))
+  parts <- strsplit(version, ".", fixed = TRUE)[[1]]
 
-  if (length(parts_num) != 3 || any(is.na(parts_num))) {
+  if (length(parts) != 3 || any(!grepl("^[0-9]+$", parts))) {
     return(-Inf)
   }
+
+  parts_num <- as.numeric(parts)
 
   parts_num[[1]] * 1e6 + parts_num[[2]] * 1e3 + parts_num[[3]]
 }
