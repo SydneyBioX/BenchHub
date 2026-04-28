@@ -430,8 +430,7 @@ studySubmissionToJSON <- function(
 #' @param submittedBy Submitter email or identifier.
 #'
 #' @return A list containing request status information and response text.
-#' @examples  
-#' if (interactive()) {
+#' @examples
 #' study <- BenchmarkStudy$new(name = "example_study")
 #' study$description <- "A small example benchmark study."
 #' existing_studies <- data.frame(
@@ -449,11 +448,14 @@ studySubmissionToJSON <- function(
 #'   datasetIDs = "dataset_001",
 #'   existing_studies = existing_studies
 #' )
-#' submitStudySubmission(
-#'   submission,
-#'   url = "https://script.google.com/macros/s/example/exec",
-#'   submittedBy = "researcher@example.org"
-#' )
+#'
+#' if (interactive() && curl::has_internet()) {
+#'   response <- submitStudySubmission(
+#'     submission,
+#'     url = "https://script.google.com/macros/s/example/exec",
+#'     submittedBy = "researcher@example.org"
+#'   )
+#'   names(response)
 #' }
 #' @export
 submitStudySubmission <- function(
