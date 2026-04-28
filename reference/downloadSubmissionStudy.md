@@ -41,3 +41,15 @@ downloadSubmissionStudy(
 ## Value
 
 A populated `BenchmarkStudy` object.
+
+## Examples
+
+``` r
+if (interactive()) {
+  study <- downloadSubmissionStudy(
+    studyID =  "ST005", 
+    cachePath = tempdir()
+  )
+  study
+}
+```

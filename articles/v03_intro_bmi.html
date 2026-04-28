@@ -209,7 +209,7 @@ differences.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getHeatmap</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Fig.1 Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])." width="960"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/heatmap-1.png" class="r-plt" alt="Fig.1 Heatmap of benchmarking performance across simulation methods and evaluation metrics. Each row corresponds to a simulation method and each column to an evaluation criterion. The size and colour of the circles represent the normalised metric values (scaled to [0, 1])." width="960"><p class="caption">
 Fig.1 Heatmap of benchmarking performance across simulation methods and
 evaluation metrics. Each row corresponds to a simulation method and each
 column to an evaluation criterion. The size and colour of the circles
@@ -239,7 +239,7 @@ dependencies among evaluation components.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getCorplot</span><span class="op">(</span>input_type <span class="op">=</span> <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Fig.2 Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association." width="700"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/corplot-1.png" class="r-plt" alt="Fig.2 Correlation plot illustrating relationships among evaluation metrics across different methods. Correlation coefficients are computed based on benchmarking results, with colour intensity indicating the strength and direction of association." width="700"><p class="caption">
 Fig.2 Correlation plot illustrating relationships among evaluation
 metrics across different methods. Correlation coefficients are computed
 based on benchmarking results, with colour intensity indicating the
@@ -263,7 +263,7 @@ into trade-offs and performance consistency.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getScatterplot</span><span class="op">(</span>variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"recall"</span>, <span class="st">"precision"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Fig.3 Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics." width="700"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/scatterplot-1.png" class="r-plt" alt="Fig.3 Scatter plot illustrating the relationship between recall and precision across methods. Each point represents a method, with positions reflecting its performance on the two metrics." width="700"><p class="caption">
 Fig.3 Scatter plot illustrating the relationship between recall and
 precision across methods. Each point represents a method, with positions
 reflecting its performance on the two metrics.
@@ -285,7 +285,7 @@ complexity increases, revealing potential efficiency trade-offs.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getLineplot</span><span class="op">(</span>metricVariable <span class="op">=</span> <span class="st">"memory"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Fig.4 Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions." width="700"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/lineplot-1.png" class="r-plt" alt="Fig.4 Line plot illustrating memory usage across increasing data complexity for different methods. Each line represents a method, showing how memory consumption scales under varying conditions." width="700"><p class="caption">
 Fig.4 Line plot illustrating memory usage across increasing data
 complexity for different methods. Each line represents a method, showing
 how memory consumption scales under varying conditions.
@@ -310,7 +310,7 @@ factors.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getForestplot</span><span class="op">(</span>input_group <span class="op">=</span> <span class="st">"metric"</span>, input_model <span class="op">=</span> <span class="st">"method"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Fig.5 Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods." width="700"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/forestplot-1.png" class="r-plt" alt="Fig.5 Forest plot of regression coefficients estimating the influence of evaluation metrics on method performance. The vertical line at zero indicates no difference relative to the reference method; larger absolute coefficients indicate stronger metric-specific discrimination between methods." width="700"><p class="caption">
 Fig.5 Forest plot of regression coefficients estimating the influence of
 evaluation metrics on method performance. The vertical line at zero
 indicates no difference relative to the reference method; larger
@@ -346,7 +346,7 @@ instability when applied to different datasets.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bmi</span><span class="op">$</span><span class="fu">getBoxplot</span><span class="op">(</span>metricVariable <span class="op">=</span> <span class="st">"KDEstat"</span>, evidenceVariable <span class="op">=</span> <span class="st">"scaledVar"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Fig.6 Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets." width="700"><p class="caption">
+<img src="v03_intro_bmi_files/figure-html/boxplot-1.png" class="r-plt" alt="Fig.6 Boxplot showing the distribution of KDEstat values across simulation methods under the selected evidence setting. Differences in spread reflect variability and stability of method performance across datasets." width="700"><p class="caption">
 Fig.6 Boxplot showing the distribution of KDEstat values across
 simulation methods under the selected evidence setting. Differences in
 spread reflect variability and stability of method performance across
@@ -416,7 +416,7 @@ robustness across methods.</p>
 </h2>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.3 (2026-03-11)</span></span>
+<pre><code><span><span class="co">## R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -438,45 +438,45 @@ robustness across methods.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.14</span></span>
-<span><span class="co">## [5] BiocStyle_2.38.0</span></span>
+<span><span class="co">## [5] BiocStyle_2.39.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] Rdpack_2.6.6           gridExtra_2.3          httr2_1.2.2           </span></span>
-<span><span class="co">##   [4] rlang_1.2.0            magrittr_2.0.5         compiler_4.5.3        </span></span>
+<span><span class="co">##   [4] rlang_1.2.0            magrittr_2.0.5         compiler_4.6.0        </span></span>
 <span><span class="co">##   [7] survAUC_1.4-0          systemfonts_1.3.2      vctrs_0.7.3           </span></span>
 <span><span class="co">##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          </span></span>
 <span><span class="co">##  [13] fastmap_1.2.0          backports_1.5.1        labeling_0.4.3        </span></span>
 <span><span class="co">##  [16] ggstance_0.3.7         rmarkdown_2.31         tzdb_0.5.0            </span></span>
 <span><span class="co">##  [19] ragg_1.5.2             purrr_1.2.2            bit_4.6.0             </span></span>
 <span><span class="co">##  [22] xfun_0.57              cachem_1.1.0           jsonlite_2.0.0        </span></span>
-<span><span class="co">##  [25] tweenr_2.0.3           broom_1.0.12           parallel_4.5.3        </span></span>
+<span><span class="co">##  [25] tweenr_2.0.3           broom_1.0.12           parallel_4.6.0        </span></span>
 <span><span class="co">##  [28] cluster_2.1.8.2        R6_2.6.1               bslib_0.10.0          </span></span>
-<span><span class="co">##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          </span></span>
+<span><span class="co">##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.27          </span></span>
 <span><span class="co">##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      </span></span>
-<span><span class="co">##  [37] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            </span></span>
-<span><span class="co">##  [40] base64enc_0.1-6        parameters_0.28.3      Matrix_1.7-4          </span></span>
-<span><span class="co">##  [43] splines_4.5.3          nnet_7.3-20            tidyselect_1.2.1      </span></span>
-<span><span class="co">##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.0.0            </span></span>
+<span><span class="co">##  [37] Rcpp_1.1.1-1.1         bookdown_0.46          knitr_1.51            </span></span>
+<span><span class="co">##  [40] base64enc_0.1-6        parameters_0.28.3      Matrix_1.7-5          </span></span>
+<span><span class="co">##  [43] splines_4.6.0          nnet_7.3-20            tidyselect_1.2.1      </span></span>
+<span><span class="co">##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.1.0            </span></span>
 <span><span class="co">##  [49] lattice_0.22-9         tibble_3.3.1           plyr_1.8.9            </span></span>
-<span><span class="co">##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1-1            </span></span>
+<span><span class="co">##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.2              </span></span>
 <span><span class="co">##  [55] evaluate_1.0.5         marginaleffects_0.32.0 foreign_0.8-91        </span></span>
 <span><span class="co">##  [58] desc_1.4.3             survival_3.8-6         polyclip_1.10-7       </span></span>
 <span><span class="co">##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       </span></span>
 <span><span class="co">##  [64] insight_1.5.0          generics_0.1.4         vroom_1.7.1           </span></span>
-<span><span class="co">##  [67] hms_1.1.4              ggplot2_4.0.2          scales_1.4.0          </span></span>
-<span><span class="co">##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.5.3           </span></span>
+<span><span class="co">##  [67] hms_1.1.4              ggplot2_4.0.3          scales_1.4.0          </span></span>
+<span><span class="co">##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.6.0           </span></span>
 <span><span class="co">##  [73] data.table_1.18.2.1    fs_2.1.0               cowplot_1.2.0         </span></span>
-<span><span class="co">##  [76] grid_4.5.3             tidyr_1.3.2            rbibutils_2.4.1       </span></span>
+<span><span class="co">##  [76] grid_4.6.0             tidyr_1.3.2            rbibutils_2.4.1       </span></span>
 <span><span class="co">##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   </span></span>
 <span><span class="co">##  [82] patchwork_1.3.2        performance_0.16.0     ggforce_0.5.0         </span></span>
-<span><span class="co">##  [85] htmlTable_2.4.3        googledrive_2.1.2      splitTools_1.0.1      </span></span>
+<span><span class="co">##  [85] htmlTable_2.5.0        googledrive_2.1.2      splitTools_1.0.1      </span></span>
 <span><span class="co">##  [88] Formula_1.2-5          cli_3.6.6              rappdirs_0.3.4        </span></span>
 <span><span class="co">##  [91] textshaping_1.0.5      gargle_1.6.1           funkyheatmap_0.5.2    </span></span>
 <span><span class="co">##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_5.0.0           </span></span>
 <span><span class="co">##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.8         </span></span>
 <span><span class="co">## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       </span></span>
 <span><span class="co">## [103] pkgdown_2.2.0          lifecycle_1.0.5        MASS_7.3-65           </span></span>
-<span><span class="co">## [106] bit64_4.6.0-1          dotwhisker_0.8.4</span></span></code></pre>
+<span><span class="co">## [106] bit64_4.8.0            dotwhisker_0.8.4</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

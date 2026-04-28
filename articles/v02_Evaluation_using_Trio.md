@@ -217,7 +217,7 @@ boxplot(
 ```
 
 ![Fig.1 Mean cross-validation accuracy across
-repeats.](v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-6-1.png)
+repeats.](v02_Evaluation_using_Trio_files/figure-html/unnamed-chunk-1-1.png)
 
 Fig.1 Mean cross-validation accuracy across repeats.
 
@@ -332,7 +332,7 @@ functions in `BenchmarkInsights`.
 sessionInfo()
 ```
 
-    ## R version 4.5.3 (2026-03-11)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -353,14 +353,14 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] glmnet_4.1-10    Matrix_1.7-4     lubridate_1.9.5  forcats_1.0.1   
+    ##  [1] glmnet_4.1-10    Matrix_1.7-5     lubridate_1.9.5  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.2      readr_2.2.0     
-    ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.2    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.14 BiocStyle_2.38.0
+    ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.3    tidyverse_2.0.0 
+    ## [13] BenchHub_0.99.14 BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           
-    ##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
+    ##  [4] magrittr_2.0.5         compiler_4.6.0         survAUC_1.4-0         
     ##  [7] systemfonts_1.3.2      vctrs_0.7.3            reshape2_1.4.5        
     ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
     ## [13] backports_1.5.1        utf8_1.2.6             ggstance_0.3.7        
@@ -368,22 +368,22 @@ sessionInfo()
     ## [19] xfun_0.57              cachem_1.1.0           jsonlite_2.0.0        
     ## [22] broom_1.0.12           cluster_2.1.8.2        R6_2.6.1              
     ## [25] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
-    ## [28] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
-    ## [31] Rcpp_1.1.1-1           bookdown_0.46          iterators_1.0.14      
+    ## [28] rpart_4.1.27           jquerylib_0.1.4        cellranger_1.1.0      
+    ## [31] Rcpp_1.1.1-1.1         bookdown_0.46          iterators_1.0.14      
     ## [34] knitr_1.51             base64enc_0.1-6        parameters_0.28.3     
-    ## [37] splines_4.5.3          nnet_7.3-20            timechange_0.4.0      
+    ## [37] splines_4.6.0          nnet_7.3-20            timechange_0.4.0      
     ## [40] tidyselect_1.2.1       rstudioapi_0.18.0      yaml_2.3.12           
-    ## [43] codetools_0.2-20       curl_7.0.0             lattice_0.22-9        
+    ## [43] codetools_0.2-20       curl_7.1.0             lattice_0.22-9        
     ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
-    ## [49] S7_0.2.1-1             evaluate_1.0.5         marginaleffects_0.32.0
+    ## [49] S7_0.2.2               evaluate_1.0.5         marginaleffects_0.32.0
     ## [52] foreign_0.8-91         desc_1.4.3             survival_3.8-6        
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
     ## [58] foreach_1.5.2          insight_1.5.0          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.1            
-    ## [64] Hmisc_5.2-5            tools_4.5.3            data.table_1.18.2.1   
-    ## [67] fs_2.1.0               grid_4.5.3             datawizard_1.3.0      
+    ## [64] Hmisc_5.2-5            tools_4.6.0            data.table_1.18.2.1   
+    ## [67] fs_2.1.0               grid_4.6.0             datawizard_1.3.0      
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [73] performance_0.16.0     htmlTable_2.4.3        googledrive_2.1.2     
+    ## [73] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
     ## [79] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
     ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_5.0.0           

@@ -220,7 +220,7 @@ loaded_study$printMappingFunctionDocumentation("annotated_domain")
 
 ### Preparing for evaluation
 
-This benchmark study wants to assess predicted spatial domains and cell
+This benchmark study aims to assess predicted spatial domains and cell
 type proportions.
 
 Suppose the method developer has run a method and obtained predicted
@@ -287,7 +287,7 @@ This vignette demonstrated two ways that users can interact with the
 sessionInfo()
 ```
 
-    ## R version 4.5.3 (2026-03-11)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -309,46 +309,46 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BenchHub_0.99.14            scuttle_1.20.0             
-    ##  [3] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
-    ##  [5] Biobase_2.70.0              GenomicRanges_1.62.1       
-    ##  [7] Seqinfo_1.0.0               IRanges_2.44.0             
-    ##  [9] S4Vectors_0.48.1            BiocGenerics_0.56.0        
-    ## [11] generics_0.1.4              MatrixGenerics_1.22.0      
+    ##  [1] BenchHub_0.99.14            scuttle_1.21.6             
+    ##  [3] SingleCellExperiment_1.33.2 SummarizedExperiment_1.41.1
+    ##  [5] Biobase_2.71.0              GenomicRanges_1.63.2       
+    ##  [7] Seqinfo_1.1.0               IRanges_2.45.0             
+    ##  [9] S4Vectors_0.49.3            BiocGenerics_0.57.1        
+    ## [11] generics_0.1.4              MatrixGenerics_1.23.0      
     ## [13] matrixStats_1.5.0           R6_2.6.1                   
-    ## [15] BiocStyle_2.38.0           
+    ## [15] BiocStyle_2.39.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           
-    ##  [4] magrittr_2.0.5         compiler_4.5.3         survAUC_1.4-0         
+    ##  [4] magrittr_2.0.5         compiler_4.6.0         survAUC_1.4-0         
     ##  [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           
     ## [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
-    ## [13] backports_1.5.1        XVector_0.50.0         ggstance_0.3.7        
+    ## [13] backports_1.5.1        XVector_0.51.0         ggstance_0.3.7        
     ## [16] rmarkdown_2.31         ragg_1.5.2             purrr_1.2.2           
-    ## [19] xfun_0.57              cachem_1.1.0           beachmat_2.26.0       
-    ## [22] jsonlite_2.0.0         DelayedArray_0.36.1    BiocParallel_1.44.0   
-    ## [25] broom_1.0.12           parallel_4.5.3         cluster_2.1.8.2       
+    ## [19] xfun_0.57              cachem_1.1.0           beachmat_2.27.5       
+    ## [22] jsonlite_2.0.0         DelayedArray_0.37.1    BiocParallel_1.45.0   
+    ## [25] broom_1.0.12           parallel_4.6.0         cluster_2.1.8.2       
     ## [28] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
-    ## [31] rpart_4.1.24           jquerylib_0.1.4        cellranger_1.1.0      
-    ## [34] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            
-    ## [37] base64enc_0.1-6        parameters_0.28.3      splines_4.5.3         
-    ## [40] Matrix_1.7-4           nnet_7.3-20            tidyselect_1.2.1      
+    ## [31] rpart_4.1.27           jquerylib_0.1.4        cellranger_1.1.0      
+    ## [34] Rcpp_1.1.1-1.1         bookdown_0.46          knitr_1.51            
+    ## [37] base64enc_0.1-6        parameters_0.28.3      splines_4.6.0         
+    ## [40] Matrix_1.7-5           nnet_7.3-20            tidyselect_1.2.1      
     ## [43] rstudioapi_0.18.0      abind_1.4-8            yaml_2.3.12           
-    ## [46] codetools_0.2-20       curl_7.0.0             plyr_1.8.9            
+    ## [46] codetools_0.2-20       curl_7.1.0             plyr_1.8.9            
     ## [49] lattice_0.22-9         tibble_3.3.1           withr_3.0.2           
-    ## [52] bayestestR_0.17.0      S7_0.2.1-1             evaluate_1.0.5        
+    ## [52] bayestestR_0.17.0      S7_0.2.2               evaluate_1.0.5        
     ## [55] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
     ## [58] desc_1.4.3             pillar_1.11.1          BiocManager_1.30.27   
-    ## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.2         
+    ## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.3         
     ## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-5           
-    ## [67] tools_4.5.3            data.table_1.18.2.1    fs_2.1.0              
-    ## [70] grid_4.5.3             tidyr_1.3.2            datawizard_1.3.0      
+    ## [67] tools_4.6.0            data.table_1.18.2.1    fs_2.1.0              
+    ## [70] grid_4.6.0             tidyr_1.3.2            datawizard_1.3.0      
     ## [73] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [76] performance_0.16.0     htmlTable_2.4.3        googledrive_2.1.2     
+    ## [76] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
     ## [79] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
     ## [82] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
-    ## [85] S4Arrays_1.10.1        dplyr_1.2.1            gtable_0.3.6          
+    ## [85] S4Arrays_1.11.1        dplyr_1.2.1            gtable_0.3.6          
     ## [88] ggcorrplot_0.1.4.1     ggsci_5.0.0            sass_0.4.10           
-    ## [91] digest_0.6.39          SparseArray_1.10.10    ggrepel_0.9.8         
+    ## [91] digest_0.6.39          SparseArray_1.11.13    ggrepel_0.9.8         
     ## [94] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
     ## [97] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4

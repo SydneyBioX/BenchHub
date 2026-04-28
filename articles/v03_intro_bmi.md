@@ -159,7 +159,7 @@ bmi$getHeatmap()
 and evaluation metrics. Each row corresponds to a simulation method and
 each column to an evaluation criterion. The size and colour of the
 circles represent the normalised metric values (scaled to \[0,
-1\]).](v03_intro_bmi_files/figure-html/unnamed-chunk-6-1.png)
+1\]).](v03_intro_bmi_files/figure-html/heatmap-1.png)
 
 Fig.1 Heatmap of benchmarking performance across simulation methods and
 evaluation metrics. Each row corresponds to a simulation method and each
@@ -192,7 +192,7 @@ bmi$getCorplot(input_type = "method")
 metrics across different methods. Correlation coefficients are computed
 based on benchmarking results, with colour intensity indicating the
 strength and direction of
-association.](v03_intro_bmi_files/figure-html/unnamed-chunk-7-1.png)
+association.](v03_intro_bmi_files/figure-html/corplot-1.png)
 
 Fig.2 Correlation plot illustrating relationships among evaluation
 metrics across different methods. Correlation coefficients are computed
@@ -222,7 +222,7 @@ bmi$getScatterplot(variables = c("recall", "precision"))
 ![Fig.3 Scatter plot illustrating the relationship between recall and
 precision across methods. Each point represents a method, with positions
 reflecting its performance on the two
-metrics.](v03_intro_bmi_files/figure-html/unnamed-chunk-8-1.png)
+metrics.](v03_intro_bmi_files/figure-html/scatterplot-1.png)
 
 Fig.3 Scatter plot illustrating the relationship between recall and
 precision across methods. Each point represents a method, with positions
@@ -248,7 +248,7 @@ bmi$getLineplot(metricVariable = "memory")
 ![Fig.4 Line plot illustrating memory usage across increasing data
 complexity for different methods. Each line represents a method, showing
 how memory consumption scales under varying
-conditions.](v03_intro_bmi_files/figure-html/unnamed-chunk-9-1.png)
+conditions.](v03_intro_bmi_files/figure-html/lineplot-1.png)
 
 Fig.4 Line plot illustrating memory usage across increasing data
 complexity for different methods. Each line represents a method, showing
@@ -278,8 +278,7 @@ bmi$getForestplot(input_group = "metric", input_model = "method")
 of evaluation metrics on method performance. The vertical line at zero
 indicates no difference relative to the reference method; larger
 absolute coefficients indicate stronger metric-specific discrimination
-between
-methods.](v03_intro_bmi_files/figure-html/unnamed-chunk-10-1.png)
+between methods.](v03_intro_bmi_files/figure-html/forestplot-1.png)
 
 Fig.5 Forest plot of regression coefficients estimating the influence of
 evaluation metrics on method performance. The vertical line at zero
@@ -319,7 +318,7 @@ bmi$getBoxplot(metricVariable = "KDEstat", evidenceVariable = "scaledVar")
 ![Fig.6 Boxplot showing the distribution of KDEstat values across
 simulation methods under the selected evidence setting. Differences in
 spread reflect variability and stability of method performance across
-datasets.](v03_intro_bmi_files/figure-html/unnamed-chunk-11-1.png)
+datasets.](v03_intro_bmi_files/figure-html/boxplot-1.png)
 
 Fig.6 Boxplot showing the distribution of KDEstat values across
 simulation methods under the selected evidence setting. Differences in
@@ -360,7 +359,7 @@ robustness across methods.
 sessionInfo()
 ```
 
-    ## R version 4.5.3 (2026-03-11)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -382,42 +381,42 @@ sessionInfo()
     ## 
     ## other attached packages:
     ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.14
-    ## [5] BiocStyle_2.38.0
+    ## [5] BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] Rdpack_2.6.6           gridExtra_2.3          httr2_1.2.2           
-    ##   [4] rlang_1.2.0            magrittr_2.0.5         compiler_4.5.3        
+    ##   [4] rlang_1.2.0            magrittr_2.0.5         compiler_4.6.0        
     ##   [7] survAUC_1.4-0          systemfonts_1.3.2      vctrs_0.7.3           
     ##  [10] reshape2_1.4.5         pkgconfig_2.0.3        crayon_1.5.3          
     ##  [13] fastmap_1.2.0          backports_1.5.1        labeling_0.4.3        
     ##  [16] ggstance_0.3.7         rmarkdown_2.31         tzdb_0.5.0            
     ##  [19] ragg_1.5.2             purrr_1.2.2            bit_4.6.0             
     ##  [22] xfun_0.57              cachem_1.1.0           jsonlite_2.0.0        
-    ##  [25] tweenr_2.0.3           broom_1.0.12           parallel_4.5.3        
+    ##  [25] tweenr_2.0.3           broom_1.0.12           parallel_4.6.0        
     ##  [28] cluster_2.1.8.2        R6_2.6.1               bslib_0.10.0          
-    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.24          
+    ##  [31] stringi_1.8.7          RColorBrewer_1.1-3     rpart_4.1.27          
     ##  [34] jquerylib_0.1.4        cellranger_1.1.0       assertthat_0.2.1      
-    ##  [37] Rcpp_1.1.1-1           bookdown_0.46          knitr_1.51            
-    ##  [40] base64enc_0.1-6        parameters_0.28.3      Matrix_1.7-4          
-    ##  [43] splines_4.5.3          nnet_7.3-20            tidyselect_1.2.1      
-    ##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.0.0            
+    ##  [37] Rcpp_1.1.1-1.1         bookdown_0.46          knitr_1.51            
+    ##  [40] base64enc_0.1-6        parameters_0.28.3      Matrix_1.7-5          
+    ##  [43] splines_4.6.0          nnet_7.3-20            tidyselect_1.2.1      
+    ##  [46] rstudioapi_0.18.0      yaml_2.3.12            curl_7.1.0            
     ##  [49] lattice_0.22-9         tibble_3.3.1           plyr_1.8.9            
-    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.1-1            
+    ##  [52] withr_3.0.2            bayestestR_0.17.0      S7_0.2.2              
     ##  [55] evaluate_1.0.5         marginaleffects_0.32.0 foreign_0.8-91        
     ##  [58] desc_1.4.3             survival_3.8-6         polyclip_1.10-7       
     ##  [61] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
     ##  [64] insight_1.5.0          generics_0.1.4         vroom_1.7.1           
-    ##  [67] hms_1.1.4              ggplot2_4.0.2          scales_1.4.0          
-    ##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.5.3           
+    ##  [67] hms_1.1.4              ggplot2_4.0.3          scales_1.4.0          
+    ##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.6.0           
     ##  [73] data.table_1.18.2.1    fs_2.1.0               cowplot_1.2.0         
-    ##  [76] grid_4.5.3             tidyr_1.3.2            rbibutils_2.4.1       
+    ##  [76] grid_4.6.0             tidyr_1.3.2            rbibutils_2.4.1       
     ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
     ##  [82] patchwork_1.3.2        performance_0.16.0     ggforce_0.5.0         
-    ##  [85] htmlTable_2.4.3        googledrive_2.1.2      splitTools_1.0.1      
+    ##  [85] htmlTable_2.5.0        googledrive_2.1.2      splitTools_1.0.1      
     ##  [88] Formula_1.2-5          cli_3.6.6              rappdirs_0.3.4        
     ##  [91] textshaping_1.0.5      gargle_1.6.1           funkyheatmap_0.5.2    
     ##  [94] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_5.0.0           
     ##  [97] sass_0.4.10            digest_0.6.39          ggrepel_0.9.8         
     ## [100] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
     ## [103] pkgdown_2.2.0          lifecycle_1.0.5        MASS_7.3-65           
-    ## [106] bit64_4.6.0-1          dotwhisker_0.8.4
+    ## [106] bit64_4.8.0            dotwhisker_0.8.4

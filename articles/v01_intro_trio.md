@@ -47,7 +47,7 @@ trio
     ##   $ gene_B: num 1 2 8 9
     ## Data Source: "figshare"
     ## Dataset ID: "30007327/63474198"
-    ## Cache Path: "/tmp/Rtmplxz8mW"
+    ## Cache Path: "/tmp/RtmpI5XYVZ"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -110,7 +110,7 @@ trioA
     ##   ... (truncated)
     ## Data Source: "figshare"
     ## Dataset ID: "26142922/47361079"
-    ## Cache Path: "/tmp/Rtmplxz8mW"
+    ## Cache Path: "/tmp/RtmpI5XYVZ"
     ## Split Indices: "None"
     ## 
     ## ── Supporting Evidence 
@@ -233,7 +233,7 @@ In the above example, we added two metrics based on the same function:
 expected and predicted values are equal, while the “inequality” metric
 checks if they are not equal.
 
-Underneeth the hood, Trio creates a wrapper function that calls the
+Underneath the hood, Trio creates a wrapper function that calls the
 metric function with the specified arguments.
 
 ``` r
@@ -244,8 +244,8 @@ trio$metrics$inequality
     ## {
     ##     do.call(metric, append(list(evidence, to_eval), args))
     ## }
-    ## <bytecode: 0x558010753830>
-    ## <environment: 0x5580102e3b58>
+    ## <bytecode: 0x55cf3a181f58>
+    ## <environment: 0x55cf3b8455f8>
 
 ## Other Features
 
@@ -347,7 +347,7 @@ studies more effectively.
 sessionInfo()
 ```
 
-    ## R version 4.5.3 (2026-03-11)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -368,30 +368,30 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.14 BiocStyle_2.38.0
+    ## [1] BenchHub_0.99.14 BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
-    ##  [4] S7_0.2.1-1             fastmap_1.2.0          bayestestR_0.17.0     
-    ##  [7] digest_0.6.39          rpart_4.1.24           lifecycle_1.0.5       
+    ##  [4] S7_0.2.2               fastmap_1.2.0          bayestestR_0.17.0     
+    ##  [7] digest_0.6.39          rpart_4.1.27           lifecycle_1.0.5       
     ## [10] cluster_2.1.8.2        survival_3.8-6         magrittr_2.0.5        
-    ## [13] compiler_4.5.3         rlang_1.2.0            Hmisc_5.2-5           
-    ## [16] sass_0.4.10            tools_4.5.3            yaml_2.3.12           
+    ## [13] compiler_4.6.0         rlang_1.2.0            Hmisc_5.2-5           
+    ## [16] sass_0.4.10            tools_4.6.0            yaml_2.3.12           
     ## [19] data.table_1.18.2.1    knitr_1.51             htmlwidgets_1.6.4     
-    ## [22] curl_7.0.0             ggstance_0.3.7         plyr_1.8.9            
+    ## [22] curl_7.1.0             ggstance_0.3.7         plyr_1.8.9            
     ## [25] RColorBrewer_1.1-3     foreign_0.8-91         withr_3.0.2           
     ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
-    ## [31] grid_4.5.3             datawizard_1.3.0       googledrive_2.1.2     
-    ## [34] colorspace_2.1-2       ggplot2_4.0.2          scales_1.4.0          
+    ## [31] grid_4.6.0             datawizard_1.3.0       googledrive_2.1.2     
+    ## [34] colorspace_2.1-2       ggplot2_4.0.3          scales_1.4.0          
     ## [37] insight_1.5.0          cli_3.6.6              rmarkdown_2.31        
     ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        
     ## [43] rstudioapi_0.18.0      performance_0.16.0     httr_1.4.8            
     ## [46] reshape2_1.4.5         parameters_0.28.3      ggcorrplot_0.1.4.1    
-    ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.5.3         
+    ## [49] cachem_1.1.0           stringr_1.6.0          splines_4.6.0         
     ## [52] BiocManager_1.30.27    cellranger_1.1.0       base64enc_0.1-6       
-    ## [55] marginaleffects_0.32.0 vctrs_0.7.3            Matrix_1.7-4          
+    ## [55] marginaleffects_0.32.0 vctrs_0.7.3            Matrix_1.7-5          
     ## [58] jsonlite_2.0.0         bookdown_0.46          patchwork_1.3.2       
-    ## [61] ggrepel_0.9.8          Formula_1.2-5          htmlTable_2.4.3       
+    ## [61] ggrepel_0.9.8          Formula_1.2-5          htmlTable_2.5.0       
     ## [64] systemfonts_1.3.2      tidyr_1.3.2            jquerylib_0.1.4       
     ## [67] splitTools_1.0.1       glue_1.8.1             pkgdown_2.2.0         
     ## [70] survAUC_1.4-0          stringi_1.8.7          gtable_0.3.6          
@@ -400,5 +400,5 @@ sessionInfo()
     ## [79] textshaping_1.0.5      evaluate_1.0.5         lattice_0.22-9        
     ## [82] backports_1.5.1        googlesheets4_1.1.2    broom_1.0.12          
     ## [85] ggsci_5.0.0            gargle_1.6.1           bslib_0.10.0          
-    ## [88] Rcpp_1.1.1-1           gridExtra_2.3          checkmate_2.3.4       
+    ## [88] Rcpp_1.1.1-1.1         gridExtra_2.3          checkmate_2.3.4       
     ## [91] xfun_0.57              fs_2.1.0               pkgconfig_2.0.3
