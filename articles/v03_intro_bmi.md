@@ -380,7 +380,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.14
+    ## [1] stringr_1.6.0    dplyr_1.2.1      readr_2.2.0      BenchHub_0.99.15
     ## [5] BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
@@ -410,7 +410,7 @@ sessionInfo()
     ##  [70] glue_1.8.1             Hmisc_5.2-5            tools_4.6.0           
     ##  [73] data.table_1.18.2.1    fs_2.1.0               cowplot_1.2.0         
     ##  [76] grid_4.6.0             tidyr_1.3.2            rbibutils_2.4.1       
-    ##  [79] datawizard_1.3.0       colorspace_2.1-2       googlesheets4_1.1.2   
+    ##  [79] datawizard_1.3.1       colorspace_2.1-2       googlesheets4_1.1.2   
     ##  [82] patchwork_1.3.2        performance_0.16.0     ggforce_0.5.0         
     ##  [85] htmlTable_2.5.0        googledrive_2.1.2      splitTools_1.0.1      
     ##  [88] Formula_1.2-5          cli_3.6.6              rappdirs_0.3.4        

@@ -309,7 +309,7 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BenchHub_0.99.14            scuttle_1.21.6             
+    ##  [1] BenchHub_0.99.15            scuttle_1.21.6             
     ##  [3] SingleCellExperiment_1.33.2 SummarizedExperiment_1.41.1
     ##  [5] Biobase_2.71.0              GenomicRanges_1.63.2       
     ##  [7] Seqinfo_1.1.0               IRanges_2.45.0             
@@ -342,7 +342,7 @@ sessionInfo()
     ## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.3         
     ## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-5           
     ## [67] tools_4.6.0            data.table_1.18.2.1    fs_2.1.0              
-    ## [70] grid_4.6.0             tidyr_1.3.2            datawizard_1.3.0      
+    ## [70] grid_4.6.0             tidyr_1.3.2            datawizard_1.3.1      
     ## [73] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
     ## [76] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
     ## [79] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             

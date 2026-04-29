@@ -144,7 +144,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.14 BiocStyle_2.39.0
+    ## [1] BenchHub_0.99.15 BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
@@ -157,7 +157,7 @@ sessionInfo()
     ## [22] curl_7.1.0             ggstance_0.3.7         plyr_1.8.9            
     ## [25] RColorBrewer_1.1-3     foreign_0.8-91         withr_3.0.2           
     ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
-    ## [31] grid_4.6.0             datawizard_1.3.0       googledrive_2.1.2     
+    ## [31] grid_4.6.0             datawizard_1.3.1       googledrive_2.1.2     
     ## [34] colorspace_2.1-2       ggplot2_4.0.3          scales_1.4.0          
     ## [37] insight_1.5.0          cli_3.6.6              rmarkdown_2.31        
     ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        

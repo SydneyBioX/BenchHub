@@ -356,7 +356,7 @@ sessionInfo()
     ##  [1] glmnet_4.1-10    Matrix_1.7-5     lubridate_1.9.5  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.2      readr_2.2.0     
     ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.3    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.14 BiocStyle_2.39.0
+    ## [13] BenchHub_0.99.15 BiocStyle_2.39.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           
@@ -381,7 +381,7 @@ sessionInfo()
     ## [58] foreach_1.5.2          insight_1.5.0          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.1            
     ## [64] Hmisc_5.2-5            tools_4.6.0            data.table_1.18.2.1   
-    ## [67] fs_2.1.0               grid_4.6.0             datawizard_1.3.0      
+    ## [67] fs_2.1.0               grid_4.6.0             datawizard_1.3.1      
     ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
     ## [73] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
