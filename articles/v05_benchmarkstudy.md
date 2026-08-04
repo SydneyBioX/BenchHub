@@ -1,6 +1,7 @@
 # 5 BenchmarkStudy
 
 ``` r
+
 library(BenchHub)
 ```
 
@@ -31,10 +32,12 @@ benchmarking study.
 We begin by creating an empty `BenchmarkStudy` object.
 
 ``` r
+
 study <- BenchmarkStudy$new()
 ```
 
 ``` r
+
 # Download an existing Trio from the submission database
 example_trio <- downloadSubmissionTrio("D001", cachePath = tempdir())
 
@@ -67,6 +70,7 @@ from a method result.
 Example 1: extract predicted spatial domains.
 
 ``` r
+
 # Define the mapping function 
 extract_domains <- function(result) {
   if (is.data.frame(result) && "annotated_domain" %in% colnames(result)) {
@@ -97,6 +101,7 @@ study$addMappingFunction(
 Example 2: extract predicted cell type proportions.
 
 ``` r
+
 # Define the mapping function 
 extract_celltype_props <- function(result) {
   if (is.data.frame(result) && "celltype_proportions" %in% names(result)) {
@@ -152,6 +157,7 @@ the recommended next step is to an interactive console workflow via
 `interactivePrepareStudySubmission(study)`.
 
 ``` r
+
 # Set name and description manually
 study <- BenchmarkStudy$new(name = "ST toy study")
 study$description <- "Toy spatial transcriptomics study."
@@ -181,12 +187,14 @@ A `BenchmarkStudy` object can be downloaded from the submission database
 through its `studyID`.
 
 ``` r
+
 loaded_study <- downloadSubmissionStudy(studyID = "ST005", cachePath = tempdir())
 ```
 
 This returns a populated `BenchmarkStudy` object. For example:
 
 ``` r
+
 loaded_study
 loaded_study$name
 loaded_study$description
@@ -200,6 +208,7 @@ Each entry of `loaded_study$trios` is a `Trio` object with supporting
 evidence that can be used for evaluation.
 
 ``` r
+
 length(loaded_study$trios)
 
 loaded_study$trios[[1]]
@@ -211,6 +220,7 @@ format that can be used for evaluation.
 Each mapping function has documentation.
 
 ``` r
+
 # list the names of the mapping function
 loaded_study$listMappingFunctions()
 
@@ -227,6 +237,7 @@ Suppose the method developer has run a method and obtained predicted
 domain labels and cell type proportions for each spot.
 
 ``` r
+
 method_output <- list(
   annotated_domain = c("domain_1", "domain_1", "domain_2", "domain_2"),
   celltype_proportions = data.frame(
@@ -240,6 +251,7 @@ The method developer can apply the mapping functions to the method
 output to generate the objects required for evaluation.
 
 ``` r
+
 domain_pred <- loaded_study$runMapping("annotated_domain", method_output)
 prop_pred <- loaded_study$runMapping("celltype_proportions", method_output)
 ```
@@ -256,6 +268,7 @@ In the function below, the names in the list correspond to supporting
 evidence stored in the reference `Trio`.
 
 ``` r
+
 result <- loaded_study$evaluate(loaded_study$trios[[1]]$name,  # name of the Trio to compare with
   list(
     "annotated_domain" = domain_pred,
@@ -284,10 +297,11 @@ This vignette demonstrated two ways that users can interact with the
 ## Session Info
 
 ``` r
+
 sessionInfo()
 ```
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -309,46 +323,46 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BenchHub_0.99.15            scuttle_1.21.6             
-    ##  [3] SingleCellExperiment_1.33.2 SummarizedExperiment_1.41.1
-    ##  [5] Biobase_2.71.0              GenomicRanges_1.63.2       
-    ##  [7] Seqinfo_1.1.0               IRanges_2.45.0             
-    ##  [9] S4Vectors_0.49.3            BiocGenerics_0.57.1        
-    ## [11] generics_0.1.4              MatrixGenerics_1.23.0      
+    ##  [1] BenchHub_0.99.15            scuttle_1.22.0             
+    ##  [3] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
+    ##  [5] Biobase_2.72.0              GenomicRanges_1.64.0       
+    ##  [7] Seqinfo_1.2.0               IRanges_2.46.0             
+    ##  [9] S4Vectors_0.50.1            BiocGenerics_0.58.1        
+    ## [11] generics_0.1.4              MatrixGenerics_1.24.0      
     ## [13] matrixStats_1.5.0           R6_2.6.1                   
-    ## [15] BiocStyle_2.39.0           
+    ## [15] BiocStyle_2.40.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] httr2_1.2.2            gridExtra_2.3          rlang_1.2.0           
-    ##  [4] magrittr_2.0.5         compiler_4.6.0         survAUC_1.4-0         
-    ##  [7] reshape2_1.4.5         systemfonts_1.3.2      vctrs_0.7.3           
-    ## [10] stringr_1.6.0          pkgconfig_2.0.3        fastmap_1.2.0         
-    ## [13] backports_1.5.1        XVector_0.51.0         ggstance_0.3.7        
+    ##  [1] httr2_1.3.0            gridExtra_2.3.1        rlang_1.3.0           
+    ##  [4] magrittr_2.0.5         otel_0.2.0             compiler_4.6.1        
+    ##  [7] survAUC_1.4-0          reshape2_1.4.5         systemfonts_1.3.2     
+    ## [10] vctrs_0.7.3            stringr_1.6.0          pkgconfig_2.0.3       
+    ## [13] fastmap_1.2.0          backports_1.5.1        XVector_0.52.0        
     ## [16] rmarkdown_2.31         ragg_1.5.2             purrr_1.2.2           
-    ## [19] xfun_0.57              cachem_1.1.0           beachmat_2.27.5       
-    ## [22] jsonlite_2.0.0         DelayedArray_0.37.1    BiocParallel_1.45.0   
-    ## [25] broom_1.0.12           parallel_4.6.0         cluster_2.1.8.2       
-    ## [28] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
+    ## [19] xfun_0.60              cachem_1.1.0           beachmat_2.28.0       
+    ## [22] jsonlite_2.0.0         DelayedArray_0.38.2    BiocParallel_1.46.0   
+    ## [25] broom_1.0.13           parallel_4.6.1         cluster_2.1.8.2       
+    ## [28] bslib_0.11.0           stringi_1.8.7          RColorBrewer_1.1-3    
     ## [31] rpart_4.1.27           jquerylib_0.1.4        cellranger_1.1.0      
-    ## [34] Rcpp_1.1.1-1.1         bookdown_0.46          knitr_1.51            
-    ## [37] base64enc_0.1-6        parameters_0.28.3      splines_4.6.0         
+    ## [34] Rcpp_1.1.2             bookdown_0.47          knitr_1.51            
+    ## [37] base64enc_0.1-6        parameters_0.29.2      splines_4.6.1         
     ## [40] Matrix_1.7-5           nnet_7.3-20            tidyselect_1.2.1      
-    ## [43] rstudioapi_0.18.0      abind_1.4-8            yaml_2.3.12           
+    ## [43] rstudioapi_0.19.0      abind_1.4-8            yaml_2.3.12           
     ## [46] codetools_0.2-20       curl_7.1.0             plyr_1.8.9            
-    ## [49] lattice_0.22-9         tibble_3.3.1           withr_3.0.2           
-    ## [52] bayestestR_0.17.0      S7_0.2.2               evaluate_1.0.5        
+    ## [49] lattice_0.22-9         tibble_3.3.1           withr_3.0.3           
+    ## [52] bayestestR_0.18.1      S7_0.2.2               evaluate_1.0.5        
     ## [55] marginaleffects_0.32.0 foreign_0.8-91         survival_3.8-6        
     ## [58] desc_1.4.3             pillar_1.11.1          BiocManager_1.30.27   
-    ## [61] checkmate_2.3.4        insight_1.5.0          ggplot2_4.0.3         
-    ## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-5           
-    ## [67] tools_4.6.0            data.table_1.18.2.1    fs_2.1.0              
-    ## [70] grid_4.6.0             tidyr_1.3.2            datawizard_1.3.1      
-    ## [73] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [76] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
+    ## [61] checkmate_2.3.4        insight_1.5.2          ggplot2_4.0.3         
+    ## [64] scales_1.4.0           glue_1.8.1             Hmisc_5.2-6           
+    ## [67] tools_4.6.1            data.table_1.18.4      fs_2.1.0              
+    ## [70] grid_4.6.1             tidyr_1.3.2            datawizard_1.3.1      
+    ## [73] colorspace_2.1-3       googlesheets4_1.1.2    patchwork_1.3.2       
+    ## [76] performance_0.17.1     htmlTable_2.5.0        googledrive_2.1.2     
     ## [79] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
-    ## [82] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
-    ## [85] S4Arrays_1.11.1        dplyr_1.2.1            gtable_0.3.6          
-    ## [88] ggcorrplot_0.1.4.1     ggsci_5.0.0            sass_0.4.10           
-    ## [91] digest_0.6.39          SparseArray_1.11.13    ggrepel_0.9.8         
-    ## [94] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
-    ## [97] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4
+    ## [82] textshaping_1.0.5      gargle_1.6.1           S4Arrays_1.12.0       
+    ## [85] dplyr_1.2.1            gtable_0.3.6           ggcorrplot_0.3.0      
+    ## [88] ggsci_5.2.0            sass_0.4.10            digest_0.6.39         
+    ## [91] SparseArray_1.12.2     ggrepel_0.9.8          htmlwidgets_1.6.4     
+    ## [94] farver_2.1.2           htmltools_0.5.9        pkgdown_2.2.1         
+    ## [97] lifecycle_1.0.5        dotwhisker_0.8.6

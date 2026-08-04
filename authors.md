@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/SydneyBioX/BenchHub/blob/devel/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/SydneyBioX/BenchHub/blob/v0.1.0/DESCRIPTION)
 
 Liang C, Kim S, Robertson N, Torkel M, Cao Y, Strbenac D, Yang J,
 Maintainer S (2026). *BenchHub: Comprehensive Collection of Curated

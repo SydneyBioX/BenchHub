@@ -1,6 +1,7 @@
 # 2 Evaluation using Trio
 
 ``` r
+
 library(BenchHub)
 library(tidyverse)
 library(glmnet)
@@ -18,6 +19,7 @@ binary factor indicating Parkinson’s disease (`PD`) or healthy control
 (`HC`) status for each sample.
 
 ``` r
+
 # import the microbiome data into a temporary environment
 exampleEnv <- new.env(parent = emptyenv())
 data("lubomski_microbiome_data", envir = exampleEnv, package = "BenchHub")
@@ -32,6 +34,7 @@ dim(x)
     ## [1]  575 1192
 
 ``` r
+
 # check the length of the patient status
 length(lubomPD)
 ```
@@ -39,6 +42,7 @@ length(lubomPD)
     ## [1] 575
 
 ``` r
+
 # Add sample IDs so the evidence matches the dataset rows by name.
 names(lubomPD) <- rownames(x)
 ```
@@ -54,6 +58,7 @@ To initialise a Trio object, we use a
 [`new()`](https://rdrr.io/r/methods/new.html) method.
 
 ``` r
+
 trio <- Trio$new(data = x, 
                  evidence = list(
                    Diagnosis = list(
@@ -85,6 +90,7 @@ following code will extract the data matrix and patient status outcome
 from `Trio` object.
 
 ``` r
+
 # get the gold standard from the Trio object
 x <- trio$data
 y <- trio$getEvidence("Diagnosis")
@@ -100,6 +106,7 @@ gives a simple list where each element represents a combination of folds
 and repeats for each sample.
 
 ``` r
+
 # get train and test indices
 trio$split(y = y, n_fold = 2, n_repeat = 5)
 CVindices <- trio$splitIndices
@@ -125,6 +132,7 @@ and repeat identifiers, and then iterate over this plan to evaluate each
 split.
 
 ``` r
+
 set.seed(1234)
 library(tibble)
 
@@ -201,6 +209,7 @@ After cross-validation, we can visualise cross-validation results by
 averaging results across folds within each repeats.
 
 ``` r
+
 result <- dplyr::bind_rows(result_list)
 
 result_summary <- result %>%
@@ -238,6 +247,7 @@ two values. Step 4: Evaluate the difference in sparsity of the
 microbiome data and the simulated data.
 
 ``` r
+
 set.seed(1)
 
 # generate a simulated matrix
@@ -258,6 +268,7 @@ calc_diff <- function(evidence, predicted) {
 ```
 
 ``` r
+
 # add metric that we just defined
 trio$addMetric(name = "Difference", metric = calc_diff)
 
@@ -298,6 +309,7 @@ column names are “datasetID”, “method”, “evidence”, “metric” , �
 and that there is one row for each result.
 
 ``` r
+
 # in the with cross validation result, we need to average the results from multiple repeats to give one value
 result <- result %>%
   dplyr::group_by(datasetID, method, evidence, metric) %>%
@@ -312,6 +324,7 @@ result <- result %>%
     ##   per-operation grouping (`?dplyr::dplyr_by`) instead.
 
 ``` r
+
 result <- rbind(result, eval_res)
 result
 ```
@@ -329,10 +342,11 @@ functions in `BenchmarkInsights`.
 ## Session Info
 
 ``` r
+
 sessionInfo()
 ```
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -353,40 +367,40 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] glmnet_4.1-10    Matrix_1.7-5     lubridate_1.9.5  forcats_1.0.1   
+    ##  [1] glmnet_5.0       Matrix_1.7-5     lubridate_1.9.5  forcats_1.0.1   
     ##  [5] stringr_1.6.0    dplyr_1.2.1      purrr_1.2.2      readr_2.2.0     
     ##  [9] tidyr_1.3.2      tibble_3.3.1     ggplot2_4.0.3    tidyverse_2.0.0 
-    ## [13] BenchHub_0.99.15 BiocStyle_2.39.0
+    ## [13] BenchHub_0.99.15 BiocStyle_2.40.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] gridExtra_2.3          httr2_1.2.2            rlang_1.2.0           
-    ##  [4] magrittr_2.0.5         compiler_4.6.0         survAUC_1.4-0         
-    ##  [7] systemfonts_1.3.2      vctrs_0.7.3            reshape2_1.4.5        
-    ## [10] shape_1.4.6.1          pkgconfig_2.0.3        fastmap_1.2.0         
-    ## [13] backports_1.5.1        utf8_1.2.6             ggstance_0.3.7        
+    ##  [1] gridExtra_2.3.1        httr2_1.3.0            rlang_1.3.0           
+    ##  [4] magrittr_2.0.5         otel_0.2.0             compiler_4.6.1        
+    ##  [7] survAUC_1.4-0          systemfonts_1.3.2      vctrs_0.7.3           
+    ## [10] reshape2_1.4.5         shape_1.4.6.1          pkgconfig_2.0.3       
+    ## [13] fastmap_1.2.0          backports_1.5.1        utf8_1.2.6            
     ## [16] rmarkdown_2.31         tzdb_0.5.0             ragg_1.5.2            
-    ## [19] xfun_0.57              cachem_1.1.0           jsonlite_2.0.0        
-    ## [22] broom_1.0.12           cluster_2.1.8.2        R6_2.6.1              
-    ## [25] bslib_0.10.0           stringi_1.8.7          RColorBrewer_1.1-3    
+    ## [19] xfun_0.60              cachem_1.1.0           jsonlite_2.0.0        
+    ## [22] broom_1.0.13           cluster_2.1.8.2        R6_2.6.1              
+    ## [25] bslib_0.11.0           stringi_1.8.7          RColorBrewer_1.1-3    
     ## [28] rpart_4.1.27           jquerylib_0.1.4        cellranger_1.1.0      
-    ## [31] Rcpp_1.1.1-1.1         bookdown_0.46          iterators_1.0.14      
-    ## [34] knitr_1.51             base64enc_0.1-6        parameters_0.28.3     
-    ## [37] splines_4.6.0          nnet_7.3-20            timechange_0.4.0      
-    ## [40] tidyselect_1.2.1       rstudioapi_0.18.0      yaml_2.3.12           
+    ## [31] Rcpp_1.1.2             bookdown_0.47          iterators_1.0.14      
+    ## [34] knitr_1.51             base64enc_0.1-6        parameters_0.29.2     
+    ## [37] splines_4.6.1          nnet_7.3-20            timechange_0.4.0      
+    ## [40] tidyselect_1.2.1       rstudioapi_0.19.0      yaml_2.3.12           
     ## [43] codetools_0.2-20       curl_7.1.0             lattice_0.22-9        
-    ## [46] plyr_1.8.9             withr_3.0.2            bayestestR_0.17.0     
+    ## [46] plyr_1.8.9             withr_3.0.3            bayestestR_0.18.1     
     ## [49] S7_0.2.2               evaluate_1.0.5         marginaleffects_0.32.0
     ## [52] foreign_0.8-91         desc_1.4.3             survival_3.8-6        
     ## [55] pillar_1.11.1          BiocManager_1.30.27    checkmate_2.3.4       
-    ## [58] foreach_1.5.2          insight_1.5.0          generics_0.1.4        
+    ## [58] foreach_1.5.2          insight_1.5.2          generics_0.1.4        
     ## [61] hms_1.1.4              scales_1.4.0           glue_1.8.1            
-    ## [64] Hmisc_5.2-5            tools_4.6.0            data.table_1.18.2.1   
-    ## [67] fs_2.1.0               grid_4.6.0             datawizard_1.3.1      
-    ## [70] colorspace_2.1-2       googlesheets4_1.1.2    patchwork_1.3.2       
-    ## [73] performance_0.16.0     htmlTable_2.5.0        googledrive_2.1.2     
+    ## [64] Hmisc_5.2-6            tools_4.6.1            data.table_1.18.4     
+    ## [67] fs_2.1.0               grid_4.6.1             datawizard_1.3.1      
+    ## [70] colorspace_2.1-3       googlesheets4_1.1.2    patchwork_1.3.2       
+    ## [73] performance_0.17.1     htmlTable_2.5.0        googledrive_2.1.2     
     ## [76] splitTools_1.0.1       Formula_1.2-5          cli_3.6.6             
-    ## [79] rappdirs_0.3.4         textshaping_1.0.5      gargle_1.6.1          
-    ## [82] gtable_0.3.6           ggcorrplot_0.1.4.1     ggsci_5.0.0           
-    ## [85] sass_0.4.10            digest_0.6.39          ggrepel_0.9.8         
-    ## [88] htmlwidgets_1.6.4      farver_2.1.2           htmltools_0.5.9       
-    ## [91] pkgdown_2.2.0          lifecycle_1.0.5        dotwhisker_0.8.4
+    ## [79] textshaping_1.0.5      gargle_1.6.1           gtable_0.3.6          
+    ## [82] ggcorrplot_0.3.0       ggsci_5.2.0            sass_0.4.10           
+    ## [85] digest_0.6.39          ggrepel_0.9.8          htmlwidgets_1.6.4     
+    ## [88] farver_2.1.2           htmltools_0.5.9        pkgdown_2.2.1         
+    ## [91] lifecycle_1.0.5        dotwhisker_0.8.6

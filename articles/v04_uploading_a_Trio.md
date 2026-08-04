@@ -18,6 +18,7 @@ The workflow has two common entry points:
   Datasets](https://docs.google.com/spreadsheets/d/1H8hOxL8D0XTquao8vGZ2cr9-XeaFC48SWAdFn0M3fkg/edit?usp=sharing).
 
 ``` r
+
 library(BenchHub)
 ```
 
@@ -39,6 +40,7 @@ a GitHub gist.
 Add the token to your environment in R:
 
 ``` r
+
 Sys.setenv(GITHUB_PAT = "your_personal_access_token")
 ```
 
@@ -53,6 +55,7 @@ Replace `"your_personal_access_token"` with the token you copied.
     to prepare the Trio submission:
 
 ``` r
+
 bundle <- writeSubmission(trio)
 ```
 
@@ -74,6 +77,7 @@ After reviewing the generated bundle, you can submit it with
 [`submitTrioSubmission()`](https://sydneybiox.github.io/BenchHub/reference/submitTrioSubmission.md):
 
 ``` r
+
 response <- submitTrioSubmission(
   submission = bundle$submission,
   submittedBy = "your.name@example.org"
@@ -85,6 +89,7 @@ If you prefer a single interactive step, you can also let
 submit at the end:
 
 ``` r
+
 bundle <- writeSubmission(
   trio,
   submittedBy = "your.name@example.org",
@@ -107,6 +112,7 @@ You can also download a previously submitted Trio by its dataset ID
 under Dataset sheet:
 
 ``` r
+
 trio <- downloadSubmissionTrio("datasetID", cachePath = tempdir())
 ```
 
@@ -120,10 +126,11 @@ trio <- downloadSubmissionTrio("datasetID", cachePath = tempdir())
 ## Session Info
 
 ``` r
+
 sessionInfo()
 ```
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -144,37 +151,37 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] BenchHub_0.99.15 BiocStyle_2.39.0
+    ## [1] BenchHub_0.99.15 BiocStyle_2.40.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_1.2.1       dplyr_1.2.1            farver_2.1.2          
-    ##  [4] S7_0.2.2               fastmap_1.2.0          bayestestR_0.17.0     
-    ##  [7] digest_0.6.39          rpart_4.1.27           lifecycle_1.0.5       
-    ## [10] cluster_2.1.8.2        survival_3.8-6         magrittr_2.0.5        
-    ## [13] compiler_4.6.0         rlang_1.2.0            Hmisc_5.2-5           
-    ## [16] sass_0.4.10            tools_4.6.0            yaml_2.3.12           
-    ## [19] data.table_1.18.2.1    knitr_1.51             htmlwidgets_1.6.4     
-    ## [22] curl_7.1.0             ggstance_0.3.7         plyr_1.8.9            
-    ## [25] RColorBrewer_1.1-3     foreign_0.8-91         withr_3.0.2           
-    ## [28] purrr_1.2.2            desc_1.4.3             nnet_7.3-20           
-    ## [31] grid_4.6.0             datawizard_1.3.1       googledrive_2.1.2     
-    ## [34] colorspace_2.1-2       ggplot2_4.0.3          scales_1.4.0          
-    ## [37] insight_1.5.0          cli_3.6.6              rmarkdown_2.31        
-    ## [40] dotwhisker_0.8.4       ragg_1.5.2             generics_0.1.4        
-    ## [43] rstudioapi_0.18.0      performance_0.16.0     reshape2_1.4.5        
-    ## [46] parameters_0.28.3      ggcorrplot_0.1.4.1     cachem_1.1.0          
-    ## [49] stringr_1.6.0          splines_4.6.0          BiocManager_1.30.27   
-    ## [52] cellranger_1.1.0       base64enc_0.1-6        marginaleffects_0.32.0
-    ## [55] vctrs_0.7.3            Matrix_1.7-5           jsonlite_2.0.0        
-    ## [58] bookdown_0.46          patchwork_1.3.2        ggrepel_0.9.8         
-    ## [61] Formula_1.2-5          htmlTable_2.5.0        systemfonts_1.3.2     
-    ## [64] tidyr_1.3.2            jquerylib_0.1.4        splitTools_1.0.1      
-    ## [67] glue_1.8.1             pkgdown_2.2.0          survAUC_1.4-0         
-    ## [70] stringi_1.8.7          gtable_0.3.6           tibble_3.3.1          
-    ## [73] pillar_1.11.1          rappdirs_0.3.4         htmltools_0.5.9       
-    ## [76] R6_2.6.1               httr2_1.2.2            textshaping_1.0.5     
-    ## [79] evaluate_1.0.5         lattice_0.22-9         backports_1.5.1       
-    ## [82] googlesheets4_1.1.2    broom_1.0.12           ggsci_5.0.0           
-    ## [85] gargle_1.6.1           bslib_0.10.0           Rcpp_1.1.1-1.1        
-    ## [88] gridExtra_2.3          checkmate_2.3.4        xfun_0.57             
-    ## [91] fs_2.1.0               pkgconfig_2.0.3
+    ##  [1] gtable_0.3.6           httr2_1.3.0            xfun_0.60             
+    ##  [4] bslib_0.11.0           bayestestR_0.18.1      ggplot2_4.0.3         
+    ##  [7] survAUC_1.4-0          htmlwidgets_1.6.4      insight_1.5.2         
+    ## [10] ggrepel_0.9.8          lattice_0.22-9         gargle_1.6.1          
+    ## [13] vctrs_0.7.3            tools_4.6.1            generics_0.1.4        
+    ## [16] curl_7.1.0             datawizard_1.3.1       tibble_3.3.1          
+    ## [19] cluster_2.1.8.2        pkgconfig_2.0.3        Matrix_1.7-5          
+    ## [22] data.table_1.18.4      checkmate_2.3.4        RColorBrewer_1.1-3    
+    ## [25] S7_0.2.2               desc_1.4.3             lifecycle_1.0.5       
+    ## [28] compiler_4.6.1         farver_2.1.2           stringr_1.6.0         
+    ## [31] textshaping_1.0.5      ggsci_5.2.0            splitTools_1.0.1      
+    ## [34] htmltools_0.5.9        marginaleffects_0.32.0 sass_0.4.10           
+    ## [37] yaml_2.3.12            htmlTable_2.5.0        Formula_1.2-5         
+    ## [40] dotwhisker_0.8.6       pillar_1.11.1          pkgdown_2.2.1         
+    ## [43] jquerylib_0.1.4        tidyr_1.3.2            googlesheets4_1.1.2   
+    ## [46] cachem_1.1.0           Hmisc_5.2-6            ggcorrplot_0.3.0      
+    ## [49] rpart_4.1.27           tidyselect_1.2.1       digest_0.6.39         
+    ## [52] performance_0.17.1     stringi_1.8.7          reshape2_1.4.5        
+    ## [55] dplyr_1.2.1            purrr_1.2.2            bookdown_0.47         
+    ## [58] splines_4.6.1          fastmap_1.2.0          grid_4.6.1            
+    ## [61] colorspace_2.1-3       cli_3.6.6              magrittr_2.0.5        
+    ## [64] patchwork_1.3.2        base64enc_0.1-6        survival_3.8-6        
+    ## [67] broom_1.0.13           withr_3.0.3            foreign_0.8-91        
+    ## [70] scales_1.4.0           backports_1.5.1        googledrive_2.1.2     
+    ## [73] rmarkdown_2.31         otel_0.2.0             nnet_7.3-20           
+    ## [76] gridExtra_2.3.1        cellranger_1.1.0       ragg_1.5.2            
+    ## [79] evaluate_1.0.5         knitr_1.51             parameters_0.29.2     
+    ## [82] rlang_1.3.0            Rcpp_1.1.2             glue_1.8.1            
+    ## [85] BiocManager_1.30.27    rstudioapi_0.19.0      jsonlite_2.0.0        
+    ## [88] plyr_1.8.9             R6_2.6.1               systemfonts_1.3.2     
+    ## [91] fs_2.1.0
